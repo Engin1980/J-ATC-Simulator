@@ -1,5 +1,7 @@
 package eng.jAtcSim.newLib.atcs.internal;
 
+import eng.eSystem.collections.IList;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
@@ -12,18 +14,23 @@ import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
+import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 
 public class InternalAcc {
   private static Atc app;
-  private static Producer<AtcList<Atc>> atcProducer = null;
-  private static Atc ctr;
+  private static AtcList<Atc> atcs;
   private static final PlaneResponsibilityManager prm = new PlaneResponsibilityManager();
-  private static Atc twr;
+
+  public static void init(AtcList<Atc> atcs, Atc app){
+    EAssert.Argument.isNotNull(atcs, "atcs");
+    EAssert.Argument.isNotNull(app, "app");
+    InternalAcc.app = app;
+    InternalAcc.atcs = atcs;
+  }
 
   public static Atc getApp() {
-    if (app == null)
-      app = atcProducer.produce().getFirst(q -> q.getAtcId().getType() == AtcType.app);
+    EAssert.isNotNull(app );
     return app;
   }
 
@@ -37,7 +44,9 @@ public class InternalAcc {
 
   public static Atc getAtc(AtcId atcId) {
     EAssert.Argument.isNotNull(atcId, "atcId");
-    throw new ToDoException();
+    EAssert.isNotNull(atcs);
+    Atc ret = atcs.getFirst(q->q.getAtcId().equals(atcId));
+    return ret;
   }
 
   public static Atc getAtc(AirplaneResponsibilityInfo airplaneResponsibilityInfo) {
@@ -46,17 +55,11 @@ public class InternalAcc {
   }
 
   public static AtcList<Atc> getAtcs() {
-    return atcProducer.produce();
+    return atcs;
   }
 
   public static Callsign getCallsignFromSquawk(Squawk squawk) {
     return Context.getAirplane().getAirplanes().get(squawk).getCallsign();
-  }
-
-  public static Atc getCtr() {
-    if (ctr == null)
-      ctr = atcProducer.produce().getFirst(q -> q.getAtcId().getType() == AtcType.ctr);
-    return ctr;
   }
 
   public static IAirplane getPlane(AirplaneResponsibilityInfo airplaneResponsibilityInfo) {
@@ -79,18 +82,5 @@ public class InternalAcc {
 
   public static Squawk getSquawkFromCallsign(Callsign callsign) {
     return Context.getAirplane().getAirplanes().get(callsign).getSqwk();
-  }
-
-  public static Atc getTwr() {
-    if (twr == null)
-      twr = atcProducer.produce().getFirst(q -> q.getAtcId().getType() == AtcType.twr);
-    return twr;
-  }
-
-  public static void setAtcProducer(Producer<AtcList<Atc>> atcProducer) {
-    InternalAcc.atcProducer = atcProducer;
-    twr = null;
-    app = null;
-    ctr = null;
   }
 }

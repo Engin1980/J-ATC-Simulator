@@ -6,11 +6,10 @@ import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 
 public interface IAirplaneRouting {
-  DARoute getAssignedRoute();
+
+  String getAssignedDARouteName();
 
   ActiveRunwayThreshold getAssignedRunwayThreshold();
-
-  Navaid getDepartureLastNavaid();
 
   Navaid getEntryExitPoint();
 
@@ -21,7 +20,7 @@ public interface IAirplaneRouting {
   boolean isGoingToFlightOverNavaid(Navaid n);
 
   default boolean isOnWayToPassDeparturePoint(){
-    return isGoingToFlightOverNavaid(getDepartureLastNavaid());
+    return isGoingToFlightOverNavaid(getEntryExitPoint());
   }
 
   boolean isRoutingEmpty();

@@ -71,6 +71,10 @@ public class AtcModule {
     this.atcProvider.init();
   }
 
+  public void registerNewPlane(IAirplane tmp) {
+    this.atcProvider.registerNewPlane(tmp.getAtc().getTunedAtc(), tmp.getCallsign());
+  }
+
   public RunwayConfiguration tryGetSchedulerRunwayConfiguration() {
     return this.atcProvider.tryGetSchedulerRunwayConfiguration();
   }

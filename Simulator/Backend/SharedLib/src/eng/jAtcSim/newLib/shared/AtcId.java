@@ -4,6 +4,8 @@ import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 
+import java.util.Objects;
+
 public class AtcId {
   private final String name;
   private final double frequency;
@@ -32,5 +34,18 @@ public class AtcId {
   @Override
   public String toString() {
     return name;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    AtcId atcId = (AtcId) o;
+    return name.equals(atcId.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name);
   }
 }

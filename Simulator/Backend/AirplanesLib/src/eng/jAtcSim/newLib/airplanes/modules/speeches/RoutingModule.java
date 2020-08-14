@@ -39,7 +39,9 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     route,
     extension
   }
+
   private final AfterCommandList afterCommands = new AfterCommandList();
+  private String assignedDARouteName = "";
   private Navaid entryExitPoint;
   private final DelayedList<ICommand> queue = new DelayedList<>(2, 7); //Min/max item delay
   private ActiveRunwayThreshold runwayThreshold;
@@ -61,6 +63,15 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     processNewSpeeches();
     processAfterSpeeches();
     flushSaidTextToAtc();
+  }
+
+  public String getAssignedDARouteName() {
+    return assignedDARouteName;
+  }
+
+  public void setAssignedDARouteName(String assignedDARouteName) {
+    EAssert.Argument.isNotNull(assignedDARouteName, "assignedDARouteName");
+    this.assignedDARouteName = assignedDARouteName;
   }
 
   public Navaid getEntryExitPoint() {
@@ -90,24 +101,9 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     return afterCommands.hasProceedDirectToNavaidAsConseqent(navaid);
   }
 
-  public void processNewSpeeches() {
-    SpeechList<ICommand> current = new SpeechList<>(this.queue.getAndElapse());
-
-    if (current.isEmpty()) return;
-
-    wrt.getCVR().logProcessedCurrentSpeeches(current);
-
-    // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
-    if (rdr.getAtc().hasRadarContact() == false
-        && !(current.getFirst() instanceof RadarContactConfirmationNotification)) {
-      say(new RequestRadarContactNotification());
-      this.queue.clear();
-    } else {
-      processSpeeches(current, CommandSource.atc);
-    }
-  }
-
   public void setRouting(IReadOnlyList<ICommand> routeCommands) {
+    EAssert.Argument.isNotNull(routeCommands, "routeCommands");
+
     SpeechList<ICommand> cmds = tryExpandThenCommands(routeCommands);
     if (cmds == null) return; // some error
     afterCommands.clearAll();
@@ -297,6 +293,23 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
         rdr, targetCoordinate, AfterCommandList.Type.route);
     wrt.getCVR().logProcessedAfterSpeeches(cmds, "route");
     processSpeeches(cmds, CommandSource.route);
+  }
+
+  private void processNewSpeeches() {
+    SpeechList<ICommand> current = new SpeechList<>(this.queue.getAndElapse());
+
+    if (current.isEmpty()) return;
+
+    wrt.getCVR().logProcessedCurrentSpeeches(current);
+
+    // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
+    if (rdr.getAtc().hasRadarContact() == false
+        && !(current.getFirst() instanceof RadarContactConfirmationNotification)) {
+      say(new RequestRadarContactNotification());
+      this.queue.clear();
+    } else {
+      processSpeeches(current, CommandSource.atc);
+    }
   }
 
   private void processNormalSpeech(

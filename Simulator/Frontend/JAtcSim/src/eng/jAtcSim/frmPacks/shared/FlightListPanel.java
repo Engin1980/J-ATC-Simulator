@@ -199,9 +199,7 @@ class FlightStripPanel extends JPanel {
     lbl.setForeground(stripSettings.textColor);
     cmps[4] = lbl;
 
-    String routeLabel = ai.getAssignedRoute() == null
-        ? "(" + ai.entryExitPoint().getName() + ")"
-        : ai.getExpectedRunwayThreshold().getName() + "/" + ai.getAssignedRoute().getName();
+    String routeLabel = ai.getRoutingLabel();
     lbl = new JLabel(Format.Flight.getDepartureArrivalChar(ai.getArriDep()) + " " + routeLabel);
     lbl.setName("lblRoute");
     lbl.setFont(normalFont);

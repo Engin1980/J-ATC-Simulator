@@ -53,6 +53,7 @@ public class AirplanesController {
       throw new EApplicationException("Unknown airplane template type " + at.getClass().getName());
 
     planes.add(airplane);
+    publicPlanes.add(airplane.getReader());
 
     Context.getMessaging().getMessenger().registerListener(
         Participant.createAirplane(airplane.getReader().getCallsign()));
@@ -71,12 +72,8 @@ public class AirplanesController {
   }
 
   public void unregisterPlane(Callsign callsign) {
-
     planes.remove(q -> q.getReader().getCallsign().equals(callsign));
     publicPlanes.remove(q -> q.getCallsign().equals(callsign));
-
-    //TODO Implement this:
-    throw new ToDoException();
   }
 
   public void init(){

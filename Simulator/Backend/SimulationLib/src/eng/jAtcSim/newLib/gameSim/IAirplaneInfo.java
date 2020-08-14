@@ -28,9 +28,9 @@ public interface IAirplaneInfo {
 
   DepartureArrival getArriDep();
 
-  DARoute getAssignedRoute();
-
   ActiveRunwayThreshold getExpectedRunwayThreshold();
+
+  String getRoutingLabel();
 
   boolean hasRadarContact();
 

@@ -34,6 +34,8 @@ import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequestCancelation;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
 /**
  * @author Marek
  */
@@ -258,12 +260,12 @@ public class UserAtc extends Atc {
     EAssert.Argument.isNotNull(callsign, "callsign");
     IAirplane plane = InternalAcc.getPlane(callsign);
 
-    Matcher m =
-        Pattern.compile("(\\d{1,2}[lrcLRC]?)?(\\/(.+))?")
-            .matcher(text);
-    boolean found = m.find();
-    assert found;
+    Matcher m = Pattern.compile("(\\d{1,2}[lrcLRC]?)?(\\/(.+))?").matcher(text);
+    EAssert.isTrue(m.find(), sf("Unable to decode switch routing request from '%s'.", text));
+
     ActiveRunwayThreshold threshold;
+    DARoute route;
+
     if (m.group(1) == null)
       threshold = plane.getRouting().getAssignedRunwayThreshold();
     else {
@@ -273,10 +275,9 @@ public class UserAtc extends Atc {
       }
     }
 
-    DARoute route;
     if (m.group(3) == null) {
       if (threshold == plane.getRouting().getAssignedRunwayThreshold())
-        route = plane.getRouting().getAssignedRoute();
+        route = null;
       else {
         throw new ToDoException("Implement this");
 //        route = plane.isArrival()
@@ -292,7 +293,8 @@ public class UserAtc extends Atc {
     }
 
     Tuple<SwitchRoutingRequest, String> ret;
-    if (threshold == plane.getRouting().getAssignedRunwayThreshold() && route == plane.getRouting().getAssignedRoute())
+//    Tuple<SwitchRoutingRequest, String> ret = new Tuple<>(new SwitchRoutingRequest(threshold, route), null);
+    if (threshold == plane.getRouting().getAssignedRunwayThreshold() && route.getName().equals(plane.getRouting().getAssignedDARouteName()))
       ret = new Tuple<>(null, null);
     else
       ret = new Tuple<>(new SwitchRoutingRequest(threshold, route), null);

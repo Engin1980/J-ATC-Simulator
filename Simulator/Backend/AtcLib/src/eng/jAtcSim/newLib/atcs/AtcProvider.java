@@ -1,19 +1,14 @@
 package eng.jAtcSim.newLib.atcs;
 
 import eng.eSystem.collections.EDistinctList;
-import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.events.EventAnonymousSimple;
-import eng.eSystem.events.IEventListenerAnonymousSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
-import eng.jAtcSim.newLib.atcs.internal.Atc;
-import eng.jAtcSim.newLib.atcs.internal.CenterAtc;
-import eng.jAtcSim.newLib.atcs.internal.ComputerAtc;
-import eng.jAtcSim.newLib.atcs.internal.UserAtc;
+import eng.jAtcSim.newLib.atcs.internal.*;
 import eng.jAtcSim.newLib.atcs.internal.tower.TowerAtc;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.shared.AtcId;
@@ -54,12 +49,12 @@ public class AtcProvider {
   }
 
   public EventAnonymousSimple getOnRunwayChanged() {
-    TowerAtc towerAtc =(TowerAtc) atcs.getFirst(q -> q.getAtcId().getType() == AtcType.twr);
+    TowerAtc towerAtc = (TowerAtc) atcs.getFirst(q -> q.getAtcId().getType() == AtcType.twr);
     return towerAtc.getOnRunwayChanged();
   }
 
   public int getPlanesCountAtHoldingPoint() {
-    TowerAtc towerAtc =(TowerAtc) atcs.getFirst(q -> q.getAtcId().getType() == AtcType.twr);
+    TowerAtc towerAtc = (TowerAtc) atcs.getFirst(q -> q.getAtcId().getType() == AtcType.twr);
     int ret = towerAtc.getNumberOfPlanesAtHoldingPoint();
     return ret;
   }
@@ -77,6 +72,19 @@ public class AtcProvider {
 
   public void init() {
     atcs.forEach(q -> q.init());
+
+    IList<Atc> app = atcs.where(q -> q.getAtcId().getType() == AtcType.app);
+    EAssert.isTrue(app.size() == 1); // application now prepared only for one app
+
+    InternalAcc.init(
+        atcs,
+        app.getFirst());
+  }
+
+  public void registerNewPlane(AtcId atcId, Callsign callsign) {
+    prm.registerNewPlane(atcId, callsign);
+    Atc atc = atcs.getFirst(q -> q.getAtcId().equals(atcId));
+    atc.registerNewPlaneUnderControl(callsign, true);
   }
 
   public RunwayConfiguration tryGetSchedulerRunwayConfiguration() {

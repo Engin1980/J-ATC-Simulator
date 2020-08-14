@@ -110,19 +110,15 @@ public class Airplane {
   }
 
   public class AirplaneRoutingImpl implements IAirplaneRouting {
+
     @Override
-    public DARoute getAssignedRoute() {
-      throw new ToDoException();
+    public String getAssignedDARouteName() {
+      return Airplane.this.routingModule.getAssignedDARouteName();
     }
 
     @Override
     public ActiveRunwayThreshold getAssignedRunwayThreshold() {
-      throw new ToDoException();
-    }
-
-    @Override
-    public Navaid getDepartureLastNavaid() {
-      throw new ToDoException();
+      return Airplane.this.routingModule.getRunwayThreshold();
     }
 
     @Override
@@ -393,10 +389,17 @@ public class Airplane {
       Airplane.this.routingModule.setRouting(routeCommands);
     }
 
+    // Obsolete
+//    @Override
+//    public void setRouting(IReadOnlyList<ICommand> routeCommands) {
+//      Airplane.this.routingModule.setRouting(routeCommands);
+//    }
+
     @Override
     public void setRouting(DARoute daRoute, ActiveRunwayThreshold activeRunwayThreshold) {
       Airplane.this.routingModule.setRunwayThreshold(activeRunwayThreshold);
       Airplane.this.routingModule.setEntryExitPoint(daRoute.getMainNavaid());
+      Airplane.this.routingModule.setAssignedDARouteName(daRoute.getName());
       Airplane.this.routingModule.setRouting(daRoute.getRouteCommands());
     }
 
@@ -544,8 +547,7 @@ public class Airplane {
 
     if (isDeparture) {
       this.pilot = new HoldingPointPilot(this);
-    }
-    else {
+    } else {
       this.pilot = new ArrivalPilot(this);
     }
   }

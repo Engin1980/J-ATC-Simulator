@@ -141,7 +141,7 @@ public class CenterAtc extends ComputerAtc {
         ret = new RequestResult(false,
             String.format("%s is not heading (or on the route to) departure fix %s",
                 plane.getCallsign().toString(),
-                plane.getRouting().getAssignedRoute().getMainNavaid().getName()));
+                plane.getRouting().getEntryExitPoint().getName()));
       } else {
         if (plane.getSha().getAltitude() > super.getAcceptAltitude() || plane.getSha().getAltitude() > (plane.getType().maxAltitude * .666)) {
           ret = new RequestResult(true, null);
@@ -150,14 +150,14 @@ public class CenterAtc extends ComputerAtc {
           if (aipDist > this.ctrAcceptDistance) {
             ret = new RequestResult(true, null);
           } else {
-            double navDist = Coordinates.getDistanceInNM(plane.getCoordinate(), plane.getRouting().getDepartureLastNavaid().getCoordinate());
+            double navDist = Coordinates.getDistanceInNM(plane.getCoordinate(), plane.getRouting().getEntryExitPoint().getCoordinate());
             if (navDist < this.ctrNavaidAcceptDistance) {
               ret = new RequestResult(true, null);
             } else {
               ret = new RequestResult(false, String.format(
                   "%s is too far from departure fix %s, or not enough far from airport, or not enough high.",
                   plane.getCallsign().toString(),
-                  plane.getRouting().getAssignedRoute().getName()
+                  plane.getRouting().getAssignedDARouteName()
               ));
             }
           }
@@ -209,7 +209,7 @@ public class CenterAtc extends ComputerAtc {
               ChangeSpeedCommand.createResumeOwnSpeed());
 
           // order to continue after last fix
-          Navaid n = plane.getRouting().getDepartureLastNavaid();
+          Navaid n = plane.getRouting().getEntryExitPoint();
           cmds.add(AfterNavaidCommand.create(n.getName()));
           cmds.add(ChangeHeadingCommand.createContinueCurrentHeading());
 
