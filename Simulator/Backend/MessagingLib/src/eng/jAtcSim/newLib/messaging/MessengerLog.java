@@ -17,7 +17,7 @@ public class MessengerLog {
     this.journal = new Journal(name, true,
         new AutoNewLineLogWriter(
             new SimTimePipeLogWriter(
-                new FileWriter(file))));
+                FileWriter.createToDefaultFolder(file))));
   }
 
   public void recordMessage(eAction action, Message msg) {
