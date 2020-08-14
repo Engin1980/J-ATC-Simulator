@@ -421,7 +421,7 @@ class AirplaneInfo implements IAirplaneInfo {
   @Override
   public int targetSpeed() {
     //TODO remove this, probably useless?
-    return airplane.getSha().getSpeedRestriction().value;
+    return airplane.getSha().getTargetSpeed();
   }
 
   @Override

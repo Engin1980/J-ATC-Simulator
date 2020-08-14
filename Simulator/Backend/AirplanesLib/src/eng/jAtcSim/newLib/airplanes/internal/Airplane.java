@@ -79,6 +79,11 @@ public class Airplane {
     }
 
     @Override
+    public int getTargetSpeed() {
+      return Airplane.this.sha.getTargetSpeed();
+    }
+
+    @Override
     public int getVerticalSpeed() {
       return Airplane.this.sha.getVerticalSpeed();
     }

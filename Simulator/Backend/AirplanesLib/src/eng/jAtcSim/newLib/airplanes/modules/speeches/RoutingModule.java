@@ -41,7 +41,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   }
 
   private final AfterCommandList afterCommands = new AfterCommandList();
-  private String assignedDARouteName = "";
+  private String assignedDARouteName = null;
   private Navaid entryExitPoint;
   private final DelayedList<ICommand> queue = new DelayedList<>(2, 7); //Min/max item delay
   private ActiveRunwayThreshold runwayThreshold;
