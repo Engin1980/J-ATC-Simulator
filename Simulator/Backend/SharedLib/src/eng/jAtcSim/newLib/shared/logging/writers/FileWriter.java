@@ -11,6 +11,15 @@ import java.nio.file.Paths;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class FileWriter implements ILogWriter {
+  public static FileWriter createToDefaultFolder(String fileName) {
+    return createToDefaultFolder(fileName, true);
+  }
+
+  public static FileWriter createToDefaultFolder(String fileName, boolean autoFlush) {
+    Path logPath = Context.getApp().getLogPath();
+    Path tmp = logPath.resolve(fileName);
+    return new FileWriter(tmp.toString(), autoFlush);
+  }
   private final boolean autoFlush;
   private BufferedWriter bw = null;
   private final String fileName;

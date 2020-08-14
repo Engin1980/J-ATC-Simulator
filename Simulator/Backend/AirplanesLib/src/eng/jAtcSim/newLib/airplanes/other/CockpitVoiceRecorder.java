@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.other;
 
 import eng.eSystem.EStringBuilder;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.logging.Journal;
@@ -16,7 +17,8 @@ public class CockpitVoiceRecorder extends AirplaneRecorder {
   public CockpitVoiceRecorder(Callsign callsign) {
     super(callsign);
     ILogWriter wrt;
-    wrt = new FileWriter("R:\\" + callsign.toString() + ".cvr.txt");
+
+    wrt = FileWriter.createToDefaultFolder(callsign.toString() + ".cvr.txt");
     wrt = new AutoNewLineLogWriter(wrt);
     wrt = new SimTimePipeLogWriter(wrt);
     wrt = new RealTimePipeLogWriter(wrt);

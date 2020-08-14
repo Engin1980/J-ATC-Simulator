@@ -32,7 +32,7 @@ public class AtcRecorder  {
   private AtcRecorder(AtcId atcId) {
     EAssert.Argument.isNotNull(atcId, "atcId");
 
-    ILogWriter wrt = new FileWriter(atcId.getName() + ".txt", true);
+    ILogWriter wrt = FileWriter.createToDefaultFolder(atcId.getName() + ".txt", true);
     wrt = new AutoNewLineLogWriter(wrt);
     wrt = new SimTimePipeLogWriter(wrt);
     wrt = new RealTimePipeLogWriter(wrt);

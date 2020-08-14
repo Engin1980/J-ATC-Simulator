@@ -21,7 +21,7 @@ public class FlightDataRecorder extends AirplaneRecorder {
 
   public FlightDataRecorder(Callsign callsign) {
     super(callsign);
-    ILogWriter wrt = new FileWriter("R:\\" + callsign.toString() + ".fdr.txt");
+    ILogWriter wrt = FileWriter.createToDefaultFolder(callsign.toString() + ".fdr.txt");
     wrt = new AutoNewLineLogWriter(wrt);
     wrt = new SimTimePipeLogWriter(wrt);
     wrt = new RealTimePipeLogWriter(wrt);
