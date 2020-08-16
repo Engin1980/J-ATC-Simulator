@@ -105,11 +105,11 @@ public class Radar {
     sim.registerOnRunwayChanged(this::sim_runwayChanged);
 
     this.c.getMouseEvent().add(
-        (sender, e) -> Radar.this.canvas_onMouseMove((ICanvas<?>) sender, (EMouseEventArg) e));
+        (sender, e) -> Radar.this.canvas_onMouseMove(sender, e));
     this.c.getPaintEvent().add(
         (c) -> Radar.this.canvas_onPaint(c));
     this.c.getKeyEvent().add(
-        (c, o) -> Radar.this.canvas_onKeyPress((ICanvas<?>) c, (KeyEventArg) o));
+        (c, o) -> Radar.this.canvas_onKeyPress(c, (KeyEventArg) o));
     this.c.getResizedEvent().add(o -> tl.resetPosition());
   }
 

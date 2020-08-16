@@ -64,9 +64,8 @@ public class Messenger {
 
   public void send(Message msg) {
     synchronized (this) {
-      listeners
-          .where(q -> q.messageTarget.equals(msg.getTarget()))
-          .forEach(q -> q.queue.add(msg));
+      IList<ListenerInfo> tmp = listeners.where(q -> q.messageTarget.equals(msg.getTarget()));
+      tmp.forEach(q -> q.queue.add(msg));
       messengerLog.recordMessage(MessengerLog.eMessageAction.ADD, msg);
     }
   }

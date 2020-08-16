@@ -35,10 +35,7 @@ public class SystemMessagesModule extends SimulationModule {
   }
 
   public void init() {
-    Context.getMessaging().getMessenger().registerCustomListener(
-        Participant.createSystem(),
-        Participant.createAtc(userAtcId)
-    );
+    Context.getMessaging().getMessenger().registerListener(Participant.createSystem());
   }
 
   private void processDeletePlaneRequest(DeletePlaneRequest content, Participant source) {

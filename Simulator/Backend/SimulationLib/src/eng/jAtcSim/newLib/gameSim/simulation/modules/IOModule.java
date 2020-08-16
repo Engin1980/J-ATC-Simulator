@@ -75,6 +75,7 @@ public class IOModule extends SimulationModule {
   }
 
   public void registerMessagesListenerByReceiver(Object key, Participant messageReceiver) {
+    tady se to registruje pres nejakou tridu, ale ta to zrejme vubec netaha pres messenger. WHT?
     this.storedMessages.set(key, new EList<>());
     this.storedMessagesReceiverRegistrations.set(key, messageReceiver);
   }
