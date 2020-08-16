@@ -45,6 +45,8 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertingNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.weather.Weather;
 
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
 public class Airplane {
 
   public class AirplaneShaImpl implements IAirplaneSHA {
@@ -294,6 +296,13 @@ public class Airplane {
         this.sendMessage(
             Airplane.this.atcModule.getTunedAtc(),
             new DivertingNotification(divertNavaid.getName()));
+    }
+
+    @Override
+    public String toString() {
+      return sf("%s (%s)",
+          Airplane.this.flightModule.getCallsign().toString(),
+          Airplane.this.sqwk.toString());
     }
 
     @Override
@@ -562,7 +571,8 @@ public class Airplane {
     this.routingModule.elapseSecond();
     this.pilot.elapseSecond();
     this.atcModule.elapseSecond();
-    this.divertModule.elapseSecond();
+    if (this.divertModule != null) // only for arrivals
+      this.divertModule.elapseSecond();
 
     this.sha.elapseSecond();
     updateCoordinates();

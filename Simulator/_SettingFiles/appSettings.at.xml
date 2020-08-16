@@ -4,7 +4,7 @@
 >
   <verboseXmlOperations>true</verboseXmlOperations>
   <soundFolder>$app$/_Sounds</soundFolder>
-  <logFolder>./temp/$time$/</logFolder>
+  <logFolder>R:/temp/$time$/</logFolder>
   <startupSettingsFile>$app$/_SettingFiles/defaultStartupSettings.ss.xml</startupSettingsFile>
   <stripSettingsFile>$app$/_SettingFiles/stripSettings.at.xml</stripSettingsFile>
   <speechFormatterFile>$app$/_SettingFiles/speechResponses.fm.xml</speechFormatterFile>

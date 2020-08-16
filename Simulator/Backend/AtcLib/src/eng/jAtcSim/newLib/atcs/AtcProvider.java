@@ -78,7 +78,8 @@ public class AtcProvider {
 
     InternalAcc.init(
         atcs,
-        app.getFirst());
+        app.getFirst(),
+        prm);
   }
 
   public void registerNewPlane(AtcId atcId, Callsign callsign) {

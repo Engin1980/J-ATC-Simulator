@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><startupSettings>
-  <files areaXmlFile="_SettingFiles/airports/LKPR.ar.xml" companiesFleetsXmlFile="_SettingFiles/airlinesFleets.afl.xml" generalAviationFleetsXmlFile="_SettingFiles/countriesFleets.cfl.xml" planesXmlFile="_SettingFiles/planeTypes.tp.xml" trafficXmlFile="_SettingFiles/traffic/test_oneArrival.tr.xml" weatherXmlFile="_SettingFiles/developers/testWindChange.we.xml"/>
+  <files areaXmlFile="_SettingFiles/airports/LKPR.ar.xml" companiesFleetsXmlFile="_SettingFiles/airlinesFleets.afl.xml" generalAviationFleetsXmlFile="_SettingFiles/countriesFleets.cfl.xml" planesXmlFile="_SettingFiles/planeTypes.tp.xml" trafficXmlFile="_SettingFiles/traffic/test_oneDeparture.tr.xml" weatherXmlFile="_SettingFiles/developers/testWindChange.we.xml"/>
   <radar packClass="eng.jAtcSim.frmPacks.sdi.Pack"/>
   <recent icao="LKMT" time="07:00"/>
   <simulation secondLengthInMs="750"/>

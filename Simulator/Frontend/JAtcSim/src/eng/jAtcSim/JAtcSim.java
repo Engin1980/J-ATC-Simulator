@@ -40,6 +40,7 @@ import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -121,13 +122,14 @@ public class JAtcSim {
 
     initStylist();
 
-    //TODO solve somehow initial path
+    // initial path here only until settings are loaded from xml file
     AppAcc appContext = new AppAcc(new ApplicationLog(), Paths.get("C:\\Temp\\"));
     ContextManager.setContext(IAppAcc.class, appContext);
     frmLog = new FrmLog();
 
     appSettings = AppSettings.create();
     appContext.updateLogPath(appSettings.logFolder);
+    ensureLogPathExists(appSettings.logFolder);
 
     // various inits
     FileHistoryManager.init();
@@ -332,6 +334,17 @@ public class JAtcSim {
     }
     Pack ret = (Pack) object;
     return ret;
+  }
+
+  private static void ensureLogPathExists(Path path) {
+    if (java.nio.file.Files.exists(path) == false) {
+      try {
+        java.nio.file.Files.createDirectories(path);
+      } catch (IOException e) {
+        throw new EApplicationException(sf(
+            "Failed to create/use log path '%s'", path.toString()), e);
+      }
+    }
   }
 
   private static SimpleGenericTrafficModel generateCustomTraffic(StartupSettings.Traffic trf) {

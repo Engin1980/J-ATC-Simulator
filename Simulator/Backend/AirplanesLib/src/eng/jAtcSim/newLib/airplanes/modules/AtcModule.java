@@ -19,7 +19,7 @@ public class AtcModule extends Module {
   @Override
   public void elapseSecond() {
       int seconds = getAndIncreaseSecondsWithoutRadarContactIfRequired();
-      if (seconds % AtcModule.REPEATED_RADAR_CONTACT_REQUEST_SECONDS == 0){
+      if (seconds > 0 && seconds % AtcModule.REPEATED_RADAR_CONTACT_REQUEST_SECONDS == 0){
         wrt.sendMessage(
             this.getTunedAtc(),
             new GoodDayNotification(

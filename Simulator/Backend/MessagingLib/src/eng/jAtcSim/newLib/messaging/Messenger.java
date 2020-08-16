@@ -20,12 +20,9 @@ public class Messenger {
       this.queue = new EList<>();
     }
   }
-
-  //TODO recorder reimplementation
-//  @XmlIgnore
-//  private MessengerRecorder recorder = new MessengerRecorder("Messenger log", "messenger.log");
   public static final Participant SYSTEM = Participant.createSystem();
   private IList<ListenerInfo> listeners = new EList<>();
+  private final MessengerLog messengerLog = new MessengerLog("messenger_log.txt");
 
   public IList<Message> getMessagesByListener(Participant listener, boolean deleteRetrieved) {
     ListenerInfo li;
@@ -40,12 +37,12 @@ public class Messenger {
       ret = new EList(li.queue);
       if (deleteRetrieved) {
         li.queue.clear();
-//        ret.forEach(q->recorder.recordMessage(MessengerRecorder.eAction.GET,q ));
       }
     }
 
-    return ret;
+    ret.forEach(q -> messengerLog.recordMessage(MessengerLog.eMessageAction.GET, q));
 
+    return ret;
   }
 
   public void registerCustomListener(Object key, Participant messageTarget) {
@@ -56,10 +53,13 @@ public class Messenger {
 
     ListenerInfo li = new ListenerInfo(key, messageTarget);
     this.listeners.add(li);
+
+    messengerLog.recordRegistratin(MessengerLog.eRegistrationAction.REGISTER, key);
   }
 
   public void registerListener(Participant listener) {
     registerCustomListener(listener, listener);
+    messengerLog.recordRegistratin(MessengerLog.eRegistrationAction.REGISTER, listener);
   }
 
   public void send(Message msg) {
@@ -67,7 +67,7 @@ public class Messenger {
       listeners
           .where(q -> q.messageTarget.equals(msg.getTarget()))
           .forEach(q -> q.queue.add(msg));
-//      recorder.recordMessage(MessengerRecorder.eAction.ADD, msg);
+      messengerLog.recordMessage(MessengerLog.eMessageAction.ADD, msg);
     }
   }
 

@@ -7,20 +7,33 @@ import eng.jAtcSim.newLib.shared.logging.writers.SimTimePipeLogWriter;
 
 public class MessengerLog {
 
-  public enum eAction {
+  public enum eMessageAction {
     ADD,
-    GET
+    GET,
+  }
+  public enum eRegistrationAction{
+    REGISTER,
+    UNREGISTER
   }
   private Journal journal;
 
-  public MessengerLog(String name, String file) {
-    this.journal = new Journal(name, true,
+  public MessengerLog(String file) {
+    this.journal = new Journal("Messenger log", true,
         new AutoNewLineLogWriter(
             new SimTimePipeLogWriter(
                 FileWriter.createToDefaultFolder(file))));
   }
 
-  public void recordMessage(eAction action, Message msg) {
+  public void recordRegistratin(eRegistrationAction action, Object key) {
+    String line = String.format(
+        "%S :: %s",
+        action.toString(),
+        key.toString()
+    );
+    this.journal.write(line);
+  }
+
+  public void recordMessage(eMessageAction action, Message msg) {
     String line = String.format(
         "%S || FROM: %-10s; TO: %-10s; CONTENT: %s",
         action.toString(),

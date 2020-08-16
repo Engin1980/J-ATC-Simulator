@@ -76,7 +76,7 @@ public class PlaneResponsibilityManager {
       if (ai.getSwitchRequest() != null)
         throw new EApplicationException("Airplane " + plane.getCallsign() + " is already under request switch from "
             + atc.getAtcId().getType().toString() + " to " + ai.getSwitchRequest().getAtc().getType().toString() + ".");
-      if (ai.getAtc() != sender)
+      if (ai.getAtc().equals(sender) == false)
         throw new EApplicationException("Airplane " + plane.getCallsign()
             + " is requested to be switched from incorrect atc. Current is "
             + atc.getAtcId().getType().toString() + ", requested from is " + sender.getType().toString() + ".");
@@ -198,9 +198,6 @@ public class PlaneResponsibilityManager {
     }
 
     dao.add(new AirplaneResponsibilityInfo(callsign, atcId));
-
-    Atc atc = InternalAcc.getAtc(atcId);
-    atc.registerNewPlaneUnderControl(callsign, true);
   }
 
   public void unregisterPlane(Callsign callsign) {

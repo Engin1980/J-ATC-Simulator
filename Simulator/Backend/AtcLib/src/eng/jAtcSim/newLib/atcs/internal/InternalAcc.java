@@ -20,13 +20,15 @@ import eng.jAtcSim.newLib.shared.enums.AtcType;
 public class InternalAcc {
   private static Atc app;
   private static AtcList<Atc> atcs;
-  private static final PlaneResponsibilityManager prm = new PlaneResponsibilityManager();
+  private static PlaneResponsibilityManager prm;
 
-  public static void init(AtcList<Atc> atcs, Atc app){
+  public static void init(AtcList<Atc> atcs, Atc app, PlaneResponsibilityManager prm){
     EAssert.Argument.isNotNull(atcs, "atcs");
     EAssert.Argument.isNotNull(app, "app");
+    EAssert.Argument.isNotNull(prm, "prm");
     InternalAcc.app = app;
     InternalAcc.atcs = atcs;
+    InternalAcc.prm = prm;
   }
 
   public static Atc getApp() {
