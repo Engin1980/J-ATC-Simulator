@@ -2,16 +2,13 @@ package eng.jAtcSim.newLib.gameSim;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.events.EventSimple;
 import eng.eSystem.events.IEventListenerSimple;
-import eng.eSystem.functionalInterfaces.Action;
-import eng.eSystem.functionalInterfaces.Action1;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
-import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
@@ -31,11 +28,9 @@ public interface ISimulation {
 
   AtcList<AtcId> getAtcs();
 
-  IList<IMessage> getMessages(Object key);
+  IList<Message> getMessages(Object key);
 
   EDayTimeStamp getNow();
-
-  int registerOnRunwayChanged(IEventListenerSimple<ISimulation> action);
 
   IParseFormat getParseFormat();
 
@@ -51,25 +46,9 @@ public interface ISimulation {
 
   void pauseUnpauseSim();
 
-  default void registerMessageListenerByReceiver(Object key, Callsign recieverCallsign) {
-    registerMessageListenerByReceiver(key, Participant.createAirplane(recieverCallsign));
-  }
+  void registerMessageListener(Object listener, Messenger.ListenerAim... aims);
 
-  default void registerMessageListenerByReceiver(Object key, AtcId recieverAtc) {
-    registerMessageListenerByReceiver(key, Participant.createAtc(recieverAtc));
-  }
-
-  void registerMessageListenerByReceiver(Object key, Participant messageReceiver);
-
-  default void registerMessageListenerBySender(Object key, Callsign senderCallsign) {
-    registerMessageListenerByReceiver(key, Participant.createAirplane(senderCallsign));
-  }
-
-  default void registerMessageListenerBySender(Object key, AtcId senderAtc) {
-    registerMessageListenerByReceiver(key, Participant.createAtc(senderAtc));
-  }
-
-  void registerMessageListenerBySender(Object key, Participant messageSender);
+  int registerOnRunwayChanged(IEventListenerSimple<ISimulation> action);
 
   int registerOnSecondElapsed(IEventListenerSimple<ISimulation> action);
 
@@ -82,6 +61,8 @@ public interface ISimulation {
   void start();
 
   void stop();
+
+  void unregisterMessageListener(Object listener);
 
   void unregisterOnSecondElapsed(int simulationSecondListenerHandlerId);
 }

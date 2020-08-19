@@ -1,6 +1,6 @@
 package eng.jAtcSim.abstractRadar.support;
 
-import eng.jAtcSim.newLib.gameSim.IMessage;
+import eng.jAtcSim.newLib.gameSim.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ public class VisualisedMessageManager {
     this.delay = delay;
   }
 
-  public void add(IMessage message) {
+  public void add(Message message) {
     VisualisedMessage di = new VisualisedMessage(message, delay);
     items.add(di);
   }

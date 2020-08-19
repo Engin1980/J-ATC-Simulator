@@ -3,7 +3,6 @@ package eng.jAtcSim.newLib.gameSim.simulation;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.events.IEventListenerSimple;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.area.Airport;
@@ -13,7 +12,7 @@ import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
 import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
-import eng.jAtcSim.newLib.gameSim.IMessage;
+import eng.jAtcSim.newLib.gameSim.Message;
 import eng.jAtcSim.newLib.gameSim.IParseFormat;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
@@ -23,7 +22,7 @@ import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceCont
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.KeyShortcutManager;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.MrvaController;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.*;
-import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.mood.MoodManager;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -71,7 +70,7 @@ public class Simulation {
     }
 
     @Override
-    public IList<IMessage> getMessages(Object key) {
+    public IList<Message> getMessages(Object key) {
       return Simulation.this.getIoModule().getMessagesByKey(key);
     }
 
@@ -119,13 +118,8 @@ public class Simulation {
     }
 
     @Override
-    public void registerMessageListenerByReceiver(Object key, Participant messageReceiver) {
-      Simulation.this.getIoModule().registerMessagesListenerByReceiver(key, messageReceiver);
-    }
-
-    @Override
-    public void registerMessageListenerBySender(Object key, Participant messageSender) {
-      Simulation.this.getIoModule().registerMessagesListenerBySender(key, messageSender);
+    public void registerMessageListener(Object listener, Messenger.ListenerAim... aims) {
+      Simulation.this.getIoModule().registerMessageListener(listener, aims);
     }
 
     @Override
@@ -161,6 +155,11 @@ public class Simulation {
     @Override
     public void stop() {
       Simulation.this.getTimerModule().stop();
+    }
+
+    @Override
+    public void unregisterMessageListener(Object listener) {
+      Simulation.this.getIoModule().registerMessageListener(listener);
     }
 
     @Override
@@ -240,7 +239,6 @@ public class Simulation {
         new MoodManager()
     );
     this.airplanesModule.init();
-
 
 
     this.timerModule = new TimerModule(this, simulationSettings.simulationSettings.secondLengthInMs);

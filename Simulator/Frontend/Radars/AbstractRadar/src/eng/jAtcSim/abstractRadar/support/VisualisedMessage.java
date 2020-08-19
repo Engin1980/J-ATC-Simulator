@@ -1,13 +1,13 @@
 package eng.jAtcSim.abstractRadar.support;
 
 
-import eng.jAtcSim.newLib.gameSim.IMessage;
+import eng.jAtcSim.newLib.gameSim.Message;
 
 public class VisualisedMessage {
-  private final IMessage message;
+  private final Message message;
   private int lifeCounter;
 
-  public VisualisedMessage(IMessage message, int lifeCounter) {
+  public VisualisedMessage(Message message, int lifeCounter) {
     this.message = message;
     this.lifeCounter = lifeCounter;
   }
@@ -20,7 +20,7 @@ public class VisualisedMessage {
     return lifeCounter;
   }
 
-  public IMessage getMessage() {
+  public Message getMessage() {
     return this.message;
   }
 }

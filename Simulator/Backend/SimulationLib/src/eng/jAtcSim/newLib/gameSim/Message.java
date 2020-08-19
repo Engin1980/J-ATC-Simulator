@@ -5,7 +5,7 @@ import eng.jAtcSim.newLib.messaging.Participant;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
-public class IMessage {
+public class Message {
   public enum eType{
     normal,
     rejection
@@ -15,7 +15,7 @@ public class IMessage {
   private final String text;
   private final eType type;
 
-  public IMessage(Participant sender, Participant reciever, String text, eType type) {
+  public Message(Participant sender, Participant reciever, String text, eType type) {
     this.sender = sender;
     this.reciever = reciever;
     this.text = text;

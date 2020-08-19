@@ -35,9 +35,9 @@ public class PlaneResponsibilityManager {
       AirplaneResponsibilityInfo ai = dao.get(plane);
       ret = ai.getSwitchRequest() != null;
       if (ret && sourceAtc != null)
-        ret = ai.getAtc() == sourceAtc;
+        ret = ai.getAtc().equals(sourceAtc);
       if (ret && targetAtc != null)
-        ret = ai.getSwitchRequest().getAtc() == targetAtc;
+        ret = ai.getSwitchRequest().getAtc().equals(targetAtc);
       return ret;
     }
 

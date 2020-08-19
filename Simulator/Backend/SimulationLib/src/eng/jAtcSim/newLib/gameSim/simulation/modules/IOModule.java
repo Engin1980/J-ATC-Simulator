@@ -1,18 +1,14 @@
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IMap;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.gameSim.IMessage;
+import eng.jAtcSim.newLib.gameSim.Message;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.KeyShortcutManager;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
-import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.messaging.context.IMessagingAcc;
@@ -23,6 +19,7 @@ import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
+import eng.jAtcSim.newLib.speeches.base.Rejection;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 
 public class IOModule extends SimulationModule {
@@ -30,9 +27,6 @@ public class IOModule extends SimulationModule {
   private final KeyShortcutManager keyShortcutManager;
   private final Messenger messenger;
   private final ParserFormatterStartInfo parseFormatStartInfo;
-  private IMap<Object, IList<IMessage>> storedMessages = new EMap<>();
-  private IMap<Object, Participant> storedMessagesReceiverRegistrations = new EMap<>();
-  private IMap<Object, Participant> storedMessagesSenderRegistrations = new EMap<>();
   private final SystemMessagesModule systemMessagesModule;
   private final AtcId userAtcId;
 
@@ -62,9 +56,14 @@ public class IOModule extends SimulationModule {
     return keyShortcutManager;
   }
 
-  public IList<IMessage> getMessagesByKey(Object key) {
-    IList<IMessage> ret = new EList<>(storedMessages.get(key));
-    storedMessages.get(key).clear();
+  public IList<Message> getMessagesByKey(Object listener) {
+    IList<eng.jAtcSim.newLib.messaging.Message> tmp = this.messenger.getMessagesByListener(listener, true);
+    IList<Message> ret = tmp.select(q->new Message(
+        q.getSource(),
+        q.getTarget(),
+        q.getContent(),
+        q.getContent() instanceof Rejection
+    ));
     return ret;
   }
 
@@ -74,19 +73,20 @@ public class IOModule extends SimulationModule {
     this.systemMessagesModule.init();
   }
 
-  public void registerMessagesListenerByReceiver(Object key, Participant messageReceiver) {
-    tady se to registruje pres nejakou tridu, ale ta to zrejme vubec netaha pres messenger. WHT?
-    this.storedMessages.set(key, new EList<>());
-    this.storedMessagesReceiverRegistrations.set(key, messageReceiver);
+  public void registerMessageListener(Object listener, Messenger.ListenerAim ... aims){
+    this.messenger.registerListener(listener, aims);
   }
 
-  public void registerMessagesListenerBySender(Object key, Participant messageSender) {
-    this.storedMessages.set(key, new EList<>());
-    this.storedMessagesSenderRegistrations.set(key, messageSender);
+  public void registerMessagesListener(Participant participant) {
+    registerMessageListener(participant, new Messenger.ListenerAim(participant, Messenger.eListenerDirection.receiver));
+  }
+
+  public void unregisterMessageListener(Object listener){
+    this.messenger.unregisterListener(listener);
   }
 
   public void sendAtcCommand(AtcId id, IAtcSpeech atcSpech) {
-    Message msg = new Message(
+    eng.jAtcSim.newLib.messaging.Message msg = new eng.jAtcSim.newLib.messaging.Message(
         Participant.createAtc(this.userAtcId),
         Participant.createAtc(id),
         atcSpech
@@ -95,7 +95,7 @@ public class IOModule extends SimulationModule {
   }
 
   public void sendPlaneCommand(Callsign callsign, SpeechList<IForPlaneSpeech> cmds) {
-    Message msg = new Message(
+    eng.jAtcSim.newLib.messaging.Message msg = new eng.jAtcSim.newLib.messaging.Message(
         Participant.createAtc(this.userAtcId),
         Participant.createAirplane(callsign),
         cmds
@@ -104,7 +104,7 @@ public class IOModule extends SimulationModule {
   }
 
   public void sendSystemCommand(ISystemSpeech systemSpeech) {
-    Message msg = new Message(
+    eng.jAtcSim.newLib.messaging.Message msg = new eng.jAtcSim.newLib.messaging.Message(
         Participant.createAtc(userAtcId),
         Participant.createSystem(),
         systemSpeech
@@ -113,7 +113,7 @@ public class IOModule extends SimulationModule {
   }
 
   public void sendTextMessageForUser(IMessageContent content) {
-    Message m = new Message(
+    eng.jAtcSim.newLib.messaging.Message m = new eng.jAtcSim.newLib.messaging.Message(
         Participant.createSystem(),
         Participant.createAtc(this.userAtcId),
         content);

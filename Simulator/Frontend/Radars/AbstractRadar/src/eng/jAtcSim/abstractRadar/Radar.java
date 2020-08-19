@@ -1,6 +1,8 @@
 package eng.jAtcSim.abstractRadar;
 
-import eng.eSystem.collections.*;
+import eng.eSystem.collections.EDistinctList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
@@ -20,16 +22,21 @@ import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
-import eng.jAtcSim.newLib.gameSim.IMessage;
+import eng.jAtcSim.newLib.gameSim.Message;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.shared.*;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.Format;
+import eng.jAtcSim.newLib.shared.Global;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Radar {
 
@@ -37,29 +44,29 @@ public class Radar {
   //  private static final int DRAW_STEP = 10;
   public static final int BORDER_ALTITUDE_MINIMUM_VALUE = 0;
   private static final double MAX_NM_DIFFERENCE_FOR_SELECTION = 2.5;
-  private final TransformationLayer tl;
-  private final ICanvas<?> c;
-  private final Event<Radar, WithCoordinateEventArg> mouseMoveEvent = new Event<>(this);
-  private final Event<Radar, WithCoordinateEventArg> mouseClickEvent = new Event<>(this);
-  private final Event<Radar, KeyEventArg> keyPressEvent = new Event<>(this);
-  private final Event<Radar, Callsign> selectedAirplaneChangedEvent = new Event<>(this);
-  private final EventSimple<Radar> gotFocusEvent = new EventSimple<>(this);
-  private final RadarStyleSettings styleSettings;
-  private final RadarBehaviorSettings behaviorSettings;
-  private final RadarDisplaySettings displaySettings;
-  private final ISimulation simulation;
   private final Area area;
-  private final VisualisedMessageManager messageManager;
-  private final AirplaneDisplayInfoList planeInfos = new AirplaneDisplayInfoList();
-  private final NavaidDisplayInfoList navaids = new NavaidDisplayInfoList();
-  private final IList<DARoute> drawnRoutes = new EDistinctList<>(EDistinctList.Behavior.skip);
+  private final RadarBehaviorSettings behaviorSettings;
+  private final ICanvas<?> c;
+  private final RadarDisplaySettings displaySettings;
   private final IList<Approach> drawnApproaches = new EDistinctList<>(EDistinctList.Behavior.skip);
+  private final IList<DARoute> drawnRoutes = new EDistinctList<>(EDistinctList.Behavior.skip);
+  private final EventSimple<Radar> gotFocusEvent = new EventSimple<>(this);
   private InfoLine infoLine;
-  private Callsign selectedCallsign;
-  private int simulationSecondListenerHandler = -1;
+  private final Event<Radar, KeyEventArg> keyPressEvent = new Event<>(this);
+  private final VisualisedMessageManager messageManager;
+  private final Event<Radar, WithCoordinateEventArg> mouseClickEvent = new Event<>(this);
+  private final Event<Radar, WithCoordinateEventArg> mouseMoveEvent = new Event<>(this);
+  private final NavaidDisplayInfoList navaids = new NavaidDisplayInfoList();
+  private final AirplaneDisplayInfoList planeInfos = new AirplaneDisplayInfoList();
   private Counter planeRedrawCounter;
   private Counter radarRedrawCounter;
+  private final Event<Radar, Callsign> selectedAirplaneChangedEvent = new Event<>(this);
+  private Callsign selectedCallsign;
+  private final ISimulation simulation;
+  private int simulationSecondListenerHandler = -1;
+  private final RadarStyleSettings styleSettings;
   private boolean switchFlagTrue = false;
+  private final TransformationLayer tl;
 
   public Radar(ICanvas<?> canvas, InitialPosition initialPosition,
                ISimulation sim,
@@ -83,8 +90,11 @@ public class Radar {
     this.displaySettings = displaySettings;
     this.simulation = sim;
     this.area = area;
-    this.simulation.registerMessageListenerByReceiver(this,
-        this.simulation.getUserAtcId());
+    this.simulation.registerMessageListener(
+        this,
+        new Messenger.ListenerAim(
+            Participant.createAtc(this.simulation.getUserAtcId()),
+            Messenger.eListenerDirection.receiver));
 
     buildLocalNavaidList();
     buildDrawnRoutesList();
@@ -209,7 +219,7 @@ public class Radar {
     this.planeRedrawCounter = new Counter(planeRepositionInterval);
     this.radarRedrawCounter = new Counter(redrawInterval);
     // listen to simulation seconds for redraw
-    this.simulationSecondListenerHandler = this.simulation.registerOnSecondElapsed((s)-> redraw(false));
+    this.simulationSecondListenerHandler = this.simulation.registerOnSecondElapsed((s) -> redraw(false));
   }
 
   public void stop() {
@@ -585,22 +595,22 @@ public class Radar {
   }
 
   private void drawCaptions() {
-    IList<IMessage> msgs = this.simulation.getMessages(this);
+    IList<Message> msgs = this.simulation.getMessages(this);
 
-    for (IMessage msg : msgs) {
+    for (Message msg : msgs) {
       messageManager.add(msg);
     }
 
     boolean containsSystemMessage =
         msgs.isAny(q -> q.getSender().getType() == Participant.eType.system);
 
-    IList<IMessage> atcMsgs = msgs.where(q -> q.getSender().getType() == Participant.eType.atc);
+    IList<Message> atcMsgs = msgs.where(q -> q.getSender().getType() == Participant.eType.atc);
     boolean containsAtcMessage = atcMsgs.isEmpty() == false;
-    boolean isAtcMessageNegative = atcMsgs.isAny(q->q.getType() == IMessage.eType.rejection);
+    boolean isAtcMessageNegative = atcMsgs.isAny(q -> q.getType() == Message.eType.rejection);
 
-    IList<IMessage> planeMsgs = msgs.where(q->q.getSender().getType() == Participant.eType.airplane);
+    IList<Message> planeMsgs = msgs.where(q -> q.getSender().getType() == Participant.eType.airplane);
     boolean containsPlaneMessage = planeMsgs.isEmpty() == false;
-    boolean isPlaneMessageNegative = planeMsgs.isAny(q->q.getType() == IMessage.eType.rejection);
+    boolean isPlaneMessageNegative = planeMsgs.isAny(q -> q.getType() == Message.eType.rejection);
 
     if (containsAtcMessage) {
       SoundManager.playAtcNewMessage(isAtcMessageNegative);

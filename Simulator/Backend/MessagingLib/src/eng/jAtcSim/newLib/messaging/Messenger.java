@@ -4,6 +4,8 @@ import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
 
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
 public class Messenger {
 
   public static class ListenerAim {
@@ -43,7 +45,7 @@ public class Messenger {
   }
 
   public static final Participant SYSTEM = Participant.createSystem();
-  private IMap<Object, ListenerInfo> listeners = new EMap<>();
+  private final IMap<Object, ListenerInfo> listeners = new EMap<>();
   private final MessengerLog messengerLog = new MessengerLog("messenger_log.txt");
 
   public IList<Message> getMessagesByListener(Object listener, boolean deleteRetrieved) {
@@ -78,7 +80,7 @@ public class Messenger {
     EAssert.Argument.isNotNull(listener, "listener");
     EAssert.Argument.isNotNull(aims, "aims");
     EAssert.Argument.isTrue(aims.length > 0, "Aims must be non empty");
-    EAssert.Argument.isFalse(this.listeners.containsKey(listener), "Listener is already registered.");
+    EAssert.Argument.isFalse(this.listeners.containsKey(listener), sf("Listener '%s' is already registered.", listener));
 
     ListenerInfo listenerInfo = new ListenerInfo(aims);
     listeners.set(listener, listenerInfo);

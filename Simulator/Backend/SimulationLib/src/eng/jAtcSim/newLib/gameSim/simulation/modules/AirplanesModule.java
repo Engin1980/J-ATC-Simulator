@@ -209,9 +209,6 @@ public class AirplanesModule extends SimulationModule {
         index++;
       else {
         IAirplane tmp = registerAirplaneTemplate(at);
-        this.parent.getIoModule().registerMessagesListenerByReceiver(
-            Participant.createAirplane(tmp.getCallsign()),
-            Participant.createAirplane(tmp.getCallsign()));
         planesPrepared.removeAt(index);
         addAirplaneInfo(tmp);
         super.parent.getAtcModule().registerNewPlane(tmp);
