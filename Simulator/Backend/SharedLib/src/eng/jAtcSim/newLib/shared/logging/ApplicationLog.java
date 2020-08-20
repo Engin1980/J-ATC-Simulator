@@ -8,11 +8,11 @@ import eng.jAtcSim.newLib.shared.logging.writers.RealTimePipeLogWriter;
 
 public class ApplicationLog {
 
-  public static class Message {
+  public static class AppLogMessage {
     public final String text;
     public final eType type;
 
-    public Message(String text, eType type) {
+    public AppLogMessage(String text, eType type) {
       this.text = text;
       this.type = type;
     }
@@ -26,7 +26,7 @@ public class ApplicationLog {
     critical
   }
 
-  public EventAnonymous<Message> onNewMessage = new EventAnonymous<>();
+  public EventAnonymous<AppLogMessage> onNewMessage = new EventAnonymous<>();
 
   public ApplicationLog() {
     this.journal = new Journal(
@@ -37,13 +37,13 @@ public class ApplicationLog {
                 new ConsoleWriter())));
   }
 
-  public EventAnonymous<Message> getOnNewMessage() {
+  public EventAnonymous<AppLogMessage> getOnNewMessage() {
     return onNewMessage;
   }
 
   public void write(eType type, String format, Object... params) {
     String s = String.format(format, params);
     this.journal.write("JAtcSim - %s: %s", type, s);
-    onNewMessage.raise(new Message(s, type));
+    onNewMessage.raise(new AppLogMessage(s, type));
   }
 }

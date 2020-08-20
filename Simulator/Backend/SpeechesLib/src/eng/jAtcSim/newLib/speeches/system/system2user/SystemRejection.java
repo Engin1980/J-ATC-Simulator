@@ -11,4 +11,9 @@ public class SystemRejection extends Rejection<ISystemSpeech> implements ISystem
   public SystemRejection(ISystemSpeech origin, String reason) {
     super(origin, reason);
   }
+
+  @Override
+  public boolean isRejection() {
+    return true;
+  }
 }

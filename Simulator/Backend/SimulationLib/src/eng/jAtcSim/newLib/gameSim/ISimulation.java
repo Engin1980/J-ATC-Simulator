@@ -7,7 +7,9 @@ import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.AtcList;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
+import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -31,8 +33,6 @@ public interface ISimulation {
   IList<Message> getMessages(Object key);
 
   EDayTimeStamp getNow();
-
-  IParseFormat getParseFormat();
 
   IReadOnlyList<IAirplaneInfo> getPlanesToDisplay();
 
@@ -65,4 +65,6 @@ public interface ISimulation {
   void unregisterMessageListener(Object listener);
 
   void unregisterOnSecondElapsed(int simulationSecondListenerHandlerId);
+
+  ParserFormatterStartInfo getParserFormatterInfo();
 }

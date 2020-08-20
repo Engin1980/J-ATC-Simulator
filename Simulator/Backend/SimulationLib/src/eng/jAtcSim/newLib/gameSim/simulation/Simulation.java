@@ -12,16 +12,17 @@ import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
 import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
-import eng.jAtcSim.newLib.gameSim.Message;
 import eng.jAtcSim.newLib.gameSim.IParseFormat;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.SimulationStartupContext;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.AirproxController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.KeyShortcutManager;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.MrvaController;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.*;
+import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.mood.MoodManager;
 import eng.jAtcSim.newLib.shared.AtcId;
@@ -77,11 +78,6 @@ public class Simulation {
     @Override
     public EDayTimeStamp getNow() {
       return Simulation.this.now.toStamp();
-    }
-
-    @Override
-    public IParseFormat getParseFormat() {
-      return null;
     }
 
     @Override
@@ -165,6 +161,11 @@ public class Simulation {
     @Override
     public void unregisterOnSecondElapsed(int simulationSecondListenerHandlerId) {
       Simulation.this.getTimerModule().unregisterOnTickListener(simulationSecondListenerHandlerId);
+    }
+
+    @Override
+    public ParserFormatterStartInfo getParserFormatterInfo() {
+      return Simulation.this.ioModule.getParserFormatterInfo();
     }
   }
 

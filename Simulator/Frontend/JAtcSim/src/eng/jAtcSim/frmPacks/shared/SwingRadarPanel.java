@@ -25,6 +25,7 @@ import eng.jAtcSim.newLib.area.InitialPosition;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
@@ -416,12 +417,13 @@ public class SwingRadarPanel extends JPanel {
   private boolean sendMessage(String msg) {
     msg = normalizeMsg(msg);
     boolean ret;
+    ParserFormatterStartInfo pfsi = this.sim.getParserFormatterInfo();
     try {
       if (msg.startsWith("+") || msg.startsWith("-")) {
         // msg for atc
         AtcType atcType = msg.startsWith("+") ? AtcType.ctr : AtcType.twr;
         msg = msg.substring(1);
-        IAtcParser parser = this.sim.getParseFormat().getAtcParser();
+        IAtcParser parser = pfsi.parsers.atcParser;
         IAtcSpeech speech = parser.parse(msg);
         AtcId id = sim.getAtcs().getFirst(q -> q.getType() == atcType);
         sim.sendAtcCommand(id, speech);
@@ -429,7 +431,7 @@ public class SwingRadarPanel extends JPanel {
       } else if (msg.startsWith("?")) {
         // system
         msg = msg.substring(1);
-        ISystemParser parser = sim.getParseFormat().getSystemParser();
+        ISystemParser parser = pfsi.parsers.systemParser;
         ISystemSpeech speech = parser.parse(msg);
         sim.sendSystemCommand(speech);
         ret = true;
@@ -443,7 +445,7 @@ public class SwingRadarPanel extends JPanel {
         String callsignString = msg.substring(0, firstSpaceIndex);
         String messageString = msg.substring(firstSpaceIndex + 1);
         Callsign callsign = getCallsignFromString(callsignString);
-        IPlaneParser parser = sim.getParseFormat().getPlaneParser();
+        IPlaneParser parser = pfsi.parsers.planeParser;
         SpeechList<IForPlaneSpeech> cmds = parser.parse(messageString);
         sim.sendPlaneCommands(callsign, cmds);
         ret = true;
@@ -473,10 +475,10 @@ class CommandJTextWraper {
 
   private boolean isCtr = false;
   private final JTextField parent;
-  private EventAnonymousSimple pauseUnpauseSimulation = new EventAnonymousSimple();
-  private EventAnonymous<Integer> recallRadarPosition = new EventAnonymous<>();
-  private EventAnonymousSimple sendEvent = new EventAnonymousSimple();
-  private EventAnonymous<Integer> storeRadarPosition = new EventAnonymous<>();
+  private final EventAnonymousSimple pauseUnpauseSimulation = new EventAnonymousSimple();
+  private final EventAnonymous<Integer> recallRadarPosition = new EventAnonymous<>();
+  private final EventAnonymousSimple sendEvent = new EventAnonymousSimple();
+  private final EventAnonymous<Integer> storeRadarPosition = new EventAnonymous<>();
 
   public CommandJTextWraper(JTextField parentJTextField) {
     parent = parentJTextField;

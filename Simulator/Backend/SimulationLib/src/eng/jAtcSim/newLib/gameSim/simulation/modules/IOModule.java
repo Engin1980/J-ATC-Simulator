@@ -2,13 +2,13 @@ package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.gameSim.Message;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.KeyShortcutManager;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
+import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.messaging.context.IMessagingAcc;
@@ -58,13 +58,11 @@ public class IOModule extends SimulationModule {
 
   public IList<Message> getMessagesByKey(Object listener) {
     IList<eng.jAtcSim.newLib.messaging.Message> tmp = this.messenger.getMessagesByListener(listener, true);
-    IList<Message> ret = tmp.select(q->new Message(
-        q.getSource(),
-        q.getTarget(),
-        q.getContent(),
-        q.getContent() instanceof Rejection
-    ));
-    return ret;
+    return tmp;
+  }
+
+  public ParserFormatterStartInfo getParserFormatterInfo() {
+    return this.parseFormatStartInfo;
   }
 
   public void init() {

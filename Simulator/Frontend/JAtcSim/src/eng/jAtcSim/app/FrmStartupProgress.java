@@ -53,7 +53,7 @@ public class FrmStartupProgress extends JFrame {
     Stylist.apply(this, true);
   }
 
-  private void appendInfo(ApplicationLog.Message q) {
+  private void appendInfo(ApplicationLog.AppLogMessage q) {
     if (q.type == ApplicationLog.eType.info) {
       int val = prg.getValue() + 1;
       if (val < prg.getMaximum())

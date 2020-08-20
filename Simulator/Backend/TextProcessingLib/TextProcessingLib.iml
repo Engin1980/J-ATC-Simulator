@@ -11,5 +11,6 @@
     <orderEntry type="module" module-name="SharedLib" />
     <orderEntry type="library" name="eng.eSystem (jAtcSim)" level="project" />
     <orderEntry type="module" module-name="WeatherLib" />
+    <orderEntry type="module" module-name="MessagingLib" />
   </component>
 </module>

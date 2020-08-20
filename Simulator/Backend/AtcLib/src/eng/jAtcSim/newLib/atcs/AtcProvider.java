@@ -72,6 +72,7 @@ public class AtcProvider {
 
   public void init() {
     atcs.forEach(q -> q.init());
+    atcs.forEach(q -> atcIds.add(q.getAtcId()));
 
     IList<Atc> app = atcs.where(q -> q.getAtcId().getType() == AtcType.app);
     EAssert.isTrue(app.size() == 1); // application now prepared only for one app

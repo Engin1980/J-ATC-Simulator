@@ -40,7 +40,7 @@ public class FrmLog extends JFrame {
     Context.getApp().getAppLog().getOnNewMessage().add(this::newLogMessage);
   }
 
-  private void newLogMessage(ApplicationLog.Message message) {
+  private void newLogMessage(ApplicationLog.AppLogMessage message) {
     String s = message.type.toString() + " : " + message.text;
 
     Color c;

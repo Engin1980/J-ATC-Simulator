@@ -22,8 +22,9 @@ import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
-import eng.jAtcSim.newLib.gameSim.Message;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
+import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -100,7 +101,9 @@ public class Radar {
     buildDrawnRoutesList();
     buildDrawnApproachesList();
 
-    this.messageManager = new VisualisedMessageManager(this.styleSettings.displayTextDelay);
+    this.messageManager = new VisualisedMessageManager(
+        this.styleSettings.displayTextDelay,
+        (ParserFormatterStartInfo.Formatters<String>) this.simulation.getParserFormatterInfo().formatters);
     if (this.styleSettings.displayTextDelay > Global.REPEATED_SWITCH_REQUEST_SECONDS ||
         this.styleSettings.displayTextDelay > Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS) {
       simulation.getAppLog().write(ApplicationLog.eType.warning,
@@ -405,12 +408,12 @@ public class Radar {
     MessageSet ret = new MessageSet();
 
     for (VisualisedMessage m : msgs) {
-      if (m.getMessage().getSender().getType() == Participant.eType.system) {
-        ret.system.add(">> " + m.getMessage().getText());
-      } else if (m.getMessage().getSender().getType() == Participant.eType.atc) {
-        ret.atc.add("[" + m.getMessage().getSender().getId() + "] " + m.getMessage().getText());
-      } else if (m.getMessage().getSender().getType() == Participant.eType.airplane) {
-        ret.plane.add(m.getMessage().getSender().getId() + ": " + m.getMessage().getText());
+      if (m.getMessage().getSource().getType() == Participant.eType.system) {
+        ret.system.add(">> " + m.getMessageText());
+      } else if (m.getMessage().getSource().getType() == Participant.eType.atc) {
+        ret.atc.add("[" + m.getMessage().getSource().getId() + "] " + m.getMessageText());
+      } else if (m.getMessage().getSource().getType() == Participant.eType.airplane) {
+        ret.plane.add(m.getMessage().getSource().getId() + ": " + m.getMessageText());
       } else {
         throw new UnsupportedOperationException();
       }
@@ -602,15 +605,15 @@ public class Radar {
     }
 
     boolean containsSystemMessage =
-        msgs.isAny(q -> q.getSender().getType() == Participant.eType.system);
+        msgs.isAny(q -> q.getSource().getType() == Participant.eType.system);
 
-    IList<Message> atcMsgs = msgs.where(q -> q.getSender().getType() == Participant.eType.atc);
+    IList<Message> atcMsgs = msgs.where(q -> q.getSource().getType() == Participant.eType.atc);
     boolean containsAtcMessage = atcMsgs.isEmpty() == false;
-    boolean isAtcMessageNegative = atcMsgs.isAny(q -> q.getType() == Message.eType.rejection);
+    boolean isAtcMessageNegative = atcMsgs.isAny(q -> q.getContent().isRejection());
 
-    IList<Message> planeMsgs = msgs.where(q -> q.getSender().getType() == Participant.eType.airplane);
+    IList<Message> planeMsgs = msgs.where(q -> q.getSource().getType() == Participant.eType.airplane);
     boolean containsPlaneMessage = planeMsgs.isEmpty() == false;
-    boolean isPlaneMessageNegative = planeMsgs.isAny(q -> q.getType() == Message.eType.rejection);
+    boolean isPlaneMessageNegative = planeMsgs.isAny(q -> q.getContent().isRejection());
 
     if (containsAtcMessage) {
       SoundManager.playAtcNewMessage(isAtcMessageNegative);
