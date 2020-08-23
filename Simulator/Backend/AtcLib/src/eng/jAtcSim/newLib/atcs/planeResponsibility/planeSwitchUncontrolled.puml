@@ -1,0 +1,25 @@
+@startuml
+
+A -> A : outgoingPlanes.add(P)
+A -> B : request(P)
+alt Simply acceptance / re-routing acceptance
+    B -> B : IncomingPlanes.add(P)
+    B -> A : confirm(P [, reroute])
+    A -> A : outgoingPlanes.remove(p)
+    A -> P : contact(B)
+    P --> A :
+    A -> A : planes.remove(P)
+    P -> B : hello
+    B -> B : IncomingPlanes.remove(P)
+    B -> B : planes.add(P)
+    B --> P : radar contact
+else Simple rejection
+    B -> A : reject(P, reason)
+    A -> A : outgoingPlanes.remove(P)
+else Rerouting rejection
+    B -> B : IncomingPlanes.add(P)
+    B -> A : confirm(P [, reroute])
+    A -> B : reject(P, reason)
+    A -> A : outgoingPlanes.remove(P)
+end
+@enduml

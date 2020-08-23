@@ -1,0 +1,31 @@
+@startuml
+
+== twr process ==
+
+twr -> twr : myRequests.create(EZY3750)
+twr -> msg : Sw-Req EZY3750 -> app
+msg -> app : Sw-Req EZY3750 -> app
+app -> MNG : setMyselfResponsible(EZY3750)
+app -> msg : Sw-Conf EZY3750 -> twr
+msg -> twr : Sw-Conf EZY3750 -> twr
+twr -> MNG : myRequests.remove(EZY3750)
+twr -> EZY3750 : ContactCommand(app)
+twr -> twr : activePlanes.remove(EZY3750)
+EZY3750 -> app : HelloCommand
+app -> app : preparedPlanes.remove(EZY3750)
+app -> app : activePlanes.add(EZY3750)
+
+== app process ==
+
+app -> msg : SwitchRequestMessage EZY3750 for app
+msg -> ctr : SwitchRequestMessage EZY3750 for app
+ctr -> ctr : preparedPlanes.add(EZY3750)
+ctr -> msg : SwitchRequestConfirmation EZY3750 for twr
+msg -> app : SwitchRequestConfirmation EZY3750 for twr
+app -> app : myRequests.remove(EZY3750)
+app -> EZY3750 : ContactCommand(app)
+app -> app : activePlanes.remove(EZY3750)
+EZY3750 -> ctr : HelloCommand
+ctr -> ctr : preparedPlanes.remove(EZY3750)
+ctr -> ctr : activePlanes.add(EZY3750)
+@enduml

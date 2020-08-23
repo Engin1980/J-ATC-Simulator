@@ -33,11 +33,11 @@ import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 
 public class CenterAtc extends ComputerAtc {
 
-  private IList<IAirplane> closeArrivals = new EList<>();
+  private final IList<IAirplane> closeArrivals = new EList<>();
   private int ctrAcceptDistance = 40;
   private int ctrNavaidAcceptDistance = 15;
-  private IList<IAirplane> farArrivals = new EList<>();
-  private IList<IAirplane> middleArrivals = new EList<>();
+  private final IList<IAirplane> farArrivals = new EList<>();
+  private final IList<IAirplane> middleArrivals = new EList<>();
 
   public CenterAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);

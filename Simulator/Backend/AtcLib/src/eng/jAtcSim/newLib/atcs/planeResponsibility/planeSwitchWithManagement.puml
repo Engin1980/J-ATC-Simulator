@@ -1,0 +1,23 @@
+@startuml
+A -> MNG : request(P)
+B -> MNG : getData()
+MNG --> B : (data)
+alt Simply acceptance/re-routing acceptance
+    B -> MNG : confirm [, new route]
+    A -> MNG : getData()
+    MNG --> A : (data)
+    A -> P : contact(B)
+    P --> A
+    A -> A : planes.remove(P)
+    P -> B : hello
+    B -> B : planes.add(P)
+    B --> P : radar contact
+else simple rejection
+    B -> MNG : reject
+else reroute rejection
+    B -> MNG : confirm [, new route]
+    A -> MNG : getData()
+    MNG --> A : (data)
+    A -> MNG : reject
+end
+@enduml
