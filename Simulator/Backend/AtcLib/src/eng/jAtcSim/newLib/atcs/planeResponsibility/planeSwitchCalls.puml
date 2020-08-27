@@ -1,0 +1,14 @@
+@startuml
+start
+:ATC gets messages;
+:Filter only to plane-switch-messages (PSM);
+
+if (incomingPlanes.exists) then (yes)
+  : incomingPlanes.delete;
+else (no)
+  :confirmed;
+endif
+
+end
+
+@enduml

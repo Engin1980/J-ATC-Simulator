@@ -5,6 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.AirplaneList;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
@@ -89,6 +90,43 @@ public abstract class ComputerAtc extends Atc {
       this.repeatOldSwitchRequests();
     }
 
+    private void processPlaneSwitchMessage(Message m) {
+      PlaneSwitchRequest psm = m.getContent();
+      EAssert.isTrue(m.getSource().getType() == Participant.eType.atc);
+      AtcId targetAtcId = InternalAcc.getAtc(m.getSource().getId()).getAtcId();
+
+      if (outgoingPlanes.isAny(q->q.getAirplane().getSqwk().equals(psm.getSquawk())))
+        this.processConfirmedSwitch(psm);
+      else if (prm.forAtc().isUnderSwitchRequest(callsign, null, this.getAtcId())) {
+        this.processIncomingSwitchRequest(psm);
+      }
+    }
+
+    private void processIncomingSwitchRequest(PlaneSwitchRequest psm, AtcId sender) {
+      // other ATC offers us a plane
+      IAirplane airplane = InternalAcc.getPlane(psm.getSquawk());
+      RequestResult planeAcceptance = canIAcceptPlane(airplane);
+      if (planeAcceptance.isAccepted) {
+        acceptSwitch(airplane, sender, psm);
+      } else {
+        rejectSwitch(airplane, sender, planeAcceptance, psm);
+      }
+    }
+
+    private void processConfirmedSwitch(PlaneSwitchRequest psr){
+      SwitchRoutingRequest srr = prm.forAtc().getRoutingForSwitchRequest(this.getAtcId(), callsign);
+      if (srr != null) {
+        // the other ATC tries to change plane routing, we can check in and reject it if required
+        if (!parent.acceptsNewRouting(callsign, srr))
+          this.rejectChangedRouting(callsign, targetAtcId, psm);
+        else {
+          prm.forAtc().confirmRerouting(this.getAtcId(), callsign);
+          this.applyConfirmedSwitch(psr.getSquawk());
+        }
+      } else
+        this.applyConfirmedSwitch(psr.getSquawk());
+    }
+
 
     public void acceptSwitch(Callsign callsign, AtcId targetAtcId, PlaneSwitchRequest psr) {
       PlaneResponsibilityManager prm = InternalAcc.getPrm();
@@ -157,7 +195,7 @@ public abstract class ComputerAtc extends Atc {
 
   protected abstract boolean acceptsNewRouting(Callsign callsign, SwitchRoutingRequest srr);
 
-  protected abstract RequestResult canIAcceptPlane(Callsign callsign);
+  protected abstract RequestResult canIAcceptPlane(IAirplane airplane);
 
   /**
    * Returns target atc if plane is ready for switch.
@@ -195,7 +233,7 @@ public abstract class ComputerAtc extends Atc {
 
   private void elapseSecondProcessMessageFromAtc(Message m) {
     if (m.getContent() instanceof PlaneSwitchRequest) {
-      processPlaneSwitchMessage(m);
+      this.switchManager.processPlaneSwitchMessage(m);
     } else {
       processNonPlaneSwitchMessageFromAtc(m);
     }
@@ -227,32 +265,7 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
-  private void processPlaneSwitchMessage(Message m) {
-    PlaneResponsibilityManager prm = InternalAcc.getPrm();
-    PlaneSwitchRequest psm = m.getContent();
-    Callsign callsign = InternalAcc.getCallsignFromSquawk(psm.getSquawk());
-    EAssert.isTrue(m.getSource().getType() == Participant.eType.atc);
-    AtcId targetAtcId = InternalAcc.getAtc(m.getSource().getId()).getAtcId();
-    if (prm.forAtc().isUnderSwitchRequest(callsign, this.getAtcId(), targetAtcId)) {
-      // other ATC confirms our request, plane is going to hang off
-      SwitchRoutingRequest srr = prm.forAtc().getRoutingForSwitchRequest(this.getAtcId(), callsign);
-      if (srr != null) {
-        // the other ATC tries to change plane routing, we can check in and reject it if required
-        if (acceptsNewRouting(callsign, srr) == false)
-          rejectChangedRouting(callsign, targetAtcId, psm);
-        else
-          prm.forAtc().confirmRerouting(this.getAtcId(), callsign);
-      }
-    } else if (prm.forAtc().isUnderSwitchRequest(callsign, null, this.getAtcId())) {
-      // other ATC offers us a plane
-      RequestResult planeAcceptance = canIAcceptPlane(callsign);
-      if (planeAcceptance.isAccepted) {
-        acceptSwitch(callsign, targetAtcId, psm);
-      } else {
-        rejectSwitch(callsign, targetAtcId, planeAcceptance, psm);
-      }
-    }
-  }
+
 
   private void rejectChangedRouting(Callsign callsign, AtcId targetAtcId, PlaneSwitchRequest psr) {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();

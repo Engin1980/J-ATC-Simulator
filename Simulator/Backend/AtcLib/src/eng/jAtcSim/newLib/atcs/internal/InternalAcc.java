@@ -60,10 +60,6 @@ public class InternalAcc {
     return atcs;
   }
 
-  public static Callsign getCallsignFromSquawk(Squawk squawk) {
-    return Context.getAirplane().getAirplanes().get(squawk).getCallsign();
-  }
-
   public static IAirplane getPlane(AirplaneResponsibilityInfo airplaneResponsibilityInfo) {
     EAssert.Argument.isNotNull(airplaneResponsibilityInfo, "airplaneResponsibilityInfo");
     return InternalAcc.getPlane(airplaneResponsibilityInfo.getPlane());
@@ -74,15 +70,12 @@ public class InternalAcc {
     return Context.getAirplane().getAirplanes().get(callsign);
   }
 
-  public static PlaneResponsibilityManager getPrm() {
-    return prm;
+  public static IAirplane getPlane(Squawk squawk) {
+    EAssert.Argument.isNotNull(squawk, "squawk");
+    return Context.getAirplane().getAirplanes().get(squawk);
   }
 
   public static ActiveRunway getRunway(String rwyName) {
     return Context.getArea().getAirport().getRunways().getFirst(q -> q.getName().equals(rwyName));
-  }
-
-  public static Squawk getSquawkFromCallsign(Callsign callsign) {
-    return Context.getAirplane().getAirplanes().get(callsign).getSqwk();
   }
 }
