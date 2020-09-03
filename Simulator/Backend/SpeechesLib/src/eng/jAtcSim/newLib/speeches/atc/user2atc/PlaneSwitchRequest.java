@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.speeches.atc.user2atc;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
+import eng.jAtcSim.newLib.speeches.atc.atc2user.RunwayInUseNotification;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -11,41 +12,68 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
  */
 public class PlaneSwitchRequest implements IAtcSpeech {
 
-  public static PlaneSwitchRequest createFromComputer(Squawk squawk, boolean isRepeated) {
-    return new PlaneSwitchRequest(squawk, isRepeated, null, null);
+  public static class Routing{
+    public final String runwayThresholdName;
+    public final String routeName;
+
+    public Routing(String runwayThresholdName, String routeName) {
+      this.runwayThresholdName = runwayThresholdName;
+      this.routeName = routeName;
+    }
   }
 
-  public static PlaneSwitchRequest createFromComputer(Squawk squawk) {
-    return createFromComputer(squawk, false);
+  public enum eType{
+    inherit,
+    request,
+    requestRepeated,
+    rerouting,
+    cancelaton
   }
 
-  public static PlaneSwitchRequest createFromUser(Squawk squawk, String runway, String route) {
-    return new PlaneSwitchRequest(squawk, false, runway, route);
+  public static PlaneSwitchRequest createInherit(Squawk squawk){
+    PlaneSwitchRequest ret = new PlaneSwitchRequest(squawk, eType.inherit, null);
+    return ret;
   }
 
+  public static PlaneSwitchRequest createRequest(Squawk squawk, boolean repeated){
+    PlaneSwitchRequest ret = new PlaneSwitchRequest(squawk,
+        repeated ? eType.requestRepeated : eType.request,
+        null);
+    return ret;
+  }
+
+  public static PlaneSwitchRequest createRerouting(Squawk squawk, String runwayThresholdName, String routeName){
+    PlaneSwitchRequest ret = new PlaneSwitchRequest(squawk, eType.rerouting, new Routing(runwayThresholdName, routeName));
+    return ret;
+  }
+
+  public static PlaneSwitchRequest createCancelation(Squawk squawk){
+    PlaneSwitchRequest ret = new PlaneSwitchRequest(squawk, eType.cancelaton, null);
+    return ret;
+  }
+
+  private final eType type;
   private final Squawk squawk;
-  private final boolean repeated;
-  private final String runwayName;
-  private final String routeName;
+  private final Routing routing;
 
-  private PlaneSwitchRequest(Squawk squawk, boolean repeated, String runwayName, String routeName) {
+  private PlaneSwitchRequest(Squawk squawk, eType type, Routing routing) {
     EAssert.Argument.isNotNull(squawk, "squawk");
+    EAssert.Argument.isTrue(routing == null || type == eType.rerouting, "Routing can be used only with re-routing type.");
     this.squawk = squawk;
-    this.repeated = repeated;
-    this.runwayName = runwayName;
-    this.routeName = routeName;
+    this.type = type;
+    this.routing = routing;
   }
 
   public Squawk getSquawk() {
     return squawk;
   }
 
-  public String getRouteName() {
-    return routeName;
+  public eType getType() {
+    return type;
   }
 
-  public String getRunwayName() {
-    return runwayName;
+  public Routing getRouting() {
+    return routing;
   }
 
   //  public String getAsString() {
@@ -65,10 +93,6 @@ public class PlaneSwitchRequest implements IAtcSpeech {
 //
 //    return ret;
 //  }
-
-  public boolean isRepeated() {
-    return repeated;
-  }
 
 //  public String getMessageText() {
 //    StringBuilder sb = new StringBuilder();
