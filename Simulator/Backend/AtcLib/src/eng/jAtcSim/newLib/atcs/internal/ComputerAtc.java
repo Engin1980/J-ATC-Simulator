@@ -5,12 +5,9 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplaneType.AirplaneType;
-import eng.jAtcSim.newLib.airplanes.AirplaneList;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchInfo;
-import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.*;
@@ -31,124 +28,37 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public abstract class ComputerAtc extends Atc {
 
-  protected final IList<SwitchInfo> outgoingPlanes = new EList<>();
-  protected final IList<SwitchInfo> incomingPlanes = new EList<>();
-  protected final IList<IAirplane> planes = new EList<>();
-  private final SwitchManager switchManager = new SwitchManager();
+  private static class PlaneSwitchRequestMessageWrapper {
+    private final Message message;
 
-  private class SwitchManager{
-
-    private final ComputerAtc parent = ComputerAtc.this;
-
-    private void checkAndProcessPlanesReadyToSwitch() {
-      for (IAirplane airplane : parent.planes) {
-        if (parent.outgoingPlanes.isAny(q->q.equals(airplane)))
-          continue;
-
-        AtcId targetAtcId = parent.getTargetAtcIfPlaneIsReadyToSwitch(airplane);
-        if (targetAtcId != null) {
-          this.requestNewSwitch(airplane, targetAtcId);
-        }
-      }
+    public PlaneSwitchRequestMessageWrapper(Message message) {
+      this.message = message;
     }
 
-    private void requestNewSwitch(IAirplane airplane, AtcId targetAtcId) {
-      SwitchInfo si = new SwitchInfo(airplane, targetAtcId, Context.getShared().getNow().toStamp());
-      parent.outgoingPlanes.add(si);
-      Message m = new Message(
-          Participant.createAtc(parent.getAtcId()),
-          Participant.createAtc(targetAtcId),
-          PlaneSwitchRequest.createFromComputer(airplane.getSqwk(), false));
-      sendMessage(m);
+    public PlaneSwitchRequest getPlaneSwitchRequest() {
+      return message.getContent();
     }
 
-    private static final int SECONDS_BEFORE_REPEAT_SWITCH_REQUEST = 30;
-
-    private void repeatOldSwitchRequests() {
-      EDayTimeRun now = Context.getShared().getNow();
-      IReadOnlyList<SwitchInfo> awaitings = this.parent.outgoingPlanes.where(
-          q->q.getTime().getValue() + SECONDS_BEFORE_REPEAT_SWITCH_REQUEST < now.getValue());
-
-      for (SwitchInfo si : awaitings) {
-        IAirplane airplane = si.getAirplane();
-        if (speechDelayer
-            .isAny(q -> q.getContent() instanceof PlaneSwitchRequest && ((PlaneSwitchRequest) q.getContent()).getSquawk().equals(airplane.getCallsign())))
-          continue; // if message about this plane is delayed and waiting to process
-        Squawk sqwk = airplane.getSqwk();
-        Message m = new Message(
-            Participant.createAtc(parent.getAtcId()),
-            Participant.createAtc(si.getAtcId()),
-            PlaneSwitchRequest.createFromComputer(sqwk, true));
-        Context.getMessaging().getMessenger().send(m);
-        si.updateTime(now.toStamp());
-        parent.getRecorder().write(m);
-      }
+    public PlaneSwitchRequest.Routing getRouting() {
+      return getPlaneSwitchRequest().getRouting();
     }
 
-    public void elapseSecond() {
-      this.checkAndProcessPlanesReadyToSwitch();
-      this.repeatOldSwitchRequests();
+    public AtcId getSource() {
+      Participant p = message.getSource();
+      EAssert.isTrue(message.getSource().getType() == Participant.eType.atc);
+      AtcId ret = InternalAcc.getAtc(message.getSource().getId()).getAtcId();
+      return ret;
     }
 
-    private void processPlaneSwitchMessage(Message m) {
-      PlaneSwitchRequest psm = m.getContent();
-      EAssert.isTrue(m.getSource().getType() == Participant.eType.atc);
-      AtcId targetAtcId = InternalAcc.getAtc(m.getSource().getId()).getAtcId();
-
-      if (outgoingPlanes.isAny(q->q.getAirplane().getSqwk().equals(psm.getSquawk())))
-        this.processConfirmedSwitch(psm);
-      else if (prm.forAtc().isUnderSwitchRequest(callsign, null, this.getAtcId())) {
-        this.processIncomingSwitchRequest(psm);
-      }
+    public Squawk getSquawk() {
+      return getPlaneSwitchRequest().getSquawk();
     }
 
-    private void processIncomingSwitchRequest(PlaneSwitchRequest psm, AtcId sender) {
-      // other ATC offers us a plane
-      IAirplane airplane = InternalAcc.getPlane(psm.getSquawk());
-      RequestResult planeAcceptance = canIAcceptPlane(airplane);
-      if (planeAcceptance.isAccepted) {
-        acceptSwitch(airplane, sender, psm);
-      } else {
-        rejectSwitch(airplane, sender, planeAcceptance, psm);
-      }
-    }
-
-    private void processConfirmedSwitch(PlaneSwitchRequest psr){
-      SwitchRoutingRequest srr = prm.forAtc().getRoutingForSwitchRequest(this.getAtcId(), callsign);
-      if (srr != null) {
-        // the other ATC tries to change plane routing, we can check in and reject it if required
-        if (!parent.acceptsNewRouting(callsign, srr))
-          this.rejectChangedRouting(callsign, targetAtcId, psm);
-        else {
-          prm.forAtc().confirmRerouting(this.getAtcId(), callsign);
-          this.applyConfirmedSwitch(psr.getSquawk());
-        }
-      } else
-        this.applyConfirmedSwitch(psr.getSquawk());
-    }
-
-
-    public void acceptSwitch(Callsign callsign, AtcId targetAtcId, PlaneSwitchRequest psr) {
-      PlaneResponsibilityManager prm = InternalAcc.getPrm();
-      prm.forAtc().confirmSwitchRequest(callsign, this.getAtcId(), null);
-      Message nm = new Message(
-          Participant.createAtc(this.getAtcId()),
-          Participant.createAtc(targetAtcId),
-          new AtcConfirmation(psr));
-      sendMessage(nm);
-    }
-
-
-    private void applyConfirmedSwitch(Squawk squawk) {
-      PlaneResponsibilityManager prm = InternalAcc.getPrm();
-      prm.forAtc().applyConfirmedSwitch(this.getAtcId(), callsign);
-      AtcId newTargetAtc = prm.getResponsibleAtc(callsign);
-      Message msg = new Message(
-          Participant.createAtc(this.getAtcId()),
-          Participant.createAirplane(callsign),
-          new SpeechList<>(
-              new ContactCommand(newTargetAtc)));
-      Context.getMessaging().getMessenger().send(msg);
+    public AtcId getTarget() {
+      Participant p = message.getSource();
+      EAssert.isTrue(message.getTarget().getType() == Participant.eType.atc);
+      AtcId ret = InternalAcc.getAtc(message.getTarget().getId()).getAtcId();
+      return ret;
     }
   }
 
@@ -162,8 +72,142 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
+    tohle porad vytahnout do nejake tridy bokem
+  private class SwitchManager {
+
+    private static final int SECONDS_BEFORE_REPEAT_SWITCH_REQUEST = 30;
+    private final ComputerAtc parent = ComputerAtc.this;
+
+    public void elapseSecond() {
+      this.elapCheckAndProcessPlanesReadyToSwitch();
+      this.elapRepeatOldSwitchRequests();
+    }
+
+    public void processPlaneSwitchMessage(Message m) {
+      PlaneSwitchRequestMessageWrapper mw = new PlaneSwitchRequestMessageWrapper(m);
+
+      SwitchInfo outgoingSwitchInfo = parent.outgoingPlanes.tryGetFirst(q ->
+          q.getAirplane().getSqwk().equals(mw.getSquawk()) && q.getAtcId().equals(mw.getSource()));
+      if (outgoingSwitchInfo != null)
+        this.procProcessConfirmedSwitch(outgoingSwitchInfo, mw);
+      else
+        this.procProcessIncomingNewSwitchRequest(mw);
+
+    }
+
+    private void elapCheckAndProcessPlanesReadyToSwitch() {
+      for (IAirplane airplane : parent.planes) {
+        if (parent.outgoingPlanes.isAny(q -> q.getAirplane().equals(airplane)))
+          continue;
+
+        AtcId targetAtcId = parent.getTargetAtcIfPlaneIsReadyToSwitch(airplane);
+        if (targetAtcId != null) {
+          this.elapRequestNewSwitch(airplane, targetAtcId);
+        }
+      }
+    }
+
+    private void elapRepeatOldSwitchRequests() {
+      EDayTimeRun now = Context.getShared().getNow();
+      IReadOnlyList<SwitchInfo> awaitings = this.parent.outgoingPlanes.where(
+          q -> q.getTime().getValue() + SECONDS_BEFORE_REPEAT_SWITCH_REQUEST < now.getValue());
+
+      for (SwitchInfo si : awaitings) {
+        IAirplane airplane = si.getAirplane();
+        if (speechDelayer
+            .isAny(q -> q.getContent() instanceof PlaneSwitchRequest &&
+                ((PlaneSwitchRequest) q.getContent()).getSquawk().equals(airplane.getSqwk())))
+          continue; // if message about this plane is delayed and waiting to process
+        Squawk sqwk = airplane.getSqwk();
+        Message m = new Message(
+            Participant.createAtc(parent.getAtcId()),
+            Participant.createAtc(si.getAtcId()),
+            PlaneSwitchRequest.createRequest(sqwk, true));
+        Context.getMessaging().getMessenger().send(m);
+        si.updateTime(now.toStamp());
+        parent.getRecorder().write(m);
+      }
+    }
+
+    private void elapRequestNewSwitch(IAirplane airplane, AtcId targetAtcId) {
+      SwitchInfo si = new SwitchInfo(airplane, targetAtcId, Context.getShared().getNow().toStamp());
+      parent.outgoingPlanes.add(si);
+      Message m = new Message(
+          Participant.createAtc(parent.getAtcId()),
+          Participant.createAtc(targetAtcId),
+          PlaneSwitchRequest.createRequest(airplane.getSqwk(), false));
+      sendMessage(m);
+    }
+
+    private void msgConfirm(PlaneSwitchRequestMessageWrapper mw) {
+AtcConfirmation confirmation = new AtcConfirmation(mw.getPlaneSwitchRequest());
+Message msg = new Message(
+    Participant.createAtc(parent.getAtcId()),
+    Participant.createAtc(mw.getSource()),
+    confirmation
+);
+      sendMessage(msg);
+    }
+
+    private void msgCreate(PlaneSwitchRequest psr,)
+
+    private void msgReject(PlaneSwitchRequestMessageWrapper mw, String reason) {
+      AtcRejection confirmation = new AtcRejection(mw.getPlaneSwitchRequest(), reason);
+      Message msg = new Message(
+          Participant.createAtc(parent.getAtcId()),
+          Participant.createAtc(mw.getSource()),
+          confirmation
+      );
+      sendMessage(msg);
+    }
+
+    private void procAcceptNewSwitchRequest(PlaneSwitchRequestMessageWrapper mw) {
+      IAirplane airplane = InternalAcc.getPlane(mw.getSquawk());
+      SwitchInfo si = new SwitchInfo(airplane, mw.getSource(), Context.getShared().getNow().toStamp());
+      parent.outgoingPlanes.add(si);
+      msgConfirm(mw);
+    }
+
+    private void procApplyConfirmedSwitch(SwitchInfo si) {
+      AtcId newTargetAtc = si.getAtcId();
+      Message msg = new Message(
+          Participant.createAtc(parent.getAtcId()),
+          Participant.createAirplane(si.getAirplane().getCallsign()),
+          new SpeechList<>(
+              new ContactCommand(newTargetAtc)));
+      Context.getMessaging().getMessenger().send(msg);
+    }
+
+    private void procProcessConfirmedSwitch(SwitchInfo si, PlaneSwitchRequestMessageWrapper mw) {
+      if (mw.getRouting() != null) {
+        // the other ATC tries to change plane routing, we can check in and reject it if required
+        if (!parent.acceptsNewRouting(si.getAirplane(), mw.getRouting()))
+          this.msgReject(mw, "Updated routing not accepted.");
+        else {
+          this.msgConfirm(mw);
+          this.procApplyConfirmedSwitch(si);
+        }
+      } else
+        this.procApplyConfirmedSwitch(si);
+    }
+
+    private void procProcessIncomingNewSwitchRequest(PlaneSwitchRequestMessageWrapper mw) {
+      // other ATC offers us a plane
+      RequestResult planeAcceptance = canIAcceptPlane(mw.getSquawk());
+      if (planeAcceptance.isAccepted) {
+        procAcceptNewSwitchRequest(mw);
+      } else {
+        msgReject(mw, planeAcceptance.message);
+      }
+    }
+  }
+
+  protected final IList<SwitchInfo> incomingPlanes = new EList<>();
+  protected final IList<SwitchInfo> outgoingPlanes = new EList<>();
+  protected final IList<IAirplane> planes = new EList<>();
   private final DelayedList<Message> speechDelayer = new DelayedList<>(
       Global.MINIMUM_ATC_SPEECH_DELAY_SECONDS, Global.MAXIMUM_ATC_SPEECH_DELAY_SECONDS);
+  private final SwitchManager switchManager = new SwitchManager();
 
   public ComputerAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
@@ -193,9 +237,9 @@ public abstract class ComputerAtc extends Atc {
     return false;
   }
 
-  protected abstract boolean acceptsNewRouting(Callsign callsign, SwitchRoutingRequest srr);
+  protected abstract boolean acceptsNewRouting(IAirplane airplane, PlaneSwitchRequest.Routing routing);
 
-  protected abstract RequestResult canIAcceptPlane(IAirplane airplane);
+  protected abstract RequestResult canIAcceptPlane(Squawk squawk);
 
   /**
    * Returns target atc if plane is ready for switch.
@@ -263,28 +307,6 @@ public abstract class ComputerAtc extends Atc {
             m.toString()), ex);
       }
     }
-  }
-
-
-
-  private void rejectChangedRouting(Callsign callsign, AtcId targetAtcId, PlaneSwitchRequest psr) {
-    PlaneResponsibilityManager prm = InternalAcc.getPrm();
-    prm.forAtc().resetSwitchRequest(this.getAtcId(), callsign);
-    Message m = new Message(
-        Participant.createAtc(this.getAtcId()),
-        Participant.createAtc(targetAtcId),
-        new AtcRejection(psr, "New routing rejected."));
-    sendMessage(m);
-  }
-
-  private void rejectSwitch(Callsign callsign, AtcId targetAtcId, RequestResult planeAcceptance, PlaneSwitchRequest psr) {
-    PlaneResponsibilityManager prm = InternalAcc.getPrm();
-    prm.forAtc().rejectSwitchRequest(callsign, this.getAtcId());
-    Message nm = new Message(
-        Participant.createAtc(this.getAtcId()),
-        Participant.createAtc(targetAtcId),
-        new AtcRejection(psr, planeAcceptance.message));
-    sendMessage(nm);
   }
 
 //  @Override
