@@ -11,7 +11,6 @@ import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchInfo;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.*;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -31,12 +30,9 @@ public abstract class ComputerAtc extends Atc {
   private static class PlaneSwitchRequestMessageWrapper {
     private final Message message;
 
-    public PlaneSwitchRequestMessageWrapper(Message message) {
+    PlaneSwitchRequestMessageWrapper(Message message) {
+      EAssert.Argument.isNotNull(message, "message");
       this.message = message;
-    }
-
-    public PlaneSwitchRequest getPlaneSwitchRequest() {
-      return message.getContent();
     }
 
     public PlaneSwitchRequest.Routing getRouting() {
@@ -45,8 +41,8 @@ public abstract class ComputerAtc extends Atc {
 
     public AtcId getSource() {
       Participant p = message.getSource();
-      EAssert.isTrue(message.getSource().getType() == Participant.eType.atc);
-      AtcId ret = InternalAcc.getAtc(message.getSource().getId()).getAtcId();
+      EAssert.isTrue(p.getType() == Participant.eType.atc);
+      AtcId ret = InternalAcc.getAtc(p.getId()).getAtcId();
       return ret;
     }
 
@@ -55,10 +51,14 @@ public abstract class ComputerAtc extends Atc {
     }
 
     public AtcId getTarget() {
-      Participant p = message.getSource();
-      EAssert.isTrue(message.getTarget().getType() == Participant.eType.atc);
-      AtcId ret = InternalAcc.getAtc(message.getTarget().getId()).getAtcId();
+      Participant p = message.getTarget();
+      EAssert.isTrue(p.getType() == Participant.eType.atc);
+      AtcId ret = InternalAcc.getAtc(p.getId()).getAtcId();
       return ret;
+    }
+
+    PlaneSwitchRequest getPlaneSwitchRequest() {
+      return message.getContent();
     }
   }
 
@@ -72,7 +72,6 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
-    tohle porad vytahnout do nejake tridy bokem
   private class SwitchManager {
 
     private static final int SECONDS_BEFORE_REPEAT_SWITCH_REQUEST = 30;
@@ -140,16 +139,14 @@ public abstract class ComputerAtc extends Atc {
     }
 
     private void msgConfirm(PlaneSwitchRequestMessageWrapper mw) {
-AtcConfirmation confirmation = new AtcConfirmation(mw.getPlaneSwitchRequest());
-Message msg = new Message(
-    Participant.createAtc(parent.getAtcId()),
-    Participant.createAtc(mw.getSource()),
-    confirmation
-);
+      AtcConfirmation confirmation = new AtcConfirmation(mw.getPlaneSwitchRequest());
+      Message msg = new Message(
+          Participant.createAtc(parent.getAtcId()),
+          Participant.createAtc(mw.getSource()),
+          confirmation
+      );
       sendMessage(msg);
     }
-
-    private void msgCreate(PlaneSwitchRequest psr,)
 
     private void msgReject(PlaneSwitchRequestMessageWrapper mw, String reason) {
       AtcRejection confirmation = new AtcRejection(mw.getPlaneSwitchRequest(), reason);
@@ -201,14 +198,12 @@ Message msg = new Message(
       }
     }
   }
-
   protected final IList<SwitchInfo> incomingPlanes = new EList<>();
   protected final IList<SwitchInfo> outgoingPlanes = new EList<>();
   protected final IList<IAirplane> planes = new EList<>();
   private final DelayedList<Message> speechDelayer = new DelayedList<>(
       Global.MINIMUM_ATC_SPEECH_DELAY_SECONDS, Global.MAXIMUM_ATC_SPEECH_DELAY_SECONDS);
   private final SwitchManager switchManager = new SwitchManager();
-
   public ComputerAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
   }
@@ -237,6 +232,11 @@ Message msg = new Message(
     return false;
   }
 
+  @Override
+  public boolean isResponsibleFor(Callsign callsign) {
+    return this.planes.isAny(q -> q.getCallsign().equals(callsign));
+  }
+
   protected abstract boolean acceptsNewRouting(IAirplane airplane, PlaneSwitchRequest.Routing routing);
 
   protected abstract RequestResult canIAcceptPlane(Squawk squawk);
@@ -244,7 +244,7 @@ Message msg = new Message(
   /**
    * Returns target atc if plane is ready for switch.
    *
-   * @param callsign Plane checked if ready to switch
+   * @param airplane Plane checked if ready to switch
    * @return Target atc, or null if plane not ready to switch.
    */
   protected abstract AtcId getTargetAtcIfPlaneIsReadyToSwitch(IAirplane airplane);
@@ -263,9 +263,12 @@ Message msg = new Message(
     if (gdns.isEmpty() == false) {
       SpeechList<IForPlaneSpeech> lst = new SpeechList<>();
       lst.add(new RadarContactConfirmationNotification());
-      if (InternalAcc.getPrm().forAtc().getResponsibleAtc(callsign).equals(this.getAtcId())) {
+      SwitchInfo si = this.incomingPlanes.tryGetFirst(q -> q.getAirplane().getCallsign().equals(callsign));
+      if (si == null) {
         AtcId atcId = InternalAcc.getAtc(AtcType.app).getAtcId();
         lst.add(new ContactCommand(atcId));
+      } else {
+        this.incomingPlanes.remove(si);
       }
       Message msg = new Message(
           Participant.createAtc(this.getAtcId()),

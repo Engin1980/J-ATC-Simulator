@@ -10,7 +10,6 @@ import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.*;
 import eng.jAtcSim.newLib.atcs.internal.tower.TowerAtc;
-import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
@@ -20,7 +19,6 @@ public class AtcProvider {
       q -> q, EDistinctList.Behavior.exception);
   private final AtcList<Atc> atcs = new AtcList<>(
       q -> q.getAtcId(), EDistinctList.Behavior.exception);
-  private final PlaneResponsibilityManager prm = new PlaneResponsibilityManager();
 
   public AtcProvider(Airport activeAirport) {
     for (eng.jAtcSim.newLib.area.Atc atcTemplate : activeAirport.getAtcTemplates()) {
@@ -60,7 +58,13 @@ public class AtcProvider {
   }
 
   public AtcId getResponsibleAtc(Callsign callsign) {
-    AtcId ret = prm.getResponsibleAtc(callsign);
+    AtcId ret = null;
+    for (Atc atc : atcs) {
+      if (atc.isResponsibleFor(callsign)){
+        ret = atc.getAtcId();
+        break;
+      }
+    }
     return ret;
   }
 
@@ -79,12 +83,10 @@ public class AtcProvider {
 
     InternalAcc.init(
         atcs,
-        app.getFirst(),
-        prm);
+        app.getFirst());
   }
 
   public void registerNewPlane(AtcId atcId, Callsign callsign) {
-    prm.registerNewPlane(atcId, callsign);
     Atc atc = atcs.getFirst(q -> q.getAtcId().equals(atcId));
     atc.registerNewPlaneUnderControl(callsign, true);
   }

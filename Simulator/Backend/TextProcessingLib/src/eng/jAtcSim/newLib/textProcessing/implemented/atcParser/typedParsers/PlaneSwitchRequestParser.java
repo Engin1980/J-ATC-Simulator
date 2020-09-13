@@ -50,7 +50,12 @@ public class PlaneSwitchRequestParser extends TextSpeechParser<PlaneSwitchReques
         route = tmp[1];
       }
     }
-    ret = PlaneSwitchRequest.createFromUser(Squawk.create(sqwk), runway, route);
+
+    if (runway != null || route != null){
+      ret = PlaneSwitchRequest.createRerouting(Squawk.create(sqwk), runway, route);
+    }
+     else
+       ret = PlaneSwitchRequest.createInherit(Squawk.create(sqwk));
     return ret;
   }
 }

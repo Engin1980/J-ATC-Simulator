@@ -8,13 +8,13 @@ public class PlaneSwitchRequestFormatter extends SmartTextSpeechFormatter<PlaneS
   @Override
   public String _format(PlaneSwitchRequest input) {
     String ret;
-    if (input.getRunwayName() == null && input.getRouteName() == null) {
+    if (input.getRouting() != null) {
       EStringBuilder sb = new EStringBuilder();
       sb.appendFormat("%s ", input.getSquawk());
-      if (input.getRunwayName() != null)
-        sb.appendFormat("%s", input.getRunwayName());
-      if (input.getRouteName() != null)
-        sb.appendFormat("/%s", input.getRouteName());
+      if (input.getRouting().getRunwayThresholdName() != null)
+        sb.appendFormat("%s", input.getRouting().getRunwayThresholdName());
+      if (input.getRouting().getRouteName() != null)
+        sb.appendFormat("/%s", input.getRouting().getRouteName());
       ret = sb.toString();
     } else
       ret = input.getSquawk().toString();

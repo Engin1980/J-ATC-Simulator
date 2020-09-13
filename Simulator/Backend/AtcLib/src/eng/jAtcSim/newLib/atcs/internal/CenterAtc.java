@@ -9,11 +9,11 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.airplanes.IAirplaneSHA;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
-import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
@@ -30,6 +30,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterNavaidCommand;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
+import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequest;
 
 public class CenterAtc extends ComputerAtc {
 
@@ -120,9 +121,9 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  protected boolean acceptsNewRouting(Callsign callsign, SwitchRoutingRequest srr) {
-    IAirplane plane = InternalAcc.getPlane(callsign);
+  protected boolean acceptsNewRouting(IAirplane plane, PlaneSwitchRequest.Routing routing) {
     boolean ret;
+
     ret = srr.route.isValidForCategory(plane.getType().category)
         && (srr.route.getType() == DARouteType.vectoring
         || srr.route.getType() == DARouteType.star

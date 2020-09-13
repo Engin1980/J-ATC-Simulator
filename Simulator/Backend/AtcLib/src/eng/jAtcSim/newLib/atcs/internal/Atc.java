@@ -13,6 +13,8 @@ public abstract class Atc {
   private final int orderedAltitude;
   private final AtcRecorder recorder;
 
+  public abstract boolean isResponsibleFor(Callsign callsign);
+
 
 //  public final void save(XElement elm){
 //    XElement tmp =new XElement("atc");

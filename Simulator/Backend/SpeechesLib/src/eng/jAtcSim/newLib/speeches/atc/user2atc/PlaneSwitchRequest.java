@@ -20,6 +20,14 @@ public class PlaneSwitchRequest implements IAtcSpeech {
       this.runwayThresholdName = runwayThresholdName;
       this.routeName = routeName;
     }
+
+    public String getRunwayThresholdName() {
+      return runwayThresholdName;
+    }
+
+    public String getRouteName() {
+      return routeName;
+    }
   }
 
   public enum eType{
