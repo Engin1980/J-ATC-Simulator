@@ -9,6 +9,7 @@ import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.*;
+import eng.jAtcSim.newLib.atcs.internal.center.CenterAtc;
 import eng.jAtcSim.newLib.atcs.internal.tower.TowerAtc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -81,7 +82,7 @@ public class AtcProvider {
     IList<Atc> app = atcs.where(q -> q.getAtcId().getType() == AtcType.app);
     EAssert.isTrue(app.size() == 1); // application now prepared only for one app
 
-    InternalAcc.init(
+    Context.Internal.init(
         atcs,
         app.getFirst());
   }

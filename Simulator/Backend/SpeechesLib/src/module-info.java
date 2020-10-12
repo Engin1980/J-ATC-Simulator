@@ -15,4 +15,5 @@ module JAtcSim.Modules.Backend.SpeechesLib {
   exports eng.jAtcSim.newLib.speeches.system.user2system;
   exports eng.jAtcSim.newLib.speeches.atc.atc2user;
   exports eng.jAtcSim.newLib.speeches.system.system2user;
+  exports eng.jAtcSim.newLib.speeches.atc.planeSwitching;
 }

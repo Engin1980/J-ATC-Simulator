@@ -9,7 +9,6 @@ import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
-import eng.jAtcSim.newLib.atcs.internal.InternalAcc;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
@@ -98,7 +97,7 @@ class DepartureManager {
   }
 
   public boolean isSomeDepartureOnRunway(String rwyName) {
-    ActiveRunway runway = InternalAcc.getRunway(rwyName);
+    ActiveRunway runway = Context.Internal.getRunway(rwyName);
     for (ActiveRunwayThreshold rt : runway.getThresholds()) {
       IAirplane aip = this.lastDepartingPlane.tryGet(rt);
       if (aip != null && aip.getState() == AirplaneState.takeOffRoll)

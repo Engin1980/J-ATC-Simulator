@@ -14,7 +14,7 @@ import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
-import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
+import eng.jAtcSim.newLib.atcs.planeResponsibility.diagrams.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
@@ -33,8 +33,6 @@ import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequestCancelation;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 /**
  * @author Marek
@@ -137,10 +135,10 @@ public class UserAtc extends Atc {
   }
 
   public void sendPlaneSwitchMessageToAtc(AtcId atcId, Callsign callsign, String additionalMessage) {
-    Atc otherAtc = InternalAcc.getAtc(atcId);
-    PlaneResponsibilityManager prm = InternalAcc.getPrm();
+    Atc otherAtc = Context.Internal.getAtc(atcId);
+    PlaneResponsibilityManager prm = Context.Internal.getPrm();
     IAtcSpeech msg;
-    Squawk sqwk = InternalAcc.getSquawkFromCallsign(callsign);
+    Squawk sqwk = Context.Internal.getSquawkFromCallsign(callsign);
 
     if (prm.getResponsibleAtc(callsign).equals(this.getAtcId())) {
       // it is my plane
@@ -220,7 +218,7 @@ public class UserAtc extends Atc {
   public void sendToPlane(Callsign c, SpeechList speeches) {
     //TODO remove after some verification
     try {
-      InternalAcc.getPlane(c);
+      Context.Internal.getPlane(c);
     } catch (Exception ex) {
       throw new EApplicationException("Messages for plane " + c + " cannot be send. Plane not found.");
     }
@@ -251,14 +249,14 @@ public class UserAtc extends Atc {
   private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(Callsign callsign, SpeechList<IForPlaneSpeech> speeches) {
     ContactCommand cc = (ContactCommand) speeches.tryGetFirst(q -> q instanceof ContactCommand);
     if (cc != null) {
-      InternalAcc.getPrm().forAtc().applyConfirmedSwitch(this.getAtcId(), callsign);
+      Context.Internal.getPrm().forAtc().applyConfirmedSwitch(this.getAtcId(), callsign);
     }
   }
 
   private Tuple<SwitchRoutingRequest, String> decodeAdditionalRouting(String text, Callsign callsign) {
     //TODO rewrite using some smart message, to not use parsing here
     EAssert.Argument.isNotNull(callsign, "callsign");
-    IAirplane plane = InternalAcc.getPlane(callsign);
+    IAirplane plane = Context.Internal.getPlane(callsign);
 
     Matcher m = Pattern.compile("(\\d{1,2}[lrcLRC]?)?(\\/(.+))?").matcher(text);
     EAssert.isTrue(m.find(), sf("Unable to decode switch routing request from '%s'.", text));

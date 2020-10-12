@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.atcs.internal;
+package eng.jAtcSim.newLib.atcs.internal.center;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
@@ -9,12 +9,12 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
-import eng.jAtcSim.newLib.airplanes.IAirplaneSHA;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
-import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
+import eng.jAtcSim.newLib.atcs.internal.ComputerAtc;
+import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityEvidence;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
@@ -30,7 +30,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterNavaidCommand;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
-import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequest;
+import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 
 public class CenterAtc extends ComputerAtc {
 
@@ -100,7 +100,7 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   public void registerNewPlaneUnderControl(Callsign callsign, boolean finalRegistration) {
-    IAirplane plane = InternalAcc.getPlane(callsign);
+    IAirplane plane = Context.Internal.getPlane(callsign);
     if (plane.isArrival())
       farArrivals.add(plane);
   }
@@ -112,7 +112,7 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   public void unregisterPlaneUnderControl(Callsign callsign) {
-    IAirplane plane = InternalAcc.getPlane(callsign);
+    IAirplane plane = Context.Internal.getPlane(callsign);
     if (plane.isArrival()) {
       farArrivals.tryRemove(plane);
       middleArrivals.tryRemove(plane);
@@ -121,20 +121,19 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  protected boolean acceptsNewRouting(IAirplane plane, PlaneSwitchRequest.Routing routing) {
+  protected boolean acceptsNewRouting(IAirplane plane, PlaneSwitchRequestRouting routing) {
     boolean ret;
-
-    ret = srr.route.isValidForCategory(plane.getType().category)
-        && (srr.route.getType() == DARouteType.vectoring
-        || srr.route.getType() == DARouteType.star
-        || srr.route.getType() == DARouteType.transition);
+    DARoute daRoute = Context.getArea().getAirport().getDaRoutes().getFirst(q->q.getName().equals(routing.getRouteName()));
+    ret = daRoute.isValidForCategory(plane.getType().category)
+        && (daRoute.getType() == DARouteType.vectoring
+        || daRoute.getType() == DARouteType.star
+        || daRoute.getType() == DARouteType.transition);
     return ret;
   }
 
   @Override
-  protected RequestResult canIAcceptPlane(Callsign callsign) {
+  protected RequestResult canIAcceptPlaneIncomingFromAnotherAtc(IAirplane plane) {
     RequestResult ret;
-    IAirplane plane = InternalAcc.getPlane(callsign);
     if (plane.isArrival()) {
       ret = new RequestResult(false, String.format("%s is an arrival.", plane.getCallsign().toString()));
     } else {
@@ -169,12 +168,11 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  protected AtcId getTargetAtcIfPlaneIsReadyToSwitch(Callsign callsign) {
+  protected AtcId getTargetAtcIfPlaneIsReadyToSwitchToAnotherAtc(IAirplane plane) {
     AtcId ret;
-    IAirplane plane = InternalAcc.getPlane(callsign);
     if (plane.isArrival()) {
       if (plane.isEmergency())
-        ret = InternalAcc.getAtc(AtcType.app).getAtcId();
+        ret = Context.Internal.getAtc(AtcType.app).getAtcId();
       else {
         if (closeArrivals.contains(plane) == false) {
           ret = null;
@@ -182,7 +180,7 @@ public class CenterAtc extends ComputerAtc {
           Navaid n = plane.getRouting().getEntryExitPoint();
           double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
           if (dist <= 10) {
-            ret = InternalAcc.getAtc(AtcType.app).getAtcId();
+            ret = Context.Internal.getAtc(AtcType.app).getAtcId();
           } else
             ret = null;
         }
@@ -193,13 +191,12 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  protected void processMessagesFromPlane(Callsign callsign, SpeechList<IFromPlaneSpeech> spchs) {
-    IAirplane plane = InternalAcc.getPlane(callsign);
-    PlaneResponsibilityManager prm = InternalAcc.getPrm();
+  protected void processMessagesFromPlane(IAirplane plane, SpeechList<IFromPlaneSpeech> spchs) {
+    PlaneResponsibilityEvidence pre = Context.Internal.getPre();
     for (Object o : spchs) {
       if (o instanceof GoodDayNotification) {
         if (((GoodDayNotification) o).isRepeated()) continue; // repeated g-d-n are ignored
-        if (plane.isDeparture() && prm.forAtc().getResponsibleAtc(callsign).equals(this.getAtcId())) {
+        if (plane.isDeparture() && pre.getResponsibleAtc(plane).equals(this.getAtcId())) {
           SpeechList<ICommand> cmds = new SpeechList<>();
 
           cmds.add(
@@ -247,10 +244,10 @@ public class CenterAtc extends ComputerAtc {
     dist = Coordinates.getDistanceInNM(plane.getRouting().getEntryExitPoint().getCoordinate(), plane.getCoordinate());
     if (dist < 27) {
       SpeechList<ICommand> cmds = new SpeechList<>();
-      if (plane.getSha().getTargetAltitude() > InternalAcc.getAtc(AtcType.ctr).getOrderedAltitude())
+      if (plane.getSha().getTargetAltitude() > Context.Internal.getAtc(AtcType.ctr).getOrderedAltitude())
         cmds.add(ChangeAltitudeCommand.create(
             ChangeAltitudeCommand.eDirection.descend,
-            InternalAcc.getAtc(AtcType.ctr).getOrderedAltitude()));
+                Context.Internal.getAtc(AtcType.ctr).getOrderedAltitude()));
 
       // assigns route
       Navaid n = plane.getRouting().getEntryExitPoint();

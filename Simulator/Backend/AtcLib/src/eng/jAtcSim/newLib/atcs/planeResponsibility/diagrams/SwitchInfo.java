@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.atcs.planeResponsibility;
+package eng.jAtcSim.newLib.atcs.planeResponsibility.diagrams;
 
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.shared.AtcId;

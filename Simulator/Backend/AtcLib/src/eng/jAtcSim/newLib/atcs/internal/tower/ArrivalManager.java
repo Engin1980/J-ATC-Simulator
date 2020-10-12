@@ -8,7 +8,6 @@ import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
-import eng.jAtcSim.newLib.atcs.internal.InternalAcc;
 import eng.jAtcSim.newLib.shared.Callsign;
 
 class ArrivalManager {
@@ -54,14 +53,13 @@ class ArrivalManager {
     return ret;
   }
 
-  public void goAroundPlane(Callsign callsign) {
-    IAirplane plane = InternalAcc.getPlane(callsign);
+  public void goAroundPlane(IAirplane plane) {
     landingPlanesList.remove(plane);
     goAroundedPlanesToSwitchList.add(plane);
   }
 
   public boolean isSomeArrivalApproachingOrOnRunway(String rwyName) {
-    ActiveRunway runway = InternalAcc.getRunway(rwyName);
+    ActiveRunway runway = Context.Internal.getRunway(rwyName);
     if (runway == null) {
       throw new IllegalArgumentException("Value of {runway} cannot not be null.");
     }
