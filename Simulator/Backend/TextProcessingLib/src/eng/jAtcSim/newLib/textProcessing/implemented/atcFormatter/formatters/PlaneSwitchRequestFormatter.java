@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.atcFormatter.formatters;
 
 import eng.eSystem.EStringBuilder;
-import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequest;
+import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.jAtcSim.newLib.textProcessing.implemented.formatterHelpers.SmartTextSpeechFormatter;
 
 public class PlaneSwitchRequestFormatter extends SmartTextSpeechFormatter<PlaneSwitchRequest> {

@@ -13,7 +13,7 @@ public class AtcFormatter implements IAtcFormatter<String> {
   static{
     formatters = new TextSpeechFormatterList<>();
     formatters.add(new PlaneSwitchRequestFormatter());
-    formatters.add(new PlaneSwitchRequestCancelationFormatter());
+//    formatters.add(new PlaneSwitchRequestCancelationFormatter());
     formatters.add(new RunwayMaintenanceEndedNotificationFormatter());
     formatters.add(new RunwayMaintenanceProceedingNotificationFormatter());
     formatters.add(new RunwayMaintenanceScheduledNotificationFormatter());

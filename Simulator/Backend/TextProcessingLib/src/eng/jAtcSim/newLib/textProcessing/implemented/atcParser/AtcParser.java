@@ -4,7 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.textProcessing.IWithHelp;
-import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers.PlaneSwitchRequestCancelationParser;
+//import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers.PlaneSwitchRequestCancelationParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers.PlaneSwitchRequestParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers.RunwayInUseRequestParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers.RunwayMaintenanceRequestParser;
@@ -25,7 +25,7 @@ public class AtcParser implements IAtcParser, IWithShortcuts<String>, IWithHelp 
     atcParsers = new TextSpeechParserList<>();
     atcParsers.add(new RunwayMaintenanceRequestParser());
     atcParsers.add(new RunwayInUseRequestParser());
-    atcParsers.add(new PlaneSwitchRequestCancelationParser());
+//    atcParsers.add(new PlaneSwitchRequestCancelationParser());
     atcParsers.add(new PlaneSwitchRequestParser());
   }
 

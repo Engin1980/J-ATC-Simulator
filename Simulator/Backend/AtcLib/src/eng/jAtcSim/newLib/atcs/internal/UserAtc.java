@@ -13,7 +13,7 @@ import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
-import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
+import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityEvidence;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.diagrams.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
@@ -28,8 +28,6 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
-import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequest;
-import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequestCancelation;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -136,11 +134,11 @@ public class UserAtc extends Atc {
 
   public void sendPlaneSwitchMessageToAtc(AtcId atcId, Callsign callsign, String additionalMessage) {
     Atc otherAtc = Context.Internal.getAtc(atcId);
-    PlaneResponsibilityManager prm = Context.Internal.getPrm();
+    PlaneResponsibilityEvidence pre = Context.Internal.getPre();
     IAtcSpeech msg;
-    Squawk sqwk = Context.Internal.getSquawkFromCallsign(callsign);
+    Squawk sqwk = Context.Internal.getPlane(callsign).getSqwk();
 
-    if (prm.getResponsibleAtc(callsign).equals(this.getAtcId())) {
+    if (pre.getResponsibleAtc(sqwk).equals(this.getAtcId())) {
       // it is my plane
       if (prm.forAtc().isUnderSwitchRequest(callsign, this.getAtcId(), null)) {
         // is already under switch request?
@@ -246,58 +244,13 @@ public class UserAtc extends Atc {
 //
 //  }
 
-  private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(Callsign callsign, SpeechList<IForPlaneSpeech> speeches) {
+  private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(IAirplane plane, SpeechList<IForPlaneSpeech> speeches) {
     ContactCommand cc = (ContactCommand) speeches.tryGetFirst(q -> q instanceof ContactCommand);
-    if (cc != null) {
-      Context.Internal.getPrm().forAtc().applyConfirmedSwitch(this.getAtcId(), callsign);
-    }
+    if (cc != null)
+      Context.Internal.getPre().setResponsibleAtc(plane.getSqwk(), this.getAtcId());
   }
 
-  private Tuple<SwitchRoutingRequest, String> decodeAdditionalRouting(String text, Callsign callsign) {
-    //TODO rewrite using some smart message, to not use parsing here
-    EAssert.Argument.isNotNull(callsign, "callsign");
-    IAirplane plane = Context.Internal.getPlane(callsign);
 
-    Matcher m = Pattern.compile("(\\d{1,2}[lrcLRC]?)?(\\/(.+))?").matcher(text);
-    EAssert.isTrue(m.find(), sf("Unable to decode switch routing request from '%s'.", text));
-
-    ActiveRunwayThreshold threshold;
-    DARoute route;
-
-    if (m.group(1) == null)
-      threshold = plane.getRouting().getAssignedRunwayThreshold();
-    else {
-      threshold = Context.getArea().getAirport().tryGetRunwayThreshold(m.group(1));
-      if (threshold == null) {
-        return new Tuple<>(null, "Unable to find runway threshold {" + m.group(1) + "}.");
-      }
-    }
-
-    if (m.group(3) == null) {
-      if (threshold == plane.getRouting().getAssignedRunwayThreshold())
-        route = null;
-      else {
-        throw new ToDoException("Implement this");
-//        route = plane.isArrival()
-//            ? threshold.getArrivalRouteForPlane(plane.getType(), plane.getSha().getTargetAltitude(), plane.getRouting().getEntryExitPoint(), true)
-//            : threshold.getDepartureRouteForPlane(plane.getType(), plane.getRouting().getEntryExitPoint(), true);
-      }
-    } else if (m.group(3).toUpperCase().equals("V")) {
-      route = DARoute.createNewVectoringByFix(plane.getRouting().getEntryExitPoint());
-    } else {
-      route = threshold.getRoutes().tryGetFirst(q -> q.getName().equals(m.group(3)));
-      if (route == null)
-        return new Tuple<>(null, "Unable to find route {" + m.group((3) + "} for runway threshold {" + threshold.getName() + "}."));
-    }
-
-    Tuple<SwitchRoutingRequest, String> ret;
-//    Tuple<SwitchRoutingRequest, String> ret = new Tuple<>(new SwitchRoutingRequest(threshold, route), null);
-    if (threshold == plane.getRouting().getAssignedRunwayThreshold() && route.getName().equals(plane.getRouting().getAssignedDARouteName()))
-      ret = new Tuple<>(null, null);
-    else
-      ret = new Tuple<>(new SwitchRoutingRequest(threshold, route), null);
-    return ret;
-  }
 
 //  private void raiseError(String text) {
 //    //TODO do not know what this is doing:

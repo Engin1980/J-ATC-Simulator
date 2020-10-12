@@ -22,7 +22,7 @@ import eng.jAtcSim.newLib.weather.context.IWeatherAcc;
 
 public class Context {
 
-  public static class Internal{
+  public static class Internal {
     private static Atc app;
     private static AtcList<Atc> atcs;
     private static PlaneResponsibilityEvidence pre;
@@ -30,10 +30,6 @@ public class Context {
     public static Atc getApp() {
       EAssert.isNotNull(app);
       return app;
-    }
-
-    public static PlaneResponsibilityEvidence getPre(){
-      return pre;
     }
 
     public static Atc getAtc(String atcName) {
@@ -51,28 +47,34 @@ public class Context {
       return ret;
     }
 
-    public static Atc getAtc(AirplaneResponsibilityInfo airplaneResponsibilityInfo) {
-      EAssert.Argument.isNotNull(airplaneResponsibilityInfo, "airplaneResponsibilityInfo");
-      return Context.Internal.getAtc(airplaneResponsibilityInfo.getAtc());
-    }
-
     public static AtcList<Atc> getAtcs() {
       return atcs;
     }
 
-    public static IAirplane getPlane(AirplaneResponsibilityInfo airplaneResponsibilityInfo) {
-      EAssert.Argument.isNotNull(airplaneResponsibilityInfo, "airplaneResponsibilityInfo");
-      return Context.Internal.getPlane(airplaneResponsibilityInfo.getPlane());
-    }
+    //TODO delete when unused
+//    public static Atc getAtc(AirplaneResponsibilityInfo airplaneResponsibilityInfo) {
+//      EAssert.Argument.isNotNull(airplaneResponsibilityInfo, "airplaneResponsibilityInfo");
+//      return Context.Internal.getAtc(airplaneResponsibilityInfo.getAtc());
+//    }
 
     public static IAirplane getPlane(Callsign callsign) {
       EAssert.Argument.isNotNull(callsign, "callsign");
       return Context.getAirplane().getAirplanes().get(callsign);
     }
 
+    //TODO delete when unused
+//    public static IAirplane getPlane(AirplaneResponsibilityInfo airplaneResponsibilityInfo) {
+//      EAssert.Argument.isNotNull(airplaneResponsibilityInfo, "airplaneResponsibilityInfo");
+//      return Context.Internal.getPlane(airplaneResponsibilityInfo.getPlane());
+//    }
+
     public static IAirplane getPlane(Squawk squawk) {
       EAssert.Argument.isNotNull(squawk, "squawk");
       return Context.getAirplane().getAirplanes().get(squawk);
+    }
+
+    public static PlaneResponsibilityEvidence getPre() {
+      return pre;
     }
 
     public static ActiveRunway getRunway(String rwyName) {
@@ -103,6 +105,10 @@ public class Context {
     return ContextManager.getContext(IAtcAcc.class);
   }
 
+  public static IMessagingAcc getMessaging() {
+    return ContextManager.getContext(IMessagingAcc.class);
+  }
+
   public static ISharedAcc getShared() {
     return ContextManager.getContext(ISharedAcc.class);
   }
@@ -114,6 +120,4 @@ public class Context {
   public static IWeatherAcc getWeather() {
     return ContextManager.getContext(IWeatherAcc.class);
   }
-
-  public static IMessagingAcc getMessaging() { return ContextManager.getContext(IMessagingAcc.class);}
 }

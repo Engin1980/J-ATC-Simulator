@@ -2,7 +2,8 @@ package eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.Squawk;
-import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequest;
+import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
+import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
 public class PlaneSwitchRequestParser extends TextSpeechParser<PlaneSwitchRequest> {
@@ -52,10 +53,62 @@ public class PlaneSwitchRequestParser extends TextSpeechParser<PlaneSwitchReques
     }
 
     if (runway != null || route != null){
-      ret = PlaneSwitchRequest.createRerouting(Squawk.create(sqwk), runway, route);
+      ret = new PlaneSwitchRequest(Squawk.create(sqwk), new PlaneSwitchRequestRouting(runway, route));
     }
      else
-       ret = PlaneSwitchRequest.createInherit(Squawk.create(sqwk));
+       ret = new PlaneSwitchRequest(Squawk.create(sqwk), false);
     return ret;
   }
 }
+
+/*
+
+//TODO exported from UserAtc class
+// if not required anymore, can be deleted
+
+private Tuple<SwitchRoutingRequest, String> decodeAdditionalRouting(String text, Callsign callsign) {
+    //TODO rewrite using some smart message, to not use parsing here
+    EAssert.Argument.isNotNull(callsign, "callsign");
+    IAirplane plane = Context.Internal.getPlane(callsign);
+
+    Matcher m = Pattern.compile("(\\d{1,2}[lrcLRC]?)?(\\/(.+))?").matcher(text);
+    EAssert.isTrue(m.find(), sf("Unable to decode switch routing request from '%s'.", text));
+
+    ActiveRunwayThreshold threshold;
+    DARoute route;
+
+    if (m.group(1) == null)
+      threshold = plane.getRouting().getAssignedRunwayThreshold();
+    else {
+      threshold = Context.getArea().getAirport().tryGetRunwayThreshold(m.group(1));
+      if (threshold == null) {
+        return new Tuple<>(null, "Unable to find runway threshold {" + m.group(1) + "}.");
+      }
+    }
+
+    if (m.group(3) == null) {
+      if (threshold == plane.getRouting().getAssignedRunwayThreshold())
+        route = null;
+      else {
+        throw new ToDoException("Implement this");
+//        route = plane.isArrival()
+//            ? threshold.getArrivalRouteForPlane(plane.getType(), plane.getSha().getTargetAltitude(), plane.getRouting().getEntryExitPoint(), true)
+//            : threshold.getDepartureRouteForPlane(plane.getType(), plane.getRouting().getEntryExitPoint(), true);
+      }
+    } else if (m.group(3).toUpperCase().equals("V")) {
+      route = DARoute.createNewVectoringByFix(plane.getRouting().getEntryExitPoint());
+    } else {
+      route = threshold.getRoutes().tryGetFirst(q -> q.getName().equals(m.group(3)));
+      if (route == null)
+        return new Tuple<>(null, "Unable to find route {" + m.group((3) + "} for runway threshold {" + threshold.getName() + "}."));
+    }
+
+    Tuple<SwitchRoutingRequest, String> ret;
+//    Tuple<SwitchRoutingRequest, String> ret = new Tuple<>(new SwitchRoutingRequest(threshold, route), null);
+    if (threshold == plane.getRouting().getAssignedRunwayThreshold() && route.getName().equals(plane.getRouting().getAssignedDARouteName()))
+      ret = new Tuple<>(null, null);
+    else
+      ret = new Tuple<>(new SwitchRoutingRequest(threshold, route), null);
+    return ret;
+  }
+ */
