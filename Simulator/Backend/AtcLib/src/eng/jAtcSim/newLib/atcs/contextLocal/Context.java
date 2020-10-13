@@ -8,7 +8,6 @@ import eng.jAtcSim.newLib.area.context.IAreaAcc;
 import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.context.IAtcAcc;
 import eng.jAtcSim.newLib.atcs.internal.Atc;
-import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityEvidence;
 import eng.jAtcSim.newLib.messaging.context.IMessagingAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -25,7 +24,8 @@ public class Context {
   public static class Internal {
     private static Atc app;
     private static AtcList<Atc> atcs;
-    private static PlaneResponsibilityEvidence pre;
+    //TODO del if unused
+//    private static PlaneResponsibilityEvidence pre;
 
     public static Atc getApp() {
       EAssert.isNotNull(app);
@@ -72,10 +72,10 @@ public class Context {
       EAssert.Argument.isNotNull(squawk, "squawk");
       return Context.getAirplane().getAirplanes().get(squawk);
     }
-
-    public static PlaneResponsibilityEvidence getPre() {
-      return pre;
-    }
+    //TODO del if unused
+//    public static PlaneResponsibilityEvidence getPre() {
+//      return pre;
+//    }
 
     public static ActiveRunway getRunway(String rwyName) {
       return Context.getArea().getAirport().getRunways().getFirst(q -> q.getName().equals(rwyName));
