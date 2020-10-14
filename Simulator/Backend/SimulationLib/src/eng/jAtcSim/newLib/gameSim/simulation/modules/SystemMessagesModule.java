@@ -18,11 +18,9 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class SystemMessagesModule extends SimulationModule {
   private static final int MAX_TICK_LENGTH_INTERVAL = 5000;
   private static final int MIN_TICK_LENGTH_INTERVAL = 100;
-  private final AtcId userAtcId;
 
-  public SystemMessagesModule(Simulation parent, AtcId userAtcId) {
+  public SystemMessagesModule(Simulation parent) {
     super(parent);
-    this.userAtcId = userAtcId;
   }
 
   public void elapseSecond() {

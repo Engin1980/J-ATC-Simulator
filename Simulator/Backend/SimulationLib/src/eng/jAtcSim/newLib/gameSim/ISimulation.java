@@ -42,7 +42,7 @@ public interface ISimulation {
 
   IStatsProvider getStats();
 
-  AtcId getUserAtcId();
+  IReadOnlyList<AtcId> getUserAtcIds();
 
   void pauseUnpauseSim();
 
@@ -52,11 +52,11 @@ public interface ISimulation {
 
   int registerOnSecondElapsed(IEventListenerSimple<ISimulation> action);
 
-  void sendAtcCommand(AtcId id, IAtcSpeech speech);
+  void sendAtcCommand(AtcId fromAtcId, AtcId toAtcId, IAtcSpeech speech);
 
-  void sendPlaneCommands(Callsign callsign, SpeechList<IForPlaneSpeech> cmds);
+  void sendPlaneCommands(AtcId fromAtcId, Callsign toCallsign, SpeechList<IForPlaneSpeech> cmds);
 
-  void sendSystemCommand(ISystemSpeech speech);
+  void sendSystemCommand(AtcId fromAtcId, ISystemSpeech speech);
 
   void start();
 

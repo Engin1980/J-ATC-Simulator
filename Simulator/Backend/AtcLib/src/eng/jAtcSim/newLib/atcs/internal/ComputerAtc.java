@@ -108,7 +108,7 @@ public abstract class ComputerAtc extends Atc {
 
     public static PlaneSwitchRequest tryGetBaseIfBasedOnPlaneSwitch(Message message) {
       if (message.getContent() instanceof PlaneSwitchRequest)
-        return (PlaneSwitchRequest) message.getContent();
+        return message.getContent();
       else if (message.getContent() instanceof AtcConfirmation)
         return (PlaneSwitchRequest) ((AtcConfirmation) message.getContent()).getOrigin();
       else if (message.getContent() instanceof AtcRejection)

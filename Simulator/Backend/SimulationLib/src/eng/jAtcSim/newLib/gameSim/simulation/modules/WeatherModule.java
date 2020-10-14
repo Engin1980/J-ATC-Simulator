@@ -1,7 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 import eng.jAtcSim.newLib.shared.ContextManager;
@@ -12,6 +11,7 @@ import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 
 public class WeatherModule extends SimulationModule {
   private final WeatherManager weatherManager;
+
   public WeatherModule(Simulation parent, WeatherManager weatherManager) {
     super(parent);
     EAssert.Argument.isNotNull(weatherManager, "weatherManager");
@@ -23,7 +23,8 @@ public class WeatherModule extends SimulationModule {
     weatherManager.elapseSecond();
     if (weatherManager.isNewWeather()) {
       parent.getAtcModule().adviceWeatherUpdated();
-      parent.getIoModule().sendTextMessageForUser(new MetarNotification(true));
+      parent.getAtcModule().getUserAtcIds().forEach(q ->
+              parent.getIoModule().sendTextMessageForUser(q, new MetarNotification(true)));
     }
   }
 

@@ -15,36 +15,9 @@ public abstract class Atc {
 
   public abstract boolean isResponsibleFor(Callsign callsign);
 
+  public abstract void unregisterPlaneDeletedFromGame(Callsign plane);
 
-//  public final void save(XElement elm){
-//    XElement tmp =new XElement("atc");
-//    elm.addElement(tmp);
-//
-//    LoadSave.saveField(tmp, this, "name");
-//    _save(tmp);
-//  }
-//
-//  public void load(XElement elm) {
-//    XElement tmp = null;
-//    for (XElement item : elm.getChildren()) {
-//      if (item.getChild("name").getContent().equals(name)){
-//        tmp = item;
-//        break;
-//      }
-//    }
-//    assert tmp != null;
-//
-//    _load(tmp);
-//  }
-//
-//  protected abstract void _save(XElement elm);
-//  protected abstract void _load(XElement elm);
-
-  public abstract void unregisterPlaneUnderControl(Callsign plane);
-
-  public abstract void removePlaneDeletedFromGame(Callsign plane);
-
-  public abstract void registerNewPlaneUnderControl(Callsign plane, boolean initialRegistration);
+  public abstract void registerNewPlaneInGame(Callsign plane, boolean initialRegistration);
 
   public Atc(eng.jAtcSim.newLib.area.Atc template) {
     this.atcId = template.toAtcId();
@@ -88,4 +61,28 @@ public abstract class Atc {
   protected AtcRecorder getRecorder() {
     return recorder;
   }
+
+//  public final void save(XElement elm){
+//    XElement tmp =new XElement("atc");
+//    elm.addElement(tmp);
+//
+//    LoadSave.saveField(tmp, this, "name");
+//    _save(tmp);
+//  }
+//
+//  public void load(XElement elm) {
+//    XElement tmp = null;
+//    for (XElement item : elm.getChildren()) {
+//      if (item.getChild("name").getContent().equals(name)){
+//        tmp = item;
+//        break;
+//      }
+//    }
+//    assert tmp != null;
+//
+//    _load(tmp);
+//  }
+//
+//  protected abstract void _save(XElement elm);
+//  protected abstract void _load(XElement elm);
 }

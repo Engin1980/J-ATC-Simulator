@@ -12,7 +12,6 @@ import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
 import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
-import eng.jAtcSim.newLib.gameSim.IParseFormat;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.SimulationStartupContext;
@@ -81,6 +80,11 @@ public class Simulation {
     }
 
     @Override
+    public ParserFormatterStartInfo getParserFormatterInfo() {
+      return Simulation.this.ioModule.getParserFormatterInfo();
+    }
+
+    @Override
     public IReadOnlyList<IAirplaneInfo> getPlanesToDisplay() {
       return Simulation.this.getAirplanesModule().getPlanesForPublicAccess();
     }
@@ -101,8 +105,8 @@ public class Simulation {
     }
 
     @Override
-    public AtcId getUserAtcId() {
-      return Simulation.this.getAtcModule().getUserAtcId();
+    public IReadOnlyList<AtcId> getUserAtcIds() {
+      return Simulation.this.getAtcModule().getUserAtcIds();
     }
 
     @Override
@@ -129,18 +133,18 @@ public class Simulation {
     }
 
     @Override
-    public void sendAtcCommand(AtcId id, IAtcSpeech speech) {
-      Simulation.this.getIoModule().sendAtcCommand(id, speech);
+    public void sendAtcCommand(AtcId fromAtcId, AtcId toAtcId, IAtcSpeech speech) {
+      Simulation.this.getIoModule().sendAtcCommand(fromAtcId, toAtcId, speech);
     }
 
     @Override
-    public void sendPlaneCommands(Callsign callsign, SpeechList<IForPlaneSpeech> cmds) {
-      Simulation.this.getIoModule().sendPlaneCommand(callsign, cmds);
+    public void sendPlaneCommands(AtcId fromAtcId, Callsign toCallsign, SpeechList<IForPlaneSpeech> cmds) {
+      Simulation.this.getIoModule().sendPlaneCommand(fromAtcId, toCallsign, cmds);
     }
 
     @Override
-    public void sendSystemCommand(ISystemSpeech speech) {
-      Simulation.this.getIoModule().sendSystemCommand(speech);
+    public void sendSystemCommand(AtcId fromAtcId, ISystemSpeech speech) {
+      Simulation.this.getIoModule().sendSystemCommand(fromAtcId, speech);
     }
 
     @Override
@@ -162,11 +166,6 @@ public class Simulation {
     public void unregisterOnSecondElapsed(int simulationSecondListenerHandlerId) {
       Simulation.this.getTimerModule().unregisterOnTickListener(simulationSecondListenerHandlerId);
     }
-
-    @Override
-    public ParserFormatterStartInfo getParserFormatterInfo() {
-      return Simulation.this.ioModule.getParserFormatterInfo();
-    }
   }
 
   private static final boolean DEBUG_STYLE_TIMER = false;
@@ -183,18 +182,18 @@ public class Simulation {
   private final WorldModule worldModule;
 
   public Simulation(
-      SimulationStartupContext simulationContext,
-      SimulationSettings simulationSettings) {
+          SimulationStartupContext simulationContext,
+          SimulationSettings simulationSettings) {
     EAssert.Argument.isNotNull(simulationContext, "simulationContext");
     EAssert.Argument.isNotNull(simulationSettings, "simulationSettings");
 
     ETimeStamp simulationStartTime = simulationSettings.simulationSettings.startTime;
     this.now = new EDayTimeRun(simulationStartTime.getValue());
     SharedAcc sharedContext = new SharedAcc(
-        simulationContext.activeAirport.getIcao(),
-        simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()),
-        this.now,
-        new SimulationLog()
+            simulationContext.activeAirport.getIcao(),
+            simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()),
+            this.now,
+            new SimulationLog()
     );
     ContextManager.setContext(ISharedAcc.class, sharedContext);
 
@@ -207,11 +206,10 @@ public class Simulation {
     this.weatherModule.init();
 
     this.ioModule = new IOModule(
-        this,
-        userAtcId,
-        new KeyShortcutManager(),
-        simulationSettings.parserFormatterStartInfo,
-        new SystemMessagesModule(this, userAtcId)
+            this,
+            new KeyShortcutManager(),
+            simulationSettings.parserFormatterStartInfo,
+            new SystemMessagesModule(this)
     );
     this.ioModule.init();
 
@@ -219,25 +217,24 @@ public class Simulation {
     this.statsModule.init();
 
     this.atcModule = new AtcModule(
-        userAtcId,
-        new AtcProvider(worldModule.getActiveAirport()));
+            new AtcProvider(worldModule.getActiveAirport()));
     this.atcModule.init();
 
     this.trafficModule = new TrafficModule(
-        this,
-        new TrafficProvider(worldModule.getTraffic()),
-        simulationSettings.trafficSettings.trafficDelayStepProbability,
-        simulationSettings.trafficSettings.trafficDelayStep,
-        simulationSettings.trafficSettings.useExtendedCallsigns);
+            this,
+            new TrafficProvider(worldModule.getTraffic()),
+            simulationSettings.trafficSettings.trafficDelayStepProbability,
+            simulationSettings.trafficSettings.trafficDelayStep,
+            simulationSettings.trafficSettings.useExtendedCallsigns);
     this.trafficModule.init();
 
     this.airplanesModule = new AirplanesModule(
-        this,
-        new AirplanesController(),
-        new AirproxController(),
-        new MrvaController(worldModule.getArea().getBorders().where(q -> q.getType() == Border.eType.mrva)),
-        new EmergencyAppearanceController(simulationSettings.trafficSettings.emergencyPerDayProbability),
-        new MoodManager()
+            this,
+            new AirplanesController(),
+            new AirproxController(),
+            new MrvaController(worldModule.getArea().getBorders().where(q -> q.getType() == Border.eType.mrva)),
+            new EmergencyAppearanceController(simulationSettings.trafficSettings.emergencyPerDayProbability),
+            new MoodManager()
     );
     this.airplanesModule.init();
 
@@ -283,8 +280,8 @@ public class Simulation {
 
     if (isElapseSecondCalculationRunning) {
       Context.getApp().getAppLog().write(
-          ApplicationLog.eType.warning,
-          "elapseSecond() called before the previous one was finished!");
+              ApplicationLog.eType.warning,
+              "elapseSecond() called before the previous one was finished!");
       return;
     }
     if (DEBUG_STYLE_TIMER)

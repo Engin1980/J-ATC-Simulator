@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.atcs.IUserAtcInterface;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
@@ -19,7 +20,6 @@ import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
-import eng.jAtcSim.newLib.speeches.base.Rejection;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 
 public class IOModule extends SimulationModule {
@@ -28,11 +28,9 @@ public class IOModule extends SimulationModule {
   private final Messenger messenger;
   private final ParserFormatterStartInfo parseFormatStartInfo;
   private final SystemMessagesModule systemMessagesModule;
-  private final AtcId userAtcId;
 
   public IOModule(
       Simulation parent,
-      AtcId userAtcId,
       KeyShortcutManager keyShortcutManager,
       ParserFormatterStartInfo parserFormatterStartInfo,
       SystemMessagesModule systemMessagesModule) {
@@ -41,7 +39,6 @@ public class IOModule extends SimulationModule {
     EAssert.Argument.isNotNull(parserFormatterStartInfo, "parserFormatterStartInfo");
     EAssert.Argument.isNotNull(systemMessagesModule, "systemMessagesModule");
 
-    this.userAtcId = userAtcId;
     this.keyShortcutManager = keyShortcutManager;
     this.parseFormatStartInfo = parserFormatterStartInfo;
     this.systemMessagesModule = systemMessagesModule;
@@ -83,37 +80,30 @@ public class IOModule extends SimulationModule {
     this.messenger.unregisterListener(listener);
   }
 
-  public void sendAtcCommand(AtcId id, IAtcSpeech atcSpech) {
-    eng.jAtcSim.newLib.messaging.Message msg = new eng.jAtcSim.newLib.messaging.Message(
-        Participant.createAtc(this.userAtcId),
-        Participant.createAtc(id),
-        atcSpech
-    );
-    this.messenger.send(msg);
+  public void sendAtcCommand(AtcId fromAtcId, AtcId toAtcId, IAtcSpeech atcSpeech) {
+    IUserAtcInterface humanAtc = getUserAtcInterface(fromAtcId);
+    humanAtc.sendAtcCommand(toAtcId,atcSpeech);
   }
 
-  public void sendPlaneCommand(Callsign callsign, SpeechList<IForPlaneSpeech> cmds) {
-    eng.jAtcSim.newLib.messaging.Message msg = new eng.jAtcSim.newLib.messaging.Message(
-        Participant.createAtc(this.userAtcId),
-        Participant.createAirplane(callsign),
-        cmds
-    );
-    this.messenger.send(msg);
+  public void sendPlaneCommand(AtcId fromAtcId, Callsign toCallsign, SpeechList<IForPlaneSpeech> cmds) {
+    IUserAtcInterface humanAtc = getUserAtcInterface(fromAtcId);
+    humanAtc.sendPlaneCommand(toCallsign, cmds);
   }
 
-  public void sendSystemCommand(ISystemSpeech systemSpeech) {
-    eng.jAtcSim.newLib.messaging.Message msg = new eng.jAtcSim.newLib.messaging.Message(
-        Participant.createAtc(userAtcId),
-        Participant.createSystem(),
-        systemSpeech
-    );
-    this.messenger.send(msg);
+  public void sendSystemCommand(AtcId fromAtcId, ISystemSpeech systemSpeech) {
+    IUserAtcInterface humanAtc = getUserAtcInterface(fromAtcId);
+    humanAtc.sendSystemCommand(systemSpeech);
   }
 
-  public void sendTextMessageForUser(IMessageContent content) {
+  private IUserAtcInterface getUserAtcInterface(AtcId fromAtcId) {
+    IUserAtcInterface ret = parent.getAtcModule().getUserAtcInterface(fromAtcId);
+    return ret;
+  }
+
+  public void sendTextMessageForUser(AtcId targetAtcId, IMessageContent content) {
     eng.jAtcSim.newLib.messaging.Message m = new eng.jAtcSim.newLib.messaging.Message(
         Participant.createSystem(),
-        Participant.createAtc(this.userAtcId),
+        Participant.createAtc(targetAtcId),
         content);
     Context.getMessaging().getMessenger().send(m);
   }

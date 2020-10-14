@@ -99,14 +99,14 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void registerNewPlaneUnderControl(Callsign callsign, boolean finalRegistration) {
+  public void registerNewPlaneInGame(Callsign callsign, boolean finalRegistration) {
     IAirplane plane = Context.Internal.getPlane(callsign);
     if (plane.isArrival())
       farArrivals.add(plane);
   }
 
   @Override
-  public void removePlaneDeletedFromGame(Callsign callsign) {
+  public void unregisterPlaneDeletedFromGame(Callsign callsign) {
     // intentionally blank
   }
 

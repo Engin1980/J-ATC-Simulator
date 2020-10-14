@@ -155,7 +155,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void registerNewPlaneUnderControl(Callsign callsign, boolean initialRegistration) {
+  public void registerNewPlaneInGame(Callsign callsign, boolean initialRegistration) {
     IAirplane plane = Context.Internal.getPlane(callsign);
     if (plane.isArrival())
       arrivalManager.registerNewArrival(plane);
@@ -166,7 +166,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void removePlaneDeletedFromGame(Callsign callsign) {
+  public void unregisterPlaneDeletedFromGame(Callsign callsign) {
     IAirplane plane = Context.Internal.getPlane(callsign);
     if (plane.isArrival()) {
       arrivalManager.deletePlane(plane);
