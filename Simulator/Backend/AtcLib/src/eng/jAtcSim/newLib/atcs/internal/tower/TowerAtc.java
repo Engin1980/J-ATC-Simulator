@@ -9,17 +9,17 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
-import eng.jAtcSim.newLib.area.*;
-import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.area.ActiveRunway;
+import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.area.Airport;
+import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.ComputerAtc;
-import eng.jAtcSim.newLib.atcs.planeResponsibility.diagrams.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
@@ -30,13 +30,18 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.RadarContactConfirmatio
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.TaxiToHoldingPointCommand;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.*;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
-import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
+import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.weather.Weather;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class TowerAtc extends ComputerAtc {
+
+  public enum eDirection {
+    departures,
+    arrivals
+  }
 
   public static class RunwaysInUseInfo {
     private SchedulerForAdvice scheduler;
@@ -52,55 +57,9 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  public enum eDirection {
-    departures,
-    arrivals
-  }
-
   private static final int[] RWY_CHANGE_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5, 4, 3, 2, 1};
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
-
-  private static RunwayConfiguration getSuggestedThresholds() {
-    RunwayConfiguration ret = null;
-    Weather w = Context.getWeather().getWeather();
-
-    for (RunwayConfiguration rc : Context.getArea().getAirport().getRunwayConfigurations()) {
-      if (rc.accepts(w.getWindHeading(), w.getWindSpeetInKts())) {
-        ret = rc;
-        break;
-      }
-    }
-    if (ret == null) {
-      ActiveRunwayThreshold rt = getSuggestedThresholdsRegardlessRunwayConfigurations();
-      IReadOnlyList<ActiveRunwayThreshold> rts = rt.getParallelGroup();
-      ret = RunwayConfiguration.createForThresholds(rts);
-    }
-
-    assert ret != null : "There must be runway configuration created.";
-
-    return ret;
-  }
-
-  private static ActiveRunwayThreshold getSuggestedThresholdsRegardlessRunwayConfigurations() {
-    Weather w = Context.getWeather().getWeather();
-    Airport airport = Context.getArea().getAirport();
-    ActiveRunwayThreshold rt = null;
-
-    double diff = Integer.MAX_VALUE;
-    // select runway according to wind
-    for (ActiveRunway r : airport.getRunways()) {
-      for (ActiveRunwayThreshold t : r.getThresholds()) {
-        double localDiff = Headings.getDifference(w.getWindHeading(), (int) t.getCourse(), true);
-        if (localDiff < diff) {
-          diff = localDiff;
-          rt = t;
-        }
-      }
-    }
-    return rt;
-  }
-
   private final DepartureManager departureManager = new DepartureManager(this);
   private final ArrivalManager arrivalManager = new ArrivalManager(this);
   private final EventAnonymousSimple onRunwayChanged = new EventAnonymousSimple();
@@ -165,20 +124,6 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  @Override
-  public void unregisterPlaneDeletedFromGame(Callsign callsign) {
-    IAirplane plane = Context.Internal.getPlane(callsign);
-    if (plane.isArrival()) {
-      arrivalManager.deletePlane(plane);
-      //TODO this will add to stats even planes deleted from the game by a user(?)
-      //TODO this stats value should be increased outside of Tower atc??
-      Context.getStats().getStatsProvider().registerArrival();
-    }
-    if (plane.isDeparture()) {
-      departureManager.deletePlane(plane);
-    }
-  }
-
   public void setUpdatedWeatherFlag() {
     this.isUpdatedWeather = true;
   }
@@ -188,32 +133,72 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(Callsign callsign) {
+  public void unregisterPlaneDeletedFromGame(Callsign callsign, boolean isForcedDeletion) {
     IAirplane plane = Context.Internal.getPlane(callsign);
-    if (plane.isArrival()) {
-      if (plane.getState() == AirplaneState.landed) {
-        arrivalManager.unregisterFinishedArrival(plane);
-      }
-      //GO-AROUNDed planes are not unregistered, they have been unregistered previously
-    }
     if (plane.isDeparture()) {
-      departureManager.unregisterFinishedDeparture(plane);
-
-      // add to stats
-      EDayTimeStamp holdingPointEntryTime = departureManager.getAndEraseHoldingPointEntryTime(plane);
-      int diffSecs = Context.getShared().getNow().getValue() - holdingPointEntryTime.getValue();
-      diffSecs -= 15; // generally let TWR atc asks APP atc to switch 15 seconds before HP.
-      if (diffSecs < 0) diffSecs = 0;
+      departureManager.deletePlane(plane);
+      if (isForcedDeletion == false) {
+        // add to stats
+        EDayTimeStamp holdingPointEntryTime = departureManager.getAndEraseHoldingPointEntryTime(plane);
+        int diffSecs = Context.getShared().getNow().getValue() - holdingPointEntryTime.getValue();
+        diffSecs -= 15; // generally let TWR atc asks APP atc to switch 15 seconds before HP.
+        if (diffSecs < 0) diffSecs = 0;
+        //TODO this stats value should be increased outside of Tower atc??
+        Context.getStats().getStatsProvider().registerDeparture(diffSecs);
+      }
+    } else { // plane.isArrival()
+      arrivalManager.deletePlane(plane);
+      //TODO this will add to stats even planes deleted from the game by a user(?)
       //TODO this stats value should be increased outside of Tower atc??
-      Context.getStats().getStatsProvider().registerDeparture(diffSecs);
+      Context.getStats().getStatsProvider().registerArrival();
     }
 
-    if (plane.isEmergency() && plane.getState() == AirplaneState.landed) {
+    if (!isForcedDeletion && plane.isEmergency() && plane.getState() == AirplaneState.landed) {
       // if it is landed emergency, close runway for amount of time
       ActiveRunway rwy = plane.getRouting().getAssignedRunwayThreshold().getParent();
       RunwayCheckInfo rwyCheck = RunwayCheckInfo.createImmediateAfterEmergency();
       runwayChecks.set(rwy.getName(), rwyCheck);
     }
+  }
+
+  private static RunwayConfiguration getSuggestedThresholds() {
+    RunwayConfiguration ret = null;
+    Weather w = Context.getWeather().getWeather();
+
+    for (RunwayConfiguration rc : Context.getArea().getAirport().getRunwayConfigurations()) {
+      if (rc.accepts(w.getWindHeading(), w.getWindSpeetInKts())) {
+        ret = rc;
+        break;
+      }
+    }
+    if (ret == null) {
+      ActiveRunwayThreshold rt = getSuggestedThresholdsRegardlessRunwayConfigurations();
+      IReadOnlyList<ActiveRunwayThreshold> rts = rt.getParallelGroup();
+      ret = RunwayConfiguration.createForThresholds(rts);
+    }
+
+    assert ret != null : "There must be runway configuration created.";
+
+    return ret;
+  }
+
+  private static ActiveRunwayThreshold getSuggestedThresholdsRegardlessRunwayConfigurations() {
+    Weather w = Context.getWeather().getWeather();
+    Airport airport = Context.getArea().getAirport();
+    ActiveRunwayThreshold rt = null;
+
+    double diff = Integer.MAX_VALUE;
+    // select runway according to wind
+    for (ActiveRunway r : airport.getRunways()) {
+      for (ActiveRunwayThreshold t : r.getThresholds()) {
+        double localDiff = Headings.getDifference(w.getWindHeading(), (int) t.getCourse(), true);
+        if (localDiff < diff) {
+          diff = localDiff;
+          rt = t;
+        }
+      }
+    }
+    return rt;
   }
 
 //  @Override
@@ -305,9 +290,10 @@ public class TowerAtc extends ComputerAtc {
     if (plane.isDeparture()) {
       return new ComputerAtc.RequestResult(false, String.format("%s is a departure.", plane.getCallsign()));
     }
-    if (Context.Internal.getPre().getResponsibleAtc(plane).equals(Context.Internal.getApp().getAtcId())) {
-      return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", plane.getCallsign()));
-    }
+    //FIXME is it needed to be plane from APP?
+//    if (this.pa Context.Internal.getPre().getResponsibleAtc(plane).equals(Context.Internal.getApp().getAtcId())) {
+//      return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", plane.getCallsign()));
+//    }
     if (isOnApproachOfTheRunwayInUse(plane) == false)
       return new ComputerAtc.RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", plane.getCallsign()));
     if (isRunwayThresholdUnderMaintenance(plane.getRouting().getAssignedRunwayThreshold()) == false) {

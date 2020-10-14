@@ -118,7 +118,7 @@ public class UserAtc extends Atc implements IUserAtcInterface {
   }
 
   @Override
-  public void unregisterPlaneDeletedFromGame(Callsign callsign) {
+  public void unregisterPlaneDeletedFromGame(Callsign callsign, boolean isForcedDeletion) {
     IAirplane plane = Context.Internal.getPlane(callsign);
     this.planes.tryRemove(plane);
   }

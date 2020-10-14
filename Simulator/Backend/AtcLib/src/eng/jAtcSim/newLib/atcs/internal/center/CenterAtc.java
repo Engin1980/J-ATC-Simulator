@@ -14,7 +14,6 @@ import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.ComputerAtc;
-import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityEvidence;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
@@ -106,17 +105,13 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void unregisterPlaneDeletedFromGame(Callsign callsign) {
-    // intentionally blank
-  }
-
-  @Override
-  public void unregisterPlaneUnderControl(Callsign callsign) {
+  public void unregisterPlaneDeletedFromGame(Callsign callsign, boolean isForcedDeletion) {
     IAirplane plane = Context.Internal.getPlane(callsign);
     if (plane.isArrival()) {
       farArrivals.tryRemove(plane);
       middleArrivals.tryRemove(plane);
       closeArrivals.tryRemove(plane);
+      //TODO here somewhere should be stats after finished departer, don't they?
     }
   }
 
@@ -192,11 +187,10 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   protected void processMessagesFromPlane(IAirplane plane, SpeechList<IFromPlaneSpeech> spchs) {
-    PlaneResponsibilityEvidence pre = Context.Internal.getPre();
     for (Object o : spchs) {
       if (o instanceof GoodDayNotification) {
         if (((GoodDayNotification) o).isRepeated()) continue; // repeated g-d-n are ignored
-        if (plane.isDeparture() && pre.getResponsibleAtc(plane).equals(this.getAtcId())) {
+        if (plane.isDeparture() && this.isResponsibleFor(plane.getCallsign())) {
           SpeechList<ICommand> cmds = new SpeechList<>();
 
           cmds.add(

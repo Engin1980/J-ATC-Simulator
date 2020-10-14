@@ -15,7 +15,7 @@ public abstract class Atc {
 
   public abstract boolean isResponsibleFor(Callsign callsign);
 
-  public abstract void unregisterPlaneDeletedFromGame(Callsign plane);
+  public abstract void unregisterPlaneDeletedFromGame(Callsign plane, boolean isForcedDeletion);
 
   public abstract void registerNewPlaneInGame(Callsign plane, boolean initialRegistration);
 
