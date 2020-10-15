@@ -11,6 +11,7 @@ import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.abstractRadar.Radar;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.InitialPosition;
+import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import javax.imageio.IIOImage;
@@ -34,7 +35,8 @@ public class Recording {
   private int imgCounter;
   private boolean isActive;
 
-  public Recording(Settings settings, ISimulation sim, Area area, InitialPosition initialPosition,
+  public Recording(Settings settings, ISimulation sim, Area area, AtcId userAtcId,
+                   InitialPosition initialPosition,
                    RadarStyleSettings ss, RadarDisplaySettings ds, RadarBehaviorSettings bs) {
 
     File f = new File(settings.getPath());
@@ -48,7 +50,7 @@ public class Recording {
     bmpCanvas = new BitmapCanvas(settings.getWidth(), settings.getHeight());
     bmpCanvas.getImageDrawn().add(this::bmpCanvas_imageDrawn);
 
-    radar = new Radar(bmpCanvas, initialPosition, simulation, area, ss, ds, bs);
+    radar = new Radar(bmpCanvas, initialPosition, simulation, area, userAtcId, ss, ds, bs);
 
     this.radar.start(settings.getInterval(), settings.getInterval());
     this.isActive = true;

@@ -30,10 +30,10 @@ public class IOModule extends SimulationModule {
   private final SystemMessagesModule systemMessagesModule;
 
   public IOModule(
-      Simulation parent,
-      KeyShortcutManager keyShortcutManager,
-      ParserFormatterStartInfo parserFormatterStartInfo,
-      SystemMessagesModule systemMessagesModule) {
+          Simulation parent,
+          KeyShortcutManager keyShortcutManager,
+          ParserFormatterStartInfo parserFormatterStartInfo,
+          SystemMessagesModule systemMessagesModule) {
     super(parent);
     EAssert.Argument.isNotNull(keyShortcutManager, "keyShortcutManager");
     EAssert.Argument.isNotNull(parserFormatterStartInfo, "parserFormatterStartInfo");
@@ -68,7 +68,7 @@ public class IOModule extends SimulationModule {
     this.systemMessagesModule.init();
   }
 
-  public void registerMessageListener(Object listener, Messenger.ListenerAim ... aims){
+  public void registerMessageListener(Object listener, Messenger.ListenerAim... aims) {
     this.messenger.registerListener(listener, aims);
   }
 
@@ -76,13 +76,9 @@ public class IOModule extends SimulationModule {
     registerMessageListener(participant, new Messenger.ListenerAim(participant, Messenger.eListenerDirection.receiver));
   }
 
-  public void unregisterMessageListener(Object listener){
-    this.messenger.unregisterListener(listener);
-  }
-
   public void sendAtcCommand(AtcId fromAtcId, AtcId toAtcId, IAtcSpeech atcSpeech) {
     IUserAtcInterface humanAtc = getUserAtcInterface(fromAtcId);
-    humanAtc.sendAtcCommand(toAtcId,atcSpeech);
+    humanAtc.sendAtcCommand(toAtcId, atcSpeech);
   }
 
   public void sendPlaneCommand(AtcId fromAtcId, Callsign toCallsign, SpeechList<IForPlaneSpeech> cmds) {
@@ -95,17 +91,29 @@ public class IOModule extends SimulationModule {
     humanAtc.sendSystemCommand(systemSpeech);
   }
 
-  private IUserAtcInterface getUserAtcInterface(AtcId fromAtcId) {
-    IUserAtcInterface ret = parent.getAtcModule().getUserAtcInterface(fromAtcId);
-    return ret;
+  public void sendSystemCommandByGame(ISystemSpeech systemSpeech) {
+    messenger.send(
+            new Message(
+                    Participant.createSystem(),
+                    Participant.createSystem(),
+                    systemSpeech));
   }
 
   public void sendTextMessageForUser(AtcId targetAtcId, IMessageContent content) {
     eng.jAtcSim.newLib.messaging.Message m = new eng.jAtcSim.newLib.messaging.Message(
-        Participant.createSystem(),
-        Participant.createAtc(targetAtcId),
-        content);
+            Participant.createSystem(),
+            Participant.createAtc(targetAtcId),
+            content);
     Context.getMessaging().getMessenger().send(m);
+  }
+
+  public void unregisterMessageListener(Object listener) {
+    this.messenger.unregisterListener(listener);
+  }
+
+  private IUserAtcInterface getUserAtcInterface(AtcId fromAtcId) {
+    IUserAtcInterface ret = parent.getAtcModule().getUserAtcInterface(fromAtcId);
+    return ret;
   }
 
 }

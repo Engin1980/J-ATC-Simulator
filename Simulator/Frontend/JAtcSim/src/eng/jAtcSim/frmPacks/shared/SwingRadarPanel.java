@@ -133,6 +133,7 @@ public class SwingRadarPanel extends JPanel {
     }
   }
   private Area area;
+  private AtcId userAtcId;
   private RadarBehaviorSettings behaviorSettings;
   private IList<ButtonBinding> bndgs = new EList();
   private RadarDisplaySettings displaySettings;
@@ -174,12 +175,13 @@ public class SwingRadarPanel extends JPanel {
   }
 
   public void init(InitialPosition initialPosition,
-                   ISimulation sim, Area area,
+                   ISimulation sim, Area area, AtcId userAtcId,
                    RadarStyleSettings styleSett,
                    RadarDisplaySettings displaySett,
                    RadarBehaviorSettings behSett) {
     this.sim = sim;
     this.area = area;
+    this.userAtcId = userAtcId;
     this.initialPosition = initialPosition;
     this.styleSettings = styleSett;
     this.displaySettings = displaySett;
@@ -252,7 +254,7 @@ public class SwingRadarPanel extends JPanel {
     this.radar = new Radar(
         canvas,
         this.initialPosition,
-        this.sim, this.area,
+        this.sim, this.area, this.userAtcId,
         this.styleSettings,
         this.displaySettings,
         this.behaviorSettings);
@@ -426,14 +428,14 @@ public class SwingRadarPanel extends JPanel {
         IAtcParser parser = pfsi.parsers.atcParser;
         IAtcSpeech speech = parser.parse(msg);
         AtcId id = sim.getAtcs().getFirst(q -> q.getType() == atcType);
-        sim.sendAtcCommand(id, speech);
+        sim.sendAtcCommand(userAtcId, id, speech);
         ret = true;
       } else if (msg.startsWith("?")) {
         // system
         msg = msg.substring(1);
         ISystemParser parser = pfsi.parsers.systemParser;
         ISystemSpeech speech = parser.parse(msg);
-        sim.sendSystemCommand(speech);
+        sim.sendSystemCommand(userAtcId, speech);
         ret = true;
 //      } else if (msg.startsWith("!")) {
 //        // application
@@ -447,7 +449,7 @@ public class SwingRadarPanel extends JPanel {
         Callsign callsign = getCallsignFromString(callsignString);
         IPlaneParser parser = pfsi.parsers.planeParser;
         SpeechList<IForPlaneSpeech> cmds = parser.parse(messageString);
-        sim.sendPlaneCommands(callsign, cmds);
+        sim.sendPlaneCommands(userAtcId, callsign, cmds);
         ret = true;
       }
     } catch (Throwable t) {

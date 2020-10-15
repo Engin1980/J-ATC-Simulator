@@ -43,7 +43,7 @@ public class FrmView extends JFrame {
 
     SwingRadarPanel srp = new SwingRadarPanel();
     srp.init(this.parent.getSim().getAirport().getInitialPosition(),
-        this.parent.getSim(), this.parent.getArea(),
+        this.parent.getSim(), this.parent.getArea(), this.parent.getSim().getUserAtcIds().getFirst(),
         this.parent.getDisplaySettings(), ds, behSett);
 
     this.pnlContent.add(srp);

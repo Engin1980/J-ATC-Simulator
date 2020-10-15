@@ -148,6 +148,11 @@ public class Simulation {
     }
 
     @Override
+    public void sendSystemCommandAnonymous(ISystemSpeech speech) {
+      Simulation.this.getIoModule().sendSystemCommandByGame(speech);
+    }
+
+    @Override
     public void start() {
       Simulation.this.getTimerModule().start();
     }

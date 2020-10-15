@@ -45,7 +45,7 @@ public class FrmMain extends javax.swing.JFrame {
 
     this.pnlRadar = new SwingRadarPanel();
     this.pnlRadar.init(this.parent.getSim().getAirport().getInitialPosition(),
-        this.parent.getSim(), this.parent.getArea(),
+        this.parent.getSim(), this.parent.getArea(), this.parent.getSim().getUserAtcIds().getFirst(),
         this.parent.getDisplaySettings(), dispSett, behSett);
 
     this.pnlContent.add(this.pnlRadar);

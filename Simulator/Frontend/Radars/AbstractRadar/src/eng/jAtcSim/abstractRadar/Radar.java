@@ -27,6 +27,7 @@ import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Format;
 import eng.jAtcSim.newLib.shared.Global;
@@ -72,6 +73,7 @@ public class Radar {
   public Radar(ICanvas<?> canvas, InitialPosition initialPosition,
                ISimulation sim,
                Area area,
+               AtcId userAtcId,
                RadarStyleSettings styleSettings,
                RadarDisplaySettings displaySettings,
                RadarBehaviorSettings behaviorSettings) {
@@ -94,7 +96,7 @@ public class Radar {
     this.simulation.registerMessageListener(
         this,
         new Messenger.ListenerAim(
-            Participant.createAtc(this.simulation.getUserAtcId()),
+            Participant.createAtc(userAtcId),
             Messenger.eListenerDirection.receiver));
 
     buildLocalNavaidList();

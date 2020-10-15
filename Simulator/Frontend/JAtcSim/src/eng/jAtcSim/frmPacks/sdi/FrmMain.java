@@ -1,26 +1,26 @@
 package eng.jAtcSim.frmPacks.sdi;
 
 import eng.eSystem.collections.IMap;
+import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
-import eng.jAtcSim.app.FrmAbout;
-import eng.jAtcSim.contextLocal.Context;
-import eng.jAtcSim.frmPacks.shared.*;
-import eng.jAtcSim.abstractRadar.settings.RadarBehaviorSettings;
-import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
 import eng.jAtcSim.abstractRadar.RadarViewPort;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
+import eng.jAtcSim.abstractRadar.settings.RadarBehaviorSettings;
+import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
+import eng.jAtcSim.app.FrmAbout;
+import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
+import eng.jAtcSim.contextLocal.Context;
+import eng.jAtcSim.frmPacks.shared.*;
 import eng.jAtcSim.newLib.area.InitialPosition;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
 import eng.jAtcSim.recording.Recording;
 import eng.jAtcSim.recording.Settings;
-import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
-import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,13 +58,13 @@ public class FrmMain extends JFrame {
 
   private void appendListenerForKeyToRadar() {
     ComponentUtils.adjustComponentTree(this,
-        q -> q.getClass().equals(JTextField.class) == false,
-        q -> q.addKeyListener(new KeyAdapter() {
-          @Override
-          public void keyReleased(KeyEvent e) {
-            srpRadar.setFocus(e.getKeyChar());
-          }
-        })
+            q -> q.getClass().equals(JTextField.class) == false,
+            q -> q.addKeyListener(new KeyAdapter() {
+              @Override
+              public void keyReleased(KeyEvent e) {
+                srpRadar.setFocus(e.getKeyChar());
+              }
+            })
     );
   }
 
@@ -112,8 +112,8 @@ public class FrmMain extends JFrame {
     // content pane
 
     LayoutManager.fillBorderedPanel(
-        this.getContentPane(),
-        pnlTop, pnlBottom, pnlLeft, pnlRight, pnlContent);
+            this.getContentPane(),
+            pnlTop, pnlBottom, pnlLeft, pnlRight, pnlContent);
 
     pack();
 
@@ -251,7 +251,7 @@ public class FrmMain extends JFrame {
   }
 
   private void setSimulationSpeed(int intervalMs) {
-    parent.getSim().sendSystemCommand(TickSpeedRequest.createSet(intervalMs));
+    parent.getSim().sendSystemCommandAnonymous(TickSpeedRequest.createSet(intervalMs));
   }
 
   private void viewRecordingPanel() {
@@ -287,7 +287,9 @@ public class FrmMain extends JFrame {
 
     RadarDisplaySettings ds = this.parent.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
     recording = new Recording(q,
-        this.parent.getSim(), this.parent.getArea(), initPos, this.parent.getRadarStyleSettings(), ds, bs);
+            this.parent.getSim(), this.parent.getArea(),
+            this.parent.getSim().getUserAtcIds().getFirst(),
+            initPos, this.parent.getRadarStyleSettings(), ds, bs);
   }
 
   private void saveSimulation() {
@@ -325,9 +327,9 @@ public class FrmMain extends JFrame {
 
     this.srpRadar = new SwingRadarPanel();
     this.srpRadar.init(
-        this.parent.getSim().getAirport().getInitialPosition(),
-        this.parent.getSim(), this.parent.getArea(),
-        this.parent.getRadarStyleSettings(), dispSett, behSett
+            this.parent.getSim().getAirport().getInitialPosition(),
+            this.parent.getSim(), this.parent.getArea(), this.parent.getSim().getUserAtcIds().getFirst(),
+            this.parent.getRadarStyleSettings(), dispSett, behSett
     );
     this.pnlContent.add(srpRadar);
 
