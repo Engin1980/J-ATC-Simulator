@@ -4,6 +4,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 
 public interface IAirplane {
 
@@ -34,4 +35,6 @@ public interface IAirplane {
   }
 
   boolean isEmergency();
+
+  GoingAroundNotification.GoAroundReason pullLastGoAroundReasonIfAny();
 }

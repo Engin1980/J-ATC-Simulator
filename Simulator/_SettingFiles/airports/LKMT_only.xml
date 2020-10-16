@@ -1,0 +1,1557 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<area
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/area"
+        icao="LKAA">
+    <meta>
+        <title>LKMT demo only</title>
+        <author>Marek Vajgl</author>
+        <date>2018-08-24</date>
+        <description>
+            Real-life implementation of LKPR (Praha - Ruzyně) and LKMT(Ostrava - Mošnov) airports.
+
+            At LKPR note that planes do not hold at the end of STARs, but continue on their headings.
+        </description>
+    </meta>
+    <airports>
+        <airport icao="LKMT" name="Ostrava Mošnov" altitude="844" transitionAltitude="5000" vfrAltitude="2500"
+                 mainAirportNavaidName="OTA" declination="4.833" coveredDistance="50">
+            <initialPosition coordinate="49.697492 18.109075" range="85"/>
+            <atcTemplates>
+                <atcTemplate type="ctr" name="LKAA CTR" frequency="127.12"
+                             releaseAltitude="14000" acceptAltitude="7000" orderedAltitude="10000"/>
+                <atcTemplate type="twr" name="LKMT TWR" frequency="120.80"
+                             releaseAltitude="300" acceptAltitude="4000" orderedAltitude="4000"/>
+                <atcTemplate type="app" name="LKMT APP" frequency="125.10"
+                             releaseAltitude="-1" acceptAltitude="-1" orderedAltitude="-1"/>
+            </atcTemplates>
+            <runways>
+                <runway>
+                    <thresholds>
+                        <threshold name="04" coordinate="49 41 07.16 N 018 05 35.69 E" initialDepartureAltitude="4000"
+                                   mapping="04">
+                            <approaches>
+                                <gnssApproach gaMapping="04"
+                                              radial="042" daA="1190" daB="1190" daC="1190" daD="1190" iafMapping="04gnss"
+                                              initialAltitude="3200"/>
+                                <unpreciseApproach gaMapping="04"
+                                                   radial="042" type="ndb" mapt="N" faf="OTA/222/8.2" mdaA="1220" mdaB="1220"
+                                                   mdaC="1220" mdaD="1220" iafMapping="04" initialAltitude="3200"/>
+                                <unpreciseApproach gaMapping="04" iafMapping="04"
+                                                   radial="039" type="vor" mapt="OTA/219/1.7" faf="OTA/219/8.2" mdaA="1220" mdaB="1220"
+                                                   mdaC="1220" mdaD="1220" initialAltitude="3200" />
+                            </approaches>
+                        </threshold>
+                        <threshold name="22" mapping="22" coordinate="49 42 25.65 N 018 07 42.41 E"
+                                   initialDepartureAltitude="4000">
+                            <approaches>
+                                <ilsApproach radial="222" iafMapping="22ils" gaMapping="22ils" initialAltitude="3000">
+                                    <categories>
+                                        <category type="I" daA="955" daB="968" daC="975" daD="992"/>
+                                        <category type="II" daA="867" daB="884" daC="895" daD="910"/>
+                                    </categories>
+                                </ilsApproach>
+                                <unpreciseApproach type="vor" mapt="OTA/046/1.7" faf="OTA/046/7.7" radial="226" mdaA="1170" mdaB="1170"
+                                                   mdaC="1170" mdaD="1170" gaMapping="22vor" iafMapping="22vor"
+                                                   initialAltitude="3000" />
+                                <unpreciseApproach type="ndb" mapt="N" faf="OTA/042/7.7" radial="222" mdaA="1170" mdaB="1170"
+                                                   mdaC="1170" mdaD="1170" gaMapping="22ndb" iafMapping="22ndb"
+                                                   initialAltitude="3000" />
+                                <gnssApproach daA="1062" daB="1074" daC="1083" daD="1093" radial="222"
+                                              gaMapping="22gnss" iafMapping="22gnss"
+                                              initialAltitude="3000" />
+                            </approaches>
+                        </threshold>
+                    </thresholds>
+                </runway>
+            </runways>
+            <holds>
+                <!-- generic -->
+                <hold navaidName="OTA" inboundRadial="042" turn="left"/>
+                <!-- apps  -->
+                <hold navaidName="ODRAN" inboundRadial="212" turn="right"/>
+                <hold navaidName="POLOM" inboundRadial="041" turn="right"/>
+                <hold navaidName="MORUV" inboundRadial="222" turn="left"/>
+                <hold navaidName="BOGTU" inboundRadial="042" turn="left"/>
+                <hold navaidName="EKMIT" inboundRadial="042" turn="right"/>
+            </holds>
+            <daRoutes>
+                <group note="04">
+                    <group note="sid">
+                        <route type="sid" name="HLV5H" mapping="04">
+                            <proceedDirect fix="MT701"/>
+                            <speed restriction="above" value="230"/>
+                            <then/>
+                            <speed restriction="clear"/>
+                            <proceedDirect fix="MT715"/>
+                            <then/>
+                            <proceedDirect fix="MT716"/>
+                            <then/>
+                            <proceedDirect fix="HLV"/>
+                        </route>
+                        <route type="sid" name="BILNA3H" mapping="04">
+                            <proceedDirect fix="MT701"/>
+                            <then/>
+                            <proceedDirect fix="MT702"/>
+                            <then/>
+                            <proceedDirect fix="MT712"/>
+                            <then/>
+                            <proceedDirect fix="MT713"/>
+                            <then/>
+                            <proceedDirect fix="BILNA"/>
+                        </route>
+                        <route type="sid" name="NETIR1H" mapping="04">
+                            <proceedDirect fix="MT701"/>
+                            <then/>
+                            <proceedDirect fix="MT702"/>
+                            <then/>
+                            <proceedDirect fix="MT705"/>
+                            <then/>
+                            <proceedDirect fix="MT708"/>
+                            <then/>
+                            <proceedDirect fix="MT709"/>
+                            <then/>
+                            <proceedDirect fix="NETIR"/>
+                        </route>
+                        <route type="sid" name="BAVOK1H" mapping="04">
+                            <proceedDirect fix="MT701"/>
+                            <then/>
+                            <proceedDirect fix="MT702"/>
+                            <then/>
+                            <proceedDirect fix="MT705"/>
+                            <then/>
+                            <proceedDirect fix="MT706"/>
+                            <then/>
+                            <proceedDirect fix="BAVOK"/>
+                        </route>
+                        <route type="sid" name="REGLI1H" mapping="04">
+                            <proceedDirect fix="MT701"/>
+                            <then/>
+                            <proceedDirect fix="MT702"/>
+                            <then/>
+                            <proceedDirect fix="MT703"/>
+                            <then/>
+                            <proceedDirect fix="REGLI"/>
+                        </route>
+                        <route type="sid" name="BAXEV1H" mapping="04">
+                            <proceedDirect fix="MT701"/>
+                            <then/>
+                            <proceedDirect fix="MT702"/>
+                            <then/>
+                            <proceedDirect fix="MT703"/>
+                            <then/>
+                            <proceedDirect fix="OPAVO"/>
+                            <then/>
+                            <proceedDirect fix="BAXEV"/>
+                        </route>
+                    </group>
+                    <group note="star">
+                        <route type="star" name="BAXEV1W" mapping="04">
+                            <proceedDirect fix="BAXEV"/>
+                            <then/>
+                            <proceedDirect fix="OPAVO"/>
+                            <then/>
+                            <proceedDirect fix="MT602"/>
+                            <then/>
+                            <proceedDirect fix="ODRAN"/>
+                            <then/>
+                            <hold fix="ODRAN"/>
+                        </route>
+                        <route type="star" name="REGLI1W" mapping="04">
+                            <proceedDirect fix="REGLI"/>
+                            <then/>
+                            <proceedDirect fix="MT602"/>
+                            <then/>
+                            <proceedDirect fix="ODRAN"/>
+                            <then/>
+                            <hold fix="ODRAN"/>
+                        </route>
+                        <route type="star" name="TUSIN1W" mapping="04">
+                            <proceedDirect fix="TUSIN"/>
+                            <then/>
+                            <proceedDirect fix="MT715"/>
+                            <then/>
+                            <proceedDirect fix="MORUV"/>
+                            <then/>
+                            <hold fix="MORUV"/>
+                        </route>
+                        <route type="star" name="BILNA2W" mapping="04">
+                            <proceedDirect fix="BILNA"/>
+                            <then/>
+                            <proceedDirect fix="MT714"/>
+                            <then/>
+                            <proceedDirect fix="MT715"/>
+                            <then/>
+                            <proceedDirect fix="MORUV"/>
+                            <then/>
+                            <hold fix="MORUV"/>
+                        </route>
+                        <route type="star" name="HLV5W" mapping="04">
+                            <proceedDirect fix="HLV"/>
+                            <then/>
+                            <proceedDirect fix="POLOM"/>
+                            <then/>
+                            <hold fix="POLOM"/>
+                        </route>
+                    </group>
+                </group>
+                <group note="22">
+                    <route type="star" name="BAXEV1T" mapping="22">
+                        <proceedDirect fix="BAXEV"/>
+                        <then/>
+                        <proceedDirect fix="OPAVO"/>
+                        <then/>
+                        <proceedDirect fix="MT807"/>
+                        <then/>
+                        <proceedDirect fix="BOGTU"/>
+                        <then/>
+                        <hold fix="BOGTU"/>
+                    </route>
+                    <route type="star" name="REGLI1T" mapping="22">
+                        <proceedDirect fix="REGLI"/>
+                        <then/>
+                        <proceedDirect fix="MT806"/>
+                        <then/>
+                        <proceedDirect fix="MT807"/>
+                        <then/>
+                        <proceedDirect fix="BOGTU"/>
+                        <then/>
+                        <hold fix="BOGTU"/>
+                    </route>
+                    <route type="star" name="BAVOK1T" mapping="22">
+                        <proceedDirect fix="BAVOK"/>
+                        <then/>
+                        <proceedDirect fix="MT806"/>
+                        <then/>
+                        <proceedDirect fix="MT807"/>
+                        <then/>
+                        <proceedDirect fix="BOGTU"/>
+                        <then/>
+                        <hold fix="BOGTU"/>
+                    </route>
+                    <route type="star" name="TUSIN1T" mapping="22">
+                        <proceedDirect fix="TUSIN"/>
+                        <then/>
+                        <proceedDirect fix="MT805"/>
+                        <then/>
+                        <proceedDirect fix="MT807"/>
+                        <then/>
+                        <proceedDirect fix="BOGTU"/>
+                        <then/>
+                        <hold fix="BOGTU"/>
+                    </route>
+                    <route type="star" name="HLV2T" mapping="22">
+                        <proceedDirect fix="HLV"/>
+                        <then/>
+                        <proceedDirect fix="MT716"/>
+                        <then/>
+                        <proceedDirect fix="MT715"/>
+                        <then/>
+                        <proceedDirect fix="EKMIT"/>
+                        <then/>
+                        <hold fix="EKMIT"/>
+                    </route>
+                    <route type="star" name="BILNA2T" mapping="22">
+                        <proceedDirect fix="BILNA"/>
+                        <then/>
+                        <proceedDirect fix="MT714"/>
+                        <then/>
+                        <proceedDirect fix="MT715"/>
+                        <then/>
+                        <proceedDirect fix="EKMIT"/>
+                        <then/>
+                        <hold fix="EKMIT"/>
+                    </route>
+                    <route type="sid" name="BAXEV1F" mapping="22">
+                        <proceedDirect fix="MT511"/>
+                        <then/>
+                        <proceedDirect fix="MT512"/>
+                        <then/>
+                        <proceedDirect fix="OPAVO"/>
+                        <then/>
+                        <proceedDirect fix="BAXEV"/>
+                    </route>
+                    <route type="sid" name="REGLI1F" mapping="22">
+                        <proceedDirect fix="MT511"/>
+                        <then/>
+                        <proceedDirect fix="MT512"/>
+                        <then/>
+                        <proceedDirect fix="REGLI"/>
+                    </route>
+                    <route type="sid" name="BAVOK1F" mapping="22">
+                        <proceedDirect fix="MT511"/>
+                        <then/>
+                        <proceedDirect fix="MT512"/>
+                        <then/>
+                        <proceedDirect fix="BAVOK"/>
+                    </route>
+                    <route type="sid" name="HLV5F" mapping="22">
+                        <proceedDirect fix="MT521"/>
+                        <then/>
+                        <proceedDirect fix="POLOM"/>
+                        <then/>
+                        <proceedDirect fix="HLV"/>
+                    </route>
+                    <route type="sid" name="BILNA2F" mapping="22">
+                        <proceedDirect fix="MT521"/>
+                        <then/>
+                        <proceedDirect fix="MT522"/>
+                        <then/>
+                        <proceedDirect fix="MT523"/>
+                        <then/>
+                        <proceedDirect fix="BILNA"/>
+                    </route>
+                    <route type="sid" name="NETIR1F" mapping="22">
+                        <proceedDirect fix="MT521"/>
+                        <then/>
+                        <proceedDirect fix="MT522"/>
+                        <then/>
+                        <proceedDirect fix="MT523"/>
+                        <then/>
+                        <proceedDirect fix="NETIR"/>
+                    </route>
+                </group>
+            </daRoutes>
+            <iafRoutes>
+                <group note="04">
+                    <iafRoute iaf="MORUV" iafMapping="04">
+                        <proceedDirect fix="MT716"/>
+                        <then/>
+                        <proceedDirect fix="MT718"/>
+                        <then/>
+                        <heading value="039" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="POLOM" iafMapping="04">
+                        <proceedDirect fix="MT718"/>
+                        <then/>
+                        <heading value="039" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="ODRAN" iafMapping="04">
+                        <proceedDirect fix="MT603"/>
+                        <then/>
+                        <proceedDirect fix="MT718"/>
+                        <then/>
+                        <heading value="039" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="OTA" category="CD" iafMapping="04">
+                        <proceedDirect fix="OTA/245/10"/>
+                        <then/>
+                        <heading value="039" direction="left"/>
+                        <then/>
+                        <heading value="039" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="OTA" category="AB" iafMapping="04">
+                        <proceedDirect fix="OTA/229/10"/>
+                        <then/>
+                        <heading value="039" direction="left"/>
+                        <then/>
+                        <heading value="039" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="OTA" iafMapping="04gnss">
+                        <proceedDirect fix="ODRAN"/>
+                        <then/>
+                        <proceedDirect fix="MT603"/>
+                        <then/>
+                        <proceedDirect fix="MT604"/>
+                        <then/>
+                        <heading value="042" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="ODRAN" iafMapping="04gnss">
+                        <proceedDirect fix="MT603"/>
+                        <then/>
+                        <proceedDirect fix="MT604"/>
+                        <then/>
+                        <heading value="042" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="MORUV" iafMapping="04gnss">
+                        <proceedDirect fix="MT716"/>
+                        <then/>
+                        <proceedDirect fix="MT604"/>
+                        <then/>
+                        <heading value="042" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="POLOM" iafMapping="04gnss">
+                        <proceedDirect fix="MT604"/>
+                        <then/>
+                        <heading value="042" direction="nearest"/>
+                    </iafRoute>
+                </group>
+                <group note="22">
+                    <iafRoute iaf="OTA" iafMapping="22ils">
+                        <altitude direction="descend" value="30"/>
+                        <proceedDirect fix="OTA/015/10"/>
+                        <then/>
+                        <proceedDirect fix="MT825"/>
+                        <then/>
+                        <heading value="200" direction="right"/>
+                    </iafRoute>
+                    <iafRoute iaf="BOGTU" iafMapping="22ils">
+                        <altitude direction="descend" value="30"/>
+                        <proceedDirect fix="MT821"/>
+                        <then/>
+                        <proceedDirect fix="MT825"/>
+                        <then/>
+                        <heading value="222" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="EKMIT" iafMapping="22ils">
+                        <altitude direction="descend" value="30"/>
+                        <proceedDirect fix="MT823"/>
+                        <then/>
+                        <proceedDirect fix="MT825"/>
+                        <then/>
+                        <heading value="222" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="BOGTU" iafMapping="22vor">
+                        <altitude direction="descend" value="30"/>
+                        <proceedDirect fix="MT821"/>
+                        <then/>
+                        <proceedDirect fix="MT827"/>
+                        <then/>
+                        <heading value="226" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="EKMIT" iafMapping="22vor">
+                        <altitude direction="descend" value="30"/>
+                        <proceedDirect fix="MT823"/>
+                        <then/>
+                        <proceedDirect fix="MT827"/>
+                        <then/>
+                        <heading value="226" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="OTA" category="CD" iafMapping="22vor">
+                        <altitude direction="descend" value="30"/>
+                        <proceedDirect fix="OTA/020/10"/>
+                        <then/>
+                        <proceedDirect fix="MT827"/>
+                        <then/>
+                        <heading value="226" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="OTA" category="AB" iafMapping="22vor">
+                        <altitude direction="descend" value="30"/>
+                        <proceedDirect fix="OTA/036/10"/>
+                        <then/>
+                        <proceedDirect fix="MT827"/>
+                        <then/>
+                        <heading value="226" direction="nearest"/>
+                    </iafRoute>
+                    <iafRoute iaf="BOGTU" iafMapping="22ndb">
+                        <altitude direction="descend" value="30" />
+                        <proceedDirect fix="MT821" />
+                        <then />
+                        <proceedDirect fix="MT825" />
+                        <then />
+                        <heading value="222" direction="nearest" />
+                    </iafRoute>
+                    <iafRoute iaf="EKMIT" iafMapping="22ndb">
+                        <altitude direction="descend" value="30" />
+                        <proceedDirect fix="MT823" />
+                        <then />
+                        <proceedDirect fix="MT825" />
+                        <then />
+                        <heading value="222" direction="nearest" />
+                    </iafRoute>
+                    <iafRoute iaf="OTA" category="CD"  iafMapping="22ndb">
+                        <altitude direction="descend" value="30" />
+                        <proceedDirect fix="OTA/015/10" />
+                        <then />
+                        <proceedDirect fix="MT825" />
+                        <then />
+                        <heading value="222" direction="nearest" />
+                    </iafRoute>
+                    <iafRoute iaf="OTA" category="AB"  iafMapping="22ndb">
+                        <altitude direction="descend" value="30" />
+                        <then />
+                        <proceedDirect fix="OTA/033/10" />
+                        <then />
+                        <proceedDirect fix="MT825" />
+                        <then />
+                        <heading value="222" direction="nearest" />
+                    </iafRoute>
+                    <iafRoute iaf="OTA"  iafMapping="22gnss">
+                        <altitude direction="descend" value="30" />
+                        <proceedDirect fix="BOGTU" />
+                        <then />
+                        <proceedDirect fix="MT821" />
+                        <then />
+                        <proceedDirect fix="MT825" />
+                        <then />
+                        <proceedDirect fix="MT22F" />
+                        <then />
+                        <heading value="222" direction="nearest" />
+                    </iafRoute>
+                    <iafRoute iaf="BOGTU"  iafMapping="22gnss">
+                        <altitude direction="descend" value="30" />
+                        <proceedDirect fix="MT821" />
+                        <then />
+                        <proceedDirect fix="MT825" />
+                        <then />
+                        <proceedDirect fix="MT22F" />
+                        <then />
+                        <heading value="222" direction="nearest" />
+                    </iafRoute>
+                    <iafRoute iaf="EKMIT"  iafMapping="22gnss">
+                        <altitude direction="descend" value="30" />
+                        <proceedDirect fix="MT823" />
+                        <then />
+                        <proceedDirect fix="MT825" />
+                        <then />
+                        <proceedDirect fix="MT22F" />
+                        <then />
+                        <heading value="222" direction="nearest" />
+                    </iafRoute>
+                </group>
+            </iafRoutes>
+            <gaRoutes>
+                <group note="04">
+                    <gaRoute gaMapping="04">
+                        <heading value="039" direction="nearest"/>
+                        <altitude direction="climb" value="025"/>
+                        <afterAltitude value="2500" extension="orAbove" />
+                        <proceedDirect fix="MT598"/>
+                        <altitude direction="climb" value="035"/>
+                        <afterNavaid fix="MT598"/>
+                        <proceedDirect fix="ODRAN"/>
+                    </gaRoute>
+                </group>
+                <group note="22">
+                    <gaRoute gaMapping="22ils">
+                        <altitude direction="climb" value="30"/>
+                        <heading value="222" direction="nearest"/>
+                        <afterAltitude value="500" extension="orAbove" />
+                        <proceedDirect fix="MT598"/>
+                        <then/>
+                        <proceedDirect fix="BOGTU"/>
+                    </gaRoute>
+                    <gaRoute gaMapping="22vor">
+                        <heading value="226" direction="nearest"/>
+                        <afterAltitude value="2500" extension="orAbove" />
+                        <proceedDirect fix="MT598"/>
+                        <then/>
+                        <proceedDirect fix="BOGTU"/>
+                    </gaRoute>
+                    <gaRoute gaMapping="22ndb">
+                        <heading value="226" direction="nearest" />
+                        <afterAltitude value="2500" extension="orAbove" />
+                        <proceedDirect fix="MT598" />
+                        <then />
+                        <proceedDirect fix="BOGTU" />
+                    </gaRoute>
+                    <gaRoute gaMapping="22gnss">
+                        <altitude direction="climb" value="30" />
+                        <proceedDirect fix="MT597" />
+                        <then />
+                        <proceedDirect fix="MT598" />
+                        <then />
+                        <proceedDirect fix="BOGTU" />
+                    </gaRoute>
+                </group>
+            </gaRoutes>
+        </airport>
+    </airports>
+    <navaids>
+        <!-- VORs -->
+        <navaid name="BNO" type="vor" coordinate="49.150064 16.692581"/>
+        <navaid name="DRN" type="vor" coordinate="51.015547 13.598889"/>
+        <navaid name="HDO" type="vor" coordinate="50.928150 14.368800"/>
+        <navaid name="NER" type="vor" coordinate="50.366558 14.621364"/>
+        <navaid name="OKF" type="vor" coordinate="48.969175 15.545578"/>
+        <navaid name="OKG" type="vor" coordinate="50.065147 12.405739"/>
+        <navaid name="OKL" type="vor" coordinate="50.095867 14.265608"/>
+        <navaid name="OKX" type="vor" coordinate="50.902681 15.031900"/>
+        <navaid name="OTA" type="vor" coordinate="49.697492 18.109075"/>
+        <navaid name="RDG" type="vor" coordinate="49.040269 12.526547"/>
+        <navaid name="VLM" type="vor" coordinate="49.704272 15.066742"/>
+        <navaid name="VOZ" type="vor" coordinate="49.532328 14.874664"/>
+
+        <!-- NDBs -->
+        <navaid name="ABU" type="ndb" coordinate="50.993775 12.521039"/>
+        <navaid name="B" type="ndb" coordinate="49.148514 16.726175"/>
+        <navaid name="C" type="ndb" coordinate="49.924786 15.403167"/>
+        <navaid name="CF" type="ndb" coordinate="49.904022 15.432847"/>
+        <navaid name="DBV" type="ndb" coordinate="48.858056 18.799445"/>
+        <navaid name="F" type="ndb" coordinate="49.958161 15.355347"/>
+        <navaid name="HLV" type="ndb" coordinate="49.322853 17.528397"/>
+        <navaid name="K" type="ndb" coordinate="50.129683 14.568172"/>
+        <navaid name="KD" type="ndb" coordinate="50.152608 14.636608"/>
+        <navaid name="KNE" type="ndb" coordinate="49.046486 17.452153"/>
+        <navaid name="KUN" type="ndb" coordinate="49.113922 17.501397"/>
+        <!--<navaid name="L" type="ndb" coordinate="49.150531 16.153561"/>-->
+        <navaid name="L" type="ndb" coordinate="50.119928 14.286597"/>
+        <!--<navaid name="L" type="ndb" coordinate="50.195789 12.941686"/>-->
+        <navaid name="LA" type="ndb" coordinate="49.136506 16.179611"/>
+        <navaid name="N" type="ndb" coordinate="49.713200 18.138031"/>
+        <navaid name="P" type="ndb" coordinate="50.012472 15.770506"/>
+        <navaid name="PK" type="ndb" coordinate="50.011092 15.813020"/>
+        <navaid name="PNY" type="ndb" coordinate="48.608139 17.822250"/>
+        <navaid name="R" type="ndb" coordinate="49.679345 18.084067"/>
+        <navaid name="RAK" type="ndb" coordinate="50.097058 13.690717"/>
+        <navaid name="TBV" type="ndb" coordinate="49.795845 16.678858"/>
+        <navaid name="V" type="ndb" coordinate="50.220219 14.374753"/>
+        <navaid name="X" type="ndb" coordinate="49.180994 16.096828"/>
+        <navaid name="XU" type="ndb" coordinate="49.197253 16.066789"/>
+        <navaid name="Z" type="ndb" coordinate="49.227639 18.594639"/>
+        <navaid name="ZLA" type="ndb" coordinate="49.202889 18.510445"/>
+
+        <!-- FIXes -->
+        <navaid name="PH" type="fixMinor" coordinate="50 06 15.26 N 14 13 49.23 E"/>
+
+        <navaid name="ABERU" type="fix" coordinate="50.069194 12.093719"/>
+        <navaid name="ABKIS" type="fix" coordinate="50.629695 13.057186"/>
+        <navaid name="ABRAX" type="fix" coordinate="49.697703 15.894884"/>
+        <navaid name="ABUDO" type="fix" coordinate="48.996528 14.240089"/>
+        <navaid name="AC221" type="fixMinor" coordinate="50.903103 12.403903"/>
+        <navaid name="AC222" type="fixMinor" coordinate="50.900131 12.312570"/>
+        <navaid name="AC223" type="fixMinor" coordinate="51.046992 12.077831"/>
+        <navaid name="AC224" type="fixMinor" coordinate="50.965828 12.341070"/>
+        <navaid name="AC225" type="fixMinor" coordinate="50.885514 12.381078"/>
+        <navaid name="AC420" type="fixMinor" coordinate="50.843325 12.156539"/>
+        <navaid name="AC430" type="fixMinor" coordinate="50.790653 12.258353"/>
+        <navaid name="ADADO" type="fix" coordinate="50.209481 17.747931"/>
+        <navaid name="ADISU" type="fix" coordinate="48.935053 16.548667"/>
+        <navaid name="ADLET" type="fix" coordinate="48.567600 14.299283"/>
+        <navaid name="ADVEX" type="fix" coordinate="50.348333 17.869722"/>
+        <navaid name="AGNAV" type="fix" coordinate="49.567917 12.614503"/>
+        <navaid name="AKEVA" type="fix" coordinate="49.954878 14.043775"/>
+        <navaid name="AKINI" type="fix" coordinate="48.749722 12.124167"/>
+        <navaid name="AKOSI" type="fix" coordinate="49.707778 12.086111"/>
+        <navaid name="ALEBU" type="fix" coordinate="50.793206 13.745764"/>
+        <navaid name="AMTEK" type="fix" coordinate="50.003358 17.956975"/>
+        <navaid name="ANEXO" type="fix" coordinate="49.862650 15.066628"/>
+        <navaid name="APTAS" type="fix" coordinate="50.911389 17.695833"/>
+        <navaid name="ARBAX" type="fix" coordinate="49.211111 13.043056"/>
+        <navaid name="ARMOV" type="fix" coordinate="50.180767 13.280700"/>
+        <navaid name="ARMUT" type="fix" coordinate="49.722500 12.323333"/>
+        <navaid name="ARNUM" type="fix" coordinate="50.209586 17.109944"/>
+        <navaid name="ARPOT" type="fix" coordinate="48.674445 12.766667"/>
+        <navaid name="ARTAV" type="fix" coordinate="50.200556 18.562222"/>
+        <navaid name="ARTUP" type="fix" coordinate="50.685236 14.905103"/>
+        <navaid name="ARVEG" type="fix" coordinate="49.998992 14.683958"/>
+        <navaid name="ASTEL" type="fix" coordinate="50.864450 14.860456"/>
+        <navaid name="ATMEV" type="fix" coordinate="50.733056 17.503056"/>
+        <navaid name="BABUS" type="fix" coordinate="48.980314 17.301253"/>
+        <navaid name="BADUG" type="fix" coordinate="49.966647 12.741803"/>
+        <navaid name="BAGMI" type="fix" coordinate="49.226667 12.857222"/>
+        <navaid name="BAGRU" type="fix" coordinate="50.431839 14.337092"/>
+        <navaid name="BALTU" type="fix" coordinate="50.089461 13.326522"/>
+        <navaid name="BAMTA" type="fix" coordinate="48.732222 12.887500"/>
+        <navaid name="BAREX" type="fix" coordinate="50.894445 18.738333"/>
+        <navaid name="BARIX" type="fix" coordinate="49.122500 13.176389"/>
+        <navaid name="BAROX" type="fix" coordinate="49.948547 13.720850"/>
+        <navaid name="BAVIN" type="fix" coordinate="49.945034 14.728264"/>
+        <navaid name="BAVOK" type="fix" coordinate="50.002778 18.195278"/>
+        <navaid name="BAXEV" type="fix" coordinate="49.873245 17.441492"/>
+        <navaid name="BEDLO" type="fix" coordinate="50.185900 15.316000"/>
+        <navaid name="BEKTO" type="fix" coordinate="49.965822 12.712045"/>
+        <navaid name="BEKVI" type="fix" coordinate="50.073356 14.722358"/>
+        <navaid name="BELUX" type="fix" coordinate="49.377770 16.182700"/>
+        <navaid name="BEPAS" type="fix" coordinate="48.898334 13.509722"/>
+        <navaid name="BERVA" type="fix" coordinate="48.617500 17.541111"/>
+        <navaid name="BESIP" type="fix" coordinate="50.935278 13.485278"/>
+        <navaid name="BILNA" type="fix" coordinate="49.393553 18.447300"/>
+        <navaid name="BINGU" type="fix" coordinate="48.620278 12.617500"/>
+        <navaid name="BISGI" type="fix" coordinate="50.272345 12.660525"/>
+        <navaid name="BITSI" type="fix" coordinate="49.308278 16.236314"/>
+        <navaid name="BIXEL" type="fix" coordinate="48.697500 12.584722"/>
+        <navaid name="BODAL" type="fix" coordinate="49.464108 15.782703"/>
+        <navaid name="BOGTU" type="fix" coordinate="49.867942 18.165411"/>
+        <navaid name="BOHUM" type="fix" coordinate="49.886511 18.328081"/>
+        <navaid name="BOLMU" type="fix" coordinate="48.985786 16.955789"/>
+        <navaid name="BUDEX" type="fix" coordinate="48.948328 14.336028"/>
+        <navaid name="BUKAP" type="fix" coordinate="49.123517 17.010047"/>
+        <navaid name="BUKOB" type="fix" coordinate="49.227639 18.311445"/>
+        <navaid name="BULEK" type="fix" coordinate="50.413239 15.065306"/>
+        <navaid name="CD12Z" type="fixMinor" coordinate="50.234328 14.016803"/>
+        <navaid name="CF24" type="fixMinor" coordinate="50.197211 14.769947"/>
+        <navaid name="CF28" type="fixMinor" coordinate="50.184525 14.583306"/>
+        <navaid name="CF31" type="fixMinor" coordinate="49.047778 16.348611"/>
+        <navaid name="CI06" type="fixMinor" coordinate="49.161397 18.382270"/>
+        <!--<navaid name="CI06" type="fixMinor" coordinate="50.030772 13.990747"/>-->
+        <navaid name="CI12" type="fixMinor" coordinate="50.195247 14.064122"/>
+        <navaid name="CI22" type="fixMinor" coordinate="49.807483 18.291092"/>
+        <navaid name="CI24" type="fixMinor" coordinate="50.176972 14.477950"/>
+        <navaid name="CI28" type="fixMinor" coordinate="49.133822 16.909553"/>
+        <navaid name="CI29" type="fixMinor" coordinate="50.135289 13.161172"/>
+        <navaid name="CI29Y" type="fixMinor" coordinate="51.033003 17.112436"/>
+        <navaid name="CI30" type="fixMinor" coordinate="50.005242 14.457267"/>
+        <navaid name="CI31" type="fixMinor" coordinate="49.812639 15.563047"/>
+        <navaid name="CL12Z" type="fixMinor" coordinate="50.213169 14.026697"/>
+        <navaid name="CN27" type="fixMinor" coordinate="50.007669 15.925695"/>
+        <navaid name="CS10" type="fixMinor" coordinate="49.180128 16.429906"/>
+        <navaid name="CS12" type="fixMinor" coordinate="50.236503 14.012875"/>
+        <navaid name="CV13C" type="fixMinor" coordinate="50.018250 15.114069"/>
+        <navaid name="CV13F" type="fixMinor" coordinate="50.033236 15.246411"/>
+        <navaid name="CV13I" type="fixMinor" coordinate="50.067475 15.197219"/>
+        <navaid name="CV13R" type="fixMinor" coordinate="49.859792 15.495753"/>
+        <navaid name="D010E" type="fixMinor" coordinate="48.699722 17.855834"/>
+        <navaid name="D015J" type="fixMinor" coordinate="49.854900 18.192922"/>
+        <navaid name="D020J" type="fixMinor" coordinate="49.849559 18.213814"/>
+        <navaid name="D033J" type="fixMinor" coordinate="49.830370 18.263989"/>
+        <navaid name="D033W" type="fixMinor" coordinate="49.284167 15.899445"/>
+        <navaid name="D036J" type="fixMinor" coordinate="49.824928 18.274517"/>
+        <navaid name="D037D" type="fixMinor" coordinate="51.048867 12.591842"/>
+        <navaid name="D045D" type="fixMinor" coordinate="50.056006 16.013714"/>
+        <navaid name="D048K" type="fixMinor" coordinate="49.807331 18.319022"/>
+        <navaid name="D055X" type="fixMinor" coordinate="49.923056 15.596717"/>
+        <navaid name="D076I" type="fixMinor" coordinate="50.248814 14.609961"/>
+        <navaid name="D094K" type="fixMinor" coordinate="49.129650 16.959909"/>
+        <navaid name="D095G" type="fixMinor" coordinate="50.136672 14.811411"/>
+        <navaid name="D102K" type="fixMinor" coordinate="50.167233 14.683456"/>
+        <navaid name="D102M" type="fixMinor" coordinate="50.164528 14.695728"/>
+        <navaid name="D111D" type="fixMinor" coordinate="50.174819 13.021186"/>
+        <navaid name="D112L" type="fixMinor" coordinate="51.007667 17.194500"/>
+        <navaid name="D112M" type="fixMinor" coordinate="51.007611 17.194139"/>
+        <navaid name="D113P" type="fixMinor" coordinate="50.993364 17.240069"/>
+        <navaid name="D119N" type="fixMinor" coordinate="49.976372 14.561200"/>
+        <navaid name="D134O" type="fixMinor" coordinate="49.768014 15.626403"/>
+        <navaid name="D140J" type="fixMinor" coordinate="49.557553 12.106131"/>
+        <navaid name="D141U" type="fixMinor" coordinate="51.035139 17.440064"/>
+        <navaid name="D142I" type="fixMinor" coordinate="50.241000 14.758358"/>
+        <navaid name="D142J" type="fixMinor" coordinate="50.227344 14.773208"/>
+        <navaid name="D142M" type="fixMinor" coordinate="50.183628 14.820664"/>
+        <navaid name="D143M" type="fixMinor" coordinate="49.718467 15.625717"/>
+        <navaid name="D174J" type="fixMinor" coordinate="50.201950 14.634803"/>
+        <navaid name="D192C" type="fixMinor" coordinate="48.578333 17.811389"/>
+        <navaid name="D217F" type="fixMinor" coordinate="50.919472 12.425900"/>
+        <navaid name="D229J" type="fixMinor" coordinate="49.597097 17.904478"/>
+        <navaid name="D235O" type="fixMinor" coordinate="50.989984 13.422500"/>
+        <navaid name="D239B" type="fixMinor" coordinate="50.102103 14.487097"/>
+        <navaid name="D242F" type="fixMinor" coordinate="49.162164 18.371256"/>
+        <navaid name="D245J" type="fixMinor" coordinate="49.637570 17.869709"/>
+        <navaid name="D260L" type="fixMinor" coordinate="50.456472 18.773806"/>
+        <navaid name="D270D" type="fixMinor" coordinate="50.016497 15.648439"/>
+        <navaid name="D270H" type="fixMinor" coordinate="50.019836 15.545403"/>
+        <navaid name="D271B" type="fixMinor" coordinate="49.152833 16.631795"/>
+        <navaid name="D286I" type="fixMinor" coordinate="50.007814 15.130606"/>
+        <navaid name="D291D" type="fixMinor" coordinate="50.226961 12.830231"/>
+        <navaid name="D294D" type="fixMinor" coordinate="49.075831 17.362200"/>
+        <navaid name="D294R" type="fixMinor" coordinate="49.290414 16.288231"/>
+        <navaid name="D295K" type="fixMinor" coordinate="50.046128 15.097597"/>
+        <navaid name="D300O" type="fixMinor" coordinate="50.231431 13.939072"/>
+        <navaid name="D301O" type="fixMinor" coordinate="50.233383 13.946745"/>
+        <navaid name="D310O" type="fixMinor" coordinate="50.076269 15.145231"/>
+        <navaid name="D313O" type="fixMinor" coordinate="50.275206 13.994897"/>
+        <navaid name="D314O" type="fixMinor" coordinate="50.278778 13.998992"/>
+        <navaid name="D323W" type="fixMinor" coordinate="48.605617 17.741642"/>
+        <navaid name="D324K" type="fixMinor" coordinate="50.115706 15.196125"/>
+        <navaid name="DC224" type="fixMinor" coordinate="51.050211 13.557975"/>
+        <navaid name="DC225" type="fixMinor" coordinate="51.003289 13.664531"/>
+        <navaid name="DC226" type="fixMinor" coordinate="51.047800 13.644781"/>
+        <navaid name="DC229" type="fixMinor" coordinate="50.984564 13.763320"/>
+        <navaid name="DC230" type="fixMinor" coordinate="50.982425 13.643464"/>
+        <navaid name="DC231" type="fixMinor" coordinate="50.940864 13.606456"/>
+        <navaid name="DC420" type="fixMinor" coordinate="50.964284 13.319828"/>
+        <navaid name="DC421" type="fixMinor" coordinate="51.014906 13.388489"/>
+        <navaid name="DC422" type="fixMinor" coordinate="51.065489 13.457303"/>
+        <navaid name="DC428" type="fixMinor" coordinate="50.766858 13.105731"/>
+        <navaid name="DC429" type="fixMinor" coordinate="51.063458 13.211719"/>
+        <navaid name="DC430" type="fixMinor" coordinate="50.897181 13.443828"/>
+        <navaid name="DC431" type="fixMinor" coordinate="50.927534 13.485058"/>
+        <navaid name="DC450" type="fixMinor" coordinate="50.829050 13.569003"/>
+        <navaid name="DC451" type="fixMinor" coordinate="50.879525 13.637733"/>
+        <navaid name="DC452" type="fixMinor" coordinate="50.929959 13.706617"/>
+        <navaid name="DC453" type="fixMinor" coordinate="51.025078 13.837103"/>
+        <navaid name="DC454" type="fixMinor" coordinate="51.056842 13.880845"/>
+        <navaid name="DC460" type="fixMinor" coordinate="50.997720 13.988609"/>
+        <navaid name="DC491" type="fixMinor" coordinate="51.062878 13.593961"/>
+        <navaid name="DC493" type="fixMinor" coordinate="50.981764 13.385006"/>
+        <navaid name="DEGAB" type="fix" coordinate="48.705683 13.931495"/>
+        <navaid name="DEGIN" type="fix" coordinate="48.601389 12.706111"/>
+        <navaid name="DEKOV" type="fix" coordinate="50.897353 14.216386"/>
+        <navaid name="DESEN" type="fix" coordinate="50.270103 17.516950"/>
+        <navaid name="DEVEG" type="fix" coordinate="50.857500 17.510556"/>
+        <navaid name="DIKVA" type="fix" coordinate="50.210128 13.427856"/>
+        <navaid name="DINOG" type="fix" coordinate="48.613611 12.515556"/>
+        <navaid name="DINOV" type="fix" coordinate="50.928611 16.085556"/>
+        <navaid name="DITIS" type="fix" coordinate="48.898022 15.116361"/>
+        <navaid name="DIVUK" type="fix" coordinate="50.428361 15.344150"/>
+        <navaid name="DIXEP" type="fix" coordinate="49.885045 15.616011"/>
+        <navaid name="DOBEN" type="fix" coordinate="49.773339 13.561542"/>
+        <navaid name="DOBIL" type="fix" coordinate="50.038689 15.937392"/>
+        <navaid name="DOKEL" type="fix" coordinate="50.627611 14.822389"/>
+        <navaid name="DOMAL" type="fix" coordinate="49.094556 13.428647"/>
+        <navaid name="DONAD" type="fix" coordinate="50.080814 13.000000"/>
+        <navaid name="DOPOV" type="fix" coordinate="50.080814 13.125111"/>
+        <navaid name="EKMES" type="fix" coordinate="49.978070 13.495311"/>
+        <navaid name="EKMIT" type="fix" coordinate="49.723233 18.377953"/>
+        <navaid name="EKPEK" type="fix" coordinate="50.964495 13.321350"/>
+        <navaid name="EKROT" type="fix" coordinate="50.062778 14.886945"/>
+        <navaid name="ELGOX" type="fix" coordinate="50.564722 18.300833"/>
+        <navaid name="ELMEK" type="fix" coordinate="49.903900 14.029875"/>
+        <navaid name="ELPON" type="fix" coordinate="49.925011 14.617303"/>
+        <navaid name="ELVOT" type="fix" coordinate="50.611725 16.409208"/>
+        <navaid name="EMBIK" type="fix" coordinate="50.208056 18.103056"/>
+        <navaid name="ENGLE" type="fix" coordinate="49.617000 12.203833"/>
+        <navaid name="ENITA" type="fix" coordinate="49.702136 12.473886"/>
+        <navaid name="ENORU" type="fix" coordinate="50.340239 16.370231"/>
+        <navaid name="EPOPA" type="fix" coordinate="50.368056 17.799722"/>
+        <navaid name="ERASU" type="fix" coordinate="50.268753 14.478142"/>
+        <navaid name="ESETO" type="fix" coordinate="49.229944 17.718278"/>
+        <navaid name="ESINU" type="fix" coordinate="50.228917 13.687233"/>
+        <navaid name="ESLOR" type="fix" coordinate="51.065833 14.179444"/>
+        <navaid name="ETESI" type="fix" coordinate="51.060556 14.152500"/>
+        <navaid name="ETNEL" type="fix" coordinate="50.840834 17.156944"/>
+        <navaid name="ETVIS" type="fix" coordinate="49.653828 12.817447"/>
+        <navaid name="EVEMI" type="fix" coordinate="50.277461 14.109411"/>
+        <navaid name="EVIKU" type="fix" coordinate="49.669597 16.681553"/>
+        <navaid name="EVRUX" type="fix" coordinate="50.501389 18.690000"/>
+        <navaid name="EXUSI" type="fix" coordinate="49.222778 12.657222"/>
+        <navaid name="FD04" type="fixMinor" coordinate="49.597542 17.965806"/>
+        <!--<navaid name="FD04" type="fixMinor" coordinate="51.000822 13.577881"/>-->
+        <navaid name="FD10" type="fixMinor" coordinate="49.171883 16.502486"/>
+        <navaid name="FD12Z" type="fixMinor" coordinate="50.201667 14.075706"/>
+        <navaid name="FD22" type="fixMinor" coordinate="49.779806 18.260750"/>
+        <navaid name="FD28" type="fixMinor" coordinate="49.141072 16.885014"/>
+        <navaid name="FD29" type="fixMinor" coordinate="51.047306 17.066389"/>
+        <navaid name="FF06" type="fixMinor" coordinate="50.040886 14.024089"/>
+        <navaid name="FF24" type="fixMinor" coordinate="50.175694 14.705533"/>
+        <navaid name="FF28" type="fixMinor" coordinate="49.135903 16.884372"/>
+        <!--<navaid name="FF28" type="fixMinor" coordinate="50.193139 14.533206"/>-->
+        <navaid name="FF31" type="fixMinor" coordinate="49.078889 16.291945"/>
+        <!--<navaid name="FF31" type="fixMinor" coordinate="49.827500 15.542222"/>-->
+        <navaid name="FI04" type="fixMinor" coordinate="51.075428 13.687042"/>
+        <navaid name="FI06" type="fixMinor" coordinate="49.175722 18.428083"/>
+        <navaid name="FI12" type="fixMinor" coordinate="50.146367 14.165828"/>
+        <navaid name="FI22" type="fixMinor" coordinate="49.784536 18.253811"/>
+        <navaid name="FI24" type="fixMinor" coordinate="50.142667 14.362725"/>
+        <!--<navaid name="FI29" type="fixMinor" coordinate="50.148450 13.113575"/>-->
+        <navaid name="FI29" type="fixMinor" coordinate="51.047333 17.065778"/>
+        <navaid name="FI30" type="fixMinor" coordinate="50.052478 14.360086"/>
+        <navaid name="FL12Z" type="fixMinor" coordinate="50.193244 14.068267"/>
+        <navaid name="FN04" type="fixMinor" coordinate="49.601870 17.958975"/>
+        <navaid name="FN10" type="fixMinor" coordinate="49.166219 16.503606"/>
+        <navaid name="FN13" type="fixMinor" coordinate="49.252222 15.961667"/>
+        <navaid name="FN22" type="fixMinor" coordinate="49.784167 18.253217"/>
+        <navaid name="FQ10" type="fixMinor" coordinate="50.240756 14.254883"/>
+        <navaid name="FR29" type="fixMinor" coordinate="51.047361 17.065722"/>
+        <navaid name="FS12" type="fixMinor" coordinate="50.202756 14.073744"/>
+        <navaid name="FS30" type="fixMinor" coordinate="50.013628 14.469395"/>
+        <navaid name="GAVLI" type="fix" coordinate="50.506167 13.138242"/>
+        <navaid name="GIGAL" type="fix" coordinate="51.078611 16.491945"/>
+        <navaid name="GIMBO" type="fix" coordinate="48.725364 14.775831"/>
+        <navaid name="GINAT" type="fix" coordinate="48.938295 17.115094"/>
+        <navaid name="GODLO" type="fix" coordinate="51.003889 16.504167"/>
+        <navaid name="GODVI" type="fix" coordinate="48.945834 18.283333"/>
+        <navaid name="GOGOB" type="fix" coordinate="49.978611 18.844167"/>
+        <navaid name="GOLIN" type="fix" coordinate="50.059314 14.984964"/>
+        <navaid name="GOLOP" type="fix" coordinate="50.585761 14.495731"/>
+        <navaid name="GOMAX" type="fix" coordinate="48.790278 12.348611"/>
+        <navaid name="GOMPA" type="fix" coordinate="50.998278 13.581453"/>
+        <navaid name="GONBA" type="fix" coordinate="48.687778 13.075833"/>
+        <navaid name="GOPSI" type="fix" coordinate="50.566306 13.569061"/>
+        <navaid name="GOSEK" type="fix" coordinate="49.617014 14.101172"/>
+        <navaid name="GRAFE" type="fix" coordinate="49.582167 12.176167"/>
+        <navaid name="GUDON" type="fix" coordinate="50.909722 14.856667"/>
+        <navaid name="GUDVU" type="fix" coordinate="51.075806 16.526195"/>
+        <navaid name="IBEBI" type="fix" coordinate="51.048611 17.496389"/>
+        <navaid name="IBNOT" type="fix" coordinate="51.004444 17.142778"/>
+        <navaid name="IDOBA" type="fix" coordinate="50.857445 17.043389"/>
+        <navaid name="INBUX" type="fix" coordinate="50.350528 18.843917"/>
+        <navaid name="IPSAR" type="fix" coordinate="50.892500 17.455000"/>
+        <navaid name="IPSOD" type="fix" coordinate="50.868334 17.432778"/>
+        <navaid name="IVOLI" type="fix" coordinate="49.000600 16.457883"/>
+        <navaid name="IXURO" type="fix" coordinate="51.017778 15.543889"/>
+        <navaid name="JAROM" type="fix" coordinate="49.086378 15.987850"/>
+        <navaid name="KENOK" type="fix" coordinate="49.857225 14.759445"/>
+        <navaid name="KILNU" type="fix" coordinate="50.476945 12.911667"/>
+        <navaid name="KOLAL" type="fix" coordinate="49.309556 18.508361"/>
+        <navaid name="KOMUR" type="fix" coordinate="50.562350 14.581639"/>
+        <navaid name="KONAR" type="fix" coordinate="50.445139 13.065578"/>
+        <navaid name="KOPAT" type="fix" coordinate="49.106389 18.654445"/>
+        <navaid name="KOPIT" type="fix" coordinate="50.188208 15.157953"/>
+        <navaid name="KOVEL" type="fix" coordinate="48.700903 15.597083"/>
+        <navaid name="KT383" type="fixMinor" coordinate="50.474528 18.797556"/>
+        <navaid name="KT384" type="fixMinor" coordinate="50.391278 18.797583"/>
+        <navaid name="KT393" type="fixMinor" coordinate="50.474528 18.788278"/>
+        <navaid name="KUSUL" type="fix" coordinate="51.046389 17.069167"/>
+        <navaid name="KUTEK" type="fix" coordinate="49.880125 14.882686"/>
+        <navaid name="KUVIX" type="fix" coordinate="50.105531 13.933742"/>
+        <navaid name="KV110" type="fixMinor" coordinate="50.282028 12.890997"/>
+        <navaid name="KV111" type="fixMinor" coordinate="50.354881 12.622508"/>
+        <navaid name="KV112" type="fixMinor" coordinate="50.114239 12.843909"/>
+        <navaid name="KV113" type="fixMinor" coordinate="50.171744 12.632556"/>
+        <navaid name="KV114" type="fixMinor" coordinate="50.204100 12.512839"/>
+        <navaid name="KV115" type="fixMinor" coordinate="50.293531 12.582131"/>
+        <navaid name="KV116" type="fixMinor" coordinate="50.174106 13.020653"/>
+        <navaid name="KV117" type="fixMinor" coordinate="50.124764 13.199458"/>
+        <navaid name="KV118" type="fixMinor" coordinate="50.086578 12.953145"/>
+        <navaid name="KV119" type="fixMinor" coordinate="50.352870 12.989075"/>
+        <navaid name="KV11F" type="fixMinor" coordinate="50.249403 12.744886"/>
+        <navaid name="KV11M" type="fixMinor" coordinate="50.213961 12.875222"/>
+        <navaid name="KV291" type="fixMinor" coordinate="50.032025 13.176458"/>
+        <navaid name="KV292" type="fixMinor" coordinate="50.115619 13.232475"/>
+        <navaid name="KV293" type="fixMinor" coordinate="50.332139 13.009267"/>
+        <navaid name="KV296" type="fixMinor" coordinate="50.226339 12.829847"/>
+        <navaid name="KV297" type="fixMinor" coordinate="50.265320 12.686456"/>
+        <navaid name="KV298" type="fixMinor" coordinate="50.336431 12.761889"/>
+        <navaid name="KV299" type="fixMinor" coordinate="50.135556 12.800417"/>
+        <navaid name="KV29A" type="fixMinor" coordinate="50.105050 13.161367"/>
+        <navaid name="KV29C" type="fixMinor" coordinate="50.092156 13.147681"/>
+        <navaid name="KV29F" type="fixMinor" coordinate="50.148547 13.113494"/>
+        <navaid name="KV29G" type="fixMinor" coordinate="50.157461 13.081222"/>
+        <navaid name="KV29H" type="fixMinor" coordinate="50.082325 13.181411"/>
+        <navaid name="KV29I" type="fixMinor" coordinate="50.127656 13.187044"/>
+        <navaid name="KV29L" type="fixMinor" coordinate="50.226450 12.829886"/>
+        <navaid name="KV29S" type="fixMinor" coordinate="50.074892 12.761408"/>
+        <navaid name="KVW12" type="fixMinor" coordinate="50.393947 12.781814"/>
+        <navaid name="LABUK" type="fix" coordinate="49.498525 17.410789"/>
+        <navaid name="LADAG" type="fix" coordinate="48.588981 15.041106"/>
+        <navaid name="LAGAR" type="fix" coordinate="50.795275 15.367089"/>
+        <navaid name="LALES" type="fix" coordinate="48.865172 17.709514"/>
+        <navaid name="LALIN" type="fix" coordinate="48.880000 13.242222"/>
+        <navaid name="LALUK" type="fix" coordinate="50.804408 13.880214"/>
+        <navaid name="LAMSI" type="fix" coordinate="48.653333 13.583333"/>
+        <navaid name="LANDU" type="fix" coordinate="48.596361 12.273928"/>
+        <navaid name="LANUX" type="fix" coordinate="48.888106 15.615789"/>
+        <navaid name="LAPUT" type="fix" coordinate="49.800620 13.394131"/>
+        <navaid name="LAVPI" type="fix" coordinate="49.935556 18.450833"/>
+        <navaid name="LEDVA" type="fix" coordinate="48.728789 16.789195"/>
+        <navaid name="LEMBI" type="fix" coordinate="50.550795 14.881281"/>
+        <navaid name="LETNA" type="fix" coordinate="50.092025 14.422178"/>
+        <navaid name="LIKSA" type="fix" coordinate="49.152767 16.014758"/>
+        <navaid name="LISBA" type="fix" coordinate="50.893334 13.709167"/>
+        <navaid name="LITLI" type="fix" coordinate="48.964445 12.863889"/>
+        <navaid name="LOKVU" type="fix" coordinate="48.874717 15.834997"/>
+        <navaid name="LOMKI" type="fix" coordinate="49.909336 13.241222"/>
+        <navaid name="LUCKE" type="fix" coordinate="49.588833 12.223833"/>
+        <navaid name="LULAR" type="fix" coordinate="49.365833 12.758889"/>
+        <navaid name="LUMEN" type="fix" coordinate="49.383345 15.869086"/>
+        <navaid name="LUMOT" type="fix" coordinate="49.711186 17.861228"/>
+        <navaid name="LUPEV" type="fix" coordinate="49.009728 14.560008"/>
+        <navaid name="LURAD" type="fix" coordinate="50.191944 18.574445"/>
+        <navaid name="MABOD" type="fix" coordinate="48.574558 16.690097"/>
+        <navaid name="MAKAL" type="fix" coordinate="49.246008 18.165717"/>
+        <navaid name="MAMOR" type="fix" coordinate="48.885834 12.222222"/>
+        <navaid name="MAPIK" type="fix" coordinate="50.526111 18.247500"/>
+        <navaid name="MAREM" type="fix" coordinate="50.715467 13.628831"/>
+        <navaid name="MAVOR" type="fix" coordinate="48.821395 17.537503"/>
+        <navaid name="MD04" type="fixMinor" coordinate="49.676783 18.079322"/>
+        <navaid name="MD10" type="fixMinor" coordinate="49.154106 16.657575"/>
+        <navaid name="MD12Z" type="fixMinor" coordinate="50.114431 14.232386"/>
+        <navaid name="MD22" type="fixMinor" coordinate="49.715681 18.142517"/>
+        <navaid name="MD28" type="fixMinor" coordinate="49.148314 16.730567"/>
+        <navaid name="MEDOV" type="fix" coordinate="49.846450 13.389920"/>
+        <navaid name="MERON" type="fix" coordinate="49.385189 15.878939"/>
+        <navaid name="MIKOV" type="fix" coordinate="48.784745 16.621003"/>
+        <navaid name="MITNU" type="fix" coordinate="48.701945 12.494722"/>
+        <navaid name="ML12Z" type="fixMinor" coordinate="50.111397 14.238344"/>
+        <navaid name="MN06" type="fixMinor" coordinate="50.099783 14.219497"/>
+        <navaid name="MN28" type="fixMinor" coordinate="50.212367 14.420364"/>
+        <navaid name="MOMEP" type="fix" coordinate="48.686945 18.571111"/>
+        <navaid name="MORKO" type="fix" coordinate="49.219117 17.026336"/>
+        <navaid name="MORUV" type="fix" coordinate="49.529745 18.065142"/>
+        <navaid name="MOTAB" type="fix" coordinate="50.842217 12.324978"/>
+        <navaid name="MQ04" type="fixMinor" coordinate="50.971259 12.492167"/>
+        <navaid name="MQ22" type="fixMinor" coordinate="49.716700 18.142758"/>
+        <navaid name="MQ27" type="fixMinor" coordinate="50.011336 15.770439"/>
+        <navaid name="MS090" type="fixMinor" coordinate="48.890725 12.640697"/>
+        <navaid name="MS091" type="fixMinor" coordinate="48.856861 12.667953"/>
+        <navaid name="MS092" type="fixMinor" coordinate="48.794561 12.620008"/>
+        <navaid name="MS093" type="fixMinor" coordinate="48.885731 12.701095"/>
+        <navaid name="MS094" type="fixMinor" coordinate="48.918553 12.724506"/>
+        <navaid name="MS095" type="fixMinor" coordinate="48.887692 12.677417"/>
+        <navaid name="MS12" type="fixMinor" coordinate="50.115522 14.230431"/>
+        <navaid name="MS270" type="fixMinor" coordinate="48.940959 12.360453"/>
+        <navaid name="MS271" type="fixMinor" coordinate="48.945939 12.341650"/>
+        <navaid name="MS272" type="fixMinor" coordinate="48.975300 12.356170"/>
+        <navaid name="MS273" type="fixMinor" coordinate="48.913322 12.310956"/>
+        <navaid name="MS274" type="fixMinor" coordinate="48.862114 12.326339"/>
+        <navaid name="MS30" type="fixMinor" coordinate="50.082625 14.298522"/>
+        <navaid name="MS439" type="fixMinor" coordinate="48.873953 12.841850"/>
+        <navaid name="MS459" type="fixMinor" coordinate="48.772031 12.822139"/>
+        <navaid name="MS491" type="fixMinor" coordinate="48.911992 12.378881"/>
+        <navaid name="MS492" type="fixMinor" coordinate="48.940961 12.364481"/>
+        <navaid name="MT04F" type="fixMinor" coordinate="49.601870 17.958975"/>
+        <navaid name="MT04I" type="fixMinor" coordinate="49.546775 17.870725"/>
+        <navaid name="MT04L" type="fixMinor" coordinate="49.750442 18.200822"/>
+        <navaid name="MT22A" type="fixMinor" coordinate="49.829911 18.264642"/>
+        <navaid name="MT22C" type="fixMinor" coordinate="49.854734 18.193161"/>
+        <navaid name="MT22F" type="fixMinor" coordinate="49.784167 18.253217"/>
+        <navaid name="MT22I" type="fixMinor" coordinate="49.828978 18.326100"/>
+        <navaid name="MT22R" type="fixMinor" coordinate="49.619608 17.985584"/>
+        <navaid name="MT511" type="fixMinor" coordinate="49.654272 18.043206"/>
+        <navaid name="MT512" type="fixMinor" coordinate="49.780203 17.870275"/>
+        <navaid name="MT521" type="fixMinor" coordinate="49.585195 17.932231"/>
+        <navaid name="MT522" type="fixMinor" coordinate="49.513100 18.038414"/>
+        <navaid name="MT523" type="fixMinor" coordinate="49.479936 18.152531"/>
+        <navaid name="MT596" type="fixMinor" coordinate="49.719814 18.148894"/>
+        <navaid name="MT597" type="fixMinor" coordinate="49.675483 18.077431"/>
+        <navaid name="MT598" type="fixMinor" coordinate="49.769656 18.002611"/>
+        <navaid name="MT602" type="fixMinor" coordinate="49.741828 17.960692"/>
+        <navaid name="MT603" type="fixMinor" coordinate="49.604195 17.777931"/>
+        <navaid name="MT604" type="fixMinor" coordinate="49.544236 17.866667"/>
+        <navaid name="MT701" type="fixMinor" coordinate="49.732708 18.169733"/>
+        <navaid name="MT702" type="fixMinor" coordinate="49.787400 18.258703"/>
+        <navaid name="MT703" type="fixMinor" coordinate="49.859700 18.152275"/>
+        <navaid name="MT705" type="fixMinor" coordinate="49.838922 18.342664"/>
+        <navaid name="MT706" type="fixMinor" coordinate="49.926036 18.196308"/>
+        <navaid name="MT708" type="fixMinor" coordinate="49.715953 18.535125"/>
+        <navaid name="MT709" type="fixMinor" coordinate="49.672142 18.603347"/>
+        <navaid name="MT712" type="fixMinor" coordinate="49.716164 18.362947"/>
+        <navaid name="MT713" type="fixMinor" coordinate="49.624947 18.386900"/>
+        <navaid name="MT714" type="fixMinor" coordinate="49.553061 18.270444"/>
+        <navaid name="MT715" type="fixMinor" coordinate="49.614595 18.201839"/>
+        <navaid name="MT716" type="fixMinor" coordinate="49.472200 17.972859"/>
+        <navaid name="MT718" type="fixMinor" coordinate="49.536508 17.878734"/>
+        <navaid name="MT805" type="fixMinor" coordinate="49.726783 18.160225"/>
+        <navaid name="MT806" type="fixMinor" coordinate="49.859092 17.964820"/>
+        <navaid name="MT807" type="fixMinor" coordinate="49.798992 18.053772"/>
+        <navaid name="MT821" type="fixMinor" coordinate="49.902375 18.221356"/>
+        <navaid name="MT823" type="fixMinor" coordinate="49.757561 18.433864"/>
+        <navaid name="MT825" type="fixMinor" coordinate="49.830014 18.327770"/>
+        <navaid name="MT827" type="fixMinor" coordinate="49.822489 18.339747"/>
+        <navaid name="NAMUG" type="fix" coordinate="48.588281 12.270742"/>
+        <navaid name="NAPAG" type="fix" coordinate="49.186208 17.553422"/>
+        <navaid name="NASKI" type="fix" coordinate="50.260661 14.135517"/>
+        <navaid name="NAVEK" type="fix" coordinate="50.287092 12.964581"/>
+        <navaid name="NAVTI" type="fix" coordinate="48.769611 16.205058"/>
+        <navaid name="NEGOB" type="fix" coordinate="48.881303 12.754261"/>
+        <navaid name="NELPA" type="fix" coordinate="49.281406 14.956170"/>
+        <navaid name="NENRU" type="fix" coordinate="51.063139 17.309778"/>
+        <navaid name="NEPOV" type="fix" coordinate="49.624667 14.080958"/>
+        <navaid name="NEPUX" type="fix" coordinate="49.538178 13.609839"/>
+        <navaid name="NESVO" type="fix" coordinate="49.120514 17.045022"/>
+        <navaid name="NETES" type="fix" coordinate="48.906389 12.626389"/>
+        <navaid name="NETIR" type="fix" coordinate="49.694664 18.708997"/>
+        <navaid name="NEVUS" type="fix" coordinate="50.207203 15.811983"/>
+        <navaid name="NIDOK" type="fix" coordinate="48.885834 18.811945"/>
+        <navaid name="NIMOM" type="fix" coordinate="50.946667 17.505278"/>
+        <navaid name="NIMUL" type="fix" coordinate="50.193914 14.975000"/>
+        <navaid name="NIRGO" type="fix" coordinate="49.330945 13.132219"/>
+        <navaid name="NOKSI" type="fix" coordinate="50.598333 12.961389"/>
+        <navaid name="NOVUM" type="fix" coordinate="49.572781 16.073336"/>
+        <navaid name="NUMBA" type="fix" coordinate="50.375556 18.108611"/>
+        <navaid name="ODERA" type="fix" coordinate="50.904445 14.992778"/>
+        <navaid name="ODLIV" type="fix" coordinate="50.670386 14.464558"/>
+        <navaid name="ODNEM" type="fix" coordinate="48.853200 17.167844"/>
+        <navaid name="ODOMO" type="fix" coordinate="49.937284 12.344000"/>
+        <navaid name="ODPAL" type="fix" coordinate="50.517131 13.774389"/>
+        <navaid name="ODRAN" type="fix" coordinate="49.661895 17.870247"/>
+        <navaid name="ODUDA" type="fix" coordinate="49.074722 12.747222"/>
+        <navaid name="OGIBI" type="fix" coordinate="50.845000 16.905000"/>
+        <navaid name="OKL46" type="fixMinor" coordinate="50.033286 15.442667"/>
+        <navaid name="OLMUK" type="fix" coordinate="50.700278 16.942222"/>
+        <navaid name="OM22" type="fixMinor" coordinate="51.039761 12.580675"/>
+        <navaid name="OMELO" type="fix" coordinate="50.837914 14.000758"/>
+        <navaid name="OPAVO" type="fix" coordinate="49.905531 17.776028"/>
+        <navaid name="ORLIX" type="fix" coordinate="49.994959 16.292722"/>
+        <navaid name="ORSOX" type="fix" coordinate="50.319722 18.537222"/>
+        <navaid name="ORVAD" type="fix" coordinate="51.017500 16.544167"/>
+        <navaid name="OSNEK" type="fix" coordinate="49.513195 15.638006"/>
+        <navaid name="OSTES" type="fix" coordinate="48.706111 12.678889"/>
+        <navaid name="PADKA" type="fix" coordinate="49.933884 18.283270"/>
+        <navaid name="PASAU" type="fix" coordinate="48.802500 13.651111"/>
+        <navaid name="PD27A" type="fixMinor" coordinate="50.027983 16.011864"/>
+        <navaid name="PD27C" type="fixMinor" coordinate="50.074617 15.987767"/>
+        <navaid name="PD27D" type="fixMinor" coordinate="49.974925 16.003200"/>
+        <navaid name="PD27F" type="fixMinor" coordinate="50.007297 15.932253"/>
+        <navaid name="PD27G" type="fixMinor" coordinate="49.936486 15.975961"/>
+        <navaid name="PD27I" type="fixMinor" coordinate="50.004733 16.009978"/>
+        <navaid name="PD27R" type="fixMinor" coordinate="50.015006 15.688364"/>
+        <navaid name="PEKOT" type="fix" coordinate="50.388333 17.443333"/>
+        <navaid name="PEMEL" type="fix" coordinate="49.570333 13.344825"/>
+        <navaid name="PEMUR" type="fix" coordinate="50.054669 15.538236"/>
+        <navaid name="PEPIK" type="fix" coordinate="48.782778 17.079167"/>
+        <navaid name="PEROX" type="fix" coordinate="50.344722 12.199444"/>
+        <navaid name="PIMEK" type="fix" coordinate="49.684920 15.747786"/>
+        <navaid name="PIRAP" type="fix" coordinate="50.993889 13.981667"/>
+        <navaid name="PISAM" type="fix" coordinate="48.892914 15.387128"/>
+        <navaid name="PIVES" type="fix" coordinate="49.921245 15.146594"/>
+        <navaid name="PO06F" type="fixMinor" coordinate="49.373661 17.225125"/>
+        <navaid name="PO06X" type="fixMinor" coordinate="49.354645 17.160081"/>
+        <navaid name="POLOM" type="fix" coordinate="49.510420 17.817411"/>
+        <navaid name="PR06F" type="fixMinor" coordinate="50.040886 14.024086"/>
+        <navaid name="PR06M" type="fixMinor" coordinate="50.096878 14.209792"/>
+        <navaid name="PR06N" type="fixMinor" coordinate="50.057914 13.774864"/>
+        <navaid name="PR104" type="fixMinor" coordinate="50.431342 14.552611"/>
+        <navaid name="PR12F" type="fixMinor" coordinate="50.195603 14.063694"/>
+        <navaid name="PR12G" type="fixMinor" coordinate="50.193683 14.067317"/>
+        <navaid name="PR13B" type="fixMinor" coordinate="50.399428 14.185750"/>
+        <navaid name="PR13I" type="fixMinor" coordinate="50.252628 13.944195"/>
+        <navaid name="PR24F" type="fixMinor" coordinate="50.177442 14.479520"/>
+        <navaid name="PR30F" type="fixMinor" coordinate="50.005019 14.458120"/>
+        <navaid name="PR318" type="fixMinor" coordinate="50.096903 14.209872"/>
+        <navaid name="PR31H" type="fixMinor" coordinate="50.014219 14.703470"/>
+        <navaid name="PR31I" type="fixMinor" coordinate="49.975131 14.518945"/>
+        <navaid name="PR402" type="fixMinor" coordinate="50.038281 14.015469"/>
+        <navaid name="PR403" type="fixMinor" coordinate="49.856520 14.159344"/>
+        <navaid name="PR404" type="fixMinor" coordinate="49.667495 14.544947"/>
+        <navaid name="PR405" type="fixMinor" coordinate="50.199383 13.842209"/>
+        <navaid name="PR406" type="fixMinor" coordinate="50.311008 13.933270"/>
+        <navaid name="PR407" type="fixMinor" coordinate="50.343489 14.041164"/>
+        <navaid name="PR409" type="fixMinor" coordinate="50.563186 14.783870"/>
+        <navaid name="PR411" type="fixMinor" coordinate="49.975392 14.264370"/>
+        <navaid name="PR412" type="fixMinor" coordinate="49.715206 14.723361"/>
+        <navaid name="PR511" type="fixMinor" coordinate="49.900645 13.482050"/>
+        <navaid name="PR512" type="fixMinor" coordinate="50.077231 13.840125"/>
+        <navaid name="PR513" type="fixMinor" coordinate="50.182828 14.189733"/>
+        <navaid name="PR516" type="fixMinor" coordinate="50.375475 14.529125"/>
+        <navaid name="PR517" type="fixMinor" coordinate="50.293461 14.252483"/>
+        <navaid name="PR518" type="fixMinor" coordinate="50.217994 14.307286"/>
+        <navaid name="PR521" type="fixMinor" coordinate="50.011339 14.230392"/>
+        <navaid name="PR522" type="fixMinor" coordinate="49.815889 14.843386"/>
+        <navaid name="PR523" type="fixMinor" coordinate="50.051006 14.363139"/>
+        <navaid name="PR530" type="fixMinor" coordinate="50.136544 14.650920"/>
+        <navaid name="PR531" type="fixMinor" coordinate="50.287770 14.542372"/>
+        <navaid name="PR532" type="fixMinor" coordinate="50.212172 14.596731"/>
+        <navaid name="PR582" type="fixMinor" coordinate="49.744683 14.268486"/>
+        <navaid name="PR619" type="fixMinor" coordinate="50.144011 14.367253"/>
+        <navaid name="PR621" type="fixMinor" coordinate="50.365972 14.139917"/>
+        <navaid name="PR622" type="fixMinor" coordinate="50.406106 14.098528"/>
+        <navaid name="PR625" type="fixMinor" coordinate="50.172042 14.461356"/>
+        <navaid name="PR626" type="fixMinor" coordinate="49.985920 14.496970"/>
+        <navaid name="PR627" type="fixMinor" coordinate="49.614808 14.673931"/>
+        <navaid name="PR631" type="fixMinor" coordinate="50.186847 14.511222"/>
+        <navaid name="PR632" type="fixMinor" coordinate="50.409150 14.284286"/>
+        <navaid name="PR633" type="fixMinor" coordinate="50.218142 14.616953"/>
+        <navaid name="PR634" type="fixMinor" coordinate="50.282064 14.834320"/>
+        <navaid name="PR635" type="fixMinor" coordinate="49.985086 14.660817"/>
+        <navaid name="PR707" type="fixMinor" coordinate="49.897875 13.556028"/>
+        <navaid name="PR711" type="fixMinor" coordinate="50.386245 14.639400"/>
+        <navaid name="PR712" type="fixMinor" coordinate="50.283286 14.525558"/>
+        <navaid name="PR718" type="fixMinor" coordinate="49.844628 14.400311"/>
+        <navaid name="PR719" type="fixMinor" coordinate="49.954350 14.347353"/>
+        <navaid name="PR721" type="fixMinor" coordinate="49.761333 14.952517"/>
+        <navaid name="PR722" type="fixMinor" coordinate="49.861406 14.890417"/>
+        <navaid name="PR723" type="fixMinor" coordinate="50.069503 14.760211"/>
+        <navaid name="PR740" type="fixMinor" coordinate="49.930231 13.962553"/>
+        <navaid name="PR741" type="fixMinor" coordinate="50.080803 13.852325"/>
+        <navaid name="PR742" type="fixMinor" coordinate="50.005531 13.907528"/>
+        <navaid name="PR807" type="fixMinor" coordinate="49.864036 14.272239"/>
+        <navaid name="PR808" type="fixMinor" coordinate="49.692331 14.621725"/>
+        <navaid name="PR813" type="fixMinor" coordinate="50.197244 14.059947"/>
+        <navaid name="PR814" type="fixMinor" coordinate="50.123075 13.973800"/>
+        <navaid name="PR815" type="fixMinor" coordinate="50.230494 13.990511"/>
+        <navaid name="PR816" type="fixMinor" coordinate="50.351561 13.981634"/>
+        <navaid name="PR817" type="fixMinor" coordinate="49.968334 13.980834"/>
+        <navaid name="PR818" type="fixMinor" coordinate="50.374622 14.171006"/>
+        <navaid name="PR819" type="fixMinor" coordinate="50.431995 14.654433"/>
+        <navaid name="PR854" type="fixMinor" coordinate="49.956220 14.138561"/>
+        <navaid name="PR855" type="fixMinor" coordinate="49.907275 13.882995"/>
+        <navaid name="PR856" type="fixMinor" coordinate="50.126239 14.658920"/>
+        <navaid name="PR858" type="fixMinor" coordinate="50.337120 14.507617"/>
+        <navaid name="PR860" type="fixMinor" coordinate="49.955775 14.558722"/>
+        <navaid name="PR861" type="fixMinor" coordinate="50.178214 14.816300"/>
+        <navaid name="PR901" type="fixMinor" coordinate="49.862247 14.190386"/>
+        <navaid name="PR902" type="fixMinor" coordinate="49.930075 14.399392"/>
+        <navaid name="PR903" type="fixMinor" coordinate="49.731895 14.801433"/>
+        <navaid name="PR904" type="fixMinor" coordinate="49.797950 14.879667"/>
+        <navaid name="PR905" type="fixMinor" coordinate="49.954961 14.773664"/>
+        <navaid name="PR906" type="fixMinor" coordinate="49.888686 14.695486"/>
+        <navaid name="PR912" type="fixMinor" coordinate="49.954050 14.562372"/>
+        <navaid name="PR913" type="fixMinor" coordinate="49.866422 14.527886"/>
+        <navaid name="PR914" type="fixMinor" coordinate="50.139528 14.395506"/>
+        <navaid name="PR915" type="fixMinor" coordinate="50.054453 14.570528"/>
+        <navaid name="PR950" type="fixMinor" coordinate="49.847231 14.877053"/>
+        <navaid name="PR951" type="fixMinor" coordinate="50.013272 14.654689"/>
+        <navaid name="PR952" type="fixMinor" coordinate="50.112028 14.452214"/>
+        <navaid name="PR953" type="fixMinor" coordinate="49.979086 14.296597"/>
+        <navaid name="PR954" type="fixMinor" coordinate="50.098889 14.048386"/>
+        <navaid name="PR956" type="fixMinor" coordinate="50.001422 13.808506"/>
+        <navaid name="PR957" type="fixMinor" coordinate="50.370425 14.447295"/>
+        <navaid name="PR958" type="fixMinor" coordinate="50.207253 14.255428"/>
+        <navaid name="PR960" type="fixMinor" coordinate="50.178319 13.882503"/>
+        <navaid name="PR961" type="fixMinor" coordinate="50.311839 14.037583"/>
+        <navaid name="PR962" type="fixMinor" coordinate="50.245108 13.959939"/>
+        <navaid name="RADKA" type="fix" coordinate="49.091081 16.516578"/>
+        <navaid name="RAPET" type="fix" coordinate="50.190489 12.338639"/>
+        <navaid name="RASAN" type="fix" coordinate="51.013753 15.094667"/>
+        <navaid name="RASEK" type="fix" coordinate="49.097361 18.660833"/>
+        <navaid name="RASIM" type="fix" coordinate="50.119431 14.665589"/>
+        <navaid name="RATEV" type="fix" coordinate="50.117589 14.586847"/>
+        <navaid name="RATIS" type="fix" coordinate="49.869445 14.175278"/>
+        <navaid name="RAVKU" type="fix" coordinate="50.766814 14.428853"/>
+        <navaid name="RDG33" type="fixMinor" coordinate="49.554703 12.269486"/>
+        <navaid name="REGLI" type="fix" coordinate="50.030278 17.995556"/>
+        <navaid name="REKLU" type="fix" coordinate="48.587500 16.937778"/>
+        <navaid name="RENKA" type="fix" coordinate="48.584722 13.505278"/>
+        <navaid name="REVMA" type="fix" coordinate="49.497222 18.700278"/>
+        <navaid name="RIKLU" type="fix" coordinate="50.931111 13.811111"/>
+        <navaid name="RISUK" type="fix" coordinate="50.236392 14.768114"/>
+        <navaid name="RODUX" type="fix" coordinate="50.942717 14.617183"/>
+        <navaid name="ROGAD" type="fix" coordinate="49.176161 16.402261"/>
+        <navaid name="ROKEM" type="fix" coordinate="49.525289 13.694745"/>
+        <navaid name="ROMIS" type="fix" coordinate="49.127114 18.110950"/>
+        <navaid name="ROSAB" type="fix" coordinate="48.633333 12.815000"/>
+        <navaid name="ROSAK" type="fix" coordinate="49.175947 16.355006"/>
+        <navaid name="ROTOL" type="fix" coordinate="50.965834 16.290833"/>
+        <navaid name="ROTPA" type="fix" coordinate="51.035833 17.166111"/>
+        <navaid name="RUDAP" type="fix" coordinate="49.241258 13.265586"/>
+        <navaid name="RUDNO" type="fix" coordinate="49.335833 12.541397"/>
+        <navaid name="RUDUB" type="fix" coordinate="50.973056 16.067222"/>
+        <navaid name="SABAB" type="fix" coordinate="50.770278 17.899167"/>
+        <navaid name="SOGPI" type="fix" coordinate="50.769445 17.563333"/>
+        <navaid name="SOMIS" type="fix" coordinate="50.144044 13.954217"/>
+        <navaid name="SOPAV" type="fix" coordinate="49.930922 18.052378"/>
+        <navaid name="SOPGA" type="fix" coordinate="50.177008 12.718786"/>
+        <navaid name="SOTUM" type="fix" coordinate="49.511470 14.268847"/>
+        <navaid name="SOVUL" type="fix" coordinate="49.890789 13.251703"/>
+        <navaid name="STAUB" type="fix" coordinate="48.785739 12.658047"/>
+        <navaid name="SUDOL" type="fix" coordinate="50.653333 18.411667"/>
+        <navaid name="SUKAV" type="fix" coordinate="49.679286 15.569581"/>
+        <navaid name="SULOV" type="fix" coordinate="50.295628 14.568292"/>
+        <navaid name="SUPIL" type="fix" coordinate="50.373247 12.813511"/>
+        <navaid name="TABEM" type="fix" coordinate="49.243314 15.221472"/>
+        <navaid name="TB101" type="fixMinor" coordinate="49.146478 16.749639"/>
+        <navaid name="TB102" type="fixMinor" coordinate="49.288711 16.657778"/>
+        <navaid name="TB103" type="fixMinor" coordinate="49.143644 16.782133"/>
+        <navaid name="TB105" type="fixMinor" coordinate="49.123194 17.013681"/>
+        <navaid name="TB106" type="fixMinor" coordinate="49.377156 16.221417"/>
+        <navaid name="TB10F" type="fixMinor" coordinate="49.167661 16.503025"/>
+        <navaid name="TB10H" type="fixMinor" coordinate="49.288947 16.291892"/>
+        <navaid name="TB10J" type="fixMinor" coordinate="49.231744 16.359492"/>
+        <navaid name="TB10M" type="fixMinor" coordinate="49.153569 16.667767"/>
+        <navaid name="TB10X" type="fixMinor" coordinate="49.174042 16.427483"/>
+        <navaid name="TB201" type="fixMinor" coordinate="49.155744 16.642558"/>
+        <navaid name="TB202" type="fixMinor" coordinate="49.166344 16.518672"/>
+        <navaid name="TB203" type="fixMinor" coordinate="49.248903 16.535022"/>
+        <navaid name="TB204" type="fixMinor" coordinate="49.210233 16.979642"/>
+        <navaid name="TB205" type="fixMinor" coordinate="49.055742 16.691050"/>
+        <navaid name="TB28A" type="fixMinor" coordinate="49.105369 16.936967"/>
+        <navaid name="TB28C" type="fixMinor" coordinate="49.062364 16.908136"/>
+        <navaid name="TB28F" type="fixMinor" coordinate="49.134697 16.884106"/>
+        <navaid name="TB28I" type="fixMinor" coordinate="49.128403 16.959534"/>
+        <navaid name="TB28L" type="fixMinor" coordinate="49.156356 16.632356"/>
+        <navaid name="TB28M" type="fixMinor" coordinate="49.148514 16.726175"/>
+        <navaid name="TB401" type="fixMinor" coordinate="49.205997 17.027183"/>
+        <navaid name="TB402" type="fixMinor" coordinate="49.229181 16.764333"/>
+        <navaid name="TB403" type="fixMinor" coordinate="49.239256 16.647853"/>
+        <navaid name="TB404" type="fixMinor" coordinate="49.264931 16.522231"/>
+        <navaid name="TB405" type="fixMinor" coordinate="49.284983 16.423550"/>
+        <navaid name="TB410" type="fixMinor" coordinate="49.041033 16.992970"/>
+        <navaid name="TB411" type="fixMinor" coordinate="49.056372 16.819736"/>
+        <navaid name="TB412" type="fixMinor" coordinate="49.085097 16.486753"/>
+        <navaid name="TB413" type="fixMinor" coordinate="49.093581 16.386170"/>
+        <navaid name="TB418" type="fixMinor" coordinate="49.324620 16.172025"/>
+        <navaid name="TB419" type="fixMinor" coordinate="49.229086 16.355272"/>
+        <navaid name="TB471" type="fixMinor" coordinate="49.163667 16.550011"/>
+        <navaid name="TB472" type="fixMinor" coordinate="49.235931 16.439122"/>
+        <navaid name="TB473" type="fixMinor" coordinate="49.290392 16.288300"/>
+        <navaid name="TB474" type="fixMinor" coordinate="49.253622 16.331845"/>
+        <navaid name="TB476" type="fixMinor" coordinate="49.143631 16.782131"/>
+        <navaid name="TB501" type="fixMinor" coordinate="49.056372 16.819736"/>
+        <navaid name="TB502" type="fixMinor" coordinate="49.041033 16.992970"/>
+        <navaid name="TB503" type="fixMinor" coordinate="49.029758 17.118411"/>
+        <navaid name="TB510" type="fixMinor" coordinate="49.229181 16.764333"/>
+        <navaid name="TB511" type="fixMinor" coordinate="49.205997 17.027183"/>
+        <navaid name="TB512" type="fixMinor" coordinate="49.194678 17.153028"/>
+        <navaid name="TB514" type="fixMinor" coordinate="49.112222 17.135689"/>
+        <navaid name="TB573" type="fixMinor" coordinate="49.056608 16.817020"/>
+        <navaid name="TB574" type="fixMinor" coordinate="49.045525 16.942545"/>
+        <navaid name="TB580" type="fixMinor" coordinate="49.156614 16.632431"/>
+        <navaid name="TEPNO" type="fix" coordinate="50.069461 12.550756"/>
+        <navaid name="TESNU" type="fix" coordinate="50.162736 13.668828"/>
+        <navaid name="TEVRA" type="fix" coordinate="50.556833 18.797361"/>
+        <navaid name="TIPAM" type="fix" coordinate="49.830000 12.252500"/>
+        <navaid name="TIPRU" type="fix" coordinate="49.841603 14.788028"/>
+        <navaid name="TIVAP" type="fix" coordinate="48.729097 14.393953"/>
+        <navaid name="TIVDA" type="fix" coordinate="49.435983 12.656547"/>
+        <navaid name="TOMTI" type="fix" coordinate="50.953056 15.293333"/>
+        <navaid name="TUMKA" type="fix" coordinate="49.407895 15.947267"/>
+        <navaid name="TUSIN" type="fix" coordinate="49.847495 18.572836"/>
+        <navaid name="TUSTO" type="fix" coordinate="48.608333 12.441667"/>
+        <navaid name="UNKOM" type="fix" coordinate="48.796667 12.548333"/>
+        <navaid name="UPALI" type="fix" coordinate="48.708889 18.520833"/>
+        <navaid name="UPEGU" type="fix" coordinate="49.034914 14.476483"/>
+        <navaid name="UPIVA" type="fix" coordinate="48.578611 18.816945"/>
+        <navaid name="UPKIS" type="fix" coordinate="50.350278 17.998334"/>
+        <navaid name="USEMI" type="fix" coordinate="49.108611 12.968611"/>
+        <navaid name="UTEVO" type="fix" coordinate="50.209928 17.511914"/>
+        <navaid name="UTORO" type="fix" coordinate="50.276642 14.551158"/>
+        <navaid name="UVSUS" type="fix" coordinate="50.155956 16.918559"/>
+        <navaid name="VADOV" type="fix" coordinate="49.129803 13.973042"/>
+        <navaid name="VALPI" type="fix" coordinate="49.024639 17.950231"/>
+        <navaid name="VAMAS" type="fix" coordinate="48.722778 12.371111"/>
+        <navaid name="VAMBO" type="fix" coordinate="50.017075 16.430028"/>
+        <navaid name="VAPUS" type="fix" coordinate="48.908334 18.342778"/>
+        <navaid name="VARIK" type="fix" coordinate="50.291111 12.381111"/>
+        <navaid name="VEMUT" type="fix" coordinate="49.810745 12.461247"/>
+        <navaid name="VENEN" type="fix" coordinate="48.566553 14.541345"/>
+        <navaid name="VENOX" type="fix" coordinate="50.554986 14.133992"/>
+        <navaid name="VESIX" type="fix" coordinate="48.693333 12.311111"/>
+        <navaid name="VESUB" type="fix" coordinate="49.419258 12.997417"/>
+        <navaid name="VEXIL" type="fix" coordinate="50.392308 12.633511"/>
+        <navaid name="VO102" type="fixMinor" coordinate="50.312175 14.187450"/>
+        <navaid name="VO103" type="fixMinor" coordinate="50.255814 14.164364"/>
+        <navaid name="VO104" type="fixMinor" coordinate="50.205989 14.458333"/>
+        <navaid name="VO10F" type="fixMinor" coordinate="50.240572 14.254764"/>
+        <navaid name="VO281" type="fixMinor" coordinate="50.131514 14.888556"/>
+        <navaid name="VO282" type="fixMinor" coordinate="50.165047 14.696081"/>
+        <navaid name="VO283" type="fixMinor" coordinate="50.233875 14.647075"/>
+        <navaid name="VO284" type="fixMinor" coordinate="50.177717 14.623497"/>
+        <navaid name="VO28F" type="fixMinor" coordinate="50.193119 14.533331"/>
+        <navaid name="VO430" type="fixMinor" coordinate="50.276583 14.398120"/>
+        <navaid name="VOZ35" type="fixMinor" coordinate="50.108386 14.888011"/>
+        <navaid name="WR374" type="fixMinor" coordinate="50.983389 17.272000"/>
+        <navaid name="WR376" type="fixMinor" coordinate="50.927945 17.449222"/>
+        <navaid name="WR377" type="fixMinor" coordinate="51.036333 17.101389"/>
+        <navaid name="WR378" type="fixMinor" coordinate="50.983556 17.272111"/>
+        <navaid name="WR379" type="fixMinor" coordinate="50.928334 17.448861"/>
+        <navaid name="WR381" type="fixMinor" coordinate="51.036250 17.102250"/>
+        <navaid name="WR406" type="fixMinor" coordinate="51.022389 16.845972"/>
+        <navaid name="WR501" type="fixMinor" coordinate="50.941639 17.405889"/>
+        <navaid name="WR502" type="fixMinor" coordinate="50.989584 17.252250"/>
+        <navaid name="WR503" type="fixMinor" coordinate="50.914889 17.194028"/>
+        <navaid name="WR504" type="fixMinor" coordinate="51.036389 17.101278"/>
+        <navaid name="WR506" type="fixMinor" coordinate="51.030083 16.850834"/>
+        <navaid name="WW171" type="fixMinor" coordinate="48.569597 15.889206"/>
+        <navaid name="WW181" type="fixMinor" coordinate="48.701111 15.597222"/>
+        <navaid name="WW190" type="fixMinor" coordinate="48.555581 14.765986"/>
+        <navaid name="XELET" type="fix" coordinate="50.837500 17.125833"/>
+        <navaid name="XERKO" type="fix" coordinate="50.867500 17.421389"/>
+        <navaid name="ZI629" type="fixMinor" coordinate="49.185444 18.451278"/>
+        <navaid name="ZI706" type="fixMinor" coordinate="49.176389 18.420556"/>
+
+    </navaids>
+    <borders>
+        <border name="LKMT CTR" type="ctr" enclosed="true" minAltitude="0" maxAltitude="5000">
+            <points>
+                <point coordinate="49 44 16.06 N 018 16 42.91 E"/>
+                <arc coordinate="49.697492 18.109075" direction="clockwise"/>
+                <point coordinate="49 35 21.86 N 018 02 19.96 E"/>
+                <point coordinate="49 33 05.29 N 017 58 40.69 E"/>
+                <point coordinate="49 36 58.87 N 017 52 56.45 E"/>
+                <point coordinate="49 39 15.61 N 017 56 35.76 E"/>
+                <arc coordinate="49.697492 18.109075" direction="clockwise"/>
+                <point coordinate="49 48 11.58 N 018 10 53.42 E"/>
+                <point coordinate="49 50 30.43 N 018 14 46.00 E"/>
+                <point coordinate="49 46 38.00 N 018 20 30.00 E"/>
+                <point coordinate="49 44 16.06 N 018 16 42.91 E"/>
+            </points>
+        </border>
+        <border name="LKMT TMA I" type="tma" enclosed="true" minAltitude="1000" maxAltitude="FL95">
+            <points>
+                <point coordinate="49 59 32.1846 N 018 12 40.99 E"/>
+                <!--state boundary with Poland - -->
+                <point coordinate="49 49 04.7075 N 018 34 56.4441 E"/>
+                <point coordinate="49 26 39.42 N 017 58 55.86 E"/>
+                <arc coordinate="49.697492 18.109075" direction="clockwise"/>
+                <point coordinate="49 35 00.12 N 017 44 19.02 E"/>
+                <point coordinate="49 42 24.44 N 017 45 08.26 E"/>
+                <point coordinate="49 59 32.1846 N 018 12 40.99 E"/>
+            </points>
+        </border>
+        <border name="LKMT TMA II" type="tma" enclosed="true" minAltitude="4000" maxAltitude="FL95">
+            <points>
+                <point coordinate="49 49 04.7075 N 018 34 56.4441 E"/>
+                <!--state boundary with Poland - -->
+                <point coordinate="49 45 59.2026 N 018 36 39.3458 E"/>
+                <point coordinate="49 25 55.46 N 018 04 32.35 E"/>
+                <arc coordinate="49.697492 18.109075" direction="clockwise"/>
+                <point coordinate="49 26 39.42 N 017 58 55.86 E"/>
+                <point coordinate="49 49 04.7075 N 018 34 56.4441 E"/>
+            </points>
+        </border>
+        <border name="LKMT TMA III" type="tma" enclosed="true" minAltitude="4000" maxAltitude="FL95">
+            <points>
+                <point coordinate="50 01 03.4982 N 017 47 13.8124 E"/>
+                <!--state boundary with Poland - -->
+                <point coordinate="49 59 32.1846 N 018 12 40.9921 E"/>
+                <point coordinate="49 42 24.44 N 017 45 08.26 E"/>
+                <point coordinate="50 01 03.4982 N 017 47 13.8124 E"/>
+            </points>
+        </border>
+        <border name="LKMT TMA IV" type="tma" enclosed="true" minAltitude="4500" maxAltitude="FL95">
+            <points>
+                <point coordinate="49 35 00.12 N 017 44 19.02 E"/>
+                <arc coordinate="49.697492 18.109075" direction="clockwise"/>
+                <point coordinate="49 26 39.42 N 017 58 55.86 E"/>
+                <point coordinate="49 22 53.78 N 017 47 57.80 E"/>
+                <point coordinate="49 31 23.68 N 017 35 00.18 E"/>
+                <point coordinate="49 34 13.89 N 017 37 40.77 E"/>
+                <point coordinate="49 35 00.12 N 017 44 19.02 E"/>
+            </points>
+        </border>
+        <border name="LKMT TMA V" type="tma" enclosed="true" minAltitude="FL65" maxAltitude="FL95">
+            <points>
+                <point coordinate="49 33 39.47 N 017 26 09.50 E"/>
+                <point coordinate="49 33 25.05 N 017 31 51.04 E"/>
+                <point coordinate="49 33 22.90 N 017 32 39.77 E"/>
+                <point coordinate="49 34 13.89 N 017 37 40.77 E"/>
+                <point coordinate="49 31 23.68 N 017 35 00.18 E"/>
+                <point coordinate="49 22 53.78 N 017 47 57.80 E"/>
+                <point coordinate="49 22 17.81 N 017 47 02.26 E"/>
+                <point coordinate="49 23 49.98 N 017 35 29.94 E"/>
+                <point coordinate="49 27 29.85 N 017 29 00.64 E"/>
+                <point coordinate="49 29 12.61 N 017 25 58.12 E"/>
+                <point coordinate="49 33 39.47 N 017 26 09.50 E"/>
+            </points>
+        </border>
+
+        <border name="LKMT_MRVA_27" type="mrva" enclosed="true" maxAltitude="2700">
+            <points>
+                <crd coordinate="49.688428 18.103892" radial="240" distance="4.5"/>
+                <arc coordinate="49.688428 18.103892" direction="clockwise"/>
+                <crd coordinate="49.688428 18.103892" radial="060" distance="4.5"/>
+            </points>
+        </border>
+
+        <border name="LKMT_MRVA_33" type="mrva" enclosed="true" maxAltitude="3300">
+            <points>
+                <crd coordinate="49.688428 18.103892" radial="060" distance="4.5"/>
+                <arc coordinate="49.688428 18.103892" direction="clockwise"/>
+                <crd coordinate="49.688428 18.103892" radial="240" distance="4.5"/>
+            </points>
+        </border>
+
+        <border name="LKMT_MRVA_31" type="mrva" enclosed="true" maxAltitude="3100">
+            <points>
+                <crd coordinate="49.688428 18.103892" radial="250" distance="4.5"/>
+                <crd coordinate="49.688428 18.103892" radial="250" distance="10"/>
+                <arc coordinate="49.688428 18.103892" direction="clockwise"/>
+                <crd coordinate="49.688428 18.103892" radial="270" distance="10"/>
+                <point coordinate="49.699825 17.742879"/>
+                <point coordinate="50.023015 17.787444"/>
+                <point coordinate="50.067543 18.035899"/>
+                <point coordinate="49.993569 18.131715"/>
+                <crd coordinate="49.688428 18.103892" radial="0" distance="4.5"/>
+                <arc coordinate="49.688428 18.103892" direction="counterclockwise"/>
+            </points>
+        </border>
+
+        <border name="LKMT_MRVA_32" type="mrva" enclosed="true" maxAltitude="3200">
+            <points>
+                <crd coordinate="49.688428 18.103892" radial="270" distance="10"/>
+                <point coordinate="49.699825 17.742879"/>
+                <point coordinate="49.617950 17.732851"/>
+                <crd coordinate="49.688428 18.103892" radial="250" distance="10"/>
+                <arc coordinate="49.688428 18.103892" direction="clockwise"/>
+            </points>
+        </border>
+
+        <border name="LKMT_MRVA_37" type="mrva" enclosed="true" maxAltitude="3700">
+            <points>
+                <point coordinate="49.699825 17.742879"/>
+                <point coordinate="50.023015 17.787444"/>
+                <point coordinate="49.946886 17.423119"/>
+                <point coordinate="49.800373 17.437603"/>
+                <point coordinate="49.568395 17.267139"/>
+                <point coordinate="49.406082 17.551246"/>
+                <point coordinate="49.521712 17.781874"/>
+                <point coordinate="49.577731 17.727281"/>
+                <point coordinate="49.617950 17.732851"/>
+                <point coordinate="49.699825 17.742879"/>
+            </points>
+        </border>
+
+        <border name="LKMT_MRVA_30" type="mrva" enclosed="true" maxAltitude="3000">
+            <points>
+                <crd coordinate="49.688428 18.103892" radial="250" distance="4.5"/>
+                <crd coordinate="49.688428 18.103892" radial="250" distance="10"/>
+                <point coordinate="49.617950 17.732851"/>
+                <point coordinate="49.577731 17.727281"/>
+                <point coordinate="49.521712 17.781874"/>
+                <point coordinate="49.490829 17.829782"/>
+                <crd coordinate="49.688428 18.103892" radial="218" distance="4.5"/>
+                <arc coordinate="49.688428 18.103892" direction="clockwise"/>
+            </points>
+        </border>
+
+        <border name="LKMT_MRVA_40" type="mrva" enclosed="true" maxAltitude="4000">
+            <points>
+                <crd coordinate="49.688428 18.103892" radial="218" distance="4.5"/>
+                <point coordinate="49.490829 17.829782"/>
+                <point coordinate="49.521712 17.781874"/>
+                <point coordinate="49.406082 17.551246"/>
+                <point coordinate="49.393872 17.571300"/>
+                <point coordinate="49.342880 17.923370"/>
+                <crd coordinate="49.688428 18.103892" radial="195" distance="4.5"/>
+                <arc coordinate="49.688428 18.103892" direction="clockwise"/>
+            </points>
+        </border>
+
+        <border name="LKMT_MRVA_52" type="mrva" enclosed="true" maxAltitude="5200">
+            <points>
+                <crd coordinate="49.688428 18.103892" radial="195" distance="4.5"/>
+                <point coordinate="49.342880 17.923370"/>
+                <point coordinate="49.294761 18.277668"/>
+                <point coordinate="49.383818 18.443676"/>
+                <point coordinate="49.541821 18.265413"/>
+                <point coordinate="49.634469 18.411366"/>
+                <crd coordinate="49.688428 18.103892" radial="100" distance="4.5"/>
+                <arc coordinate="49.688428 18.103892" direction="clockwise"/>
+            </points>
+        </border>
+
+        <border name="LKMT_MRVA_56" type="mrva" enclosed="true" maxAltitude="5600">
+            <points>
+                <point coordinate="49.634469 18.411366"/>
+                <point coordinate="49.541821 18.265413"/>
+                <point coordinate="49.383818 18.443676"/>
+                <point coordinate="49.508784 18.849225"/>
+                <point coordinate="49.562649 18.840312"/>
+            </points>
+        </border>
+
+        <border name="LKMT_MRVA_43" type="mrva" enclosed="true" maxAltitude="4300">
+            <points>
+                <crd coordinate="49.688428 18.103892" radial="100" distance="4.5"/>
+                <point coordinate="49.634469 18.411366"/>
+                <point coordinate="49.735735 18.577373"/>
+                <crd coordinate="49.688428 18.103892" radial="77" distance="4.5"/>
+                <arc coordinate="49.688428 18.103892" direction="clockwise"/>
+            </points>
+        </border>
+
+        <border name="LKMT_MRVA_50" type="mrva" enclosed="true" maxAltitude="5000">
+            <points>
+                <point coordinate="49.735735 18.577373"/>
+                <point coordinate="49.634469 18.411366"/>
+                <point coordinate="49.562649 18.840312"/>
+                <point coordinate="49.666788 18.816915"/>
+                <point coordinate="49.707725 18.645336"/>
+                <point coordinate="49.741481 18.633081"/>
+            </points>
+        </border>
+
+        <border name="LKMT_MRVA_32" type="mrva" enclosed="true" maxAltitude="3200">
+            <points>
+                <crd coordinate="49.688428 18.103892" radial="77" distance="4.5"/>
+                <point coordinate="49.735735 18.577373"/>
+                <point coordinate="49.741481 18.633081"/>
+                <point coordinate="49.824074 18.584058"/>
+                <point coordinate="49.839156 18.592971"/>
+                <crd coordinate="49.688428 18.103892" radial="60" distance="4.5"/>
+                <arc coordinate="49.688428 18.103892" direction="clockwise"/>
+            </points>
+        </border>
+
+        <border name="LKMT_MRVA_26" type="mrva" enclosed="true" maxAltitude="2600">
+            <points>
+                <crd coordinate="49.688428 18.103892" radial="60" distance="4.5"/>
+                <point coordinate="49.839156 18.592971"/>
+                <point coordinate="49.856393 18.614140"/>
+                <point coordinate="49.913130 18.579602"/>
+                <point coordinate="49.942576 18.345631"/>
+                <point coordinate="49.998596 18.182966"/>
+                <point coordinate="49.993569 18.131715"/>
+                <crd coordinate="49.688428 18.103892" radial="0" distance="4.5"/>
+                <arc coordinate="49.688428 18.103892" direction="clockwise"/>
+            </points>
+        </border>
+
+        <border name="LKP1" type="restricted" minAltitude="0" maxAltitude="5000" enclosed="true">
+            <points>
+                <circle coordinate="N 50 05 26.72 E 014 24 01.68" distance=".6"/>
+            </points>
+        </border>
+
+        <border name="LKD9" type="danger" minAltitude="0" maxAltitude="9500" enclosed="true">
+            <points>
+                <circle coordinate="N 49 44 58.00 E 013 54 43.00" distance="1.5"/>
+            </points>
+        </border>
+
+        <border name="LKD13" type="danger" minAltitude="0" maxAltitude="9500" enclosed="true">
+            <points>
+                <circle coordinate="49 40 23.34 N 017 36 05.38 E" distance="7"/>
+            </points>
+        </border>
+
+        <border name="LKP4" type="restricted" minAltitude="0" maxAltitude="5000" enclosed="true">
+            <points>
+                <point coordinate="49 42 23.79 N 014 53 56.76 E"/>
+                <point coordinate="49 40 53.30 N 014 57 57.76 E"/>
+                <point coordinate="49 39 40.74 N 014 55 54.76 E"/>
+            </points>
+        </border>
+
+    </borders>
+</area>

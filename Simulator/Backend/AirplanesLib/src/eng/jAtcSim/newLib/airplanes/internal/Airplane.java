@@ -239,6 +239,13 @@ public class Airplane {
     public boolean isEmergency() {
       return Airplane.this.emergencyModule.isEmergency();
     }
+
+    @Override
+    public GoingAroundNotification.GoAroundReason pullLastGoAroundReasonIfAny() {
+      GoingAroundNotification.GoAroundReason ret = Airplane.this.lastGoAroundReasonIfAny;
+      if (ret != null) Airplane.this.lastGoAroundReasonIfAny = null;
+      return ret;
+    }
   }
 
   public class AirplaneWriterImpl implements IAirplaneWriter {
@@ -294,15 +301,8 @@ public class Airplane {
 
       if (!isInvokedByAtc)
         this.sendMessage(
-            Airplane.this.atcModule.getTunedAtc(),
-            new DivertingNotification(divertNavaid.getName()));
-    }
-
-    @Override
-    public String toString() {
-      return sf("%s (%s)",
-          Airplane.this.flightModule.getCallsign().toString(),
-          Airplane.this.sqwk.toString());
+                Airplane.this.atcModule.getTunedAtc(),
+                new DivertingNotification(divertNavaid.getName()));
     }
 
     @Override
@@ -312,23 +312,25 @@ public class Airplane {
 
     @Override
     public void goAround(GoingAroundNotification.GoAroundReason reason) {
-      assert reason != null;
+      EAssert.isNotNull(reason);
+
+      Airplane.this.lastGoAroundReasonIfAny = reason;
 
       boolean isAtcFail = EnumUtils.is(reason,
-          new GoingAroundNotification.GoAroundReason[]{
-              GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach,
-              GoingAroundNotification.GoAroundReason.noLandingClearance,
-              GoingAroundNotification.GoAroundReason.incorrectApproachEnter,
-              GoingAroundNotification.GoAroundReason.notStabilizedAirplane
-          });
+              new GoingAroundNotification.GoAroundReason[]{
+                      GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach,
+                      GoingAroundNotification.GoAroundReason.noLandingClearance,
+                      GoingAroundNotification.GoAroundReason.incorrectApproachEnter,
+                      GoingAroundNotification.GoAroundReason.notStabilizedAirplane
+              });
       if (isAtcFail)
         this.addExperience(
-            Mood.ArrivalExperience.goAroundNotCausedByPilot);
+                Mood.ArrivalExperience.goAroundNotCausedByPilot);
 
       GoingAroundNotification gan = new GoingAroundNotification(reason);
       this.sendMessage(
-          Airplane.this.atcModule.getTunedAtc(),
-          gan);
+              Airplane.this.atcModule.getTunedAtc(),
+              gan);
 
       EAssert.isTrue(Airplane.this.pilot instanceof ApproachPilot);
       ApproachPilot prevPilot = (ApproachPilot) Airplane.this.pilot;
@@ -340,17 +342,17 @@ public class Airplane {
       setRouting(gas);
 
       setPilotAndState(
-          new TakeOffPilot(
-              Airplane.this,
-              prevPilot.getRunwayThreshold()),
-          AirplaneState.takeOffGoAround);
+              new TakeOffPilot(
+                      Airplane.this,
+                      prevPilot.getRunwayThreshold()),
+              AirplaneState.takeOffGoAround);
     }
 
     @Override
     public void hold(Navaid navaid, int inboundRadial, LeftRight turn) {
       setPilotAndState(
-          new HoldPilot(Airplane.this, navaid, inboundRadial, turn),
-          AirplaneState.holding
+              new HoldPilot(Airplane.this, navaid, inboundRadial, turn),
+              AirplaneState.holding
       );
     }
 
@@ -373,16 +375,16 @@ public class Airplane {
       int minutesLeft = (int) Math.ceil((divertTime.getValue() - now.getValue()) / 60d);
       EAssert.isTrue(minutesLeft >= 0);
       sendMessage(
-          Airplane.this.atcModule.getTunedAtc(),
-          new DivertTimeNotification(minutesLeft));
+              Airplane.this.atcModule.getTunedAtc(),
+              new DivertTimeNotification(minutesLeft));
     }
 
     @Override
     public void sendMessage(AtcId atcId, SpeechList<IFromPlaneSpeech> speechList) {
       Message m = new Message(
-          Participant.createAirplane(Airplane.this.getReader().getCallsign()),
-          Participant.createAtc(Airplane.this.getReader().getAtc().getTunedAtc()),
-          speechList);
+              Participant.createAirplane(Airplane.this.getReader().getCallsign()),
+              Participant.createAtc(Airplane.this.getReader().getAtc().getTunedAtc()),
+              speechList);
       Context.getMessaging().getMessenger().send(m);
     }
 
@@ -403,12 +405,6 @@ public class Airplane {
       Airplane.this.routingModule.setRouting(routeCommands);
     }
 
-    // Obsolete
-//    @Override
-//    public void setRouting(IReadOnlyList<ICommand> routeCommands) {
-//      Airplane.this.routingModule.setRouting(routeCommands);
-//    }
-
     @Override
     public void setRouting(DARoute daRoute, ActiveRunwayThreshold activeRunwayThreshold) {
       Airplane.this.routingModule.setRunwayThreshold(activeRunwayThreshold);
@@ -416,6 +412,12 @@ public class Airplane {
       Airplane.this.routingModule.setAssignedDARouteName(daRoute.getName());
       Airplane.this.routingModule.setRouting(daRoute.getRouteCommands());
     }
+
+    // Obsolete
+//    @Override
+//    public void setRouting(IReadOnlyList<ICommand> routeCommands) {
+//      Airplane.this.routingModule.setRouting(routeCommands);
+//    }
 
     @Override
     public void setSpeedRestriction(Restriction restriction) {
@@ -453,25 +455,25 @@ public class Airplane {
     @Override
     public void startArriving() {
       setPilotAndState(
-          new ArrivalPilot(Airplane.this),
-          AirplaneState.arrivingHigh
+              new ArrivalPilot(Airplane.this),
+              AirplaneState.arrivingHigh
       );
     }
 
     @Override
     public void startDeparting() {
       setPilotAndState(
-          new DeparturePilot(Airplane.this),
-          AirplaneState.departingLow);
+              new DeparturePilot(Airplane.this),
+              AirplaneState.departingLow);
     }
 
     @Override
     public void startHolding(Navaid navaid, int inboundRadial, LeftRight turn) {
       HoldPilot pilot = new HoldPilot(
-          Airplane.this,
-          navaid,
-          inboundRadial,
-          turn
+              Airplane.this,
+              navaid,
+              inboundRadial,
+              turn
       );
       setPilotAndState(pilot, AirplaneState.holding);
     }
@@ -481,6 +483,13 @@ public class Airplane {
       EAssert.Argument.isNotNull(threshold, "threshold");
       TakeOffPilot pilot = new TakeOffPilot(Airplane.this, threshold);
       setPilotAndState(pilot, AirplaneState.takeOffRoll);
+    }
+
+    @Override
+    public String toString() {
+      return sf("%s (%s)",
+              Airplane.this.flightModule.getCallsign().toString(),
+              Airplane.this.sqwk.toString());
     }
 
     @Override
@@ -499,20 +508,20 @@ public class Airplane {
 
   public static Airplane createArrival(ArrivalAirplaneTemplate template, Squawk sqwk, AtcId initialAtcId) {
     Airplane ret = new Airplane(
-        template.getCallsign(), template.getCoordinate(), sqwk, template.getAirplaneType(),
-        template.getHeading(), template.getAltitude(), template.getSpeed(), false,
-        template.getEntryPoint().getNavaid(), template.getExpectedExitTime(), template.getEntryDelay(),
-        initialAtcId
+            template.getCallsign(), template.getCoordinate(), sqwk, template.getAirplaneType(),
+            template.getHeading(), template.getAltitude(), template.getSpeed(), false,
+            template.getEntryPoint().getNavaid(), template.getExpectedExitTime(), template.getEntryDelay(),
+            initialAtcId
     );
     return ret;
   }
 
   public static Airplane createDeparture(DepartureAirplaneTemplate template, Squawk sqwk, AtcId initialAtcId) {
     Airplane ret = new Airplane(
-        template.getCallsign(), Context.getArea().getAirport().getLocation(), sqwk, template.getAirplaneType(),
-        0, Context.getArea().getAirport().getAltitude(), 0, true,
-        template.getExitPoint().getNavaid(), template.getExpectedExitTime(), template.getEntryDelay(),
-        initialAtcId
+            template.getCallsign(), Context.getArea().getAirport().getLocation(), sqwk, template.getAirplaneType(),
+            0, Context.getArea().getAirport().getAltitude(), 0, true,
+            template.getExitPoint().getNavaid(), template.getExpectedExitTime(), template.getEntryDelay(),
+            initialAtcId
     );
     return ret;
   }
@@ -533,6 +542,7 @@ public class Airplane {
   private final Squawk sqwk;
   private AirplaneState state;
   private final IAirplaneWriter wrt = new AirplaneWriterImpl();
+  private GoingAroundNotification.GoAroundReason lastGoAroundReasonIfAny = null;
 
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneType,
                    int heading, int altitude, int speed, boolean isDeparture,
@@ -542,7 +552,7 @@ public class Airplane {
 
     this.sqwk = sqwk;
     this.flightModule = new AirplaneFlightModule(
-        callsign, entryDelay, expectedExitTime, isDeparture);
+            callsign, entryDelay, expectedExitTime, isDeparture);
 
     this.sha = new ShaModule(this, heading, altitude, speed, airplaneType);
     this.emergencyModule = new EmergencyModule();
@@ -593,12 +603,12 @@ public class Airplane {
 
   private Navaid getDivertNavaid() {
     IList<DARoute> rts = Context.getArea().getCurrentRunwayConfiguration()
-        .getDepartures()
-        .where(q -> q.isForCategory(Airplane.this.airplaneType.category))
-        .getRandom()
-        .getThreshold()
-        .getRoutes()
-        .where(q -> q.getType() == DARouteType.sid);
+            .getDepartures()
+            .where(q -> q.isForCategory(Airplane.this.airplaneType.category))
+            .getRandom()
+            .getThreshold()
+            .getRoutes()
+            .where(q -> q.getType() == DARouteType.sid);
     DARoute r = rts.getRandom();
     //TODO here can null-pointer-exception occur when no route is found for threshold and category
     Navaid ret = r.getMainNavaid();
@@ -607,11 +617,11 @@ public class Airplane {
 
   private void logToFdr() {
     fdr.log(
-        coordinate,
-        sha.getHeading(), sha.getTargetHeading(),
-        sha.getAltitude(), sha.getVerticalSpeed(), sha.getTargetAltitude(),
-        sha.getSpeed(), sha.getGS(), sha.getTargetSpeed(),
-        state
+            coordinate,
+            sha.getHeading(), sha.getTargetHeading(),
+            sha.getAltitude(), sha.getVerticalSpeed(), sha.getTargetAltitude(),
+            sha.getSpeed(), sha.getGS(), sha.getTargetSpeed(),
+            state
     );
   }
 
@@ -621,19 +631,19 @@ public class Airplane {
   private void updateCoordinates() {
     double dist = this.sha.getGS() * secondFraction;
     Coordinate newC
-        = Coordinates.getCoordinate(coordinate, this.sha.getHeading(), dist);
+            = Coordinates.getCoordinate(coordinate, this.sha.getHeading(), dist);
 
     // add wind if flying
     if (this.state.is(
-        AirplaneState.holdingPoint,
-        AirplaneState.takeOffRoll,
-        AirplaneState.landed
+            AirplaneState.holdingPoint,
+            AirplaneState.takeOffRoll,
+            AirplaneState.landed
     ) == false) {
       Weather weather = Context.getWeather().getWeather();
       newC = Coordinates.getCoordinate(
-          newC,
-          weather.getWindHeading(),
-          UnitProvider.ftToNm(weather.getWindSpeedOrWindGustSpeed()));
+              newC,
+              weather.getWindHeading(),
+              UnitProvider.ftToNm(weather.getWindSpeedOrWindGustSpeed()));
     }
 
     this.coordinate = newC;

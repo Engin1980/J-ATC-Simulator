@@ -16,31 +16,25 @@ public class AtcModule extends Module {
     this.atcId = initialAtcId;
   }
 
-  @Override
-  public void elapseSecond() {
-      int seconds = getAndIncreaseSecondsWithoutRadarContactIfRequired();
-      if (seconds > 0 && seconds % AtcModule.REPEATED_RADAR_CONTACT_REQUEST_SECONDS == 0){
-        wrt.sendMessage(
-            this.getTunedAtc(),
-            new GoodDayNotification(
-                rdr.getCallsign(),
-                rdr.getSha().getAltitude(),
-                rdr.getSha().getTargetAltitude(),
-                rdr.isEmergency(),
-                true));
-      }
-  }
-
   public void changeAtc(AtcId atcId) {
     EAssert.Argument.isNotNull(atcId);
     this.atcId = atcId;
     this.secondsWithoutRadarContact = 1;
   }
 
-  private int getAndIncreaseSecondsWithoutRadarContactIfRequired() {
-    if (secondsWithoutRadarContact != 0)
-      secondsWithoutRadarContact++;
-    return secondsWithoutRadarContact;
+  @Override
+  public void elapseSecond() {
+    int seconds = getAndIncreaseSecondsWithoutRadarContactIfRequired();
+    if (seconds > 0 && seconds % AtcModule.REPEATED_RADAR_CONTACT_REQUEST_SECONDS == 0) {
+      wrt.sendMessage(
+              this.getTunedAtc(),
+              new GoodDayNotification(
+                      rdr.getCallsign(),
+                      rdr.getSha().getAltitude(),
+                      rdr.getSha().getTargetAltitude(),
+                      rdr.isEmergency(),
+                      true));
+    }
   }
 
   public int getSecondsWithoutRadarContact() {
@@ -57,5 +51,11 @@ public class AtcModule extends Module {
 
   public void setHasRadarContact() {
     this.secondsWithoutRadarContact = 0;
+  }
+
+  private int getAndIncreaseSecondsWithoutRadarContactIfRequired() {
+    if (secondsWithoutRadarContact != 0)
+      secondsWithoutRadarContact++;
+    return secondsWithoutRadarContact;
   }
 }
