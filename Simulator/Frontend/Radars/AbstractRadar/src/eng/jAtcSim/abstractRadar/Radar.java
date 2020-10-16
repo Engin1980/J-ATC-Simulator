@@ -2,14 +2,17 @@ package eng.jAtcSim.abstractRadar;
 
 import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
+import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.abstractRadar.global.*;
 import eng.jAtcSim.abstractRadar.global.events.EMouseEventArg;
 import eng.jAtcSim.abstractRadar.global.events.KeyEventArg;
@@ -35,10 +38,16 @@ import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.textProcessing.implemented.atcFormatter.AtcFormatter;
+import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
+import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
+import eng.jAtcSim.newLib.textProcessing.implemented.systemFormatter.SystemFormatter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class Radar {
 
@@ -103,9 +112,11 @@ public class Radar {
     buildDrawnRoutesList();
     buildDrawnApproachesList();
 
+    ParserFormatterStartInfo.Formatters<String> formatters = buildFormatters();
+
     this.messageManager = new VisualisedMessageManager(
         this.styleSettings.displayTextDelay,
-        (ParserFormatterStartInfo.Formatters<String>) this.simulation.getParserFormatterInfo().formatters);
+        formatters);
     if (this.styleSettings.displayTextDelay > Global.REPEATED_SWITCH_REQUEST_SECONDS ||
         this.styleSettings.displayTextDelay > Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS) {
       simulation.getAppLog().write(ApplicationLog.eType.warning,
@@ -126,6 +137,26 @@ public class Radar {
     this.c.getKeyEvent().add(
         (c, o) -> Radar.this.canvas_onKeyPress(c, (KeyEventArg) o));
     this.c.getResizedEvent().add(o -> tl.resetPosition());
+  }
+
+  private void load(){
+    IMap<Class<?>, IList<Sentence>> speechResponses;
+    try {
+      todle nahravat teda asi primo u typu kde je to deklarovane
+              nebo to fakt udelat konfigurovatelne?
+      XmlSerializer ser = XmlSerializationFactory.createForSpeechResponses();
+      speechResponses = XmlSerialization.loadFromFile(ser, appSettings.speechFormatterFile.toString(), IMap.class);
+    } catch (EApplicationException ex) {
+      throw new EApplicationException(
+              sf("Unable to load speech responses from xml file '%s'.", appSettings.speechFormatterFile), ex);
+    }
+  }
+
+  protected ParserFormatterStartInfo.Formatters<String> buildFormatters() {
+    return new ParserFormatterStartInfo.Formatters<>(
+            new DynamicPlaneFormatter(speechResponses),
+            new AtcFormatter(),
+            new SystemFormatter());
   }
 
   public void centerAt(Coordinate coordinate) {

@@ -11,6 +11,7 @@ import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
@@ -33,6 +34,9 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
+import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.AtcParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.PlaneParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.SystemParser;
 import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParser;
 import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParser;
 import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParser;
@@ -416,16 +420,23 @@ public class SwingRadarPanel extends JPanel {
     }
   }
 
+  private ParserFormatterStartInfo.Parsers buildParsers(){
+    return new ParserFormatterStartInfo.Parsers(
+            new PlaneParser(),
+            new AtcParser(),
+            new SystemParser());
+  }
+
   private boolean sendMessage(String msg) {
     msg = normalizeMsg(msg);
     boolean ret;
-    ParserFormatterStartInfo pfsi = this.sim.getParserFormatterInfo();
+    ParserFormatterStartInfo.Parsers parsers = buildParsers();
     try {
       if (msg.startsWith("+") || msg.startsWith("-")) {
         // msg for atc
         AtcType atcType = msg.startsWith("+") ? AtcType.ctr : AtcType.twr;
         msg = msg.substring(1);
-        IAtcParser parser = pfsi.parsers.atcParser;
+        IAtcParser parser = parsers.atcParser;
         IAtcSpeech speech = parser.parse(msg);
         AtcId id = sim.getAtcs().getFirst(q -> q.getType() == atcType);
         sim.sendAtcCommand(userAtcId, id, speech);
@@ -433,7 +444,7 @@ public class SwingRadarPanel extends JPanel {
       } else if (msg.startsWith("?")) {
         // system
         msg = msg.substring(1);
-        ISystemParser parser = pfsi.parsers.systemParser;
+        ISystemParser parser = parsers.systemParser;
         ISystemSpeech speech = parser.parse(msg);
         sim.sendSystemCommand(userAtcId, speech);
         ret = true;
@@ -447,7 +458,7 @@ public class SwingRadarPanel extends JPanel {
         String callsignString = msg.substring(0, firstSpaceIndex);
         String messageString = msg.substring(firstSpaceIndex + 1);
         Callsign callsign = getCallsignFromString(callsignString);
-        IPlaneParser parser = pfsi.parsers.planeParser;
+        IPlaneParser parser = parsers.planeParser;
         SpeechList<IForPlaneSpeech> cmds = parser.parse(messageString);
         sim.sendPlaneCommands(userAtcId, callsign, cmds);
         ret = true;

@@ -67,6 +67,4 @@ public interface ISimulation {
   void unregisterMessageListener(Object listener);
 
   void unregisterOnSecondElapsed(int simulationSecondListenerHandlerId);
-
-  ParserFormatterStartInfo getParserFormatterInfo();
 }

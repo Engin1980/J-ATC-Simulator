@@ -4,7 +4,6 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.atcs.IUserAtcInterface;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
-import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.KeyShortcutManager;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
@@ -26,21 +25,17 @@ public class IOModule extends SimulationModule {
 
   private final KeyShortcutManager keyShortcutManager;
   private final Messenger messenger;
-  private final ParserFormatterStartInfo parseFormatStartInfo;
   private final SystemMessagesModule systemMessagesModule;
 
   public IOModule(
           Simulation parent,
           KeyShortcutManager keyShortcutManager,
-          ParserFormatterStartInfo parserFormatterStartInfo,
           SystemMessagesModule systemMessagesModule) {
     super(parent);
     EAssert.Argument.isNotNull(keyShortcutManager, "keyShortcutManager");
-    EAssert.Argument.isNotNull(parserFormatterStartInfo, "parserFormatterStartInfo");
     EAssert.Argument.isNotNull(systemMessagesModule, "systemMessagesModule");
 
     this.keyShortcutManager = keyShortcutManager;
-    this.parseFormatStartInfo = parserFormatterStartInfo;
     this.systemMessagesModule = systemMessagesModule;
     this.messenger = new Messenger();
   }
@@ -56,10 +51,6 @@ public class IOModule extends SimulationModule {
   public IList<Message> getMessagesByKey(Object listener) {
     IList<eng.jAtcSim.newLib.messaging.Message> tmp = this.messenger.getMessagesByListener(listener, true);
     return tmp;
-  }
-
-  public ParserFormatterStartInfo getParserFormatterInfo() {
-    return this.parseFormatStartInfo;
   }
 
   public void init() {

@@ -80,11 +80,6 @@ public class Simulation {
     }
 
     @Override
-    public ParserFormatterStartInfo getParserFormatterInfo() {
-      return Simulation.this.ioModule.getParserFormatterInfo();
-    }
-
-    @Override
     public IReadOnlyList<IAirplaneInfo> getPlanesToDisplay() {
       return Simulation.this.getAirplanesModule().getPlanesForPublicAccess();
     }
@@ -213,7 +208,6 @@ public class Simulation {
     this.ioModule = new IOModule(
             this,
             new KeyShortcutManager(),
-            simulationSettings.parserFormatterStartInfo,
             new SystemMessagesModule(this)
     );
     this.ioModule.init();
