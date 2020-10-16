@@ -11,12 +11,14 @@ import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToRouteCommand;
 
+// region Inner
 class DepartureManager {
 
   private final TowerAtc parent;
@@ -68,6 +70,15 @@ class DepartureManager {
     this.departureSwitchAltitude.set(plane, switchAltitude);
   }
 
+  public IReadOnlyList<IAirplane> getAllPlanes() {
+    //TODO do in something more efficient way
+    IList<IAirplane> ret = new EList<>();
+    ret.addMany(this.holdingPointNotReady);
+    ret.addMany(this.holdingPointReady);
+    ret.addMany(this.departing);
+    return ret;
+  }
+
   public EDayTimeStamp getAndEraseHoldingPointEntryTime(IAirplane plane) {
     EDayTimeStamp ret = holdingPointWaitingTimeMap.get(plane);
     holdingPointWaitingTimeMap.remove(plane);
@@ -109,11 +120,11 @@ class DepartureManager {
   public void registerNewDeparture(IAirplane plane, ActiveRunwayThreshold runwayThreshold) {
     this.holdingPointNotReady.add(plane);
     holdingPointWaitingTimeMap.set(plane, Context.getShared().getNow().toStamp());
-    DARoute r = getDepartureRouteForPlane(runwayThreshold,plane.getType(), plane.getRouting().getEntryExitPoint(), true);
+    DARoute r = getDepartureRouteForPlane(runwayThreshold, plane.getType(), plane.getRouting().getEntryExitPoint(), true);
     Message m = new Message(
-        Participant.createAtc(this.parent.getAtcId()),
-        Participant.createAirplane(plane.getCallsign()),
-        new SpeechList<ICommand>(ClearedToRouteCommand.create(r.getName(), r.getType(), runwayThreshold.getName())));
+            Participant.createAtc(this.parent.getAtcId()),
+            Participant.createAirplane(plane.getCallsign()),
+            new SpeechList<ICommand>(ClearedToRouteCommand.create(r.getName(), r.getType(), runwayThreshold.getName())));
   }
 
   public IAirplane tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {
@@ -129,14 +140,15 @@ class DepartureManager {
 
   private DARoute getDepartureRouteForPlane(ActiveRunwayThreshold rt, AirplaneType type, Navaid mainNavaid, boolean canBeVectoring) {
     DARoute ret = rt.getRoutes().where(
-        q -> q.getType() == DARouteType.sid
-            && q.isValidForCategory(type.category)
-            && q.getMaxMrvaAltitude() < type.maxAltitude
-            && q.getMainNavaid().equals(mainNavaid))
-        .tryGetRandom();
+            q -> q.getType() == DARouteType.sid
+                    && q.isValidForCategory(type.category)
+                    && q.getMaxMrvaAltitude() < type.maxAltitude
+                    && q.getMainNavaid().equals(mainNavaid))
+            .tryGetRandom();
     if (ret == null && canBeVectoring)
       ret = DARoute.createNewVectoringByFix(mainNavaid);
     return ret;
   }
 
 }
+// endregion Inner

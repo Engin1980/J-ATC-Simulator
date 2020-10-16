@@ -1,18 +1,19 @@
 package eng.jAtcSim.newLib.atcs.internal.tower;
 
 import eng.eSystem.collections.EDistinctList;
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
-import eng.jAtcSim.newLib.shared.Callsign;
 
 class ArrivalManager {
-  private IList<IAirplane> goAroundedPlanesToSwitchList = new EDistinctList<>(EDistinctList.Behavior.exception);
-  private IList<IAirplane> landingPlanesList = new EDistinctList<>(EDistinctList.Behavior.exception);
+  private final IList<IAirplane> goAroundedPlanesToSwitchList = new EDistinctList<>(EDistinctList.Behavior.exception);
+  private final IList<IAirplane> landingPlanesList = new EDistinctList<>(EDistinctList.Behavior.exception);
   private final TowerAtc parent;
 
   public ArrivalManager(TowerAtc parent) {
@@ -30,6 +31,13 @@ class ArrivalManager {
   public void deletePlane(IAirplane plane) {
     this.landingPlanesList.tryRemove(plane);
     this.goAroundedPlanesToSwitchList.tryRemove(plane);
+  }
+
+  public IReadOnlyList<IAirplane> getAllPlanes() {
+    IList<IAirplane> ret = new EList<>();
+    ret.addMany(this.goAroundedPlanesToSwitchList);
+    ret.addMany(this.landingPlanesList);
+    return ret;
   }
 
   public double getClosestLandingPlaneDistanceForThreshold(ActiveRunwayThreshold threshold) {

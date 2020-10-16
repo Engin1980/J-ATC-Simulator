@@ -68,6 +68,22 @@ public abstract class ComputerAtc extends Atc {
 
   private static class PlaneSwitchWrapper {
 
+    public static boolean isPlaneSwitchBased(Message message) {
+      PlaneSwitchRequest ps = tryGetBaseIfBasedOnPlaneSwitch(message);
+      return ps != null;
+    }
+
+    public static PlaneSwitchRequest tryGetBaseIfBasedOnPlaneSwitch(Message message) {
+      if (message.getContent() instanceof PlaneSwitchRequest)
+        return message.getContent();
+      else if (message.getContent() instanceof AtcConfirmation)
+        return (PlaneSwitchRequest) ((AtcConfirmation) message.getContent()).getOrigin();
+      else if (message.getContent() instanceof AtcRejection)
+        return (PlaneSwitchRequest) ((AtcRejection) message.getContent()).getOrigin();
+      else
+        return null;
+    }
+
     private final Message message;
 
     public PlaneSwitchWrapper(Message message) {
@@ -100,32 +116,6 @@ public abstract class ComputerAtc extends Atc {
       AtcId ret = Context.Internal.getAtc(p.getId()).getAtcId();
       return ret;
     }
-
-    public static boolean isPlaneSwitchBased(Message message) {
-      PlaneSwitchRequest ps = tryGetBaseIfBasedOnPlaneSwitch(message);
-      return ps != null;
-    }
-
-    public static PlaneSwitchRequest tryGetBaseIfBasedOnPlaneSwitch(Message message) {
-      if (message.getContent() instanceof PlaneSwitchRequest)
-        return message.getContent();
-      else if (message.getContent() instanceof AtcConfirmation)
-        return (PlaneSwitchRequest) ((AtcConfirmation) message.getContent()).getOrigin();
-      else if (message.getContent() instanceof AtcRejection)
-        return (PlaneSwitchRequest) ((AtcRejection) message.getContent()).getOrigin();
-      else
-        return null;
-    }
-  }
-
-  public static class RequestResult {
-    public final boolean isAccepted;
-    public final String message;
-
-    public RequestResult(boolean isAccepted, String message) {
-      this.isAccepted = isAccepted;
-      this.message = message;
-    }
   }
 
   private class SwitchManager {
@@ -148,12 +138,13 @@ public abstract class ComputerAtc extends Atc {
     }
 
     private void elapCheckAndProcessPlanesReadyToSwitch() {
-      for (IAirplane airplane : parent.planes) {
+      IReadOnlyList<IAirplane> planes = parent.getPlanesUnderControl();
+      for (IAirplane airplane : planes) {
         if (parent.outgoingPlanes.isAny(q -> q.getSqwk().equals(airplane.getSqwk())))
           continue;
 
-        AtcId targetAtcId = parent.getTargetAtcIfPlaneIsReadyToSwitchToAnotherAtc(airplane);
-        if (targetAtcId != null) {
+        if (parent.isPlaneReadyToSwitchToAnotherAtc(airplane)) {
+          AtcId targetAtcId = parent.getAtcIdWhereIAmSwitchingPlanes();
           this.elapRequestNewSwitch(airplane, targetAtcId);
         }
       }
@@ -248,11 +239,21 @@ public abstract class ComputerAtc extends Atc {
         sendRejectMessage(mw, planeAcceptance.message);
       }
     }
+
+  }
+
+  public static class RequestResult {
+    public final boolean isAccepted;
+    public final String message;
+
+    public RequestResult(boolean isAccepted, String message) {
+      this.isAccepted = isAccepted;
+      this.message = message;
+    }
   }
 
   protected final IList<Squawk> incomingPlanes = new EList<>();
   protected final IList<SwitchInfo> outgoingPlanes = new EList<>();
-  protected final IList<IAirplane> planes = new EList<>();
   private final DelayedList<Message> speechDelayer = new DelayedList<>(
           Global.MINIMUM_ATC_SPEECH_DELAY_SECONDS, Global.MAXIMUM_ATC_SPEECH_DELAY_SECONDS);
   private final SwitchManager switchManager = new SwitchManager();
@@ -260,6 +261,22 @@ public abstract class ComputerAtc extends Atc {
   public ComputerAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
   }
+
+  protected abstract boolean acceptsNewRouting(IAirplane airplane, PlaneSwitchRequestRouting routing);
+
+  protected abstract RequestResult canIAcceptPlaneIncomingFromAnotherAtc(IAirplane plane);
+
+  protected abstract boolean isPlaneReadyToSwitchToAnotherAtc(IAirplane airplane);
+
+  protected abstract AtcId getAtcIdWhereIAmSwitchingPlanes();
+
+  protected abstract void processMessagesFromPlane(IAirplane plane, SpeechList<IFromPlaneSpeech> spchs);
+
+  protected abstract void processNonPlaneSwitchMessageFromAtc(Message m);
+
+  protected abstract boolean shouldBeSwitched(Callsign plane);
+
+  protected abstract IReadOnlyList<IAirplane> getPlanesUnderControl();
 
   public void elapseSecond() {
 
@@ -286,26 +303,9 @@ public abstract class ComputerAtc extends Atc {
 
   @Override
   public boolean isResponsibleFor(Callsign callsign) {
-    return this.planes.isAny(q -> q.getCallsign().equals(callsign));
+    boolean ret = this.getPlanesUnderControl().isAny(q -> q.getCallsign().equals(callsign));
+    return ret;
   }
-
-  protected abstract boolean acceptsNewRouting(IAirplane airplane, PlaneSwitchRequestRouting routing);
-
-  protected abstract RequestResult canIAcceptPlaneIncomingFromAnotherAtc(IAirplane plane);
-
-  /**
-   * Returns target atc if plane is ready for switch.
-   *
-   * @param airplane Plane checked if ready to switch
-   * @return Target atc, or null if plane not ready to switch.
-   */
-  protected abstract AtcId getTargetAtcIfPlaneIsReadyToSwitchToAnotherAtc(IAirplane airplane);
-
-  protected abstract void processMessagesFromPlane(IAirplane plane, SpeechList<IFromPlaneSpeech> spchs);
-
-  protected abstract void processNonPlaneSwitchMessageFromAtc(Message m);
-
-  protected abstract boolean shouldBeSwitched(Callsign plane);
 
   private void confirmGoodDayNotificationIfRequired(IAirplane plane, SpeechList<IFromPlaneSpeech> spchs) {
     IList<GoodDayNotification> gdns = spchs.whereItemClassIs(GoodDayNotification.class, false);
@@ -383,6 +383,4 @@ public abstract class ComputerAtc extends Atc {
 //  @Override
 //  protected void _load(XElement elm) {
 //  }
-
-
 }

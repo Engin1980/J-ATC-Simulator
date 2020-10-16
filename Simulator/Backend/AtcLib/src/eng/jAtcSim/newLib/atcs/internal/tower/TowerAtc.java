@@ -23,6 +23,7 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
+import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedForTakeoffCommand;
@@ -38,35 +39,63 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class TowerAtc extends ComputerAtc {
 
+// region Inner
   public enum eDirection {
     departures,
     arrivals
   }
-
-  public static class RunwaysInUseInfo {
-    private SchedulerForAdvice scheduler;
-    private RunwayConfiguration current;
-    private RunwayConfiguration scheduled;
-
-    public RunwayConfiguration getCurrent() {
-      return current;
-    }
-
-    public RunwayConfiguration getScheduled() {
-      return scheduled;
-    }
-  }
-
+// endregion Inner
+// region Static
   private static final int[] RWY_CHANGE_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5, 4, 3, 2, 1};
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
+
+  private static RunwayConfiguration getSuggestedThresholds() {
+    RunwayConfiguration ret = null;
+    Weather w = Context.getWeather().getWeather();
+
+    for (RunwayConfiguration rc : Context.getArea().getAirport().getRunwayConfigurations()) {
+      if (rc.accepts(w.getWindHeading(), w.getWindSpeetInKts())) {
+        ret = rc;
+        break;
+      }
+    }
+    if (ret == null) {
+      ActiveRunwayThreshold rt = getSuggestedThresholdsRegardlessRunwayConfigurations();
+      IReadOnlyList<ActiveRunwayThreshold> rts = rt.getParallelGroup();
+      ret = RunwayConfiguration.createForThresholds(rts);
+    }
+
+    assert ret != null : "There must be runway configuration created.";
+
+    return ret;
+  }
+
+  private static ActiveRunwayThreshold getSuggestedThresholdsRegardlessRunwayConfigurations() {
+    Weather w = Context.getWeather().getWeather();
+    Airport airport = Context.getArea().getAirport();
+    ActiveRunwayThreshold rt = null;
+
+    double diff = Integer.MAX_VALUE;
+    // select runway according to wind
+    for (ActiveRunway r : airport.getRunways()) {
+      for (ActiveRunwayThreshold t : r.getThresholds()) {
+        double localDiff = Headings.getDifference(w.getWindHeading(), (int) t.getCourse(), true);
+        if (localDiff < diff) {
+          diff = localDiff;
+          rt = t;
+        }
+      }
+    }
+    return rt;
+  }
+// endregion Static
   private final DepartureManager departureManager = new DepartureManager(this);
   private final ArrivalManager arrivalManager = new ArrivalManager(this);
   private final EventAnonymousSimple onRunwayChanged = new EventAnonymousSimple();
   private RunwaysInUseInfo inUseInfo = null;
   private EMap<String, RunwayCheckInfo> runwayChecks = null;
   private boolean isUpdatedWeather;
-
   public TowerAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
   }
@@ -161,66 +190,6 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  private static RunwayConfiguration getSuggestedThresholds() {
-    RunwayConfiguration ret = null;
-    Weather w = Context.getWeather().getWeather();
-
-    for (RunwayConfiguration rc : Context.getArea().getAirport().getRunwayConfigurations()) {
-      if (rc.accepts(w.getWindHeading(), w.getWindSpeetInKts())) {
-        ret = rc;
-        break;
-      }
-    }
-    if (ret == null) {
-      ActiveRunwayThreshold rt = getSuggestedThresholdsRegardlessRunwayConfigurations();
-      IReadOnlyList<ActiveRunwayThreshold> rts = rt.getParallelGroup();
-      ret = RunwayConfiguration.createForThresholds(rts);
-    }
-
-    assert ret != null : "There must be runway configuration created.";
-
-    return ret;
-  }
-
-  private static ActiveRunwayThreshold getSuggestedThresholdsRegardlessRunwayConfigurations() {
-    Weather w = Context.getWeather().getWeather();
-    Airport airport = Context.getArea().getAirport();
-    ActiveRunwayThreshold rt = null;
-
-    double diff = Integer.MAX_VALUE;
-    // select runway according to wind
-    for (ActiveRunway r : airport.getRunways()) {
-      for (ActiveRunwayThreshold t : r.getThresholds()) {
-        double localDiff = Headings.getDifference(w.getWindHeading(), (int) t.getCourse(), true);
-        if (localDiff < diff) {
-          diff = localDiff;
-          rt = t;
-        }
-      }
-    }
-    return rt;
-  }
-
-//  @Override
-//  protected void _load(XElement elm) {
-//    super._load(elm);
-//    LoadSave.loadField(elm, this, "departureManager");
-//    LoadSave.saveField(elm, this, "arrivalManager");
-//    LoadSave.loadField(elm, this, "inUseInfo");
-//    LoadSave.loadField(elm, this, "runwayChecks");
-//    LoadSave.loadField(elm, this, "isUpdatedWeather");
-//  }
-//
-//  @Override
-//  protected void _save(XElement elm) {
-//    super._save(elm);
-//    LoadSave.saveField(elm, this, "departureManager");
-//    LoadSave.saveField(elm, this, "arrivalManager");
-//    LoadSave.saveField(elm, this, "inUseInfo");
-//    LoadSave.saveField(elm, this, "runwayChecks");
-//    LoadSave.saveField(elm, this, "isUpdatedWeather");
-//  }
-
   @Override
   protected boolean acceptsNewRouting(IAirplane plane, PlaneSwitchRequestRouting routing) {
     assert plane.isDeparture() : "It is nonsense to have this call here for arrival.";
@@ -244,6 +213,26 @@ public class TowerAtc extends ComputerAtc {
 //                    && q.getMainNavaid().equals(plane.getRouting().getEntryExitPoint()));
 //    return ret;
   }
+
+//  @Override
+//  protected void _load(XElement elm) {
+//    super._load(elm);
+//    LoadSave.loadField(elm, this, "departureManager");
+//    LoadSave.saveField(elm, this, "arrivalManager");
+//    LoadSave.loadField(elm, this, "inUseInfo");
+//    LoadSave.loadField(elm, this, "runwayChecks");
+//    LoadSave.loadField(elm, this, "isUpdatedWeather");
+//  }
+//
+//  @Override
+//  protected void _save(XElement elm) {
+//    super._save(elm);
+//    LoadSave.saveField(elm, this, "departureManager");
+//    LoadSave.saveField(elm, this, "arrivalManager");
+//    LoadSave.saveField(elm, this, "inUseInfo");
+//    LoadSave.saveField(elm, this, "runwayChecks");
+//    LoadSave.saveField(elm, this, "isUpdatedWeather");
+//  }
 
   private void announceChangeRunwayInUse() {
     sendMessageToUser(
@@ -384,14 +373,20 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  protected AtcId getTargetAtcIfPlaneIsReadyToSwitchToAnotherAtc(IAirplane plane) {
-    AtcId ret = null;
+  protected boolean isPlaneReadyToSwitchToAnotherAtc(IAirplane plane) {
+    boolean ret;
     if (this.arrivalManager.checkIfPlaneIsReadyToSwitchAndRemoveIt(plane)) {
-      ret = Context.Internal.getApp().getAtcId();
+      ret = true;
     } else if (plane.isDeparture()) {
-      ret = Context.Internal.getApp().getAtcId();
-    }
+      ret = true;
+    } else
+      ret = false;
     return ret;
+  }
+
+  @Override
+  protected AtcId getAtcIdWhereIAmSwitchingPlanes() {
+    return Context.Internal.getApp().getAtcId();
   }
 
   private boolean isOnApproachOfTheRunwayInUse(IAirplane plane) {
@@ -539,7 +534,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  protected void processMessagesFromPlane(IAirplane plane, SpeechList spchs) {
+  protected void processMessagesFromPlane(IAirplane plane, SpeechList<IFromPlaneSpeech> spchs) {
     if (spchs.containsType(GoingAroundNotification.class)) {
       arrivalManager.goAroundPlane(plane);
     }
@@ -621,6 +616,12 @@ public class TowerAtc extends ComputerAtc {
     return departureManager.canBeSwitched(plane);
   }
 
+  @Override
+  protected IReadOnlyList<IAirplane> getPlanesUnderControl() {
+    IList<IAirplane> ret = this.departureManager.getAllPlanes().union(this.arrivalManager.getAllPlanes());
+    return ret;
+  }
+
   private void tryTakeOffPlaneNew() {
 
     // checks for lined-up plane
@@ -679,6 +680,20 @@ public class TowerAtc extends ComputerAtc {
         runwayChecks.set(rwyName, rc);
         announceScheduledRunwayCheck(rwyName, rc);
       }
+    }
+  }
+
+  public static class RunwaysInUseInfo {
+    private SchedulerForAdvice scheduler;
+    private RunwayConfiguration current;
+    private RunwayConfiguration scheduled;
+
+    public RunwayConfiguration getCurrent() {
+      return current;
+    }
+
+    public RunwayConfiguration getScheduled() {
+      return scheduled;
     }
   }
 }

@@ -52,8 +52,8 @@ public class AirplanesController {
     } else
       throw new EApplicationException("Unknown airplane template type " + at.getClass().getName());
 
-    planes.add(airplane);
-    publicPlanes.add(airplane.getReader());
+    this.planes.add(airplane);
+    this.publicPlanes.add(airplane.getReader());
 
     Context.getMessaging().getMessenger().registerListener(
         Participant.createAirplane(airplane.getReader().getCallsign()));

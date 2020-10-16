@@ -13,12 +13,6 @@ public abstract class Atc {
   private final int orderedAltitude;
   private final AtcRecorder recorder;
 
-  public abstract boolean isResponsibleFor(Callsign callsign);
-
-  public abstract void unregisterPlaneDeletedFromGame(Callsign plane, boolean isForcedDeletion);
-
-  public abstract void registerNewPlaneInGame(Callsign plane, boolean initialRegistration);
-
   public Atc(eng.jAtcSim.newLib.area.Atc template) {
     this.atcId = template.toAtcId();
     this.acceptAltitude = template.getAcceptAltitude();
@@ -28,24 +22,32 @@ public abstract class Atc {
     this.recorder = AtcRecorder.create(this.getAtcId());
   }
 
+  // region abstract
+  public abstract boolean isResponsibleFor(Callsign callsign);
+
+  public abstract void unregisterPlaneDeletedFromGame(Callsign plane, boolean isForcedDeletion);
+
+  public abstract void registerNewPlaneInGame(Callsign plane, boolean initialRegistration);
+
   public abstract void init();
 
   public abstract boolean isHuman();
+// endregion abstract
 
-  public int getReleaseAltitude() {
-    return releaseAltitude;
+  public int getAcceptAltitude() {
+    return acceptAltitude;
   }
 
   public AtcId getAtcId() {
     return atcId;
   }
 
-  public int getAcceptAltitude() {
-    return acceptAltitude;
-  }
-
   public int getOrderedAltitude() {
     return orderedAltitude;
+  }
+
+  public int getReleaseAltitude() {
+    return releaseAltitude;
   }
 
   @Override

@@ -18,6 +18,7 @@ import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -75,9 +76,9 @@ public class CenterAtc extends ComputerAtc {
             SpeechList<IForPlaneSpeech> sl = new SpeechList<>();
             sl.add(ChangeAltitudeCommand.create(ChangeAltitudeCommand.eDirection.descend, newAlt));
             Message m = new Message(
-                Participant.createAtc(this.getAtcId()),
-                Participant.createAirplane(plane.getCallsign()),
-                sl);
+                    Participant.createAtc(this.getAtcId()),
+                    Participant.createAirplane(plane.getCallsign()),
+                    sl);
             super.sendMessage(m);
           }
           tmp.add(plane);
@@ -118,11 +119,11 @@ public class CenterAtc extends ComputerAtc {
   @Override
   protected boolean acceptsNewRouting(IAirplane plane, PlaneSwitchRequestRouting routing) {
     boolean ret;
-    DARoute daRoute = Context.getArea().getAirport().getDaRoutes().getFirst(q->q.getName().equals(routing.getRouteName()));
+    DARoute daRoute = Context.getArea().getAirport().getDaRoutes().getFirst(q -> q.getName().equals(routing.getRouteName()));
     ret = daRoute.isValidForCategory(plane.getType().category)
-        && (daRoute.getType() == DARouteType.vectoring
-        || daRoute.getType() == DARouteType.star
-        || daRoute.getType() == DARouteType.transition);
+            && (daRoute.getType() == DARouteType.vectoring
+            || daRoute.getType() == DARouteType.star
+            || daRoute.getType() == DARouteType.transition);
     return ret;
   }
 
@@ -134,9 +135,9 @@ public class CenterAtc extends ComputerAtc {
     } else {
       if (plane.getRouting().isOnWayToPassDeparturePoint() == false) {
         ret = new RequestResult(false,
-            String.format("%s is not heading (or on the route to) departure fix %s",
-                plane.getCallsign().toString(),
-                plane.getRouting().getEntryExitPoint().getName()));
+                String.format("%s is not heading (or on the route to) departure fix %s",
+                        plane.getCallsign().toString(),
+                        plane.getRouting().getEntryExitPoint().getName()));
       } else {
         if (plane.getSha().getAltitude() > super.getAcceptAltitude() || plane.getSha().getAltitude() > (plane.getType().maxAltitude * .666)) {
           ret = new RequestResult(true, null);
@@ -150,9 +151,9 @@ public class CenterAtc extends ComputerAtc {
               ret = new RequestResult(true, null);
             } else {
               ret = new RequestResult(false, String.format(
-                  "%s is too far from departure fix %s, or not enough far from airport, or not enough high.",
-                  plane.getCallsign().toString(),
-                  plane.getRouting().getAssignedDARouteName()
+                      "%s is too far from departure fix %s, or not enough far from airport, or not enough high.",
+                      plane.getCallsign().toString(),
+                      plane.getRouting().getAssignedDARouteName()
               ));
             }
           }
@@ -163,26 +164,28 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  protected AtcId getTargetAtcIfPlaneIsReadyToSwitchToAnotherAtc(IAirplane plane) {
-    AtcId ret;
+  protected boolean isPlaneReadyToSwitchToAnotherAtc(IAirplane plane) {
+    boolean ret;
     if (plane.isArrival()) {
       if (plane.isEmergency())
-        ret = Context.Internal.getAtc(AtcType.app).getAtcId();
+        ret = true;
       else {
         if (closeArrivals.contains(plane) == false) {
-          ret = null;
+          ret = false;
         } else {
           Navaid n = plane.getRouting().getEntryExitPoint();
           double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
-          if (dist <= 10) {
-            ret = Context.Internal.getAtc(AtcType.app).getAtcId();
-          } else
-            ret = null;
+          ret = dist <= 10;
         }
       }
     } else
-      ret = null;
+      ret = false;
     return ret;
+  }
+
+  @Override
+  protected AtcId getAtcIdWhereIAmSwitchingPlanes() {
+    return Context.Internal.getAtc(AtcType.app).getAtcId();
   }
 
   @Override
@@ -194,11 +197,11 @@ public class CenterAtc extends ComputerAtc {
           SpeechList<ICommand> cmds = new SpeechList<>();
 
           cmds.add(
-              ChangeAltitudeCommand.create(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(plane)));
+                  ChangeAltitudeCommand.create(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(plane)));
           cmds.add(
-              AltitudeRestrictionCommand.createClearRestriction());
+                  AltitudeRestrictionCommand.createClearRestriction());
           cmds.add(
-              ChangeSpeedCommand.createResumeOwnSpeed());
+                  ChangeSpeedCommand.createResumeOwnSpeed());
 
           // order to continue after last fix
           Navaid n = plane.getRouting().getEntryExitPoint();
@@ -206,9 +209,9 @@ public class CenterAtc extends ComputerAtc {
           cmds.add(ChangeHeadingCommand.createContinueCurrentHeading());
 
           Message m = new Message(
-              Participant.createAtc(this.getAtcId()),
-              Participant.createAirplane(plane.getCallsign()),
-              cmds);
+                  Participant.createAtc(this.getAtcId()),
+                  Participant.createAirplane(plane.getCallsign()),
+                  cmds);
           super.sendMessage(m);
         }
       }
@@ -223,14 +226,23 @@ public class CenterAtc extends ComputerAtc {
     EAssert.isTrue(m.getContent() instanceof IAtcSpeech);
     IAtcSpeech origin = m.getContent();
     super.sendMessage(new Message(
-        Participant.createAtc(this.getAtcId()),
-        m.getSource(),
-        new AtcRejection(origin, "Unable.")));
+            Participant.createAtc(this.getAtcId()),
+            m.getSource(),
+            new AtcRejection(origin, "Unable.")));
   }
 
   @Override
   protected boolean shouldBeSwitched(Callsign callsign) {
     return true;
+  }
+
+  @Override
+  protected IReadOnlyList<IAirplane> getPlanesUnderControl() {
+    IList<IAirplane> ret = new EList<>();
+    ret.addMany(this.farArrivals);
+    ret.addMany(this.middleArrivals);
+    ret.addMany(this.closeArrivals);
+    return ret;
   }
 
   private void evaluateMiddleArrivalsForCloseArrivals(IList<IAirplane> tmp, IAirplane plane) {
@@ -240,7 +252,7 @@ public class CenterAtc extends ComputerAtc {
       SpeechList<ICommand> cmds = new SpeechList<>();
       if (plane.getSha().getTargetAltitude() > Context.Internal.getAtc(AtcType.ctr).getOrderedAltitude())
         cmds.add(ChangeAltitudeCommand.create(
-            ChangeAltitudeCommand.eDirection.descend,
+                ChangeAltitudeCommand.eDirection.descend,
                 Context.Internal.getAtc(AtcType.ctr).getOrderedAltitude()));
 
       // assigns route
@@ -251,9 +263,9 @@ public class CenterAtc extends ComputerAtc {
       cmds.add(ProceedDirectCommand.create(n.getName()));
       cmds.add(ClearedToRouteCommand.create(r.getName(), r.getType(), rt.getName()));
       Message msg = new Message(
-          Participant.createAtc(this.getAtcId()),
-          Participant.createAirplane(plane.getCallsign()),
-          cmds);
+              Participant.createAtc(this.getAtcId()),
+              Participant.createAirplane(plane.getCallsign()),
+              cmds);
       super.sendMessage(msg);
 
       tmp.add(plane);
@@ -262,18 +274,18 @@ public class CenterAtc extends ComputerAtc {
 
   private DARoute getArrivalRouteForPlane(ActiveRunwayThreshold rt, AirplaneType type, int currentAltitude, Navaid mainNavaid, boolean canBeVectoring) {
     DARoute ret = rt.getRoutes().where(
-        q -> q.getType() == DARouteType.transition
-            && q.isValidForCategory(type.category)
-            && q.getMaxMrvaAltitude() < currentAltitude
-            && q.getMainNavaid().equals(mainNavaid))
-        .tryGetRandom();
+            q -> q.getType() == DARouteType.transition
+                    && q.isValidForCategory(type.category)
+                    && q.getMaxMrvaAltitude() < currentAltitude
+                    && q.getMainNavaid().equals(mainNavaid))
+            .tryGetRandom();
     if (ret == null)
       ret = rt.getRoutes().where(
-          q -> q.getType() == DARouteType.star
-              && q.isValidForCategory(type.category)
-              && q.getMaxMrvaAltitude() < currentAltitude
-              && q.getMainNavaid().equals(mainNavaid))
-          .tryGetRandom();
+              q -> q.getType() == DARouteType.star
+                      && q.isValidForCategory(type.category)
+                      && q.getMaxMrvaAltitude() < currentAltitude
+                      && q.getMainNavaid().equals(mainNavaid))
+              .tryGetRandom();
     if (ret == null && canBeVectoring)
       ret = DARoute.createNewVectoringByFix(mainNavaid);
     return ret;
@@ -327,12 +339,12 @@ public class CenterAtc extends ComputerAtc {
     // if is arrival, scheduled thresholds are taken into account
     if (Context.getArea().tryGetScheduledRunwayConfiguration() != null)
       thresholds = Context.getArea().tryGetScheduledRunwayConfiguration().getArrivals()
-          .where(q -> q.isForCategory(plane.getType().category))
-          .select(q -> q.getThreshold());
+              .where(q -> q.isForCategory(plane.getType().category))
+              .select(q -> q.getThreshold());
     else
       thresholds = Context.getArea().getCurrentRunwayConfiguration().getArrivals()
-          .where(q -> q.isForCategory(plane.getType().category))
-          .select(q -> q.getThreshold());
+              .where(q -> q.isForCategory(plane.getType().category))
+              .select(q -> q.getThreshold());
 
     thresholdsCopy = new EList<>(thresholds);
     while (r == null && !thresholdsCopy.isEmpty()) {
