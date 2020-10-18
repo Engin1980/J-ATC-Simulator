@@ -11,7 +11,6 @@ import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
@@ -35,6 +34,7 @@ import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.AtcParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.PlaneParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.SystemParser;
 import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParser;
@@ -108,14 +108,14 @@ public class SwingRadarPanel extends JPanel {
   }
 
   class ApproachesAdjustSelectionPanelWrapperListener
-      implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<Approach> {
+          implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<Approach> {
     @Override
     public Tuple<Iterable<Approach>, Selector<Approach, String>> doInit(ISimulation sim) {
       Tuple<Iterable<Approach>, Selector<Approach, String>> ret = new Tuple<>();
       IList<Approach> tmp = new EList<>();
 
       for (ActiveRunwayThreshold runwayThreshold : sim.getRunwayConfigurationInUse().getArrivals()
-          .select(q -> q.getThreshold())) {
+              .select(q -> q.getThreshold())) {
         tmp.addMany(runwayThreshold.getApproaches());
       }
 
@@ -136,16 +136,17 @@ public class SwingRadarPanel extends JPanel {
       radar.redraw(true);
     }
   }
+
   private Area area;
   private AtcId userAtcId;
   private RadarBehaviorSettings behaviorSettings;
   private IList<ButtonBinding> bndgs = new EList();
   private RadarDisplaySettings displaySettings;
   private JButtonExtender extBtn = new JButtonExtender(
-      new Color(0, 0, 0),
-      new Color(150, 150, 150),
-      new Color(0, 0, 0),
-      new Color(0, 255, 0)
+          new Color(0, 0, 0),
+          new Color(150, 150, 150),
+          new Color(0, 0, 0),
+          new Color(0, 255, 0)
   );
   private InitialPosition initialPosition;
   private Radar radar;
@@ -155,6 +156,7 @@ public class SwingRadarPanel extends JPanel {
   private CommandJTextWraper wrp;
   private AdjustSelectionPanelWrapper<Approach> wrpApproaches;
   private AdjustSelectionPanelWrapper<DARoute> wrpRoutes;
+  private DynamicPlaneFormatter dynamicPlaneFormatter;
 
   public void addCommandTextToLine(String text) {
     wrp.appendText(text, true);
@@ -182,7 +184,8 @@ public class SwingRadarPanel extends JPanel {
                    ISimulation sim, Area area, AtcId userAtcId,
                    RadarStyleSettings styleSett,
                    RadarDisplaySettings displaySett,
-                   RadarBehaviorSettings behSett) {
+                   RadarBehaviorSettings behSett,
+                   DynamicPlaneFormatter dynamicPlaneFormatter) {
     this.sim = sim;
     this.area = area;
     this.userAtcId = userAtcId;
@@ -190,6 +193,7 @@ public class SwingRadarPanel extends JPanel {
     this.styleSettings = styleSett;
     this.displaySettings = displaySett;
     this.behaviorSettings = behSett;
+    this.dynamicPlaneFormatter = dynamicPlaneFormatter;
 
     this.setLayout(new BorderLayout());
 
@@ -225,7 +229,7 @@ public class SwingRadarPanel extends JPanel {
   }
 
   private Tuple<JPanel, JButton[]> buildButtonBlock(
-      String btnLabel, Object targetObject, String propertyName) {
+          String btnLabel, Object targetObject, String propertyName) {
 
     JButton btn = new JButton(btnLabel);
     ButtonBinding bb = new ButtonBinding(targetObject, propertyName, btn);
@@ -236,8 +240,8 @@ public class SwingRadarPanel extends JPanel {
   }
 
   private Tuple<JPanel, JButton[]> buildButtonBlock(
-      String btnLabel, Object targetObject, String propertyName,
-      String btnLabelB, Object targetObjectB, String propertyNameB) {
+          String btnLabel, Object targetObject, String propertyName,
+          String btnLabelB, Object targetObjectB, String propertyNameB) {
 
     JButton btn = new JButton(btnLabel);
     ButtonBinding bb = new ButtonBinding(targetObject, propertyName, btn);
@@ -256,12 +260,13 @@ public class SwingRadarPanel extends JPanel {
     ret.setLayout(new BorderLayout());
     SwingCanvas canvas = new SwingCanvas();
     this.radar = new Radar(
-        canvas,
-        this.initialPosition,
-        this.sim, this.area, this.userAtcId,
-        this.styleSettings,
-        this.displaySettings,
-        this.behaviorSettings);
+            canvas,
+            this.initialPosition,
+            this.sim, this.area, this.userAtcId,
+            this.styleSettings,
+            this.displaySettings,
+            this.behaviorSettings,
+            this.dynamicPlaneFormatter);
 
     this.radar.start(1, 3);
 
@@ -278,8 +283,8 @@ public class SwingRadarPanel extends JPanel {
     Font font = new Font("Courier New", Font.PLAIN, txtInput.getFont().getSize());
     txtInput.setFont(font);
     JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle,
-        3,
-        txtInput);
+            3,
+            txtInput);
 
     wrp = new CommandJTextWraper(txtInput);
     wrp.getSendEvent().add(() -> this.wrp_send());
@@ -300,71 +305,71 @@ public class SwingRadarPanel extends JPanel {
 
     Tuple<JPanel, JButton[]> pnlx;
     pnlx = buildButtonBlock(
-        "Cntr",
-        this.displaySettings, "CountryBorderVisible");
+            "Cntr",
+            this.displaySettings, "CountryBorderVisible");
     ret.add(pnlx.getA());
 
     pnlx = buildButtonBlock(
-        "CTR", this.displaySettings, "CtrBorderVisible",
-        "TMA", this.displaySettings, "TmaBorderVisible"
+            "CTR", this.displaySettings, "CtrBorderVisible",
+            "TMA", this.displaySettings, "TmaBorderVisible"
     );
     ret.add(pnlx.getA());
 
     pnlx = buildButtonBlock(
-        "MRVA", this.displaySettings, "MrvaBorderVisible",
-        "MRVA(lbl)", this.displaySettings, "MrvaBorderAltitudeVisible"
+            "MRVA", this.displaySettings, "MrvaBorderVisible",
+            "MRVA(lbl)", this.displaySettings, "MrvaBorderAltitudeVisible"
     );
     ret.add(pnlx.getA());
 
     pnlx = buildButtonBlock(
-        "PROH", this.displaySettings, "RestrictedBorderVisible",
-        "PROH(lbl)", this.displaySettings, "RestrictedBorderAltitudeVisible"
+            "PROH", this.displaySettings, "RestrictedBorderVisible",
+            "PROH(lbl)", this.displaySettings, "RestrictedBorderAltitudeVisible"
     );
     ret.add(pnlx.getA());
 
     pnlx = buildButtonBlock(
-        "VOR", this.displaySettings, "VorVisible",
-        "NDB", this.displaySettings, "NdbVisible"
+            "VOR", this.displaySettings, "VorVisible",
+            "NDB", this.displaySettings, "NdbVisible"
     );
     ret.add(pnlx.getA());
 
     pnlx = buildButtonBlock(
-        "FIX",
-        this.displaySettings, "FixVisible");
+            "FIX",
+            this.displaySettings, "FixVisible");
     ret.add(pnlx.getA());
     pnlx = buildButtonBlock(
-        "FIX-R", this.displaySettings, "FixRouteVisible",
-        "FIX-M", this.displaySettings, "FixMinorVisible"
+            "FIX-R", this.displaySettings, "FixRouteVisible",
+            "FIX-M", this.displaySettings, "FixMinorVisible"
     );
     ret.add(pnlx.getA());
 
     pnlx = buildButtonBlock(
-        "AIP",
-        this.displaySettings, "AirportVisible");
+            "AIP",
+            this.displaySettings, "AirportVisible");
     ret.add(pnlx.getA());
 
     pnlx = buildButtonBlock(
-        "SID", this.displaySettings, "SidVisible",
-        "STAR", this.displaySettings, "StarVisible"
+            "SID", this.displaySettings, "SidVisible",
+            "STAR", this.displaySettings, "StarVisible"
     );
     wrpRoutes =
-        new AdjustSelectionPanelWrapper(new RoutesAdjustSelectionPanelWrapperListener(), this.sim, pnlx.getB());
+            new AdjustSelectionPanelWrapper(new RoutesAdjustSelectionPanelWrapperListener(), this.sim, pnlx.getB());
     ret.add(pnlx.getA());
 
     pnlx = buildButtonBlock(
-        "Apps",
-        this.displaySettings, "ApproachesVisible");
+            "Apps",
+            this.displaySettings, "ApproachesVisible");
     wrpApproaches =
-        new AdjustSelectionPanelWrapper(new ApproachesAdjustSelectionPanelWrapperListener(), this.sim, pnlx.getB());
+            new AdjustSelectionPanelWrapper(new ApproachesAdjustSelectionPanelWrapperListener(), this.sim, pnlx.getB());
     ret.add(pnlx.getA());
 
     pnlx = buildButtonBlock(
-        "P(rngs)",
-        this.displaySettings, "RingsVisible");
+            "P(rngs)",
+            this.displaySettings, "RingsVisible");
     ret.add(pnlx.getA());
     pnlx = buildButtonBlock(
-        "P(hdg)", this.displaySettings, "PlaneHeadingLineVisible",
-        "P(hist)", this.displaySettings, "PlaneHistoryVisible"
+            "P(hdg)", this.displaySettings, "PlaneHeadingLineVisible",
+            "P(hist)", this.displaySettings, "PlaneHistoryVisible"
     );
     ret.add(pnlx.getA());
 
@@ -409,10 +414,6 @@ public class SwingRadarPanel extends JPanel {
     return sb.toString();
   }
 
-  private void processApplicationMessage(String msg) {
-
-  }
-
   private void recallRadarPosition(int index) {
     RadarViewPort rp = storedRadarPositions.tryGet(index);
     if (rp != null) {
@@ -420,7 +421,7 @@ public class SwingRadarPanel extends JPanel {
     }
   }
 
-  private ParserFormatterStartInfo.Parsers buildParsers(){
+  private ParserFormatterStartInfo.Parsers buildParsers() {
     return new ParserFormatterStartInfo.Parsers(
             new PlaneParser(),
             new AtcParser(),
@@ -648,6 +649,7 @@ class ButtonBinding {
   public static void init(JButtonExtender ext) {
     ButtonBinding.ext = ext;
   }
+
   private final JButton btn;
   private final EventAnonymousSimple onClicked = new EventAnonymousSimple();
   private final String propertyName;

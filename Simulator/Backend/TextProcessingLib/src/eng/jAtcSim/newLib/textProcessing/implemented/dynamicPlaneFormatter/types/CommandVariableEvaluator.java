@@ -119,16 +119,16 @@ public class CommandVariableEvaluator {
   public <T extends IPlaneSpeech> String eval(T value, String key) {
     String ret;
     Class<? extends IPlaneSpeech> cls = value.getClass();
-    Function<T, String> fun;
+    Selector<T, String> fun;
     try {
       IMap<String, Selector<? extends IPlaneSpeech, String>> typeEvals = evals.get(cls);
-      fun = (Function<T, String>) typeEvals.get(key);
+      fun = (Selector<T, String>) typeEvals.get(key);
     } catch (Exception ex) {
       throw new EApplicationException(
           sf("Unable to find lambda function for '%s'.'%s'.", cls.getSimpleName(), key), ex);
     }
     try {
-      ret = fun.apply(value);
+      ret = fun.getValue(value);
     } catch (Exception ex) {
       throw new EApplicationException(
           sf("Unable to evaluate '%s'.'%s' via its lambda function.", cls.getSimpleName(), key), ex);

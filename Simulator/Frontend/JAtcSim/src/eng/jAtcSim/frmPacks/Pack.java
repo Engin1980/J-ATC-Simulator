@@ -10,6 +10,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.newLib.gameSim.IGame;
+import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 
 /**
  *
@@ -26,4 +27,6 @@ public abstract class Pack {
   public abstract AppSettings getAppSettings();
 
   public abstract void applyStoredData(IMap<String,Object> map);
+
+  public abstract DynamicPlaneFormatter getDynamicPlaneFormatter();
 }

@@ -12,6 +12,7 @@ import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
+import eng.eSystem.validation.EAssert;
 import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.abstractRadar.global.*;
 import eng.jAtcSim.abstractRadar.global.events.EMouseEventArg;
@@ -85,14 +86,16 @@ public class Radar {
                AtcId userAtcId,
                RadarStyleSettings styleSettings,
                RadarDisplaySettings displaySettings,
-               RadarBehaviorSettings behaviorSettings) {
-    assert canvas != null;
-    assert initialPosition != null;
-    assert sim != null;
-    assert area != null;
-    assert styleSettings != null;
-    assert displaySettings != null;
-    assert behaviorSettings != null;
+               RadarBehaviorSettings behaviorSettings,
+               DynamicPlaneFormatter dynamicPlaneFormatter) {
+    EAssert.Argument.isNotNull(canvas, "canvas");
+    EAssert.Argument.isNotNull(initialPosition, "initialPosition");
+    EAssert.Argument.isNotNull(sim, "sim");
+    EAssert.Argument.isNotNull(area, "area");
+    EAssert.Argument.isNotNull(styleSettings, "styleSettings");
+    EAssert.Argument.isNotNull(displaySettings, "displaySettings");
+    EAssert.Argument.isNotNull(behaviorSettings, "behaviorSettings");
+    EAssert.Argument.isNotNull(dynamicPlaneFormatter, "dynamicPlaneFormatter");
 
     this.c = canvas;
 
@@ -112,7 +115,7 @@ public class Radar {
     buildDrawnRoutesList();
     buildDrawnApproachesList();
 
-    ParserFormatterStartInfo.Formatters<String> formatters = buildFormatters();
+    ParserFormatterStartInfo.Formatters<String> formatters = buildFormatters(dynamicPlaneFormatter);
 
     this.messageManager = new VisualisedMessageManager(
         this.styleSettings.displayTextDelay,
@@ -139,22 +142,10 @@ public class Radar {
     this.c.getResizedEvent().add(o -> tl.resetPosition());
   }
 
-  private void load(){
-    IMap<Class<?>, IList<Sentence>> speechResponses;
-    try {
-      todle nahravat teda asi primo u typu kde je to deklarovane
-              nebo to fakt udelat konfigurovatelne?
-      XmlSerializer ser = XmlSerializationFactory.createForSpeechResponses();
-      speechResponses = XmlSerialization.loadFromFile(ser, appSettings.speechFormatterFile.toString(), IMap.class);
-    } catch (EApplicationException ex) {
-      throw new EApplicationException(
-              sf("Unable to load speech responses from xml file '%s'.", appSettings.speechFormatterFile), ex);
-    }
-  }
-
-  protected ParserFormatterStartInfo.Formatters<String> buildFormatters() {
+  protected ParserFormatterStartInfo.Formatters<String> buildFormatters(DynamicPlaneFormatter dynamicPlaneFormatter) {
+    EAssert.Argument.isNotNull(dynamicPlaneFormatter, "dynamicPlaneFormatter");
     return new ParserFormatterStartInfo.Formatters<>(
-            new DynamicPlaneFormatter(speechResponses),
+            dynamicPlaneFormatter,
             new AtcFormatter(),
             new SystemFormatter());
   }

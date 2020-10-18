@@ -329,7 +329,8 @@ public class FrmMain extends JFrame {
     this.srpRadar.init(
             this.parent.getSim().getAirport().getInitialPosition(),
             this.parent.getSim(), this.parent.getArea(), this.parent.getSim().getUserAtcIds().getFirst(),
-            this.parent.getRadarStyleSettings(), dispSett, behSett
+            this.parent.getRadarStyleSettings(), dispSett, behSett,
+            this.parent.getDynamicPlaneFormatter()
     );
     this.pnlContent.add(srpRadar);
 

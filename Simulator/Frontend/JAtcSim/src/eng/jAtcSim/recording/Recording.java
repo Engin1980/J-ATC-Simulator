@@ -50,7 +50,8 @@ public class Recording {
     bmpCanvas = new BitmapCanvas(settings.getWidth(), settings.getHeight());
     bmpCanvas.getImageDrawn().add(this::bmpCanvas_imageDrawn);
 
-    radar = new Radar(bmpCanvas, initialPosition, simulation, area, userAtcId, ss, ds, bs);
+    //the last argument will fall as it is expected to exists. Radar is not prepared for this.
+    radar = new Radar(bmpCanvas, initialPosition, simulation, area, userAtcId, ss, ds, bs, null);
 
     this.radar.start(settings.getInterval(), settings.getInterval());
     this.isActive = true;

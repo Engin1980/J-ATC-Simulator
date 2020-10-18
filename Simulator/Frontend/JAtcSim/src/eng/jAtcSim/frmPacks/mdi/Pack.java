@@ -7,13 +7,24 @@
 package eng.jAtcSim.frmPacks.mdi;
 
 import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
-import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.eSystem.events.EventSimple;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.AppSettings;
+import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
+import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
+import eng.jAtcSim.xmlLoading.XmlSerialization;
+import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
+
+import java.nio.file.Path;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 /**
  * @author Marek
@@ -29,8 +40,33 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   private FrmFlightList frmList;
   private FrmScheduledTrafficListing frmScheduledTrafficListing;
   private AppSettings appSettings;
+  private DynamicPlaneFormatter dynamicPlaneFormatter;
 
   public Pack() {
+  }
+
+  @Override
+  public void applyStoredData(IMap<String, Object> map) {
+// nothing to do
+  }
+
+  @Override
+  public AppSettings getAppSettings() {
+    return this.appSettings;
+  }
+
+  @Override
+  public IMap<String, Object> getDataToStore() {
+    return new EMap<>();
+  }
+
+  @Override
+  public DynamicPlaneFormatter getDynamicPlaneFormatter() {
+    return this.dynamicPlaneFormatter;
+  }
+
+  public EventSimple<eng.jAtcSim.frmPacks.Pack> getElapseSecondEvent() {
+    return em;
   }
 
   @Override
@@ -38,12 +74,14 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
 
     String fileName = appSettings.radar.styleSettingsFile.toString();
     this.displaySettings = RadarStyleSettings.load(fileName); // XmlLoadHelper.loadNewDisplaySettings(fileName);
-    this.appSettings  = appSettings;
+    this.appSettings = appSettings;
 
     // init sim & area
     this.game = game;
     this.sim = game.getSimulation();
     this.area = game.getSimulation().getArea();
+
+    this.dynamicPlaneFormatter = loadDynamicPlaneFormatter(appSettings.speechFormatterFile);
 
     // create windows
     this.frmMain = new FrmMain();
@@ -70,23 +108,17 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     this.sim.start();
   }
 
-  public EventSimple<eng.jAtcSim.frmPacks.Pack> getElapseSecondEvent() {
-    return em;
-  }
-
-  @Override
-  public IMap<String, Object> getDataToStore() {
-    return new EMap<>();
-  }
-
-  @Override
-  public AppSettings getAppSettings() {
-    return this.appSettings;
-  }
-
-  @Override
-  public void applyStoredData(IMap<String, Object> map) {
-// nothing to do
+  private DynamicPlaneFormatter loadDynamicPlaneFormatter(Path speechFormatterFile) {
+    IMap<Class<?>, IList<Sentence>> speechResponses;
+    try {
+      XmlSerializer ser = XmlSerializationFactory.createForSpeechResponses();
+      speechResponses = XmlSerialization.loadFromFile(ser, speechFormatterFile.toFile(), IMap.class);
+    } catch (EApplicationException ex) {
+      throw new EApplicationException(
+              sf("Unable to load speech responses from xml file '%s'.", speechFormatterFile), ex);
+    }
+    DynamicPlaneFormatter ret = new DynamicPlaneFormatter(speechResponses);
+    return ret;
   }
 
   ISimulation getSim() {

@@ -7,6 +7,7 @@ module JAtcSim.modules.backend.TextProcessingLib {
   exports eng.jAtcSim.newLib.textProcessing.formatting;
   exports eng.jAtcSim.newLib.textProcessing.parsing;
   exports eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types;
+  exports eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter;
   requires eng.eSystem;
   requires JAtcSim.Modules.Backend.SharedLib;
   requires JAtcSim.Modules.Backend.SpeechesLib;

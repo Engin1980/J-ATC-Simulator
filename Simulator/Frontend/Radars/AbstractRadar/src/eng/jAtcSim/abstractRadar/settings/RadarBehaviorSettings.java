@@ -1,5 +1,7 @@
 package eng.jAtcSim.abstractRadar.settings;
 
+import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
+
 public class RadarBehaviorSettings {
   private final boolean paintMessages;
 
