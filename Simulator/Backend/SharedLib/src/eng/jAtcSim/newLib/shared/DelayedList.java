@@ -7,7 +7,6 @@ import eng.jAtcSim.newLib.shared.contextLocal.Context;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Predicate;
 
 public class DelayedList<T> {
@@ -21,19 +20,16 @@ public class DelayedList<T> {
       this.delayLeft = delay;
     }
   }
+
   private final int minimalDelay;
   private final int maximalDelay;
   private int currentDelay = 0;
-  private final List<DelayedItem<T>> inner = new LinkedList<>();
+  private final IList<DelayedItem<T>> inner = new EList<>(LinkedList.class);
 
   public DelayedList(int minimalDelay, int maximalDelay) {
     this.minimalDelay = minimalDelay;
     this.maximalDelay = maximalDelay;
     newRandomDelay();
-  }
-
-  public void newRandomDelay() {
-    this.currentDelay = Context.getApp().getRnd().nextInt(minimalDelay, maximalDelay + 1);
   }
 
   /**
@@ -47,7 +43,7 @@ public class DelayedList<T> {
     inner.add(delayedItem);
   }
 
-  public void add(IReadOnlyList<T> items){
+  public void add(IReadOnlyList<T> items) {
     this.add(items.toJavaList());
   }
 
@@ -67,6 +63,18 @@ public class DelayedList<T> {
     }
   }
 
+  public void clear() {
+    inner.clear();
+  }
+
+  public T get(int index) {
+    return inner.get(index).item;
+  }
+
+  public IReadOnlyList<T> getAll() {
+    return inner.select(q -> q.item);
+  }
+
   public IList<T> getAndElapse() {
     lowerDelay();
     IList<T> ret = new EList<>();
@@ -74,34 +82,30 @@ public class DelayedList<T> {
       DelayedItem<T> delayedItem = inner.get(0);
       if (delayedItem.delayLeft > 0) break;
 
-      inner.remove(0);
+      inner.removeAt(0);
       ret.add(delayedItem.item);
     }
     return ret;
   }
 
-  public void clear() {
-    inner.clear();
-  }
-
-  public int size() {
-    return inner.size();
-  }
-
-  public T get(int index) {
-    return inner.get(index).item;
-  }
-
-  public void removeAt(int index) {
-    inner.remove(index);
-  }
-
-  public boolean isAny(Predicate<T> predicate){
+  public boolean isAny(Predicate<T> predicate) {
     for (DelayedItem<T> item : inner) {
       if (predicate.test(item.item))
         return true;
     }
     return false;
+  }
+
+  public void newRandomDelay() {
+    this.currentDelay = Context.getApp().getRnd().nextInt(minimalDelay, maximalDelay + 1);
+  }
+
+  public void removeAt(int index) {
+    inner.removeAt(index);
+  }
+
+  public int size() {
+    return inner.size();
   }
 
   private void lowerDelay() {

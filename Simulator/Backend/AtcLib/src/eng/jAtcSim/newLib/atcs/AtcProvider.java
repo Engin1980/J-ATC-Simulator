@@ -11,7 +11,7 @@ import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.Atc;
-import eng.jAtcSim.newLib.atcs.internal.ComputerAtc;
+import eng.jAtcSim.newLib.atcs.internal.computer.ComputerAtc;
 import eng.jAtcSim.newLib.atcs.internal.UserAtc;
 import eng.jAtcSim.newLib.atcs.internal.center.CenterAtc;
 import eng.jAtcSim.newLib.atcs.internal.tower.TowerAtc;

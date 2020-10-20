@@ -14,7 +14,8 @@ import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
-import eng.jAtcSim.newLib.atcs.internal.ComputerAtc;
+import eng.jAtcSim.newLib.atcs.internal.computer.ComputerAtc;
+import eng.jAtcSim.newLib.atcs.internal.computer.RequestResult;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
@@ -293,23 +294,23 @@ public class TowerAtc extends ComputerAtc {
   @Override
   protected RequestResult canIAcceptPlaneIncomingFromAnotherAtc(IAirplane plane) {
     if (plane.isDeparture()) {
-      return new ComputerAtc.RequestResult(false, String.format("%s is a departure.", plane.getCallsign()));
+      return new RequestResult(false, String.format("%s is a departure.", plane.getCallsign()));
     }
     //FIXME is it needed to be plane from APP?
 //    if (this.pa Context.Internal.getPre().getResponsibleAtc(plane).equals(Context.Internal.getApp().getAtcId())) {
 //      return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", plane.getCallsign()));
 //    }
     if (isOnApproachOfTheRunwayInUse(plane) == false)
-      return new ComputerAtc.RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", plane.getCallsign()));
+      return new RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", plane.getCallsign()));
     if (isRunwayThresholdUnderMaintenance(plane.getRouting().getAssignedRunwayThreshold()) == false) {
       return new RequestResult(false, String.format("Runway %s is closed now.", plane.getRouting().getAssignedRunwayThreshold().getParent().getName()));
     }
     if (plane.getSha().getAltitude() > this.getAcceptAltitude()) {
-      return new ComputerAtc.RequestResult(false, String.format("%s is too high.", plane.getCallsign()));
+      return new RequestResult(false, String.format("%s is too high.", plane.getCallsign()));
     }
     double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), Context.getArea().getAirport().getLocation());
     if (dist > MAXIMAL_ACCEPT_DISTANCE_IN_NM) {
-      return new ComputerAtc.RequestResult(false, String.format("%s is too far.", plane.getCallsign()));
+      return new RequestResult(false, String.format("%s is too far.", plane.getCallsign()));
     }
 
     return new RequestResult(true, null);

@@ -1,7 +1,9 @@
 package eng.jAtcSim.newLib.atcs.internal;
 
+import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.Message;
+import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 
@@ -32,6 +34,15 @@ public abstract class Atc {
   public abstract void init();
 
   public abstract boolean isHuman();
+
+  protected IList<Message> pullMessages(){
+    IList<Message> messages = Context.getMessaging().getMessenger().getMessagesByListener(
+            Participant.createAtc(this.getAtcId()), true);
+
+    messages.forEach(q-> this.recorder.write(q));
+
+    return messages;
+  }
 // endregion abstract
 
   public int getAcceptAltitude() {
@@ -58,10 +69,6 @@ public abstract class Atc {
   protected void sendMessage(Message msg) {
     Context.getMessaging().getMessenger().send(msg);
     recorder.write(msg);
-  }
-
-  protected AtcRecorder getRecorder() {
-    return recorder;
   }
 
 //  public final void save(XElement elm){
