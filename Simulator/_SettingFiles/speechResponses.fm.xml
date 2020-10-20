@@ -94,10 +94,10 @@
     <sentence>approaching clearance limit</sentence>
   </response>
 
-  <response type="Confirmation">
+  <response type="PlaneConfirmation">
     <sentence>{cmd:origin}</sentence>
   </response>
-  <response type="Rejection">
+  <response type="PlaneRejection">
     <sentence>Unable {cmd:origin}, {cmd:reason}</sentence>
   </response>
 

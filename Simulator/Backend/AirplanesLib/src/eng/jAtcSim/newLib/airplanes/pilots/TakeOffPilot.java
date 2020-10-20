@@ -12,18 +12,23 @@ public class TakeOffPilot extends Pilot {
   //TODO add to airport config the acceleration altitude and use it here
   private final ActiveRunwayThreshold takeOffThreshold;
 
-  public TakeOffPilot(Airplane plane, ActiveRunwayThreshold takeOffThreshold) {
+  public TakeOffPilot(Airplane plane) {
     super(plane);
-    EAssert.Argument.isNotNull(takeOffThreshold, "takeOffThreshold");
-    this.takeOffThreshold = takeOffThreshold;
+    this.takeOffThreshold = plane.getReader().getRouting().getAssignedRunwayThreshold();
+    EAssert.isNotNull(this.takeOffThreshold);
   }
 
   @Override
   public void elapseSecondInternal() {
     switch (rdr.getState()) {
+      case holdingPoint:
+        wrt.resetHeading(takeOffThreshold.getCourse());
+        wrt.setTargetSpeed(rdr.getType().v2);
+        wrt.setState(AirplaneState.takeOffRoll);
+        break;
       case takeOffRoll:
         double targetHeading = Coordinates.getBearing(
-            rdr.getCoordinate(), takeOffThreshold.getOtherThreshold().getCoordinate());
+                rdr.getCoordinate(), takeOffThreshold.getOtherThreshold().getCoordinate());
         wrt.setTargetHeading(new HeadingNavigator(targetHeading, LeftRightAny.any));
 
         if (rdr.getSha().getSpeed() > rdr.getType().vR) {
@@ -50,15 +55,15 @@ public class TakeOffPilot extends Pilot {
   @Override
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
-        AirplaneState.takeOffRoll
+            AirplaneState.holdingPoint
     };
   }
 
   @Override
   protected AirplaneState[] getValidStates() {
     return new AirplaneState[]{
-        AirplaneState.takeOffRoll,
-        AirplaneState.takeOffGoAround
+            AirplaneState.takeOffRoll,
+            AirplaneState.takeOffGoAround
     };
   }
 

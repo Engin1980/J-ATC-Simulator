@@ -26,7 +26,7 @@ class DepartureManager {
   private final TowerAtc parent;
   private final Consumer<Message> messageSenderConsumer;
   private final IList<IAirplane> holdingPointNotAssigned = new EDistinctList<>(EDistinctList.Behavior.exception);
-  private final IList<IAirplane> holdingPointNotReady = new EDistinctList<>(EDistinctList.Behavior.exception);
+  private final IList<IAirplane> holdingPointWaitingForAppSwitchConfirmation = new EDistinctList<>(EDistinctList.Behavior.exception);
   private final IList<IAirplane> holdingPointReady = new EDistinctList<>(EDistinctList.Behavior.exception);
   private final IList<IAirplane> departing = new EList<>();
   private final IMap<IAirplane, Double> departureSwitchAltitude = new EMap<>();
@@ -39,24 +39,16 @@ class DepartureManager {
     this.messageSenderConsumer = messageSenderConsumer;
   }
 
-  public boolean canBeSwitched(IAirplane plane) {
-    if (departureSwitchAltitude.containsKey(plane) && departureSwitchAltitude.get(plane) < plane.getSha().getAltitude()) {
-      departureSwitchAltitude.remove(plane);
-      return true;
-    } else
-      return false;
-  }
-
   public void confirmedByApproach(IAirplane plane) {
-    if (this.holdingPointNotReady.contains(plane)) {
-      this.holdingPointNotReady.remove(plane);
+    if (this.holdingPointWaitingForAppSwitchConfirmation.contains(plane)) {
+      this.holdingPointWaitingForAppSwitchConfirmation.remove(plane);
       this.holdingPointReady.add(plane);
     }
   }
 
   public void deletePlane(IAirplane plane) {
     holdingPointNotAssigned.tryRemove(plane);
-    holdingPointNotReady.tryRemove(plane);
+    holdingPointWaitingForAppSwitchConfirmation.tryRemove(plane);
     holdingPointReady.tryRemove(plane);
     departing.tryRemove(plane);
     for (ActiveRunwayThreshold rt : this.lastDepartingPlane.getKeys()) {
@@ -80,7 +72,7 @@ class DepartureManager {
     //TODO do in something more efficient way
     IList<IAirplane> ret = new EList<>();
     ret.addMany(this.holdingPointNotAssigned);
-    ret.addMany(this.holdingPointNotReady);
+    ret.addMany(this.holdingPointWaitingForAppSwitchConfirmation);
     ret.addMany(this.holdingPointReady);
     ret.addMany(this.departing);
     return ret;
@@ -101,7 +93,7 @@ class DepartureManager {
   }
 
   public int getNumberOfPlanesAtHoldingPoint() {
-    return this.holdingPointNotReady.size() + this.holdingPointReady.size();
+    return this.holdingPointWaitingForAppSwitchConfirmation.size() + this.holdingPointReady.size();
   }
 
   public IMap<ActiveRunwayThreshold, IAirplane> getTheLinedUpPlanes() {
@@ -161,14 +153,17 @@ class DepartureManager {
   public void movePlanesToHoldingPoint() {
     for (IAirplane plane : holdingPointNotAssigned.where(q -> q.getRouting().getAssignedRunwayThreshold() != null)) {
       this.holdingPointNotAssigned.remove(plane);
-      this.holdingPointNotReady.add(plane);
+      this.holdingPointWaitingForAppSwitchConfirmation.add(plane);
       this.holdingPointWaitingTimeMap.set(plane, Context.getShared().getNow().toStamp());
     }
-
   }
 
-  public boolean isPlaneReadyAtHoldingPoint(IAirplane plane) {
-    return this.holdingPointNotReady.contains(plane);
+  public boolean isPlaneReadyToSwitch(IAirplane plane) {
+    return this.holdingPointWaitingForAppSwitchConfirmation.contains(plane);
+  }
+
+  public IReadOnlyList<IAirplane> getDepartedPlanesReadyToHangoff() {
+    return this.departing.where(q -> departureSwitchAltitude.get(q) < q.getSha().getAltitude());
   }
 }
 // endregion Inner

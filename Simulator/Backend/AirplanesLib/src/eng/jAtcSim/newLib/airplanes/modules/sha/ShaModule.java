@@ -80,15 +80,19 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
     return ret;
   }
-  private InertialValue altitude;
-  private HeadingInertialValue heading;
+  private final InertialValue altitude;
+  private final HeadingInertialValue heading;
   private double lastVerticalSpeed = 0;
   private Navigator navigator;
-  private InertialValue speed;
-  private RestrictableItem targetAltitude;
+  private final InertialValue speed;
+  private final RestrictableItem targetAltitude;
   private int targetHeading;
   private LeftRight targetHeadingTurn;
-  private RestrictableItem targetSpeed;
+  private final RestrictableItem targetSpeed;
+
+  public void resetHeading(double heading){
+    this.heading.reset(heading);
+  }
 
   public ShaModule(Airplane plane, int heading, int altitude, int speed, AirplaneType planeType) {
     super(plane);

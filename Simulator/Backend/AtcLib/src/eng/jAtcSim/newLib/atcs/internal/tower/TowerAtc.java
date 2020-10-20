@@ -26,17 +26,12 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedForTakeoffCommand;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.RadarContactConfirmationNotification;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.TaxiToHoldingPointCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.*;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.weather.Weather;
-
-import java.util.function.Consumer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -52,6 +47,7 @@ public class TowerAtc extends ComputerAtc {
   private RunwaysInUseInfo inUseInfo = null;
   private EMap<String, RunwayCheckInfo> runwayChecks = null;
   private boolean isUpdatedWeather;
+
   public TowerAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
   }
@@ -103,8 +99,21 @@ public class TowerAtc extends ComputerAtc {
     //TODO here should be some check that landing plane is not landing on the occupied runway
     departureManager.movePlanesToHoldingPoint();
     tryTakeOffPlaneNew();
+    hangOffDepartedPlanes();
     processRunwayCheckBackground();
     processRunwayChangeBackground();
+  }
+
+  private void hangOffDepartedPlanes() {
+    IReadOnlyList<IAirplane> departedPlanes = departureManager.getDepartedPlanesReadyToHangoff();
+    for (IAirplane plane : departedPlanes) {
+      Message msg = new Message(
+              Participant.createAtc(getAtcId()),
+              Participant.createAirplane(plane.getCallsign()),
+              new SpeechList<>(new ContactCommand(this.getAtcIdWhereIAmSwitchingPlanes())));
+      super.sendMessage(msg);
+    }
+
   }
 
   public int getNumberOfPlanesAtHoldingPoint() {
@@ -382,10 +391,10 @@ public class TowerAtc extends ComputerAtc {
   @Override
   protected boolean isPlaneReadyToSwitchToAnotherAtc(IAirplane plane) {
     boolean ret;
-    if (this.arrivalManager.checkIfPlaneIsReadyToSwitchAndRemoveIt(plane)) {
-      ret = true;
+    if (plane.isArrival()) {
+      ret = this.arrivalManager.checkIfPlaneIsReadyToSwitchAndRemoveIt(plane);
     } else if (plane.isDeparture()) {
-      ret = this.departureManager.isPlaneReadyAtHoldingPoint(plane);
+      ret = this.departureManager.isPlaneReadyToSwitch(plane);
     } else
       ret = false;
     return ret;
@@ -608,19 +617,6 @@ public class TowerAtc extends ComputerAtc {
             Participant.createAtc(Context.Internal.getApp().getAtcId()),
             content);
     super.sendMessage(msg);
-  }
-
-  @Override
-  protected boolean shouldBeSwitched(Callsign callsign) {
-    IAirplane plane = Context.Internal.getPlane(callsign);
-    if (plane.isArrival())
-      return true; // this should be go-arounded arrivals
-
-    // as this plane is asked for switch, it is confirmed
-    // from APP, so can be moved from holding-point to line-up
-    departureManager.confirmedByApproach(plane);
-
-    return departureManager.canBeSwitched(plane);
   }
 
   @Override

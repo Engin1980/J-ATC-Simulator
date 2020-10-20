@@ -80,9 +80,11 @@ public interface IAirplaneWriter {
 
   void startHolding(Navaid navaid, int inboundRadial, LeftRight turn);
 
-  void startTakeOff(ActiveRunwayThreshold threshold);
+  void startTakeOff();
 
   void tuneAtc(AtcId atc);
 
   void setHoldingPoint(ActiveRunwayThreshold t);
+
+  void resetHeading(double heading);
 }

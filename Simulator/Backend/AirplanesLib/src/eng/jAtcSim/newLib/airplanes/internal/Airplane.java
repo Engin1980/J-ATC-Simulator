@@ -342,9 +342,7 @@ public class Airplane {
       setRouting(gas);
 
       setPilotAndState(
-              new TakeOffPilot(
-                      Airplane.this,
-                      prevPilot.getRunwayThreshold()),
+              new TakeOffPilot(Airplane.this),
               AirplaneState.takeOffGoAround);
     }
 
@@ -479,10 +477,9 @@ public class Airplane {
     }
 
     @Override
-    public void startTakeOff(ActiveRunwayThreshold threshold) {
-      EAssert.Argument.isNotNull(threshold, "threshold");
-      TakeOffPilot pilot = new TakeOffPilot(Airplane.this, threshold);
-      setPilotAndState(pilot, AirplaneState.takeOffRoll);
+    public void startTakeOff() {
+      TakeOffPilot pilot = new TakeOffPilot(Airplane.this);
+      this.setPilotAndState(pilot, AirplaneState.holdingPoint);
     }
 
     @Override
@@ -501,6 +498,11 @@ public class Airplane {
     @Override
     public void setHoldingPoint(ActiveRunwayThreshold t) {
       Airplane.this.coordinate = t.getCoordinate();
+    }
+
+    @Override
+    public void resetHeading(double heading) {
+      Airplane.this.sha.resetHeading(heading);
     }
 
     private void setPilotAndState(Pilot pilot, AirplaneState state) {

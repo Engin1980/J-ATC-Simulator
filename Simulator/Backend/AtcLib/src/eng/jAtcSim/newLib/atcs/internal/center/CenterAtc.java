@@ -244,11 +244,6 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  protected boolean shouldBeSwitched(Callsign callsign) {
-    return true;
-  }
-
-  @Override
   protected IReadOnlyList<IAirplane> getPlanesUnderControl() {
     IList<IAirplane> ret = new EList<>();
     ret.addMany(this.farArrivals);

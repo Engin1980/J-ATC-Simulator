@@ -266,8 +266,6 @@ public abstract class ComputerAtc extends Atc {
 
   protected abstract void processNonPlaneSwitchMessageFromAtc(Message m);
 
-  protected abstract boolean shouldBeSwitched(Callsign plane);
-
   protected abstract IReadOnlyList<IAirplane> getPlanesUnderControl();
 
   public void elapseSecond() {
