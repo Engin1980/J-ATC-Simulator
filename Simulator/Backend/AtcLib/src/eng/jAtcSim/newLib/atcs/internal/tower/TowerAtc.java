@@ -106,7 +106,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void hangOffDepartedPlanes() {
-    IReadOnlyList<IAirplane> departedPlanes = departureManager.getDepartedPlanesReadyToHangoff();
+    IReadOnlyList<IAirplane> departedPlanes = departureManager.getDepartedPlanesReadyToHangoff(true);
     for (IAirplane plane : departedPlanes) {
       Message msg = new Message(
               Participant.createAtc(getAtcId()),
@@ -114,7 +114,6 @@ public class TowerAtc extends ComputerAtc {
               new SpeechList<>(new ContactCommand(this.getAtcIdWhereIAmSwitchingPlanes())));
       super.sendMessage(msg);
     }
-
   }
 
   public int getNumberOfPlanesAtHoldingPoint() {

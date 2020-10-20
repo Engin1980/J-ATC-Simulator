@@ -160,6 +160,9 @@ class FlightStripPanel extends JPanel {
       ret = stripSettings.selected;
     } else {
       boolean isEven = index++ % 2 == 0;
+      if (ai.responsibleAtc() == null){
+        ret = stripSettings.uncontrolled;
+      } else
       switch (ai.responsibleAtc().getType()) {
         case app:
           ret = isEven ? stripSettings.app.even : stripSettings.app.odd;

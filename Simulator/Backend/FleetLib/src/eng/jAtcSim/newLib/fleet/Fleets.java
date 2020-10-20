@@ -30,7 +30,7 @@ public abstract class Fleets<T> {
   }
 
   public String[] getIcaos() {
-    IList<String> lst = this.inner.select(q -> byIcaoSelector.getValue(q));
+    IList<String> lst = this.inner.select(q -> byIcaoSelector.select(q));
     String[] ret = lst.toArray(String.class);
     return ret;
   }
@@ -40,7 +40,7 @@ public abstract class Fleets<T> {
   }
 
   public T tryGetByIcao(String icao) {
-    T ret = this.inner.tryGetFirst(q -> byIcaoSelector.getValue(q).equals(icao));
+    T ret = this.inner.tryGetFirst(q -> byIcaoSelector.select(q).equals(icao));
     return ret;
   }
 

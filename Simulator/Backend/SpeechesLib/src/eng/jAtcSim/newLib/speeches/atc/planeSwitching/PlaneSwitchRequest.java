@@ -9,6 +9,17 @@ public class PlaneSwitchRequest implements IAtcSpeech {
   private final Squawk squawk;
   private final boolean repeated;
 
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder("Plane-Switch-Request ");
+    sb.append(squawk.toString());
+    if (routing != null)
+      sb.append(" via " ).append(routing.toString());
+    if (repeated)
+      sb.append(" repeated");
+    return sb.toString();
+  }
+
   public PlaneSwitchRequest(Squawk squawk, PlaneSwitchRequestRouting routing) {
     EAssert.Argument.isNotNull(routing, "routing");
     EAssert.Argument.isNotNull(squawk, "squawk");
@@ -38,4 +49,6 @@ public class PlaneSwitchRequest implements IAtcSpeech {
   public Squawk getSquawk() {
     return squawk;
   }
+
+
 }

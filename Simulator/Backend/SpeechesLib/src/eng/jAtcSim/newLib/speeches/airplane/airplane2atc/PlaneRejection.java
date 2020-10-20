@@ -12,4 +12,9 @@ public class PlaneRejection extends Rejection<ICommand> implements IFromPlaneSpe
     EAssert.Argument.isNonemptyString(reason);
   }
 
+  @Override
+  public String toString(){
+    return "Rejection of '" + getOrigin().toString() + "' {PlaneRejection}";
+  }
+
 }

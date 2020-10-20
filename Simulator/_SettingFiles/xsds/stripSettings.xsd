@@ -18,6 +18,7 @@
         <xs:element name="app" type="appColor"/>
         <xs:element name="airprox" type="sh:colorElement"/>
         <xs:element name="selected" type="sh:colorElement"/>
+        <xs:element name="uncontrolled" type="sh:colorElement"/>
         <xs:element name="font" type="sh:fontElement" />
       </xs:sequence>
     </xs:complexType>

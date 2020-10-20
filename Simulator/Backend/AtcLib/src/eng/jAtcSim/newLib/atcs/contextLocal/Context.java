@@ -33,7 +33,7 @@ public class Context {
     }
 
     public static Atc getAtc(String atcName) {
-      return getAtcs().getFirst(q -> q.getAtcId().getName().equals(atcName));
+      return getAtcs().getFirst(q -> q.getAtcId().getName() == atcName);
     }
 
     public static Atc getAtc(AtcType atcType) {
@@ -86,6 +86,10 @@ public class Context {
       EAssert.Argument.isNotNull(app, "app");
       Context.Internal.app = app;
       Context.Internal.atcs = atcs;
+    }
+
+    public static AtcId getAtcId(String name) {
+      return getAtc(name).getAtcId();
     }
   }
 

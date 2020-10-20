@@ -9,4 +9,9 @@ public class PlaneConfirmation extends Confirmation<ICommand> implements IFromPl
   public PlaneConfirmation(ICommand origin) {
     super(origin);
   }
+
+  @Override
+  public String toString() {
+    return "Confirmation of '" + getOrigin().toString() + "' {PlaneConfirmation}";
+  }
 }

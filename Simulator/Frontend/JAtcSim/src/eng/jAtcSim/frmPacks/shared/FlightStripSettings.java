@@ -15,6 +15,7 @@ public class FlightStripSettings {
   public Clrs twr;
   public Clrs ctr;
   public Clrs app;
+  public Color uncontrolled;
   public Color airprox;
   public Color selected;
   public Font font;

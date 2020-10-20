@@ -84,6 +84,16 @@ class DepartureManager {
     return ret;
   }
 
+  public IReadOnlyList<IAirplane> getDepartedPlanesReadyToHangoff(boolean releaseFromThemFromDepartureManager) {
+    IReadOnlyList<IAirplane> ret = this.departing.where(q -> departureSwitchAltitude.get(q) < q.getSha().getAltitude());
+    if (releaseFromThemFromDepartureManager)
+      ret.forEach(q -> {
+        this.departing.remove(q);
+        this.departureSwitchAltitude.remove(q);
+      });
+    return ret;
+  }
+
   public EDayTimeStamp getLastDepartureTime(ActiveRunwayThreshold rt) {
     EDayTimeStamp ret;
     ret = this.lastDeparturesTime.tryGet(rt);
@@ -106,6 +116,10 @@ class DepartureManager {
     return ret;
   }
 
+  public boolean isPlaneReadyToSwitch(IAirplane plane) {
+    return this.holdingPointWaitingForAppSwitchConfirmation.contains(plane);
+  }
+
   public boolean isSomeDepartureOnRunway(String rwyName) {
     ActiveRunway runway = Context.Internal.getRunway(rwyName);
     for (ActiveRunwayThreshold rt : runway.getThresholds()) {
@@ -114,6 +128,14 @@ class DepartureManager {
         return true;
     }
     return false;
+  }
+
+  public void movePlanesToHoldingPoint() {
+    for (IAirplane plane : holdingPointNotAssigned.where(q -> q.getRouting().getAssignedRunwayThreshold() != null)) {
+      this.holdingPointNotAssigned.remove(plane);
+      this.holdingPointWaitingForAppSwitchConfirmation.add(plane);
+      this.holdingPointWaitingTimeMap.set(plane, Context.getShared().getNow().toStamp());
+    }
   }
 
   public void registerNewDeparture(IAirplane plane, ActiveRunwayThreshold runwayThreshold) {
@@ -148,22 +170,6 @@ class DepartureManager {
     if (ret == null && canBeVectoring)
       ret = DARoute.createNewVectoringByFix(mainNavaid);
     return ret;
-  }
-
-  public void movePlanesToHoldingPoint() {
-    for (IAirplane plane : holdingPointNotAssigned.where(q -> q.getRouting().getAssignedRunwayThreshold() != null)) {
-      this.holdingPointNotAssigned.remove(plane);
-      this.holdingPointWaitingForAppSwitchConfirmation.add(plane);
-      this.holdingPointWaitingTimeMap.set(plane, Context.getShared().getNow().toStamp());
-    }
-  }
-
-  public boolean isPlaneReadyToSwitch(IAirplane plane) {
-    return this.holdingPointWaitingForAppSwitchConfirmation.contains(plane);
-  }
-
-  public IReadOnlyList<IAirplane> getDepartedPlanesReadyToHangoff() {
-    return this.departing.where(q -> departureSwitchAltitude.get(q) < q.getSha().getAltitude());
   }
 }
 // endregion Inner

@@ -47,15 +47,6 @@ class SwitchManager {
     this.elapRepeatOldSwitchRequests();
   }
 
-  public void processPlaneSwitchMessage(PlaneSwitchWrapper mw) {
-    SwitchInfo outgoingSwitchInfo = this.outgoingPlanes.tryGetFirst(q ->
-            q.getSqwk().equals(mw.getSquawk()) && q.getAtcId().equals(mw.getSource()));
-    if (outgoingSwitchInfo != null)
-      this.processOutgoingPlaneSwitchMessage(outgoingSwitchInfo, mw);
-    else
-      this.processIncomingPlaneSwitchMessage(mw);
-  }
-
   public void processGoodDayFromPlane(GoodDayNotification goodDayNotification) {
     SpeechList<IForPlaneSpeech> lst = new SpeechList<>();
     IAirplane plane = Context.Internal.getPlane(goodDayNotification.getCallsign());
@@ -73,6 +64,15 @@ class SwitchManager {
     this.messageSenderConsumer.consume(msg);
   }
 
+  public void processPlaneSwitchMessage(PlaneSwitchRequest planeSwitchRequest, AtcId sender) {
+    SwitchInfo outgoingSwitchInfo = this.outgoingPlanes.tryGetFirst(q ->
+            q.getSqwk().equals(planeSwitchRequest.getSquawk()) && q.getAtcId().equals(sender));
+    if (outgoingSwitchInfo != null)
+      this.processOutgoingPlaneSwitchMessage(outgoingSwitchInfo, planeSwitchRequest, sender);
+    else
+      this.processIncomingPlaneSwitchMessage(planeSwitchRequest, sender);
+  }
+
   private void elapCheckAndProcessPlanesReadyToSwitch() {
     IReadOnlyList<IAirplane> planes = parent.getPlanesUnderControl();
     for (IAirplane airplane : planes) {
@@ -87,9 +87,8 @@ class SwitchManager {
   }
 
   private boolean isPlaneSwitchRelated(Message m, Squawk otherSquawk) {
-    PlaneSwitchRequest ps = PlaneSwitchWrapper.tryGetBaseIfBasedOnPlaneSwitch(m);
-    if (ps == null) return false;
-    else return ps.getSquawk().equals(otherSquawk);
+    return m.getContent() instanceof PlaneSwitchRequest &&
+            ((PlaneSwitchRequest) m.getContent()).getSquawk().equals(otherSquawk);
   }
 
   private void elapRepeatOldSwitchRequests() {
@@ -119,32 +118,32 @@ class SwitchManager {
     messageSenderConsumer.consume(msg);
   }
 
-  private void sendConfirmMessage(PlaneSwitchWrapper mw) {
-    AtcConfirmation confirmation = new AtcConfirmation(mw.getPlaneSwitch());
+  private void sendConfirmMessage(PlaneSwitchRequest planeSwitchRequest, AtcId sender) {
+    AtcConfirmation confirmation = new AtcConfirmation(planeSwitchRequest);
     Message msg = new Message(
             Participant.createAtc(parent.getAtcId()),
-            Participant.createAtc(mw.getSource()),
+            Participant.createAtc(sender),
             confirmation
     );
     messageSenderConsumer.consume(msg);
   }
 
-  private void sendRejectMessage(PlaneSwitchWrapper mw, String reason) {
-    AtcRejection confirmation = new AtcRejection(mw.getPlaneSwitch(), reason);
+  private void sendRejectMessage(PlaneSwitchRequest psr, String reason, AtcId targetAtcId) {
+    AtcRejection confirmation = new AtcRejection(psr, reason);
     Message msg = new Message(
             Participant.createAtc(parent.getAtcId()),
-            Participant.createAtc(mw.getSource()),
+            Participant.createAtc(targetAtcId),
             confirmation
     );
     messageSenderConsumer.consume(msg);
   }
 
-  private void processOutgoingPlaneSwitchMessage(SwitchInfo si, PlaneSwitchWrapper mw) {
-    if (mw.getRouting() != null) {
+  private void processOutgoingPlaneSwitchMessage(SwitchInfo si, PlaneSwitchRequest psr, AtcId sender) {
+    if (psr.getRouting() != null) {
       // the other ATC tries to change plane routing, we can check in and reject it if required
       IAirplane plane = Context.Internal.getPlane(si.getSqwk());
-      if (!parent.acceptsNewRouting(plane, mw.getRouting())) {
-        this.sendRejectMessage(mw, sf("Updated routing %s not accepted.", mw.getRouting().toString()));
+      if (!parent.acceptsNewRouting(plane, psr.getRouting())) {
+        this.sendRejectMessage(psr, sf("Updated routing %s not accepted.", psr.getRouting().toString()), sender);
       } else {
         parent.processConfirmedOutgoingPlaneSwitch(si.getSqwk());
       }
@@ -153,14 +152,14 @@ class SwitchManager {
     this.outgoingPlanes.remove(si);
   }
 
-  private void processIncomingPlaneSwitchMessage(PlaneSwitchWrapper mw) {
-    IAirplane plane = Context.Internal.getPlane(mw.getSquawk());
+  private void processIncomingPlaneSwitchMessage(PlaneSwitchRequest planeSwitchRequest, AtcId sender) {
+    IAirplane plane = Context.Internal.getPlane(planeSwitchRequest.getSquawk());
     RequestResult planeAcceptance = parent.canIAcceptPlaneIncomingFromAnotherAtc(plane);
     if (planeAcceptance.isAccepted) {
       this.incomingPlanes.add(plane.getSqwk());
-      sendConfirmMessage(mw);
+      sendConfirmMessage(planeSwitchRequest, sender);
     } else {
-      sendRejectMessage(mw, planeAcceptance.message);
+      sendRejectMessage(planeSwitchRequest, planeAcceptance.message, sender);
     }
   }
 

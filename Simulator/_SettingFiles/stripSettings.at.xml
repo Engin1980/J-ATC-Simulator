@@ -10,5 +10,6 @@
     <app even="004800" odd="007D00" />
     <airprox>AA0000</airprox>
     <selected>AAAA00</selected>
+    <uncontrolled>FFFFFF</uncontrolled>
     <font family="Consolas" size="12" style="0" />
 </settings>

@@ -12,7 +12,7 @@ public class AtcList<T> extends EDistinctList<T> {
   private T lastGot = null;
 
   AtcList(Selector<T, AtcId> atcIdSelector, Behavior onDuplicateBehavior) {
-    super(q -> atcIdSelector.getValue(q), onDuplicateBehavior);
+    super(q -> atcIdSelector.select(q), onDuplicateBehavior);
     this.atcIdSelector = atcIdSelector;
   }
 
@@ -22,10 +22,10 @@ public class AtcList<T> extends EDistinctList<T> {
 
   public T get(String atcName) {
     T ret;
-    if (lastGot != null && atcIdSelector.getValue(lastGot).getName().equals(atcName))
+    if (lastGot != null && atcIdSelector.select(lastGot).getName().equals(atcName))
       ret = lastGot;
     else {
-      ret = this.tryGetFirst(q -> atcIdSelector.getValue(q).getName().equals(atcName));
+      ret = this.tryGetFirst(q -> atcIdSelector.select(q).getName().equals(atcName));
       if (ret != null) lastGot = ret;
     }
     return ret;

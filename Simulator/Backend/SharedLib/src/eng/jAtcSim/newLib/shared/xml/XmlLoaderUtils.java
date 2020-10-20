@@ -17,8 +17,8 @@ public class XmlLoaderUtils {
                                       Selector<XElement, Boolean> itemElementSelector,
                                       Selector<XElement, T> fromElementLoader) {
     for (XElement child : source.getChildren()) {
-      if (itemElementSelector.getValue(child) == false) continue; // child item element not accepted
-      T item = fromElementLoader.getValue(child);
+      if (itemElementSelector.select(child) == false) continue; // child item element not accepted
+      T item = fromElementLoader.select(child);
       target.add(item);
     }
     return target;
@@ -35,9 +35,9 @@ public class XmlLoaderUtils {
                                           Selector<XElement, V> valueLoader) {
 
     for (XElement child : source.getChildren()) {
-      if (entryElementSelector.getValue(child) == false) continue; // child entry element not accepted
-      K key = keyLoader.getValue(child);
-      V value = valueLoader.getValue(child);
+      if (entryElementSelector.select(child) == false) continue; // child entry element not accepted
+      K key = keyLoader.select(child);
+      V value = valueLoader.select(child);
       target.set(key, value);
     }
     return target;

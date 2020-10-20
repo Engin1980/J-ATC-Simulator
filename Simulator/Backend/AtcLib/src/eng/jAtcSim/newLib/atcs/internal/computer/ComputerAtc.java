@@ -13,6 +13,9 @@ import eng.jAtcSim.newLib.shared.*;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneConfirmation;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
+import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -73,19 +76,22 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private void elapseSecondProcessMessageFromAtc(Message m) {
-    PlaneSwitchWrapper w = tryGetWrapperIfMessageIsRelatedToPlaneSwitching(m);
-    if (w != null) {
-      this.switchManager.processPlaneSwitchMessage(w);
+    EAssert.Argument.isTrue(m.getSource().getType() == Participant.eType.atc);
+    EAssert.Argument.isFalse(
+            m.getContent() instanceof PlaneConfirmation && ((PlaneConfirmation) m.getContent()).getOrigin() instanceof PlaneSwitchRequest,
+            "Plane-Confirmation is not supported for Plane-Switch-Request message type.");
+    EAssert.Argument.isFalse(
+            m.getContent() instanceof PlaneRejection && ((PlaneRejection) m.getContent()).getOrigin() instanceof PlaneSwitchRequest,
+            "Plane-Rejection is not supported for Plane-Switch-Request message type.");
+
+
+    AtcId sender = Context.Internal.getAtcId(m.getSource().getId());
+
+    if (m.getContent() instanceof PlaneSwitchRequest){
+      this.switchManager.processPlaneSwitchMessage((PlaneSwitchRequest) m.getContent(), sender);
     } else {
       processNonPlaneSwitchMessageFromAtc(m);
     }
-  }
-
-  private PlaneSwitchWrapper tryGetWrapperIfMessageIsRelatedToPlaneSwitching(Message m) {
-    if (PlaneSwitchWrapper.isPlaneSwitchBased(m))
-      return new PlaneSwitchWrapper(m);
-    else
-      return null;
   }
 
   private void elapseSecondProcessMessagesForAtc(IList<Message> msgs) {

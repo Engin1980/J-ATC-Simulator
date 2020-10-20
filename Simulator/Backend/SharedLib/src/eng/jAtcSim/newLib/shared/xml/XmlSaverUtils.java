@@ -27,7 +27,7 @@ public class XmlSaverUtils {
                                   Selector<T, String> itemXmlNameSelector,
                                   ToElementSaver<T> itemToElementSaver) {
     for (T item : data) {
-      String itemElementName = itemXmlNameSelector.getValue(item);
+      String itemElementName = itemXmlNameSelector.select(item);
       XElement elm = new XElement(itemElementName);
       itemToElementSaver.save(item, elm);
       target.addElement(elm);
@@ -39,7 +39,7 @@ public class XmlSaverUtils {
                                     ToElementSaver<K> keyToElementSaver,
                                     ToElementSaver<V> valueToElementSaver) {
     for (Map.Entry<K, V> entry : data.getEntries()) {
-      String entryElementName = entryXmlNameSelector.getValue(entry);
+      String entryElementName = entryXmlNameSelector.select(entry);
       XElement elm = new XElement(entryElementName);
       keyToElementSaver.save(entry.getKey(), elm);
       valueToElementSaver.save(entry.getValue(), elm);
