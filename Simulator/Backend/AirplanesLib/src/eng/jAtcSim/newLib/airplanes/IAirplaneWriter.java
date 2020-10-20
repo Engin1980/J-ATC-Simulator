@@ -83,4 +83,6 @@ public interface IAirplaneWriter {
   void startTakeOff(ActiveRunwayThreshold threshold);
 
   void tuneAtc(AtcId atc);
+
+  void setHoldingPoint(ActiveRunwayThreshold t);
 }

@@ -128,6 +128,18 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
+  protected void processConfirmedOutgoingPlaneSwitch(Squawk squawk) {
+    AtcId newTargetAtc = getAtcIdWhereIAmSwitchingPlanes();
+    IAirplane plane = Context.Internal.getPlane(squawk);
+    Message msg = new Message(
+            Participant.createAtc(this.getAtcId()),
+            Participant.createAirplane(plane.getCallsign()),
+            new SpeechList<>(
+                    new ContactCommand(newTargetAtc)));
+    Context.getMessaging().getMessenger().send(msg);
+  }
+
+  @Override
   protected RequestResult canIAcceptPlaneIncomingFromAnotherAtc(IAirplane plane) {
     RequestResult ret;
     if (plane.isArrival()) {

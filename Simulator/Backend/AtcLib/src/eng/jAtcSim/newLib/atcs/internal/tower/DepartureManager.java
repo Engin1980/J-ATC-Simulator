@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.atcs.internal.tower;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
@@ -11,17 +12,20 @@ import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToRouteCommand;
 
+import java.util.function.Consumer;
+
 // region Inner
 class DepartureManager {
 
   private final TowerAtc parent;
+  private final Consumer<Message> messageSenderConsumer;
+  private final IList<IAirplane> holdingPointNotAssigned = new EDistinctList<>(EDistinctList.Behavior.exception);
   private final IList<IAirplane> holdingPointNotReady = new EDistinctList<>(EDistinctList.Behavior.exception);
   private final IList<IAirplane> holdingPointReady = new EDistinctList<>(EDistinctList.Behavior.exception);
   private final IList<IAirplane> departing = new EList<>();
@@ -30,8 +34,9 @@ class DepartureManager {
   private final IMap<ActiveRunwayThreshold, IAirplane> lastDepartingPlane = new EMap<>();
   private final IMap<ActiveRunwayThreshold, EDayTimeStamp> lastDeparturesTime = new EMap<>();
 
-  public DepartureManager(TowerAtc parent) {
+  public DepartureManager(TowerAtc parent, Consumer<Message> messageSenderConsumer) {
     this.parent = parent;
+    this.messageSenderConsumer = messageSenderConsumer;
   }
 
   public boolean canBeSwitched(IAirplane plane) {
@@ -50,6 +55,7 @@ class DepartureManager {
   }
 
   public void deletePlane(IAirplane plane) {
+    holdingPointNotAssigned.tryRemove(plane);
     holdingPointNotReady.tryRemove(plane);
     holdingPointReady.tryRemove(plane);
     departing.tryRemove(plane);
@@ -73,6 +79,7 @@ class DepartureManager {
   public IReadOnlyList<IAirplane> getAllPlanes() {
     //TODO do in something more efficient way
     IList<IAirplane> ret = new EList<>();
+    ret.addMany(this.holdingPointNotAssigned);
     ret.addMany(this.holdingPointNotReady);
     ret.addMany(this.holdingPointReady);
     ret.addMany(this.departing);
@@ -118,13 +125,14 @@ class DepartureManager {
   }
 
   public void registerNewDeparture(IAirplane plane, ActiveRunwayThreshold runwayThreshold) {
-    this.holdingPointNotReady.add(plane);
-    holdingPointWaitingTimeMap.set(plane, Context.getShared().getNow().toStamp());
+    EAssert.Argument.isTrue(plane.getState() == AirplaneState.holdingPoint);
+    this.holdingPointNotAssigned.add(plane);
     DARoute r = getDepartureRouteForPlane(runwayThreshold, plane.getType(), plane.getRouting().getEntryExitPoint(), true);
     Message m = new Message(
             Participant.createAtc(this.parent.getAtcId()),
             Participant.createAirplane(plane.getCallsign()),
             new SpeechList<ICommand>(ClearedToRouteCommand.create(r.getName(), r.getType(), runwayThreshold.getName())));
+    this.messageSenderConsumer.accept(m);
   }
 
   public IAirplane tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {
@@ -150,5 +158,17 @@ class DepartureManager {
     return ret;
   }
 
+  public void movePlanesToHoldingPoint() {
+    for (IAirplane plane : holdingPointNotAssigned.where(q -> q.getRouting().getAssignedRunwayThreshold() != null)) {
+      this.holdingPointNotAssigned.remove(plane);
+      this.holdingPointNotReady.add(plane);
+      this.holdingPointWaitingTimeMap.set(plane, Context.getShared().getNow().toStamp());
+    }
+
+  }
+
+  public boolean isPlaneReadyAtHoldingPoint(IAirplane plane) {
+    return this.holdingPointNotReady.contains(plane);
+  }
 }
 // endregion Inner

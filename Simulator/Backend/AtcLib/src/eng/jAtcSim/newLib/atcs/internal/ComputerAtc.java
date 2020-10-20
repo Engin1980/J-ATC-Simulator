@@ -204,16 +204,6 @@ public abstract class ComputerAtc extends Atc {
       sendMessage(msg);
     }
 
-    private void sendContactCommantToOutgoingPlane(SwitchInfo si) {
-      AtcId newTargetAtc = si.getAtcId();
-      IAirplane plane = Context.Internal.getPlane(si.getSqwk());
-      Message msg = new Message(
-              Participant.createAtc(parent.getAtcId()),
-              Participant.createAirplane(plane.getCallsign()),
-              new SpeechList<>(
-                      new ContactCommand(newTargetAtc)));
-      Context.getMessaging().getMessenger().send(msg);
-    }
 
     private void processOutgoingPlaneSwitchMessage(SwitchInfo si, PlaneSwitchWrapper mw) {
       if (mw.getRouting() != null) {
@@ -222,10 +212,10 @@ public abstract class ComputerAtc extends Atc {
         if (!parent.acceptsNewRouting(plane, mw.getRouting())) {
           this.sendRejectMessage(mw, sf("Updated routing %s not accepted.", mw.getRouting().toString()));
         } else {
-          this.sendContactCommantToOutgoingPlane(si);
+          parent.processConfirmedOutgoingPlaneSwitch(si.getSqwk());
         }
       } else
-        this.sendContactCommantToOutgoingPlane(si);
+        parent.processConfirmedOutgoingPlaneSwitch(si.getSqwk());
       parent.outgoingPlanes.remove(si);
     }
 
@@ -261,6 +251,8 @@ public abstract class ComputerAtc extends Atc {
   public ComputerAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
   }
+
+  protected abstract void processConfirmedOutgoingPlaneSwitch(Squawk squawk);
 
   protected abstract boolean acceptsNewRouting(IAirplane airplane, PlaneSwitchRequestRouting routing);
 

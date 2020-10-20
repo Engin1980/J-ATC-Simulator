@@ -24,6 +24,7 @@ import eng.jAtcSim.newLib.shared.DelayedList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.RequestRadarContactNotification;
@@ -110,13 +111,13 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     processSpeeches(cmds, CommandSource.route);
   }
 
-  private void addNewSpeeches(SpeechList<ICommand> speeches) {
+  private void addNewSpeeches(SpeechList<IForPlaneSpeech> speeches) {
     this.queue.newRandomDelay();
-    tryExpandThenCommands(speeches);
-    for (ICommand speech : speeches) {
+    SpeechList<ICommand> tmp = new SpeechList<>(speeches.whereItemClassIs(ICommand.class, true));
+    tryExpandThenCommands(tmp);
+    for (ICommand speech : tmp) {
       this.queue.add(speech);
     }
-
   }
 
   private void affectAfterCommands(ICommand cmd, CommandSource cs) {
@@ -214,10 +215,10 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     // extract contents
     IList<IMessageContent> contents = msgs.select(q -> q.getContent());
     for (IMessageContent c : contents) {
-      SpeechList<ICommand> cmds;
+      SpeechList<IForPlaneSpeech> cmds;
       if (c instanceof SpeechList) {
-        SpeechList<ICommand> tmp = (SpeechList<ICommand>) c;
-        EAssert.isTrue(tmp.isAll(q -> q instanceof ICommand));
+        SpeechList<IForPlaneSpeech> tmp = (SpeechList<IForPlaneSpeech>) c;
+        EAssert.isTrue(tmp.isAll(q -> q instanceof IForPlaneSpeech));
         cmds = new SpeechList<>();
         tmp.forEach(q -> cmds.add(q));
       } else if (c instanceof ICommand) {

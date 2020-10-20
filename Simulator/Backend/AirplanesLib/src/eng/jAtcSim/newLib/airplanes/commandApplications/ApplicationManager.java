@@ -24,7 +24,7 @@ public class ApplicationManager {
       ret.confirmation = new PlaneConfirmation((ICommand) speech);
     } else if (speech instanceof ICommand) {
       ICommand command = (ICommand) speech;
-      CommandApplication ca = cmdApps.get(command.getClass());
+      CommandApplication ca = cmdApps.tryGet(command.getClass());
       assert ca != null : "Unknown application. Probably not added into cmdApps list?";
       assert plane != null;
       assert command != null;
@@ -75,6 +75,7 @@ public class ApplicationManager {
     cmdApps.set(DivertCommand.class, new DivertCommandApplication());
     cmdApps.set(AltitudeRestrictionCommand.class, new AltitudeRestrictionApplication());
     cmdApps.set(ClearedToRouteCommand.class, new ClearedToRouteApplication());
+    cmdApps.set(TaxiToHoldingPointCommand.class, new TaxiToHoldingPointApplication());
 
     nonCmdApps = new EMap<>();
     nonCmdApps.set(RadarContactConfirmationNotification.class, new RadarContactConfirmationNotificationApplication());

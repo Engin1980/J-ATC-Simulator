@@ -498,6 +498,11 @@ public class Airplane {
       Airplane.this.atcModule.changeAtc(atcId);
     }
 
+    @Override
+    public void setHoldingPoint(ActiveRunwayThreshold t) {
+      Airplane.this.coordinate = t.getCoordinate();
+    }
+
     private void setPilotAndState(Pilot pilot, AirplaneState state) {
       Airplane.this.pilot = pilot;
       Airplane.this.state = state;

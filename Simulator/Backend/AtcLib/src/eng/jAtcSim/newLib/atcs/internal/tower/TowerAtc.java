@@ -20,6 +20,7 @@ import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
@@ -35,20 +36,25 @@ import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.weather.Weather;
 
+import java.util.function.Consumer;
+
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class TowerAtc extends ComputerAtc {
 
-// region Inner
-  public enum eDirection {
-    departures,
-    arrivals
-  }
-// endregion Inner
-// region Static
   private static final int[] RWY_CHANGE_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5, 4, 3, 2, 1};
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
+  private final DepartureManager departureManager = new DepartureManager(this,
+          m -> this.sendMessage(m));
+  private final ArrivalManager arrivalManager = new ArrivalManager(this);
+  private final EventAnonymousSimple onRunwayChanged = new EventAnonymousSimple();
+  private RunwaysInUseInfo inUseInfo = null;
+  private EMap<String, RunwayCheckInfo> runwayChecks = null;
+  private boolean isUpdatedWeather;
+  public TowerAtc(eng.jAtcSim.newLib.area.Atc template) {
+    super(template);
+  }
 
   private static RunwayConfiguration getSuggestedThresholds() {
     RunwayConfiguration ret = null;
@@ -89,22 +95,13 @@ public class TowerAtc extends ComputerAtc {
     }
     return rt;
   }
-// endregion Static
-  private final DepartureManager departureManager = new DepartureManager(this);
-  private final ArrivalManager arrivalManager = new ArrivalManager(this);
-  private final EventAnonymousSimple onRunwayChanged = new EventAnonymousSimple();
-  private RunwaysInUseInfo inUseInfo = null;
-  private EMap<String, RunwayCheckInfo> runwayChecks = null;
-  private boolean isUpdatedWeather;
-  public TowerAtc(eng.jAtcSim.newLib.area.Atc template) {
-    super(template);
-  }
 
   @Override
   public void elapseSecond() {
     super.elapseSecond();
 
     //TODO here should be some check that landing plane is not landing on the occupied runway
+    departureManager.movePlanesToHoldingPoint();
     tryTakeOffPlaneNew();
     processRunwayCheckBackground();
     processRunwayChangeBackground();
@@ -214,7 +211,27 @@ public class TowerAtc extends ComputerAtc {
 //    return ret;
   }
 
-//  @Override
+  @Override
+  protected void processConfirmedOutgoingPlaneSwitch(Squawk squawk) {
+    IAirplane plane = Context.Internal.getPlane(squawk);
+    if (plane.isDeparture()) {
+      departureManager.confirmedByApproach(plane);
+    } else {
+      arrivalManager.goAroundPlane(plane);
+    }
+  }
+
+  private void announceChangeRunwayInUse() {
+    sendMessageToUser(
+            new RunwayInUseNotification(
+                    this.inUseInfo.scheduled.getDepartures().select(q -> new RunwayInUseNotification.RunwayThresholdInUseInfo(q.getThreshold().getName(), q.getCategories())),
+                    this.inUseInfo.scheduled.getArrivals().select(q -> new RunwayInUseNotification.RunwayThresholdInUseInfo(q.getThreshold().getName(), q.getCategories())),
+                    this.inUseInfo.scheduler.getScheduledTime()
+            )
+    );
+  }
+
+  //  @Override
 //  protected void _load(XElement elm) {
 //    super._load(elm);
 //    LoadSave.loadField(elm, this, "departureManager");
@@ -233,16 +250,6 @@ public class TowerAtc extends ComputerAtc {
 //    LoadSave.saveField(elm, this, "runwayChecks");
 //    LoadSave.saveField(elm, this, "isUpdatedWeather");
 //  }
-
-  private void announceChangeRunwayInUse() {
-    sendMessageToUser(
-            new RunwayInUseNotification(
-                    this.inUseInfo.scheduled.getDepartures().select(q -> new RunwayInUseNotification.RunwayThresholdInUseInfo(q.getThreshold().getName(), q.getCategories())),
-                    this.inUseInfo.scheduled.getArrivals().select(q -> new RunwayInUseNotification.RunwayThresholdInUseInfo(q.getThreshold().getName(), q.getCategories())),
-                    this.inUseInfo.scheduler.getScheduledTime()
-            )
-    );
-  }
 
   private void announceScheduledRunwayCheck(String runwayName, RunwayCheckInfo rc) {
     RunwayMaintenanceBaseNotification cnt;
@@ -378,7 +385,7 @@ public class TowerAtc extends ComputerAtc {
     if (this.arrivalManager.checkIfPlaneIsReadyToSwitchAndRemoveIt(plane)) {
       ret = true;
     } else if (plane.isDeparture()) {
-      ret = true;
+      ret = this.departureManager.isPlaneReadyAtHoldingPoint(plane);
     } else
       ret = false;
     return ret;
@@ -681,6 +688,11 @@ public class TowerAtc extends ComputerAtc {
         announceScheduledRunwayCheck(rwyName, rc);
       }
     }
+  }
+
+  public enum eDirection {
+    departures,
+    arrivals
   }
 
   public static class RunwaysInUseInfo {
