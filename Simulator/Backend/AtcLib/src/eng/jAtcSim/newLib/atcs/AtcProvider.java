@@ -6,14 +6,15 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.CacheUsingProducer;
+import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.Atc;
-import eng.jAtcSim.newLib.atcs.internal.computer.ComputerAtc;
 import eng.jAtcSim.newLib.atcs.internal.UserAtc;
 import eng.jAtcSim.newLib.atcs.internal.center.CenterAtc;
+import eng.jAtcSim.newLib.atcs.internal.computer.ComputerAtc;
 import eng.jAtcSim.newLib.atcs.internal.tower.TowerAtc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -43,26 +44,13 @@ public class AtcProvider {
   }
 
   public void elapseSecond() {
-    for (ComputerAtc atc : atcs.whereItemClassIs(
-            ComputerAtc.class, true)) {
+    for (Atc atc : atcs) {
       atc.elapseSecond();
     }
   }
 
   public AtcList<AtcId> getAtcIds() {
     return atcIdsCache.get();
-  }
-
-  public IUserAtcInterface getUserAtcInterface(AtcId atcId) {
-    Atc atc = this.atcs.get(atcId);
-    EAssert.isTrue(atc instanceof UserAtc, () -> sf("Requested atc '%s' is not of type UserAtc.", atcId));
-    UserAtc userAtc = (UserAtc) atc;
-    IUserAtcInterface ret = userAtc;
-    return ret;
-  }
-
-  public IReadOnlyList<AtcId> getUserAtcIds() {
-    return userAtcIdsCache.get();
   }
 
   public EventAnonymousSimple getOnRunwayChanged() {
@@ -77,19 +65,27 @@ public class AtcProvider {
   }
 
   public AtcId getResponsibleAtc(Callsign callsign) {
-    AtcId ret = null;
-    for (Atc atc : atcs) {
-      if (atc.isResponsibleFor(callsign)) {
-        ret = atc.getAtcId();
-        break;
-      }
-    }
+    IList<AtcId> responsibleAtcs = atcs.where(q -> q.isResponsibleFor(callsign)).select(q -> q.getAtcId());
+    EAssert.isTrue(NumberUtils.isBetweenOrEqual(0, responsibleAtcs.size(), 1));
+    AtcId ret = responsibleAtcs.tryGetFirst();
     return ret;
   }
 
   public RunwayConfiguration getRunwayConfiguration() {
     TowerAtc towerAtc = (TowerAtc) atcs.getFirst(q -> q.getAtcId().getType() == AtcType.twr);
     RunwayConfiguration ret = towerAtc.getRunwayConfigurationInUse();
+    return ret;
+  }
+
+  public IReadOnlyList<AtcId> getUserAtcIds() {
+    return userAtcIdsCache.get();
+  }
+
+  public IUserAtcInterface getUserAtcInterface(AtcId atcId) {
+    Atc atc = this.atcs.get(atcId);
+    EAssert.isTrue(atc instanceof UserAtc, () -> sf("Requested atc '%s' is not of type UserAtc.", atcId));
+    UserAtc userAtc = (UserAtc) atc;
+    IUserAtcInterface ret = userAtc;
     return ret;
   }
 

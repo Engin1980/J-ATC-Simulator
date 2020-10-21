@@ -33,6 +33,7 @@ public class AirplaneList<T> extends EDistinctList<T> {
       ret = this.tryGetFirst(q -> this.callsignSelector.select(q).equals(callsign));
       if (ret != null) lastGot = ret;
     }
+    EAssert.isNotNull(ret, "AirplaneList did not found matching plane for callsign: " + callsign);
     return ret;
   }
 

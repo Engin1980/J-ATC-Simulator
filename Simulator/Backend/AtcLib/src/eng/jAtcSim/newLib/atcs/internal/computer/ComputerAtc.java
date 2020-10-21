@@ -48,7 +48,8 @@ public abstract class ComputerAtc extends Atc {
 
   protected abstract IReadOnlyList<IAirplane> getPlanesUnderControl();
 
-  public void elapseSecond() {
+  @Override
+  public final void elapseSecond() {
     IList<Message> thisSecondMsgs = super.pullMessages();
     speechDelayer.add(thisSecondMsgs);
 
@@ -56,7 +57,11 @@ public abstract class ComputerAtc extends Atc {
     elapseSecondProcessMessagesForAtc(msgs);
 
     this.switchManager.elapseSecond();
+
+    _elapseSecond();
   }
+
+  protected abstract void _elapseSecond();
 
   @Override
   public void init() {

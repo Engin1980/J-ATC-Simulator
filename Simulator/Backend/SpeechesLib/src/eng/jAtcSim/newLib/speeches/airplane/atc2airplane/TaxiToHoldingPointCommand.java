@@ -18,4 +18,9 @@ public class TaxiToHoldingPointCommand implements ICommand {
   public String getRunwayThresholdName() {
     return runwayThresholdName;
   }
+
+  @Override
+  public String toString() {
+    return "Taxi-to-HP " + runwayThresholdName + " {planeCommand}";
+  }
 }

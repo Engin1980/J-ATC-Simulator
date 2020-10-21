@@ -25,7 +25,7 @@ public class Callsign {
       throw new IllegalArgumentException("Callsign string must be at least 4 chars long.");
 
     this.company = value.substring(0, 3).toUpperCase();
-    this.number = value.substring(3).toUpperCase();
+    this.number = value.substring(3).trim().toUpperCase();
   }
 
 //  public static String getRandomNumber(boolean isIfr, boolean useExtendedCallsigns) {

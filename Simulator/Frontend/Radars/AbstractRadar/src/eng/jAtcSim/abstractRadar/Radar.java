@@ -1006,6 +1006,8 @@ public class Radar {
       ret = styleSettings.emergency;
     else if (adi.ias == 0)
       ret = styleSettings.stopped;
+    else if (adi.responsibleAtc == null)
+      ret = styleSettings.uncontrolled;
     else if (adi.responsibleAtc.getType() == AtcType.app)
       ret = styleSettings.app;
     else if (adi.responsibleAtc.getType() == AtcType.twr)

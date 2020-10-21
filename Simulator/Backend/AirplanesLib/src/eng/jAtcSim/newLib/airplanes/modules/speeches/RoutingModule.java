@@ -63,7 +63,6 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     obtainNewSpeeches();
     processNewSpeeches();
     processAfterSpeeches();
-    flushSaidTextToAtc();
   }
 
   public String getAssignedDARouteName() {
@@ -147,13 +146,13 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
           if (tmp.isResumeOwnSpeed() == false) {
             // rule 5
             this.afterCommands.clearChangeSpeedClass(
-                tmp.getRestriction().value, rdr.isArrival(), AfterCommandList.Type.route);
+                    tmp.getRestriction().value, rdr.isArrival(), AfterCommandList.Type.route);
             this.afterCommands.clearChangeSpeedClass(
-                tmp.getRestriction().value, rdr.isArrival(), AfterCommandList.Type.extensions);
+                    tmp.getRestriction().value, rdr.isArrival(), AfterCommandList.Type.extensions);
           } else {
             // rule 6
             this.afterCommands.clearChangeSpeedClassOfRouteWithTransferConsequent(
-                null, rdr.isArrival());
+                    null, rdr.isArrival());
             this.afterCommands.clearExtensionsByConsequent(ChangeSpeedCommand.class);
           }
         } else if (cmd instanceof ClearedToApproachCommand) {
@@ -180,7 +179,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
           } else {
             // rule 11
             this.afterCommands.clearChangeSpeedClassOfRouteWithTransferConsequent(
-                null, rdr.isArrival());
+                    null, rdr.isArrival());
             this.afterCommands.clearExtensionsByConsequent(ChangeSpeedCommand.class);
           }
         } else if (cmd instanceof ClearedToApproachCommand) {
@@ -193,21 +192,9 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     }
   }
 
-  private void flushSaidTextToAtc() {
-    for (AtcId atcId : saidText.getKeys()) {
-      SpeechList<IFromPlaneSpeech> saidTextToAtc = saidText.get(atcId);
-      if (!saidTextToAtc.isEmpty()) {
-        wrt.sendMessage(atcId, saidTextToAtc);
-        saidText.set(atcId, new SpeechList<>());
-        // here new list must be created
-        // the old one is send to messenger for further processing
-      }
-    }
-  }
-
   private void obtainNewSpeeches() {
     IList<Message> msgs = Context.getMessaging().getMessenger().getMessagesByListener(
-        Participant.createAirplane(rdr.getCallsign()), true);
+            Participant.createAirplane(rdr.getCallsign()), true);
 
     // only responds to messages from tuned atc
     msgs = msgs.where(q -> q.getSource().equals(Participant.createAtc(rdr.getAtc().getTunedAtc())));
@@ -232,14 +219,14 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private void processAfterSpeechWithConsequents(IList<? extends ICommand> queue, CommandSource cs) {
 
     AirplaneState[] unableProcessAfterCommandsStates = {
-        AirplaneState.flyingIaf2Faf,
-        AirplaneState.approachEnter,
-        AirplaneState.approachDescend,
-        AirplaneState.longFinal,
-        AirplaneState.shortFinal,
-        AirplaneState.landed,
-        AirplaneState.takeOffRoll,
-        AirplaneState.takeOffGoAround
+            AirplaneState.flyingIaf2Faf,
+            AirplaneState.approachEnter,
+            AirplaneState.approachDescend,
+            AirplaneState.longFinal,
+            AirplaneState.shortFinal,
+            AirplaneState.landed,
+            AirplaneState.takeOffRoll,
+            AirplaneState.takeOffGoAround
     };
 
     AfterCommand af = (AfterCommand) queue.get(0);
@@ -286,12 +273,12 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     // TODO when this function uses plane.tryGetTargetOrHoldingCoordinate(), then
     // this can be evaluated in the following function
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
-        rdr, targetCoordinate, AfterCommandList.Type.extensions);
+            rdr, targetCoordinate, AfterCommandList.Type.extensions);
     wrt.getCVR().logProcessedAfterSpeeches(cmds, "extensions");
     processSpeeches(cmds, CommandSource.extension);
 
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
-        rdr, targetCoordinate, AfterCommandList.Type.route);
+            rdr, targetCoordinate, AfterCommandList.Type.route);
     wrt.getCVR().logProcessedAfterSpeeches(cmds, "route");
     processSpeeches(cmds, CommandSource.route);
   }
@@ -305,7 +292,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
     // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
     if (rdr.getAtc().hasRadarContact() == false
-        && !(current.getFirst() instanceof RadarContactConfirmationNotification)) {
+            && !(current.getFirst() instanceof RadarContactConfirmationNotification)) {
       say(new RequestRadarContactNotification());
       this.queue.clear();
     } else {
@@ -314,11 +301,11 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   }
 
   private void processNormalSpeech(
-      SpeechList<? extends ICommand> queue, ICommand cmd, CommandSource cs) {
+          SpeechList<? extends ICommand> queue, ICommand cmd, CommandSource cs) {
 
     ConfirmationResult cres =
-        ApplicationManager.confirm(
-            plane, cmd, cs == CommandSource.atc, true);
+            ApplicationManager.confirm(
+                    plane, cmd, cs == CommandSource.atc, true);
     if (cres.rejection != null) {
       // command was rejected
       say(cres.rejection);
@@ -353,7 +340,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     // if no tuned atc, nothing is said
     if (atc == null) return;
 
-    saidText.getOrSet(atc, new SpeechList<>()).add(speech);
+    this.saidText.getOrSet(atc, new SpeechList<>()).add(speech);
   }
 
   private SpeechList<ICommand> tryExpandThenCommands(IReadOnlyList<ICommand> speeches) {
@@ -367,11 +354,9 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
       if (ret.get(i) instanceof ThenCommand) {
         if (i == 0 || i == ret.size() - 1) {
           wrt.sendMessage(
-              rdr.getAtc().getTunedAtc(),
-              new IllegalThenCommandRejection(
-                  (ThenCommand) ret.get(i),
-                  "{Then} command cannot be first or last in queue. The whole command block is ignored.")
-          );
+                  new IllegalThenCommandRejection(
+                          (ThenCommand) ret.get(i),
+                          "{Then} command cannot be first or last in queue. The whole command block is ignored."));
           ret.clear();
           return null;
         }
@@ -400,17 +385,16 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
         } else if (prev instanceof ChangeSpeedCommand) {
           ChangeSpeedCommand cmd = (ChangeSpeedCommand) prev;
           n = AfterSpeedCommand.create(
-              cmd.getRestriction().value,
-              cmd.getRestriction().direction);
+                  cmd.getRestriction().value,
+                  cmd.getRestriction().direction);
         } else if (prev instanceof ChangeHeadingCommand) {
           ChangeHeadingCommand cmd = (ChangeHeadingCommand) prev;
           n = AfterHeadingCommand.create(cmd.getHeading());
         } else {
           wrt.sendMessage(
-              rdr.getAtc().getTunedAtc(),
-              new IllegalThenCommandRejection(
-                  (ThenCommand) ret.get(i),
-                  "{Then} command is antecedent a strange command, it does not make sense. The whole command block is ignored."));
+                  new IllegalThenCommandRejection(
+                          (ThenCommand) ret.get(i),
+                          "{Then} command is antecedent a strange command, it does not make sense. The whole command block is ignored."));
           ret.clear();
           return null;
         }

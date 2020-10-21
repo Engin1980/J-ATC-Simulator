@@ -9,6 +9,7 @@ import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
+import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 
@@ -17,14 +18,14 @@ public class AirproxController {
   private static final double AIRPROX_WARNING_DISTANCE = 7.5;
   private static final double AIRPROX_APPROACH_DISTANCE = 2.5;
   private static final AirplaneState[] airproxApproachStates = {
-      AirplaneState.flyingIaf2Faf,
-      AirplaneState.approachEnter,
-      AirplaneState.approachDescend,
-      AirplaneState.longFinal,
-      AirplaneState.shortFinal,
-      AirplaneState.landed,
-      AirplaneState.takeOffRoll,
-      AirplaneState.takeOffGoAround
+          AirplaneState.flyingIaf2Faf,
+          AirplaneState.approachEnter,
+          AirplaneState.approachDescend,
+          AirplaneState.longFinal,
+          AirplaneState.shortFinal,
+          AirplaneState.landed,
+          AirplaneState.takeOffRoll,
+          AirplaneState.takeOffGoAround
   };
 
   private static AirproxType getAirproxLevel(IAirplane a, IAirplane b) {
@@ -37,7 +38,7 @@ public class AirproxController {
     }
 
     double dist = Coordinates.getDistanceInNM(
-        a.getCoordinate(), b.getCoordinate());
+            a.getCoordinate(), b.getCoordinate());
 
     if (alt < 950) {
       boolean isAinApp = a.getState().is(airproxApproachStates);
@@ -61,7 +62,7 @@ public class AirproxController {
         if (a.getSha().getAltitude() == b.getSha().getAltitude())
           ret = AirproxType.warning;
         else if ((a.getSha().getAltitude() > b.getSha().getAltitude() && a.getSha().getVerticalSpeed() < 0 && b.getSha().getVerticalSpeed() > 0)
-            || (a.getSha().getAltitude() < b.getSha().getAltitude() && a.getSha().getVerticalSpeed() > 0 && b.getSha().getVerticalSpeed() < 0))
+                || (a.getSha().getAltitude() < b.getSha().getAltitude() && a.getSha().getVerticalSpeed() > 0 && b.getSha().getVerticalSpeed() < 0))
           ret = AirproxType.warning;
         else
           ret = AirproxType.none;
@@ -71,6 +72,7 @@ public class AirproxController {
 
     return ret;
   }
+
   private final IMap<Callsign, AirproxType> airproxViolatingPlanes = new EMap<>();
 
   public void evaluateAirproxFails() {
@@ -81,23 +83,26 @@ public class AirproxController {
     for (int i = 0; i < planes.count() - 1; i++) {
       IAirplane a = planes.get(i);
       if (a.getState().is(
-          AirplaneState.holdingPoint,
-          AirplaneState.landed,
-          AirplaneState.takeOffRoll
+              AirplaneState.holdingPoint,
+              AirplaneState.landed,
+              AirplaneState.takeOffRoll
       )) continue;
       for (int j = i + 1; j < planes.size(); j++) {
         IAirplane b = planes.get(j);
         if (b.getState().is(
-            AirplaneState.holdingPoint,
-            AirplaneState.landed,
-            AirplaneState.takeOffRoll
+                AirplaneState.holdingPoint,
+                AirplaneState.landed,
+                AirplaneState.takeOffRoll
         )) continue;
 
         AirproxType at = getAirproxLevel(a, b);
 
-        if (at == AirproxType.full && Context.getAtc().getResponsibleAtcId(a.getCallsign()).getType() != AtcType.app &&
-            Context.getAtc().getResponsibleAtcId(b.getCallsign()).getType() != AtcType.app)
-          at = AirproxType.partial;
+        if (at == AirproxType.full) {
+          AtcId atcIda = Context.getAtc().getResponsibleAtcId(a.getCallsign());
+          AtcId atcIdb = Context.getAtc().getResponsibleAtcId(b.getCallsign());
+          if (atcIda == null || atcIda.getType() == AtcType.app || atcIdb == null || atcIdb.getType() == AtcType.app)
+            at = AirproxType.partial;
+        }
 
         storeAirprox(a.getCallsign(), at);
         storeAirprox(b.getCallsign(), at);

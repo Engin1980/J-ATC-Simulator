@@ -94,9 +94,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void elapseSecond() {
-    super.elapseSecond();
-
+  protected void _elapseSecond() {
     //TODO here should be some check that landing plane is not landing on the occupied runway
     departureManager.movePlanesToHoldingPoint();
     tryTakeOffPlaneNew();

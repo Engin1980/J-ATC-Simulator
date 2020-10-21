@@ -163,8 +163,8 @@ public class AirplanesModule extends SimulationModule {
     int exitDelay = airplane.getFlight().getExitDelay();
     int delayDifference = exitDelay - entryDelay;
     FinishedPlaneStats ret = new FinishedPlaneStats(
-        airplane.getCallsign(), airplane.isDeparture(), airplane.isEmergency(), delayDifference,
-        Context.getMood().getMoodManager().getMoodResult(airplane.getCallsign(), delayDifference)
+            airplane.getCallsign(), airplane.isDeparture(), airplane.isEmergency(), delayDifference,
+            Context.getMood().getMoodManager().getMoodResult(airplane.getCallsign(), delayDifference)
     );
     return ret;
   }
@@ -172,14 +172,14 @@ public class AirplanesModule extends SimulationModule {
   private void evaluateFails() {
     this.mrvaController.evaluateMrvaFails();
     this.mrvaController.getMrvaViolatingPlanes()
-        .where(q -> Context.getAtc().getResponsibleAtcId(q).getType() == AtcType.app)
-        .forEach(q -> Context.getMood().getMoodManager().get(q).experience(Mood.SharedExperience.mrvaViolation));
+            .where(q -> Context.getAtc().getResponsibleAtcId(q).getType() == AtcType.app)
+            .forEach(q -> Context.getMood().getMoodManager().get(q).experience(Mood.SharedExperience.mrvaViolation));
 
     this.airproxController.evaluateAirproxFails();
     this.airproxController.getAirproxViolatingPlanes()
-        .where(q -> Context.getAtc().getResponsibleAtcId(q.getKey()).getType() == AtcType.app
-            && q.getValue() == AirproxType.full)
-        .forEach(q -> Context.getMood().getMoodManager().get(q.getKey()).experience(Mood.SharedExperience.airprox));
+            .where(q -> Context.getAtc().getResponsibleAtcId(q.getKey()).getType() == AtcType.app
+                    && q.getValue() == AirproxType.full)
+            .forEach(q -> Context.getMood().getMoodManager().get(q.getKey()).experience(Mood.SharedExperience.airprox));
   }
 
   private Squawk generateAvailableSquawk() {
@@ -231,12 +231,12 @@ public class AirplanesModule extends SimulationModule {
         continue;
 
       double dist = Coordinates.getDistanceInNM(
-          rdr.getRouting().getEntryExitPoint().getCoordinate(), rdr.getCoordinate());
+              rdr.getRouting().getEntryExitPoint().getCoordinate(), rdr.getCoordinate());
       int atEntryPointSeconds = (int) (dist / rdr.getSha().getSpeed() * 3600);
 
       if (checkedAtEntryPointSeconds == null) {
         dist = Coordinates.getDistanceInNM(
-            template.getEntryPoint().getNavaid().getCoordinate(), template.getCoordinate());
+                template.getEntryPoint().getNavaid().getCoordinate(), template.getCoordinate());
         checkedAtEntryPointSeconds = (int) (dist / template.getSpeed() * 3600);
       }
 
@@ -265,10 +265,11 @@ public class AirplanesModule extends SimulationModule {
 
       // departed
       if (p.isDeparture()
-          && Context.getAtc().getResponsibleAtcId(p.getCallsign()).getType() == AtcType.ctr
-          && Coordinates.getDistanceInNM(
-          p.getCoordinate(),
-          Context.getArea().getAirport().getLocation()) > Context.getArea().getAirport().getCoveredDistance()) {
+              && Context.getAtc().getResponsibleAtcId(p.getCallsign()) != null
+              && Context.getAtc().getResponsibleAtcId(p.getCallsign()).getType() == AtcType.ctr
+              && Coordinates.getDistanceInNM(
+              p.getCoordinate(),
+              Context.getArea().getAirport().getLocation()) > Context.getArea().getAirport().getCoveredDistance()) {
         ret.add(p);
         Context.getStats().getStatsProvider().registerFinishedPlane(buildFinishedAirplaneStats(p));
       }
@@ -340,12 +341,12 @@ class AirplaneInfo implements IAirplaneInfo {
     String ret;
     if (airplane.getRouting().getAssignedDARouteName() == null)
       ret = sf("(%s)",
-          airplane.getRouting().getEntryExitPoint().getName()
+              airplane.getRouting().getEntryExitPoint().getName()
       );
     else
       ret = sf("%s/%s",
-          airplane.getRouting().getAssignedRunwayThreshold().getName(),
-          airplane.getRouting().getAssignedDARouteName()
+              airplane.getRouting().getAssignedRunwayThreshold().getName(),
+              airplane.getRouting().getAssignedDARouteName()
       );
     return ret;
   }

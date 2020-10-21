@@ -7,21 +7,9 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
 
-public class DivertModule extends Module{
-  private final int[] divertAnnounceTimes = new int[]{30, 15, 10, 5};
-  private final EDayTimeStamp divertTime;
-  private int lastAnnouncedMinute = Integer.MAX_VALUE;
-  private boolean possible = true;
+public class DivertModule extends Module {
   private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
   private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
-
-  public boolean isPossible() {
-    return possible;
-  }
-
-  public void disable() {
-    this.possible = false;
-  }
 
   private static EDayTimeStamp generateDivertTime() {
     EDayTimeStamp now = Context.getShared().getNow().toStamp();
@@ -29,24 +17,40 @@ public class DivertModule extends Module{
     EDayTimeStamp ret = now.addMinutes(divertTimeMinutes);
     return ret;
   }
+  private final int[] divertAnnounceTimes = new int[]{30, 15, 10, 5};
+  private final EDayTimeStamp divertTime;
+  private int lastAnnouncedMinute = Integer.MAX_VALUE;
+  private boolean possible = true;
 
   public DivertModule(Airplane plane) {
     super(plane);
     this.divertTime = generateDivertTime();
   }
 
+  public void disable() {
+    this.possible = false;
+  }
+
   @Override
-  public void elapseSecond(){
+  public void elapseSecond() {
     checkForDivert();
+  }
+
+  public EDayTimeStamp getDivertTime() {
+    return divertTime;
+  }
+
+  public boolean isPossible() {
+    return possible;
   }
 
   private void checkForDivert() {
     if (possible
-        && rdr.getRouting().isDivertable()
-        && rdr.getState().is(
-        AirplaneState.arrivingHigh, AirplaneState.arrivingLow,
-        AirplaneState.holding)
-        && rdr.isEmergency() == false) {
+            && rdr.getRouting().isDivertable()
+            && rdr.getState().is(
+            AirplaneState.arrivingHigh, AirplaneState.arrivingLow,
+            AirplaneState.holding)
+            && rdr.isEmergency() == false) {
       boolean isDiverting = this.divertIfRequested();
       if (!isDiverting) {
         adviceDivertTimeIfRequested();
@@ -58,9 +62,7 @@ public class DivertModule extends Module{
     int minLeft = getMinutesLeft();
     for (int dit : divertAnnounceTimes) {
       if (lastAnnouncedMinute > dit && minLeft < dit) {
-        wrt.sendMessage(
-            rdr.getAtc().getTunedAtc(),
-            new DivertTimeNotification(minLeft));
+        wrt.sendMessage(new DivertTimeNotification(minLeft));
         this.lastAnnouncedMinute = minLeft;
         break;
       }
@@ -79,9 +81,5 @@ public class DivertModule extends Module{
     } else {
       return false;
     }
-  }
-
-  public EDayTimeStamp getDivertTime() {
-    return divertTime;
   }
 }

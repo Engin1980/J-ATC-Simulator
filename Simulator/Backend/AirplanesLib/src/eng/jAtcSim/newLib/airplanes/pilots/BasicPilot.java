@@ -33,7 +33,6 @@ public abstract class BasicPilot extends Pilot {
           && dist < warningDistance
           && !rdr.getRouting().hasLateralDirectionAfterCoordinate()) {
         wrt.sendMessage(
-            rdr.getAtc().getTunedAtc(),
             new PassingClearanceLimitNotification());
         clearanceLimitWarningSent = true;
       } else if (dist < overNavaidDistance) {

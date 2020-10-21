@@ -50,9 +50,7 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void elapseSecond() {
-    super.elapseSecond();
-
+  protected void _elapseSecond() {
     if (Context.getShared().getNow().getValue() % 16 == 0) {
       double dist;
 

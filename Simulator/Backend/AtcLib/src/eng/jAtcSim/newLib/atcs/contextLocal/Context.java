@@ -24,8 +24,6 @@ public class Context {
   public static class Internal {
     private static Atc app;
     private static AtcList<Atc> atcs;
-    //TODO del if unused
-//    private static PlaneResponsibilityEvidence pre;
 
     public static Atc getApp() {
       EAssert.isNotNull(app);
@@ -51,31 +49,15 @@ public class Context {
       return atcs;
     }
 
-    //TODO delete when unused
-//    public static Atc getAtc(AirplaneResponsibilityInfo airplaneResponsibilityInfo) {
-//      EAssert.Argument.isNotNull(airplaneResponsibilityInfo, "airplaneResponsibilityInfo");
-//      return Context.Internal.getAtc(airplaneResponsibilityInfo.getAtc());
-//    }
-
     public static IAirplane getPlane(Callsign callsign) {
       EAssert.Argument.isNotNull(callsign, "callsign");
       return Context.getAirplane().getAirplanes().get(callsign);
     }
 
-    //TODO delete when unused
-//    public static IAirplane getPlane(AirplaneResponsibilityInfo airplaneResponsibilityInfo) {
-//      EAssert.Argument.isNotNull(airplaneResponsibilityInfo, "airplaneResponsibilityInfo");
-//      return Context.Internal.getPlane(airplaneResponsibilityInfo.getPlane());
-//    }
-
     public static IAirplane getPlane(Squawk squawk) {
       EAssert.Argument.isNotNull(squawk, "squawk");
       return Context.getAirplane().getAirplanes().get(squawk);
     }
-    //TODO del if unused
-//    public static PlaneResponsibilityEvidence getPre() {
-//      return pre;
-//    }
 
     public static ActiveRunway getRunway(String rwyName) {
       return Context.getArea().getAirport().getRunways().getFirst(q -> q.getName().equals(rwyName));
@@ -84,6 +66,7 @@ public class Context {
     public static void init(AtcList<Atc> atcs, Atc app) {
       EAssert.Argument.isNotNull(atcs, "atcs");
       EAssert.Argument.isNotNull(app, "app");
+
       Context.Internal.app = app;
       Context.Internal.atcs = atcs;
     }

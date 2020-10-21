@@ -253,6 +253,7 @@ public class RadarStyleSettings {
   public TextSettings navaid;
   public Color switchingPlaneAlternatingColor = null;
   // plane labels
+  public PlaneLabelSettings uncontrolled;
   public PlaneLabelSettings stopped;
   public PlaneLabelSettings app;
   public PlaneLabelSettings ctr;

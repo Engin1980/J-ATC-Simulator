@@ -24,6 +24,8 @@ public abstract class Atc {
     this.recorder = AtcRecorder.create(this.getAtcId());
   }
 
+  public abstract void elapseSecond();
+
   // region abstract
   public abstract boolean isResponsibleFor(Callsign callsign);
 
@@ -35,19 +37,10 @@ public abstract class Atc {
 
   public abstract boolean isHuman();
 
-  protected IList<Message> pullMessages(){
-    IList<Message> messages = Context.getMessaging().getMessenger().getMessagesByListener(
-            Participant.createAtc(this.getAtcId()), true);
-
-    messages.forEach(q-> this.recorder.write(q));
-
-    return messages;
-  }
-// endregion abstract
-
   public int getAcceptAltitude() {
     return acceptAltitude;
   }
+// endregion abstract
 
   public AtcId getAtcId() {
     return atcId;
@@ -64,6 +57,15 @@ public abstract class Atc {
   @Override
   public String toString() {
     return this.atcId.getName();
+  }
+
+  protected IList<Message> pullMessages() {
+    IList<Message> messages = Context.getMessaging().getMessenger().getMessagesByListener(
+            Participant.createAtc(this.getAtcId()), true);
+
+    messages.forEach(q -> this.recorder.write(q));
+
+    return messages;
   }
 
   protected void sendMessage(Message msg) {

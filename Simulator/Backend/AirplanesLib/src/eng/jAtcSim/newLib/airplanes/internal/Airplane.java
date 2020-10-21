@@ -1,6 +1,8 @@
 package eng.jAtcSim.newLib.airplanes.internal;
 
+import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
@@ -249,6 +251,7 @@ public class Airplane {
   }
 
   public class AirplaneWriterImpl implements IAirplaneWriter {
+
     @Override
     public void abortHolding() {
       if (Airplane.this.flightModule.isArrival())
@@ -300,9 +303,7 @@ public class Airplane {
       setPilotAndState(new DeparturePilot(Airplane.this), AirplaneState.departingLow);
 
       if (!isInvokedByAtc)
-        this.sendMessage(
-                Airplane.this.atcModule.getTunedAtc(),
-                new DivertingNotification(divertNavaid.getName()));
+        this.sendMessage(new DivertingNotification(divertNavaid.getName()));
     }
 
     @Override
@@ -328,9 +329,7 @@ public class Airplane {
                 Mood.ArrivalExperience.goAroundNotCausedByPilot);
 
       GoingAroundNotification gan = new GoingAroundNotification(reason);
-      this.sendMessage(
-              Airplane.this.atcModule.getTunedAtc(),
-              gan);
+      this.sendMessage(gan);
 
       EAssert.isTrue(Airplane.this.pilot instanceof ApproachPilot);
       ApproachPilot prevPilot = (ApproachPilot) Airplane.this.pilot;
@@ -372,18 +371,17 @@ public class Airplane {
       EDayTimeStamp now = Context.getShared().getNow().toStamp();
       int minutesLeft = (int) Math.ceil((divertTime.getValue() - now.getValue()) / 60d);
       EAssert.isTrue(minutesLeft >= 0);
-      sendMessage(
-              Airplane.this.atcModule.getTunedAtc(),
-              new DivertTimeNotification(minutesLeft));
+      sendMessage(new DivertTimeNotification(minutesLeft));
     }
 
     @Override
-    public void sendMessage(AtcId atcId, SpeechList<IFromPlaneSpeech> speechList) {
-      Message m = new Message(
-              Participant.createAirplane(Airplane.this.getReader().getCallsign()),
-              Participant.createAtc(Airplane.this.getReader().getAtc().getTunedAtc()),
-              speechList);
-      Context.getMessaging().getMessenger().send(m);
+    public void resetHeading(double heading) {
+      Airplane.this.sha.resetHeading(heading);
+    }
+
+    @Override
+    public void sendMessage(SpeechList<IFromPlaneSpeech> speechList) {
+      speechCache.getOrSet(atcModule.getTunedAtc(), () -> new SpeechList<>()).addMany(speechList);
     }
 
     @Override
@@ -393,10 +391,21 @@ public class Airplane {
     }
 
     @Override
+    public void setHoldingPoint(ActiveRunwayThreshold t) {
+      Airplane.this.coordinate = t.getCoordinate();
+    }
+
+    @Override
     public void setRouting(IafRoute iafRoute, ActiveRunwayThreshold activeRunwayThreshold) {
       Airplane.this.routingModule.setRunwayThreshold(activeRunwayThreshold);
       Airplane.this.routingModule.setRouting(iafRoute.getRouteCommands());
     }
+
+    // Obsolete
+//    @Override
+//    public void setRouting(IReadOnlyList<ICommand> routeCommands) {
+//      Airplane.this.routingModule.setRouting(routeCommands);
+//    }
 
     @Override
     public void setRouting(IReadOnlyList<ICommand> routeCommands) {
@@ -410,12 +419,6 @@ public class Airplane {
       Airplane.this.routingModule.setAssignedDARouteName(daRoute.getName());
       Airplane.this.routingModule.setRouting(daRoute.getRouteCommands());
     }
-
-    // Obsolete
-//    @Override
-//    public void setRouting(IReadOnlyList<ICommand> routeCommands) {
-//      Airplane.this.routingModule.setRouting(routeCommands);
-//    }
 
     @Override
     public void setSpeedRestriction(Restriction restriction) {
@@ -495,16 +498,6 @@ public class Airplane {
       Airplane.this.atcModule.changeAtc(atcId);
     }
 
-    @Override
-    public void setHoldingPoint(ActiveRunwayThreshold t) {
-      Airplane.this.coordinate = t.getCoordinate();
-    }
-
-    @Override
-    public void resetHeading(double heading) {
-      Airplane.this.sha.resetHeading(heading);
-    }
-
     private void setPilotAndState(Pilot pilot, AirplaneState state) {
       Airplane.this.pilot = pilot;
       Airplane.this.state = state;
@@ -550,6 +543,7 @@ public class Airplane {
   private AirplaneState state;
   private final IAirplaneWriter wrt = new AirplaneWriterImpl();
   private GoingAroundNotification.GoAroundReason lastGoAroundReasonIfAny = null;
+  private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> speechCache = new EMap<>();
 
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneType,
                    int heading, int altitude, int speed, boolean isDeparture,
@@ -585,11 +579,14 @@ public class Airplane {
 
   public void elapseSecond() {
 
-    this.routingModule.elapseSecond();
+    this.routingModule.elapseSecond(); // here messages are processed
+
     this.pilot.elapseSecond();
     this.atcModule.elapseSecond();
     if (this.divertModule != null) // only for arrivals
       this.divertModule.elapseSecond();
+
+    this.flushSpeeches();
 
     this.sha.elapseSecond();
     updateCoordinates();
@@ -606,6 +603,17 @@ public class Airplane {
 
   public IAirplaneWriter getWriter() {
     return this.wrt;
+  }
+
+  private void flushSpeeches() {
+    for (AtcId atcId : speechCache.getKeys()) {
+      Message m = new Message(
+              Participant.createAirplane(Airplane.this.getReader().getCallsign()),
+              Participant.createAtc(Airplane.this.getReader().getAtc().getTunedAtc()),
+              speechCache.get(atcId));
+      Context.getMessaging().getMessenger().send(m);
+      speechCache.get(atcId).clear();
+    }
   }
 
   private Navaid getDivertNavaid() {
@@ -632,9 +640,6 @@ public class Airplane {
     );
   }
 
-  //region Private methods
-
-
   private void updateCoordinates() {
     double dist = this.sha.getGS() * secondFraction;
     Coordinate newC
@@ -655,7 +660,6 @@ public class Airplane {
 
     this.coordinate = newC;
   }
-//  //endregion
 
 
   //region Inner classes

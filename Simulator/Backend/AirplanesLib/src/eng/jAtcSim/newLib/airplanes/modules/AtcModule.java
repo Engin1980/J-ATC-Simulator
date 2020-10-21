@@ -27,7 +27,6 @@ public class AtcModule extends Module {
     int seconds = getAndIncreaseSecondsWithoutRadarContactIfRequired();
     if (seconds > 0 && seconds % AtcModule.REPEATED_RADAR_CONTACT_REQUEST_SECONDS == 0) {
       wrt.sendMessage(
-              this.getTunedAtc(),
               new GoodDayNotification(
                       rdr.getCallsign(),
                       rdr.getSha().getAltitude(),

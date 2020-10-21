@@ -53,6 +53,7 @@
       <xs:element name="navaid" type="colorFontElement" />
       <xs:element name="switchingPlaneAlternatingColor" type="sh:colorElement" minOccurs="0" maxOccurs="1" />
 
+      <xs:element name="uncontrolled" type="displayLabelElement" />
       <xs:element name="stopped" type="displayLabelElement" />
       <xs:element name="app" type="displayLabelElement" />
       <xs:element name="ctr" type="displayLabelElement" />

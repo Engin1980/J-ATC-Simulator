@@ -41,8 +41,9 @@ public class UserAtc extends Atc implements IUserAtcInterface {
     super(template);
   }
 
+  @Override
   public void elapseSecond() {
-    this.thisSecondMessages = Context.getMessaging().getMessenger().getMessagesByListener(this.getAtcId(), true);
+    this.thisSecondMessages = Context.getMessaging().getMessenger().getMessagesByListener(Participant.createAtc(this.getAtcId()), true);
     for (Message message : this.thisSecondMessages) {
       if (message.getSource().getType() == Participant.eType.airplane) {
         SpeechList<IPlaneSpeech> speechList = message.getContent();
@@ -61,6 +62,8 @@ public class UserAtc extends Atc implements IUserAtcInterface {
 
   @Override
   public void init() {
+    Context.getMessaging().getMessenger().registerListener(
+            Participant.createAtc(this.getAtcId()));
   }
 
   @Override

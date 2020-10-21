@@ -14,13 +14,8 @@ public class ContactCommandApplication extends CommandApplication<ContactCommand
 
   @Override
   protected ApplicationResult adjustAirplane(Airplane plane, ContactCommand c) {
-    AtcId a = c.getAtc();
-    // confirmation to previous atc
-    PlaneConfirmation conf = new PlaneConfirmation(c);
-    plane.getWriter().sendMessage(a, conf);
-
     // contacting next atc
-    plane.getWriter().tuneAtc(a);
+    plane.getWriter().tuneAtc(c.getAtc());
     // rewritten
     // TODO now switch is realised in no-time, there is no delay between "frequency change confirmation" and "new atc call"
     GoodDayNotification s = new GoodDayNotification(
@@ -29,13 +24,13 @@ public class ContactCommandApplication extends CommandApplication<ContactCommand
         plane.getReader().getSha().getTargetAltitude(),
         plane.getReader().isEmergency(),
         false);
-    plane.getWriter().sendMessage(a,s);
+    plane.getWriter().sendMessage(s);
 
     GoingAroundNotification.GoAroundReason lastGaReason = plane.getReader().pullLastGoAroundReasonIfAny();
     if (lastGaReason != null)
     {
       GoingAroundNotification gan = new GoingAroundNotification(lastGaReason);
-      plane.getWriter().sendMessage(a, gan);
+      plane.getWriter().sendMessage(gan);
     }
 
     return ApplicationResult.getEmpty();

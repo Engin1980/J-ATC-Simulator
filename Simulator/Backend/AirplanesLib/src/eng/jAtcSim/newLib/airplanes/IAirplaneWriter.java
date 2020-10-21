@@ -48,13 +48,13 @@ public interface IAirplaneWriter {
 
   void reportDivertTimeLeft();
 
-  default void sendMessage(AtcId atcId, IFromPlaneSpeech speech){
+  default void sendMessage(IFromPlaneSpeech speech){
     SpeechList<IFromPlaneSpeech> speeches = new SpeechList<>();
     speeches.add(speech);
-    sendMessage(atcId, speeches);
+    sendMessage(speeches);
   }
 
-  void sendMessage(AtcId atcId, SpeechList<IFromPlaneSpeech> iSpeeches);
+  void sendMessage(SpeechList<IFromPlaneSpeech> iSpeeches);
 
   void setAltitudeRestriction(Restriction restriction);
 

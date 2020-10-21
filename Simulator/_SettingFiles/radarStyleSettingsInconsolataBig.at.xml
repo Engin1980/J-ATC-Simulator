@@ -93,6 +93,14 @@
     case 43:   climbDescendChar
   -->
 
+  <uncontrolled color="AAAAAA" connectorColor="AAAAAA"
+                pointWidth="5" headingLineLength="60"
+                historyDotCount="5" historyDotStep="3"
+                separationRingRadius="5"
+                firstLineFormat="{1}"
+                secondLineFormat="{34} {22}"
+                thirdLineFormat="{8} {4}"/>
+
   <stopped visible="false" color="000000"
            connectorColor="000000"
            pointWidth="0" headingLineLength="0"

@@ -1,50 +1,34 @@
 //package eng.jAtcSim.newLib.atcs.planeResponsibility;
 //
-//import eng.eSystem.collections.*;
+//import eng.eSystem.collections.EMap;
+//import eng.eSystem.collections.IMap;
 //import eng.eSystem.validation.EAssert;
-//import eng.jAtcSim.newLib.airplanes.IAirplane;
 //import eng.jAtcSim.newLib.shared.AtcId;
-//import eng.jAtcSim.newLib.shared.Callsign;
 //import eng.jAtcSim.newLib.shared.Squawk;
-//
-//import static eng.eSystem.utilites.FunctionShortcuts.sf;
 //
 //public class PlaneResponsibilityEvidence {
 //
-//  private final IMap<Squawk, AtcId> inner = new EMap<>();
-//  private final ISet<Squawk> proceedingSwitches = new ESet<>();
+//  private final IMap<Squawk, AtcId> current = new EMap<>();
+//  private final IMap<Squawk, AtcId> previous = new EMap<>();
 //
-//  public void setResponsibleAtc(Squawk squawk, AtcId atcId) {
-//    EAssert.Argument.isNotNull(atcId, "atcId");
+//  public AtcId getResponsibleAtcId(Squawk squawk, boolean includePrevious) {
+//    AtcId ret = current.tryGet(squawk);
+//    if (ret == null && includePrevious)
+//      ret = previous.tryGet(squawk);
+//    return ret;
+//  }
+//
+//  public void register(AtcId sender, Squawk squawk) {
+//    EAssert.Argument.isNotNull(sender, "sender");
 //    EAssert.Argument.isNotNull(squawk, "squawk");
-//    this.inner.set(squawk, atcId);
+//    previous.tryRemove(squawk);
+//    current.set(squawk, sender);
 //  }
 //
-//  public void addsquawk(Squawk squawk, AtcId atcId) {
-//    this.setResponsibleAtc(squawk, atcId);
+//  public void unregister(AtcId sender, Squawk squawk) {
+//    EAssert.isTrue(sender.equals(current.get(squawk)));
+//    previous.set(squawk, sender);
+//    current.remove(squawk);
 //  }
 //
-//  public void removesquawk(Squawk squawk) {
-//    EAssert.Argument.isNotNull(squawk, "squawk");
-//    inner.remove(squawk);
-//  }
-//
-//  public void openProceedingSwitch(Squawk squawk) {
-//    EAssert.Argument.isNotNull(squawk, "squawk");
-//    this.proceedingSwitches.add(squawk);
-//  }
-//
-//  public void closeProceedingSwitch(Squawk squawk) {
-//    EAssert.Argument.isNotNull(squawk, "squawk");
-//    this.proceedingSwitches.remove(squawk);
-//  }
-//
-//  public AtcId getResponsibleAtc(Squawk squawk) {
-//    EAssert.isTrue(inner.containsKey(squawk), sf("Squawk '%s' not in evidence.", squawk));
-//    return inner.get(squawk);
-//  }
-//
-//  public AtcId getResponsibleAtc(IAirplane plane) {
-//    return getResponsibleAtc(plane.getSqwk());
-//  }
 //}

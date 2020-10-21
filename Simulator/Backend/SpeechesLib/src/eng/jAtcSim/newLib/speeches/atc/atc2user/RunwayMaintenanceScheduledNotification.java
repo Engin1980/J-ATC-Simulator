@@ -19,4 +19,9 @@ public class RunwayMaintenanceScheduledNotification extends RunwayMaintenanceBas
   public int getMaintenanceDurationInMinutes() {
     return maintenanceDurationInMinutes;
   }
+
+  @Override
+  public String toString() {
+    return "Runway-maintenance-scheduled from "+ maintenanceStartTime.toString() + " for " + maintenanceDurationInMinutes + " {Notification}";
+  }
 }
