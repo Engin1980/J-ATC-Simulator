@@ -48,6 +48,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
 public class SwingRadarPanel extends JPanel {
   class RoutesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<DARoute> {
 
@@ -151,7 +153,7 @@ public class SwingRadarPanel extends JPanel {
   private InitialPosition initialPosition;
   private Radar radar;
   private ISimulation sim;
-  private IMap<Integer, RadarViewPort> storedRadarPositions = new EMap<>();
+  private final IMap<Integer, RadarViewPort> storedRadarPositions = new EMap<>();
   private RadarStyleSettings styleSettings;
   private CommandJTextWraper wrp;
   private AdjustSelectionPanelWrapper<Approach> wrpApproaches;
@@ -394,12 +396,12 @@ public class SwingRadarPanel extends JPanel {
       IList<Callsign> tmp = clsgns.where(q -> q.getNumber().equals(callsignString));
       if (tmp.count() > 1) {
         // multiple matches
-        throw new EApplicationException("Multiple callsign matches!");
+        throw new EApplicationException(sf("Multiple callsign matches for '%s'.", callsignString));
       } else
         ret = tmp.tryGetFirst();
     }
     if (ret == null)
-      throw new EApplicationException("No callsign match!");
+      throw new EApplicationException(sf("No callsign match for '%s'.", callsignString));
     return ret;
   }
 
@@ -458,7 +460,12 @@ public class SwingRadarPanel extends JPanel {
         int firstSpaceIndex = msg.indexOf(' ');
         String callsignString = msg.substring(0, firstSpaceIndex);
         String messageString = msg.substring(firstSpaceIndex + 1);
-        Callsign callsign = getCallsignFromString(callsignString);
+        Callsign callsign = null;
+        try {
+          callsign = getCallsignFromString(callsignString);
+        } catch (Exception e) {
+          sim.sendSystemCommand(userAtcId, new systemsp);
+        }
         IPlaneParser parser = parsers.planeParser;
         SpeechList<IForPlaneSpeech> cmds = parser.parse(messageString);
         sim.sendPlaneCommands(userAtcId, callsign, cmds);
