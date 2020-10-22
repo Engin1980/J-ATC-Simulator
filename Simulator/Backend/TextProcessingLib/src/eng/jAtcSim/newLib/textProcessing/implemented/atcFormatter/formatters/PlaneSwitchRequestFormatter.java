@@ -18,6 +18,8 @@ public class PlaneSwitchRequestFormatter extends SmartTextSpeechFormatter<PlaneS
       ret = sb.toString();
     } else
       ret = input.getSquawk().toString();
+    if (input.isRepeated())
+      ret += " (repeated)";
     return ret;
   }
 }

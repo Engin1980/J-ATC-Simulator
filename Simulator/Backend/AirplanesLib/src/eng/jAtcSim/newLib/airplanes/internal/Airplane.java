@@ -381,7 +381,9 @@ public class Airplane {
 
     @Override
     public void sendMessage(SpeechList<IFromPlaneSpeech> speechList) {
-      speechCache.getOrSet(atcModule.getTunedAtc(), () -> new SpeechList<>()).addMany(speechList);
+      AtcId tunedAtc = atcModule.getTunedAtc();
+      if (tunedAtc != null)
+        speechCache.getOrSet(tunedAtc, () -> new SpeechList<>()).addMany(speechList);
     }
 
     @Override
@@ -607,12 +609,14 @@ public class Airplane {
 
   private void flushSpeeches() {
     for (AtcId atcId : speechCache.getKeys()) {
+      SpeechList<IFromPlaneSpeech> msgs = speechCache.get(atcId);
+      if (msgs.isEmpty()) continue;
       Message m = new Message(
               Participant.createAirplane(Airplane.this.getReader().getCallsign()),
-              Participant.createAtc(Airplane.this.getReader().getAtc().getTunedAtc()),
-              speechCache.get(atcId));
+              Participant.createAtc(atcId),
+              msgs.clone());
       Context.getMessaging().getMessenger().send(m);
-      speechCache.get(atcId).clear();
+      msgs.clear();
     }
   }
 

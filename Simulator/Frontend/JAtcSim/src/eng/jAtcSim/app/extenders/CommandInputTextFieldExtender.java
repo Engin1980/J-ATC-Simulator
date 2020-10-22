@@ -27,10 +27,6 @@ import java.awt.event.KeyListener;
 
 public class CommandInputTextFieldExtender {
 
-  public void send() {
-    this.sendMessageFromText();
-  }
-
   public enum SpecialCommandType {
     storeRadarPosition,
     recallRadarPosition,
@@ -73,7 +69,6 @@ public class CommandInputTextFieldExtender {
       this.arguments = arguments;
     }
   }
-
   public final Event<CommandInputTextFieldExtender, SpecialCommandEventArgs> onSpecialCommand = new Event<>(this);
   public final Event<CommandInputTextFieldExtender, CommandEventArgs<AtcId, IAtcSpeech>> onAtcCommand = new Event<>(this);
   public final Event<CommandInputTextFieldExtender, CommandEventArgs<Callsign, SpeechList<IForPlaneSpeech>>> onPlaneCommand = new Event<>(this);
@@ -81,11 +76,9 @@ public class CommandInputTextFieldExtender {
   public final Event<CommandInputTextFieldExtender, ErrorEventArgs> onError = new Event<>(this);
   private final Producer<IReadOnlyList<AtcId>> atcIdsProducer;
   private final Producer<IReadOnlyList<Callsign>> planeCallsignsProducer;
-
   private final JTextField txt;
   private final ParserFormatterStartInfo.Parsers parsers;
   private boolean isCtr = false;
-
   public CommandInputTextFieldExtender(JTextField txt,
                                        ParserFormatterStartInfo.Parsers parsers,
                                        Producer<IReadOnlyList<AtcId>> atcIdsProducer,
@@ -122,6 +115,10 @@ public class CommandInputTextFieldExtender {
 
   public JTextField getControl() {
     return this.txt;
+  }
+
+  public void send() {
+    this.sendMessageFromText();
   }
 
   private void raiseSpecialCommand(SpecialCommandType specialCommandType, EMap<String, Object> attributes) {
@@ -245,7 +242,7 @@ public class CommandInputTextFieldExtender {
     {
       Tuple<Callsign, ErrorType> t = getCallsignFromString(pts[0]);
       if (t.getB() != null) {
-        raiseError(t.getB(), EMap.of("command", pts[0]));
+        raiseError(t.getB(), EMap.of("callsign", pts[0]));
         return;
       }
       callsign = t.getA();
@@ -256,7 +253,7 @@ public class CommandInputTextFieldExtender {
     try {
       cmds = parser.parse(pts[1]);
     } catch (Exception e) {
-      raiseError(ErrorType.planeUnableParse, EMap.of("command", pts[1]));
+      raiseError(ErrorType.planeUnableParse, EMap.of("callsign", pts[0], "command", pts[1]));
       return;
     }
 

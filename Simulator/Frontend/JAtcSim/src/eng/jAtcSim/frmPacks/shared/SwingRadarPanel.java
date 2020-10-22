@@ -46,11 +46,6 @@ public class SwingRadarPanel extends JPanel {
 
 
   public class CommandInputWrapper {
-    public void setFocus() {
-      SwingRadarPanel.this.commandInputTextFieldExtender.focus();
-
-    }
-
     public void addCommandTextToLine(char keyChar) {
       SwingRadarPanel.this.commandInputTextFieldExtender.appendText(Character.toString(keyChar), false);
     }
@@ -59,17 +54,19 @@ public class SwingRadarPanel extends JPanel {
       SwingRadarPanel.this.commandInputTextFieldExtender.appendText(text, true);
     }
 
+    public void eraseCommand() {
+      SwingRadarPanel.this.commandInputTextFieldExtender.erase();
+    }
+
     public void sendCommand() {
       SwingRadarPanel.this.commandInputTextFieldExtender.send();
     }
 
-    public void eraseCommand() {
-      SwingRadarPanel.this.commandInputTextFieldExtender.erase();
+    public void setFocus() {
+      SwingRadarPanel.this.commandInputTextFieldExtender.focus();
+
     }
   }
-
-
-  public final CommandInputWrapper CommandInput = new CommandInputWrapper();
 
   class RoutesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<DARoute> {
 
@@ -158,7 +155,7 @@ public class SwingRadarPanel extends JPanel {
       radar.redraw(true);
     }
   }
-
+  public final CommandInputWrapper CommandInput = new CommandInputWrapper();
   private Area area;
   private AtcId userAtcId;
   private RadarBehaviorSettings behaviorSettings;
@@ -304,33 +301,29 @@ public class SwingRadarPanel extends JPanel {
   }
 
   private String convertErrorToString(CommandInputTextFieldExtender.ErrorType errorType, IReadOnlyMap<String, Object> arguments) {
-    StringBuilder sb = new StringBuilder();
+    EStringBuilder sb = new EStringBuilder();
 
     switch (errorType) {
       case atcUnableDecide:
-        sb.append("Unable to decide target ATC.");
+        sb.appendFormat("Unable to decide target ATC from '%s'.", arguments.get("command"));
         break;
       case atcUnableParse:
-        sb.append("Unable to parse ATC command.");
+        sb.appendFormat("Unable to parse ATC command from '%s'.", arguments.get("command"));
         break;
       case planeMultipleCallsignMatches:
-        sb.append("Multiple planes matches callsign shortcut.");
+        sb.appendFormat("Multiple planes matches callsign shortcut from '%s'.", arguments.get("callsign"));
         break;
       case planeNoneCallsignMatch:
-        sb.append("No plane matches callsign.");
+        sb.appendFormat("No plane matches callsign/shortcut '%s'.", arguments.get("callsign"));
         break;
       case planeUnableParse:
-        sb.append("Unable to parse plane command.");
+        sb.appendFormat("Unable to parse plane command for plane '%s' from '%s'.", arguments.get("callsign"), arguments.get("command"));
         break;
       case systemUnableParse:
-        sb.append("Unable to parse system command.");
+        sb.appendFormat("Unable to parse system command from '%s.", arguments.get("command"));
         break;
       default:
         throw new EEnumValueUnsupportedException(errorType);
-    }
-
-    for (Map.Entry<String, Object> argument : arguments) {
-      sb.append("; ").append(argument.getValue().toString());
     }
 
     return sb.toString();

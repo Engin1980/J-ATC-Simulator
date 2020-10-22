@@ -13,4 +13,9 @@ public class RunwayMaintenanceProceedingNotification extends RunwayMaintenanceBa
   public EDayTimeStamp getExpectedMaintenanceEndTime() {
     return expectedMaintenanceEndTime;
   }
+
+  @Override
+  public String toString() {
+    return super.toString();
+  }
 }

@@ -56,7 +56,9 @@ public class Context {
 
     public static IAirplane getPlane(Squawk squawk) {
       EAssert.Argument.isNotNull(squawk, "squawk");
-      return Context.getAirplane().getAirplanes().get(squawk);
+      IAirplane ret = tryGetPlane(squawk);
+      EAssert.isNotNull(ret, "Plane with squawk " + squawk + " not found.");
+      return ret;
     }
 
     public static ActiveRunway getRunway(String rwyName) {
@@ -73,6 +75,10 @@ public class Context {
 
     public static AtcId getAtcId(String name) {
       return getAtc(name).getAtcId();
+    }
+
+    public static IAirplane tryGetPlane(Squawk squawk) {
+      return Context.getAirplane().getAirplanes().tryGet(squawk);
     }
   }
 

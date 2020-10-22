@@ -48,7 +48,7 @@ public class ApplicationManager {
     if (speech instanceof ICommand) {
       ICommand command = (ICommand) speech;
       ret = cmdApps.get(command.getClass()).apply(plane, command, false);
-    } else if (speech instanceof IFromPlaneSpeech) {
+    } else if (speech instanceof IForPlaneSpeech) {
       IForPlaneSpeech notification = (IForPlaneSpeech) speech;
       ret = nonCmdApps.get(notification.getClass()).apply(plane, notification);
     } else {

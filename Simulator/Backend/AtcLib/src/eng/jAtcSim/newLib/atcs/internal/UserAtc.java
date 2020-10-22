@@ -21,6 +21,7 @@ import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.IPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.RadarContactConfirmationNotification;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
@@ -33,6 +34,18 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
  * @author Marek
  */
 public class UserAtc extends Atc implements IUserAtcInterface {
+
+  private static PlaneSwitchRequest tryGetBaseIfBasedOnPlaneSwitch(IAtcSpeech speech) {
+    //TODO duplicit with the same method in ComputerAtc, how to solve this?
+    if (speech instanceof PlaneSwitchRequest)
+      return (PlaneSwitchRequest) speech;
+    else if (speech instanceof AtcConfirmation)
+      return (PlaneSwitchRequest) ((AtcConfirmation) speech).getOrigin();
+    else if (speech instanceof AtcRejection)
+      return (PlaneSwitchRequest) ((AtcRejection) speech).getOrigin();
+    else
+      return null;
+  }
 
   private final IList<IAirplane> planes = new EList<>();
   private IReadOnlyList<Message> thisSecondMessages = new EList<>();
@@ -98,10 +111,20 @@ public class UserAtc extends Atc implements IUserAtcInterface {
 
   @Override
   public void sendPlaneCommand(Callsign toCallsign, SpeechList<IForPlaneSpeech> cmds) {
+
+
     ContactCommand cc = (ContactCommand) cmds.tryGetFirst(q -> q instanceof ContactCommand);
     if (cc != null) {
       processOutgoingContactCommandToPlane(toCallsign, cc);
     }
+    RadarContactConfirmationNotification rccn = (RadarContactConfirmationNotification) cmds.tryGetFirst(q -> q instanceof RadarContactConfirmationNotification);
+    if (rccn != null) {
+      IAirplane plane = Context.Internal.getPlane(toCallsign);
+      if (this.planes.contains(plane) == false)
+        this.planes.add(plane);
+    }
+
+
     eng.jAtcSim.newLib.messaging.Message msg = new eng.jAtcSim.newLib.messaging.Message(
             Participant.createAtc(this.getAtcId()),
             Participant.createAirplane(toCallsign),
@@ -126,44 +149,24 @@ public class UserAtc extends Atc implements IUserAtcInterface {
     this.planes.tryRemove(plane);
   }
 
+  //TODEL
   private void processIncomingGoodDayFromPlane(IAirplane plane) {
-    this.planes.add(plane);
+    // intentionally blank
   }
 
   private void processOutgoingPlaneSwitchMessage(AtcId toAtcId, IAtcSpeech atcSpeech) {
     PlaneSwitchRequest psr = tryGetBaseIfBasedOnPlaneSwitch(atcSpeech);
     EAssert.isNotNull(psr);
-    IAirplane plane = this.planes.tryGetFirst(q -> q.getSqwk().equals(psr.getSquawk()));
-    if (plane != null) {
-      // sending new switch request, but not having the plane
-      super.sendMessage(
-              new Message(
-                      Participant.createSystem(),
-                      Participant.createAtc(this.getAtcId()),
-                      new AtcRejection(atcSpeech, sf("Squawk '%s' not found.", psr.getSquawk()))));
-    } else
-      super.sendMessage(new Message(
-              Participant.createAtc(this.getAtcId()),
-              Participant.createAtc(toAtcId),
-              atcSpeech
-      ));
+    super.sendMessage(new Message(
+            Participant.createAtc(this.getAtcId()),
+            Participant.createAtc(toAtcId),
+            atcSpeech
+    ));
   }
 
   private void processOutgoingContactCommandToPlane(Callsign toCallsign, ContactCommand contactCommand) {
     IAirplane plane = Context.Internal.getPlane(toCallsign);
     this.planes.remove(plane);
-  }
-
-  private static PlaneSwitchRequest tryGetBaseIfBasedOnPlaneSwitch(IAtcSpeech speech) {
-    //TODO duplicit with the same method in ComputerAtc, how to solve this?
-    if (speech instanceof PlaneSwitchRequest)
-      return (PlaneSwitchRequest) speech;
-    else if (speech instanceof AtcConfirmation)
-      return (PlaneSwitchRequest) ((AtcConfirmation) speech).getOrigin();
-    else if (speech instanceof AtcRejection)
-      return (PlaneSwitchRequest) ((AtcRejection) speech).getOrigin();
-    else
-      return null;
   }
 
 //  @Override

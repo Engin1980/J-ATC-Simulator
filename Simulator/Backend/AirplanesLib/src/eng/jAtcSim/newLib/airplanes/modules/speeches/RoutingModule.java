@@ -26,6 +26,7 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.RequestRadarContactNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
@@ -46,7 +47,6 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private Navaid entryExitPoint;
   private final DelayedList<ICommand> queue = new DelayedList<>(2, 7); //Min/max item delay
   private ActiveRunwayThreshold runwayThreshold;
-  private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> saidText = new EMap<>();
 
   public RoutingModule(Airplane plane, Navaid entryExitPoint) {
     super(plane);
@@ -201,19 +201,38 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
     // extract contents
     IList<IMessageContent> contents = msgs.select(q -> q.getContent());
-    for (IMessageContent c : contents) {
-      SpeechList<IForPlaneSpeech> cmds;
-      if (c instanceof SpeechList) {
-        SpeechList<IForPlaneSpeech> tmp = (SpeechList<IForPlaneSpeech>) c;
-        EAssert.isTrue(tmp.isAll(q -> q instanceof IForPlaneSpeech));
-        cmds = new SpeechList<>();
-        tmp.forEach(q -> cmds.add(q));
-      } else if (c instanceof ICommand) {
-        cmds = new SpeechList<>((ICommand) c);
-      } else
-        throw new EApplicationException("Unexpected type of cmd: " + c.getClass().getName());
-      this.addNewSpeeches(cmds);
+
+    SpeechList<IForPlaneSpeech> speechList = convertMessagesToSpeechList(contents);
+
+    processRadarContactNotificationIfExists(speechList);
+
+    this.addNewSpeeches(speechList);
+  }
+
+  private void processRadarContactNotificationIfExists(SpeechList<IForPlaneSpeech> speechList) {
+    IList<RadarContactConfirmationNotification> radarContacts = speechList
+            .whereItemClassIs(RadarContactConfirmationNotification.class,false);
+    RadarContactConfirmationNotification radarContact = radarContacts.tryGetLast();
+
+    if (radarContact !=null) {
+      processNormalSpeech(radarContact, CommandSource.atc);
+      speechList.removeMany(radarContacts);
     }
+  }
+
+  private SpeechList<IForPlaneSpeech> convertMessagesToSpeechList(IList<IMessageContent> contents) {
+    SpeechList<IForPlaneSpeech> ret = new SpeechList<>();
+
+    for (IMessageContent content : contents) {
+      if (content instanceof SpeechList)
+        ret.addMany((SpeechList<IForPlaneSpeech>) content);
+      else if (content instanceof IForPlaneSpeech)
+        ret.add((IForPlaneSpeech) content);
+      else
+        throw new EApplicationException("Unexpected type of cmd: " + content.getClass().getName());
+    }
+
+    return ret;
   }
 
   private void processAfterSpeechWithConsequents(IList<? extends ICommand> queue, CommandSource cs) {
@@ -300,8 +319,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     }
   }
 
-  private void processNormalSpeech(
-          SpeechList<? extends ICommand> queue, ICommand cmd, CommandSource cs) {
+  private void processNormalSpeech(IForPlaneSpeech cmd, CommandSource cs) {
 
     ConfirmationResult cres =
             ApplicationManager.confirm(
@@ -310,7 +328,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
       // command was rejected
       say(cres.rejection);
     } else {
-      affectAfterCommands(cmd, cs);
+      if (cmd instanceof ICommand) affectAfterCommands((ICommand) cmd, cs);
       // new commands from atc when needs to be confirmed, are confirmed
       if (cs == RoutingModule.CommandSource.atc && cres.confirmation != null)
         say(cres.confirmation);
@@ -319,8 +337,6 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
       assert ares.rejection == null : "This should not be rejected as was confirmed a few moments before.";
       ares.informations.forEach(q -> say(q));
     }
-
-    queue.removeAt(0);
   }
 
   private void processSpeeches(SpeechList<ICommand> queue, CommandSource cs) {
@@ -329,18 +345,14 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
       if (cmd instanceof AfterCommand) {
         processAfterSpeechWithConsequents(queue, cs);
       } else {
-        processNormalSpeech(queue, cmd, cs);
+        processNormalSpeech(cmd, cs);
+        queue.remove(cmd);
       }
     }
   }
 
   private void say(IFromPlaneSpeech speech) {
-    AtcId atc = rdr.getAtc().getTunedAtc();
-
-    // if no tuned atc, nothing is said
-    if (atc == null) return;
-
-    this.saidText.getOrSet(atc, new SpeechList<>()).add(speech);
+    wrt.sendMessage(speech);
   }
 
   private SpeechList<ICommand> tryExpandThenCommands(IReadOnlyList<ICommand> speeches) {

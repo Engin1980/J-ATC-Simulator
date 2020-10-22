@@ -1,6 +1,9 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.atcFormatter;
 
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
+import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
+import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
+import eng.jAtcSim.newLib.speeches.base.Response;
 import eng.jAtcSim.newLib.textProcessing.formatting.IAtcFormatter;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcFormatter.formatters.*;
 import eng.jAtcSim.newLib.textProcessing.implemented.formatterHelpers.TextSpeechFormatter;
@@ -10,7 +13,7 @@ public class AtcFormatter implements IAtcFormatter<String> {
 
   private static final TextSpeechFormatterList<IAtcSpeech> formatters;
 
-  static{
+  static {
     formatters = new TextSpeechFormatterList<>();
     formatters.add(new PlaneSwitchRequestFormatter());
 //    formatters.add(new PlaneSwitchRequestCancelationFormatter());
@@ -22,8 +25,20 @@ public class AtcFormatter implements IAtcFormatter<String> {
 
   @Override
   public String format(IAtcSpeech input) {
-    TextSpeechFormatter<? extends IAtcSpeech> fmt = formatters.get(input);
-    String ret = fmt.format(input);
+    IAtcSpeech tmp;
+    if (input instanceof Response)
+      tmp = ((Response<IAtcSpeech>) input).getOrigin();
+    else
+      tmp = input;
+
+    TextSpeechFormatter<? extends IAtcSpeech> fmt = formatters.get(tmp);
+    String ret = fmt.format(tmp);
+
+    if (input instanceof AtcConfirmation)
+      ret += " confirmed";
+    else if (input instanceof AtcRejection)
+      ret += " rejected: " + ((AtcRejection) input).getReason();
+
     return ret;
   }
 }

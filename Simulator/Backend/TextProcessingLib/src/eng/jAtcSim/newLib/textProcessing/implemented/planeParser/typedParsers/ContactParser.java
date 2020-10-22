@@ -34,8 +34,8 @@ public class ContactParser extends TextSpeechParser<ContactCommand> {
   public ContactCommand parse(IList<String> blocks) {
     IReadOnlyList<AtcId> atcs = Context.getShared().getAtcs();
     AtcId atcId;
-    if (blocks.get(1) != null){
-      switch (blocks.get(1)) {
+    if (blocks.get(0) != null){
+      switch (blocks.get(0)) {
       case "CT":
         atcId = atcs.getFirst(q->q.getType() == AtcType.ctr);
         break;
