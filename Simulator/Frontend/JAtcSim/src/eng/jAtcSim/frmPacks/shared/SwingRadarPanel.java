@@ -389,32 +389,8 @@ public class SwingRadarPanel extends JPanel {
     return ret;
   }
 
-  private Callsign getCallsignFromString(String callsignString) {
-    IList<Callsign> clsgns = sim.getPlanesToDisplay().select(q -> q.callsign());
-    Callsign ret = clsgns.tryGetFirst(q -> q.toString().equals(callsignString));
-    if (ret == null) {
-      IList<Callsign> tmp = clsgns.where(q -> q.getNumber().equals(callsignString));
-      if (tmp.count() > 1) {
-        // multiple matches
-        throw new EApplicationException(sf("Multiple callsign matches for '%s'.", callsignString));
-      } else
-        ret = tmp.tryGetFirst();
-    }
-    if (ret == null)
-      throw new EApplicationException(sf("No callsign match for '%s'.", callsignString));
-    return ret;
-  }
 
-  private String normalizeMsg(String txt) {
-    txt = txt.trim();
-    StringBuilder sb = new StringBuilder(txt);
-    int doubleSpaceIndex = sb.toString().indexOf("  ");
-    while (doubleSpaceIndex >= 0) {
-      sb.replace(doubleSpaceIndex, doubleSpaceIndex + 2, " ");
-      doubleSpaceIndex = sb.toString().indexOf("  ");
-    }
-    return sb.toString();
-  }
+
 
   private void recallRadarPosition(int index) {
     RadarViewPort rp = storedRadarPositions.tryGet(index);
@@ -491,140 +467,120 @@ public class SwingRadarPanel extends JPanel {
     wrp.focus();
   }
 }
-
-class CommandJTextWraper {
-
-  private boolean isCtr = false;
-  private final JTextField parent;
-  private final EventAnonymousSimple pauseUnpauseSimulation = new EventAnonymousSimple();
-  private final EventAnonymous<Integer> recallRadarPosition = new EventAnonymous<>();
-  private final EventAnonymousSimple sendEvent = new EventAnonymousSimple();
-  private final EventAnonymous<Integer> storeRadarPosition = new EventAnonymous<>();
-
-  public CommandJTextWraper(JTextField parentJTextField) {
-    parent = parentJTextField;
-
-    parent.addKeyListener(new KeyListener() {
-
-      @Override
-      public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-          case KeyEvent.VK_CONTROL:
-            isCtr = true;
-            break;
-          case java.awt.event.KeyEvent.VK_ESCAPE:
-            erase();
-            break;
-          case java.awt.event.KeyEvent.VK_LEFT:
-            if (isCtr) appendText("TL", true);
-            break;
-          case java.awt.event.KeyEvent.VK_RIGHT:
-            if (isCtr) appendText("TR", true);
-            break;
-          case java.awt.event.KeyEvent.VK_UP:
-            if (isCtr) appendText("CM", true);
-            break;
-          case java.awt.event.KeyEvent.VK_DOWN:
-            if (isCtr) appendText("DM", true);
-            break;
-          case java.awt.event.KeyEvent.VK_ENTER:
-            send();
-            break;
-          case KeyEvent.VK_F1:
-            pauseUnpauseSimulation.raise();
-            break;
-          case KeyEvent.VK_F2:
-            if (isCtr)
-              storeRadarPosition.raise(2);
-            else
-              recallRadarPosition.raise(2);
-            break;
-          case KeyEvent.VK_F3:
-            if (isCtr)
-              storeRadarPosition.raise(3);
-            else
-              recallRadarPosition.raise(3);
-            break;
-          case KeyEvent.VK_F4:
-            if (isCtr)
-              storeRadarPosition.raise(4);
-            else
-              recallRadarPosition.raise(4);
-            break;
-          case KeyEvent.VK_F5:
-            if (isCtr)
-              storeRadarPosition.raise(5);
-            else
-              recallRadarPosition.raise(5);
-            break;
-          case KeyEvent.VK_F6:
-            if (isCtr)
-              storeRadarPosition.raise(6);
-            else
-              recallRadarPosition.raise(6);
-            break;
-        }
-      }
-
-      @Override
-      public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()) {
-          case KeyEvent.VK_CONTROL:
-            isCtr = false;
-            break;
-        }
-      }
-
-      @Override
-      public void keyTyped(KeyEvent e) {
-
-      }
-
-
-    });
-  }
-
-  public void appendText(String text, boolean separate) {
-    String tmp;
-    if (separate)
-      tmp = parent.getText() + " " + text + " ";
-    else
-      tmp = parent.getText() + text;
-    parent.setText(tmp);
-  }
-
-  public void erase() {
-    parent.setText("");
-  }
-
-  public void focus() {
-    parent.requestFocus();
-  }
-
-  public EventAnonymousSimple getPauseUnpauseSimulation() {
-    return pauseUnpauseSimulation;
-  }
-
-  public EventAnonymous<Integer> getRecallRadarPosition() {
-    return recallRadarPosition;
-  }
-
-  public EventAnonymousSimple getSendEvent() {
-    return sendEvent;
-  }
-
-  public EventAnonymous<Integer> getStoreRadarPosition() {
-    return storeRadarPosition;
-  }
-
-  public String getText() {
-    return parent.getText().trim().toUpperCase();
-  }
-
-  public void send() {
-    sendEvent.raise();
-  }
-}
+//
+//class CommandJTextWraper {
+//
+//  private boolean isCtr = false;
+//  private final JTextField parent;
+//  private final EventAnonymousSimple pauseUnpauseSimulation = new EventAnonymousSimple();
+//  private final EventAnonymous<Integer> recallRadarPosition = new EventAnonymous<>();
+//  private final EventAnonymousSimple sendEvent = new EventAnonymousSimple();
+//  private final EventAnonymous<Integer> storeRadarPosition = new EventAnonymous<>();
+//
+//  public CommandJTextWraper(JTextField parentJTextField) {
+//    parent = parentJTextField;
+//
+//    parent.addKeyListener(new KeyListener() {
+//
+//      @Override
+//      public void keyPressed(KeyEvent e) {
+//        switch (e.getKeyCode()) {
+//          case KeyEvent.VK_CONTROL:
+//            isCtr = true;
+//            break;
+//          case java.awt.event.KeyEvent.VK_ESCAPE:
+//            erase();
+//            break;
+//          case java.awt.event.KeyEvent.VK_LEFT:
+//            if (isCtr) appendText("TL", true);
+//            break;
+//          case java.awt.event.KeyEvent.VK_RIGHT:
+//            if (isCtr) appendText("TR", true);
+//            break;
+//          case java.awt.event.KeyEvent.VK_UP:
+//            if (isCtr) appendText("CM", true);
+//            break;
+//          case java.awt.event.KeyEvent.VK_DOWN:
+//            if (isCtr) appendText("DM", true);
+//            break;
+//          case java.awt.event.KeyEvent.VK_ENTER:
+//            send();
+//            break;
+//          case KeyEvent.VK_F1:
+//            pauseUnpauseSimulation.raise();
+//            break;
+//          case KeyEvent.VK_F2:
+//            if (isCtr)
+//              storeRadarPosition.raise(2);
+//            else
+//              recallRadarPosition.raise(2);
+//            break;
+//          case KeyEvent.VK_F3:
+//            if (isCtr)
+//              storeRadarPosition.raise(3);
+//            else
+//              recallRadarPosition.raise(3);
+//            break;
+//          case KeyEvent.VK_F4:
+//            if (isCtr)
+//              storeRadarPosition.raise(4);
+//            else
+//              recallRadarPosition.raise(4);
+//            break;
+//          case KeyEvent.VK_F5:
+//            if (isCtr)
+//              storeRadarPosition.raise(5);
+//            else
+//              recallRadarPosition.raise(5);
+//            break;
+//          case KeyEvent.VK_F6:
+//            if (isCtr)
+//              storeRadarPosition.raise(6);
+//            else
+//              recallRadarPosition.raise(6);
+//            break;
+//        }
+//      }
+//
+//      @Override
+//      public void keyReleased(KeyEvent e) {
+//        switch (e.getKeyCode()) {
+//          case KeyEvent.VK_CONTROL:
+//            isCtr = false;
+//            break;
+//        }
+//      }
+//
+//      @Override
+//      public void keyTyped(KeyEvent e) {
+//
+//      }
+//
+//
+//    });
+//  }
+//
+//  public EventAnonymousSimple getPauseUnpauseSimulation() {
+//    return pauseUnpauseSimulation;
+//  }
+//
+//  public EventAnonymous<Integer> getRecallRadarPosition() {
+//    return recallRadarPosition;
+//  }
+//
+//  public EventAnonymousSimple getSendEvent() {
+//    return sendEvent;
+//  }
+//
+//  public EventAnonymous<Integer> getStoreRadarPosition() {
+//    return storeRadarPosition;
+//  }
+//
+//  public String getText() {
+//    return parent.getText().trim().toUpperCase();
+//  }
+//
+//}
 
 class JButtonExtender {
   public final Color backOff;
