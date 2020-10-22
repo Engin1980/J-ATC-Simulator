@@ -61,7 +61,7 @@ class SwitchManager {
             Participant.createAtc(parent.getAtcId()),
             Participant.createAirplane(plane.getCallsign()),
             lst);
-    this.messageSenderConsumer.consume(msg);
+    this.messageSenderConsumer.invoke(msg);
   }
 
   public void processPlaneSwitchMessage(PlaneSwitchRequest planeSwitchRequest, AtcId sender) {
@@ -97,13 +97,13 @@ class SwitchManager {
             q -> q.getLastRequest().getValue() + SECONDS_BEFORE_REPEAT_SWITCH_REQUEST < now.getValue());
 
     for (SwitchInfo si : awaitings) {
-      if (this.delayedMessagesProducer.produce().isAny(q -> isPlaneSwitchRelated(q, si.getSqwk())))
+      if (this.delayedMessagesProducer.invoke().isAny(q -> isPlaneSwitchRelated(q, si.getSqwk())))
         continue; // if message about this plane is delayed and waiting to process
       Message m = new Message(
               Participant.createAtc(parent.getAtcId()),
               Participant.createAtc(si.getAtcId()),
               new PlaneSwitchRequest(si.getSqwk(), true));
-      messageSenderConsumer.consume(m);
+      messageSenderConsumer.invoke(m);
       si.setLastRequest(now.toStamp());
     }
   }
@@ -115,7 +115,7 @@ class SwitchManager {
             Participant.createAtc(parent.getAtcId()),
             Participant.createAtc(targetAtcId),
             new PlaneSwitchRequest(airplane.getSqwk(), false));
-    messageSenderConsumer.consume(msg);
+    messageSenderConsumer.invoke(msg);
   }
 
   private void sendConfirmMessage(PlaneSwitchRequest planeSwitchRequest, AtcId sender) {
@@ -125,7 +125,7 @@ class SwitchManager {
             Participant.createAtc(sender),
             confirmation
     );
-    messageSenderConsumer.consume(msg);
+    messageSenderConsumer.invoke(msg);
   }
 
   private void sendRejectMessage(PlaneSwitchRequest psr, String reason, AtcId targetAtcId) {
@@ -135,7 +135,7 @@ class SwitchManager {
             Participant.createAtc(targetAtcId),
             confirmation
     );
-    messageSenderConsumer.consume(msg);
+    messageSenderConsumer.invoke(msg);
   }
 
   private void processOutgoingPlaneSwitchMessage(SwitchInfo si, PlaneSwitchRequest psr, AtcId sender) {

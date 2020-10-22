@@ -37,12 +37,12 @@ public class AreaAcc implements IAreaAcc {
 
   @Override
   public RunwayConfiguration getCurrentRunwayConfiguration() {
-    return runwayConfigurationProducer.produce();
+    return runwayConfigurationProducer.invoke();
   }
 
   @Override
   public RunwayConfiguration tryGetScheduledRunwayConfiguration() {
-    return scheduledRunwayConfigurationProducer.produce();
+    return scheduledRunwayConfigurationProducer.invoke();
   }
 
   @Override

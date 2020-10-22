@@ -8,6 +8,7 @@
       <excludeFolder url="file://$MODULE_DIR$/JAtcSimDraw" />
       <excludeFolder url="file://$MODULE_DIR$/JAtcSimXml" />
       <excludeFolder url="file://$MODULE_DIR$/Postponed" />
+      <excludeFolder url="file://$MODULE_DIR$/Postponed/JavaFXRadar/src/eng/jAtcSim/javaFXRadar" />
       <excludeFolder url="file://$MODULE_DIR$/Simulator/temp" />
       <excludeFolder url="file://$MODULE_DIR$/Tools/JAtcImagesToVideoConverter" />
     </content>

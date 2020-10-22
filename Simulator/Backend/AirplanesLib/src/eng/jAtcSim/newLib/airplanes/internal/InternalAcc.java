@@ -14,7 +14,7 @@ public class InternalAcc {
   private static Producer<AirplaneList<Airplane>> airplanesProducer = null;
 
   public static AirplaneList<Airplane> getAirplanes() {
-    return airplanesProducer.produce();
+    return airplanesProducer.invoke();
   }
 
   public static Navaid getNavaid(ToNavaidCommand toNavaidCommand) {

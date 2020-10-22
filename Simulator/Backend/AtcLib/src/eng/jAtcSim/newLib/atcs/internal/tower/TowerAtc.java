@@ -96,18 +96,18 @@ public class TowerAtc extends ComputerAtc {
   @Override
   protected void _elapseSecond() {
     //TODO here should be some check that landing plane is not landing on the occupied runway
-    departureManager.movePlanesToHoldingPoint();
-    tryTakeOffPlaneNew();
-    hangOffDepartedPlanes();
-    processRunwayCheckBackground();
-    processRunwayChangeBackground();
+    this.departureManager.movePlanesToHoldingPoint();
+    this.tryTakeOffPlaneNew();
+    this.hangOffDepartedPlanes();
+    this.processRunwayCheckBackground();
+    this.processRunwayChangeBackground();
   }
 
   private void hangOffDepartedPlanes() {
-    IReadOnlyList<IAirplane> departedPlanes = departureManager.getDepartedPlanesReadyToHangoff(true);
+    IReadOnlyList<IAirplane> departedPlanes = this.departureManager.getDepartedPlanesReadyToHangoff(true);
     for (IAirplane plane : departedPlanes) {
       Message msg = new Message(
-              Participant.createAtc(getAtcId()),
+              Participant.createAtc(this.getAtcId()),
               Participant.createAirplane(plane.getCallsign()),
               new SpeechList<>(new ContactCommand(this.getAtcIdWhereIAmSwitchingPlanes())));
       super.sendMessage(msg);

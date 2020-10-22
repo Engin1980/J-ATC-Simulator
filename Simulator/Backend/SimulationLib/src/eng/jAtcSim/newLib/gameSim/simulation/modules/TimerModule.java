@@ -8,8 +8,6 @@ package eng.jAtcSim.newLib.gameSim.simulation.modules;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.functionalInterfaces.Action;
-import eng.eSystem.functionalInterfaces.Action1;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;

@@ -9,11 +9,11 @@ public class InternalAcc {
   private static Producer<IParser> parserProducer;
 
   public static IParser getParser() {
-    return parserProducer.produce();
+    return parserProducer.invoke();
   }
 
   public static TimerModule getTimerProvider() {
-    return timerProviderProducer.produce();
+    return timerProviderProducer.invoke();
   }
 
   public static void setParserProducer(Producer<IParser> parserProducer) {

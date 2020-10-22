@@ -128,7 +128,7 @@ public class CommandVariableEvaluator {
           sf("Unable to find lambda function for '%s'.'%s'.", cls.getSimpleName(), key), ex);
     }
     try {
-      ret = fun.select(value);
+      ret = fun.invoke(value);
     } catch (Exception ex) {
       throw new EApplicationException(
           sf("Unable to evaluate '%s'.'%s' via its lambda function.", cls.getSimpleName(), key), ex);

@@ -18,7 +18,7 @@ public class AirplaneList<T> extends EDistinctList<T> {
 
 
   public AirplaneList(Selector<T, Callsign> callsignSelector, Selector<T, Squawk> squawkSelector) {
-    super(q -> callsignSelector.select(q), Behavior.exception);
+    super(q -> callsignSelector.invoke(q), Behavior.exception);
     EAssert.Argument.isNotNull(callsignSelector, "callsignSelector");
     EAssert.Argument.isNotNull(squawkSelector, "squawkSelector");
     this.callsignSelector = callsignSelector;
@@ -27,10 +27,10 @@ public class AirplaneList<T> extends EDistinctList<T> {
 
   public T get(Callsign callsign) {
     T ret;
-    if (lastGot != null && callsignSelector.select(lastGot).equals(callsign))
+    if (lastGot != null && callsignSelector.invoke(lastGot).equals(callsign))
       ret = lastGot;
     else {
-      ret = this.tryGetFirst(q -> this.callsignSelector.select(q).equals(callsign));
+      ret = this.tryGetFirst(q -> this.callsignSelector.invoke(q).equals(callsign));
       if (ret != null) lastGot = ret;
     }
     EAssert.isNotNull(ret, "AirplaneList did not found matching plane for callsign: " + callsign);
@@ -38,14 +38,14 @@ public class AirplaneList<T> extends EDistinctList<T> {
   }
 
   public T get(Squawk squawk){
-    return this.getFirst(q->squawkSelector.select(q).equals(squawk));
+    return this.getFirst(q->squawkSelector.invoke(q).equals(squawk));
   }
 
   public T tryGet(Squawk squawk) {
-    return this.tryGetFirst(q->squawkSelector.select(q).equals(squawk));
+    return this.tryGetFirst(q->squawkSelector.invoke(q).equals(squawk));
   }
 
   public T tryGet(Callsign callsign) {
-    return this.tryGetFirst(q->callsignSelector.select(q).equals(callsign));
+    return this.tryGetFirst(q->callsignSelector.invoke(q).equals(callsign));
   }
 }

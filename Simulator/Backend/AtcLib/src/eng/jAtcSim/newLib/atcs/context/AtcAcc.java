@@ -21,6 +21,6 @@ public class AtcAcc implements IAtcAcc {
 
   @Override
   public AtcId getResponsibleAtcId(Callsign callsign) {
-    return getResponsibleAtcSelector.select(callsign);
+    return getResponsibleAtcSelector.invoke(callsign);
   }
 }

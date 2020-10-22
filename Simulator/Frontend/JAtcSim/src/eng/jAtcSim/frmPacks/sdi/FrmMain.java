@@ -62,7 +62,8 @@ public class FrmMain extends JFrame {
             q -> q.addKeyListener(new KeyAdapter() {
               @Override
               public void keyReleased(KeyEvent e) {
-                srpRadar.setFocus(e.getKeyChar());
+                srpRadar.CommandInput.addCommandTextToLine(e.getKeyChar());
+                srpRadar.CommandInput.setFocus();
               }
             })
     );
@@ -359,9 +360,9 @@ public class FrmMain extends JFrame {
       pnlCommands.setPlane((Callsign) callsign);
     });
 
-    pnlCommands.getGeneratedEvent().add(s -> srpRadar.addCommandTextToLine(s));
-    pnlCommands.getSendEvent().add(() -> srpRadar.sendCommand());
-    pnlCommands.getEraseEvent().add(() -> srpRadar.eraseCommand());
+    pnlCommands.getGeneratedEvent().add(s -> srpRadar.CommandInput.addCommandTextToLine(s));
+    pnlCommands.getSendEvent().add(() -> srpRadar.CommandInput.sendCommand());
+    pnlCommands.getEraseEvent().add(() -> srpRadar.CommandInput.eraseCommand());
 
     appendListenerForKeyToRadar();
 

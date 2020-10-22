@@ -1,9 +1,6 @@
 package eng.jAtcSim.abstractRadar;
 
-import eng.eSystem.collections.EDistinctList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IMap;
-import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.*;
 import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
@@ -445,12 +442,12 @@ public class Radar {
     return ret;
   }
 
-  private List<String> decodeSystemMultilines(List<String> system) {
-    List<String> ret = new ArrayList<>();
+  private IList<String> decodeSystemMultilines(List<String> system) {
+    IList<String> ret = new EList<>();
     String del = "\r\n";
     for (String s : system) {
       String[] spl = s.split(del);
-      ret.addAll(Arrays.asList(spl));
+      ret.addMany(spl);
     }
     return ret;
   }
@@ -711,7 +708,10 @@ public class Radar {
     tl.drawTextBlock(ms.plane, TextBlockLocation.bottomLeft, dt.getFont(), dt.getColor());
 
     dt = styleSettings.system;
-    tl.drawTextBlock(decodeSystemMultilines(ms.system), TextBlockLocation.topRight, dt.getFont(), dt.getColor());
+    IList<String> systemMsgs = decodeSystemMultilines(ms.system);
+    systemMsgs.addMany(this.customSystemMessages);
+    this.customSystemMessages.clear();
+    tl.drawTextBlock(systemMsgs.toJavaList(), TextBlockLocation.topRight, dt.getFont(), dt.getColor());
   }
 
   private void drawNavaid(Navaid navaid) {
@@ -1131,5 +1131,10 @@ public class Radar {
 
     redraw(true);
 
+  }
+
+  private final IList<String> customSystemMessages = new EList<>();
+  public void showMessageOnScreen(String s) {
+    this.customSystemMessages.add(s);
   }
 }

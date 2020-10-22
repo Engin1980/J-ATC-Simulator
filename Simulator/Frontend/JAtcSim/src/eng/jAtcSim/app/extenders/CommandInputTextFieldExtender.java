@@ -7,7 +7,6 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.events.Event;
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
@@ -27,6 +26,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class CommandInputTextFieldExtender {
+
+  public void send() {
+    this.sendMessageFromText();
+  }
 
   public enum SpecialCommandType {
     storeRadarPosition,
@@ -76,21 +79,28 @@ public class CommandInputTextFieldExtender {
   public final Event<CommandInputTextFieldExtender, CommandEventArgs<Callsign, SpeechList<IForPlaneSpeech>>> onPlaneCommand = new Event<>(this);
   public final Event<CommandInputTextFieldExtender, CommandEventArgs<Object, ISystemSpeech>> onSystemCommand = new Event<>(this);
   public final Event<CommandInputTextFieldExtender, ErrorEventArgs> onError = new Event<>(this);
-  public final Producer<IReadOnlyList<AtcId>> atcIdsProducer;
-  public final Producer<Callsign> planeCallsignsProvider;
+  private final Producer<IReadOnlyList<AtcId>> atcIdsProducer;
+  private final Producer<IReadOnlyList<Callsign>> planeCallsignsProducer;
 
   private final JTextField txt;
   private final ParserFormatterStartInfo.Parsers parsers;
   private boolean isCtr = false;
 
-  public CommandInputTextFieldExtender(JTextField txt, ParserFormatterStartInfo.Parsers parsers) {
+  public CommandInputTextFieldExtender(JTextField txt,
+                                       ParserFormatterStartInfo.Parsers parsers,
+                                       Producer<IReadOnlyList<AtcId>> atcIdsProducer,
+                                       Producer<IReadOnlyList<Callsign>> planeCallsignsProducer) {
     this.txt = txt;
     this.parsers = parsers;
-    assignListeners();
+    this.atcIdsProducer = atcIdsProducer;
+    this.planeCallsignsProducer = planeCallsignsProducer;
+    this.assignListeners();
   }
 
-  public CommandInputTextFieldExtender(ParserFormatterStartInfo.Parsers parsers) {
-    this(new JFormattedTextField(), parsers);
+  public CommandInputTextFieldExtender(ParserFormatterStartInfo.Parsers parsers,
+                                       Producer<IReadOnlyList<AtcId>> atcIdsProducer,
+                                       Producer<IReadOnlyList<Callsign>> planeCallsignsProducer) {
+    this(new JFormattedTextField(), parsers, atcIdsProducer, planeCallsignsProducer);
   }
 
   public void appendText(String text, boolean separate) {
@@ -111,12 +121,7 @@ public class CommandInputTextFieldExtender {
   }
 
   public JTextField getControl() {
-    return txt;
-  }
-
-  public void raiseCommands() {
-    //TODO
-    throw new ToDoException("Do send");
+    return this.txt;
   }
 
   private void raiseSpecialCommand(SpecialCommandType specialCommandType, EMap<String, Object> attributes) {
@@ -149,7 +154,7 @@ public class CommandInputTextFieldExtender {
             if (isCtr) appendText("DM", true);
             break;
           case java.awt.event.KeyEvent.VK_ENTER:
-            raiseCommands();
+            sendMessageFromText();
             break;
           case KeyEvent.VK_F1:
             raiseSpecialCommand(SpecialCommandType.toggleSimulatorRun, new EMap<>());
@@ -203,7 +208,6 @@ public class CommandInputTextFieldExtender {
     });
   }
 
-
   private String normalizeMsg(String txt) {
     txt = txt.trim();
     StringBuilder sb = new StringBuilder(txt);
@@ -215,10 +219,11 @@ public class CommandInputTextFieldExtender {
     return sb.toString();
   }
 
-  private void sendMessage(String msg) {
-    msg = normalizeMsg(msg);
+  private void sendMessageFromText() {
+    String msg = this.txt.getText();
+    msg = this.normalizeMsg(msg);
     try {
-      if (isAtcMessage(msg)) {
+      if (this.isAtcMessage(msg)) {
         processAtcMessage(msg);
       } else if (isSystemMessage(msg)) {
         processSystemMessage(msg);
@@ -235,7 +240,6 @@ public class CommandInputTextFieldExtender {
   }
 
   private void processPlaneMessage(String msg) {
-
     String[] pts = splitCallsignAndMessage(msg);
     Callsign callsign;
     {
@@ -267,19 +271,19 @@ public class CommandInputTextFieldExtender {
   }
 
   private Tuple<Callsign, ErrorType> getCallsignFromString(String callsignString) {
-    IList<Callsign> clsgns = planeCallsignsProvider.invoke();
+    IReadOnlyList<Callsign> clsgns = this.planeCallsignsProducer.invoke();
     Callsign ret = clsgns.tryGetFirst(q -> q.toString().equals(callsignString));
     if (ret == null) {
       IList<Callsign> tmp = clsgns.where(q -> q.getNumber().equals(callsignString));
-      if (tmp.count() > 1) {
+      if (tmp.count() > 1)
         return new Tuple<>(null, ErrorType.planeMultipleCallsignMatches);
-        ret = tmp.tryGetFirst();
-        if (ret == null)
-          return new Tuple<>(null, ErrorType.planeNoneCallsignMatch);
-      }
-      EAssert.isNotNull(ret);
-      return new Tuple(ret, null);
+      else if (tmp.count() == 0)
+        return new Tuple<>(null, ErrorType.planeNoneCallsignMatch);
+      else
+        ret = tmp.getFirst();
     }
+    EAssert.isNotNull(ret);
+    return new Tuple<>(ret, null);
   }
 
   private String[] splitCallsignAndMessage(String msg) {
@@ -319,19 +323,19 @@ public class CommandInputTextFieldExtender {
   private void processAtcMessage(String msg) {
     AtcType atcType = msg.startsWith("+") ? AtcType.ctr : AtcType.twr;
     msg = msg.substring(1);
-    IAtcParser parser = parsers.atcParser;
-    IAtcSpeech speech = null;
+    IAtcParser parser = this.parsers.atcParser;
+    IAtcSpeech speech;
     try {
       speech = parser.parse(msg);
     } catch (Exception e) {
-      raiseError(ErrorType.atcUnableParse, EMap.of("command", msg, "cause", e));
+      this.raiseError(ErrorType.atcUnableParse, EMap.of("command", msg, "cause", e));
       return;
     }
     AtcId id;
     try {
-      id = atcIdsProducer.invoke().getFirst(q -> q.getType() == atcType);
-    } catch (Exception ex) {
-      raiseError(ErrorType.atcUnableDecide, EMap.of("command", msg, "cause", e));
+      id = this.atcIdsProducer.invoke().getFirst(q -> q.getType() == atcType);
+    } catch (Exception e) {
+      this.raiseError(ErrorType.atcUnableDecide, EMap.of("command", msg, "cause", e));
       return;
     }
 
@@ -342,7 +346,7 @@ public class CommandInputTextFieldExtender {
 
   private void raiseAtcCommand(AtcId targetAtcId, IAtcSpeech speech) {
     CommandEventArgs<AtcId, IAtcSpeech> e = new CommandEventArgs<>(targetAtcId, speech);
-    onAtcCommand.raise(e);
+    this.onAtcCommand.raise(e);
   }
 
   private void clear() {
