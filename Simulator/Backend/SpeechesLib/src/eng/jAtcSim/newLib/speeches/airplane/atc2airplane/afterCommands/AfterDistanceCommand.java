@@ -20,4 +20,12 @@ public class AfterDistanceCommand extends AfterCommandWithNavaid {
   public double getDistance() {
     return distance;
   }
+
+  @Override
+  public String toString() {
+    return "AfterDistanceCommand{" +
+            "navaid=" + super.getNavaidName() + "; " +
+            "distance=" + super.getPosition().toString() + " " + distance +
+            '}';
+  }
 }

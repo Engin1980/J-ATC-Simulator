@@ -60,7 +60,10 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
 
   @Override
   protected ApplicationResult adjustAirplane(Airplane plane, ChangeSpeedCommand c) {
-    plane.getWriter().setSpeedRestriction(c.getRestriction());
+    if (c.isResumeOwnSpeed())
+      plane.getWriter().setSpeedRestriction(null);
+    else
+      plane.getWriter().setSpeedRestriction(c.getRestriction());
     return ApplicationResult.getEmpty();
   }
 }

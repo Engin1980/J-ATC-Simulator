@@ -49,13 +49,15 @@ public abstract class BasicPilot extends Pilot {
           wrt.setTargetCoordinate(null);
           clearanceLimitWarningSent = false;
         }
-      } else {
-        double heading = Coordinates.getBearing(rdr.getCoordinate(), targetCoordinate);
-        heading = Headings.to(heading);
-        if (heading != rdr.getSha().getTargetHeading()) {
-          wrt.setTargetHeading(new HeadingNavigator(heading, LeftRightAny.any));
-        }
       }
+      // TODEL - done already in navigator
+//      else {
+//        double heading = Coordinates.getBearing(rdr.getCoordinate(), targetCoordinate);
+//        heading = Headings.to(heading);
+//        if (heading != rdr.getSha().getTargetHeading()) {
+//          wrt.setTargetHeading(new HeadingNavigator(heading, LeftRightAny.any));
+//        }
+//      }
     }
     elapseSecondInternalBasic();
   }

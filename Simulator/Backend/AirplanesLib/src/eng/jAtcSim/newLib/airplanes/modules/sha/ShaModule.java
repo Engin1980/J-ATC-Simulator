@@ -90,6 +90,10 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private LeftRight targetHeadingTurn;
   private final RestrictableItem targetSpeed;
 
+  public Navigator getNavigator() {
+    return this.navigator;
+  }
+
   public void resetHeading(double heading){
     this.heading.reset(heading);
   }

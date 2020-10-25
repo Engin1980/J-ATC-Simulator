@@ -65,4 +65,13 @@ public class RadialNavigator extends Navigator {
     LeftRight turn = getBetterDirectionToTurn(plane.getSha().getHeading(), targetHeading);
     return new NavigatorResult((int) Math.round(targetHeading), turn);
   }
+
+  @Override
+  public String toString() {
+    return "RadialNavigator{" +
+            "coordinate=" + coordinate +
+            ", inboundRadial=" + inboundRadial +
+            ", mode=" + mode +
+            '}';
+  }
 }

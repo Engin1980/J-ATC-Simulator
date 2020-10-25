@@ -24,4 +24,11 @@ public class ToCoordinateNavigator extends Navigator {
   public Coordinate getTargetCoordinate() {
     return coordinate;
   }
+
+  @Override
+  public String toString() {
+    return "ToCoordinateNavigator{" +
+            "coordinate=" + coordinate +
+            '}';
+  }
 }

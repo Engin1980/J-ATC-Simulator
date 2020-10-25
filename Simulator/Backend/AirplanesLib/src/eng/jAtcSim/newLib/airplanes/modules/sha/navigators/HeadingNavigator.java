@@ -58,4 +58,13 @@ public class HeadingNavigator extends Navigator {
       ret = null;
     return ret;
   }
+
+  @Override
+  public String toString() {
+    return "HeadingNavigator{" +
+            "turn=" + turn +
+            ", heading=" + heading +
+            ", isApplied=" + isApplied +
+            '}';
+  }
 }

@@ -5,7 +5,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
+import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.logging.Journal;
 import eng.jAtcSim.newLib.shared.logging.writers.*;
@@ -33,7 +33,7 @@ public class FlightDataRecorder extends AirplaneRecorder {
                   int heading, int targetHeading,
                   int altitude, int verticalSpeed, int targetAltitude,
                   int speed, int groundSpeed, int targetSpeed,
-                  AirplaneState state) {
+                  AirplaneState state, Navigator navigator) {
     EStringBuilder sb = new EStringBuilder(DEFAULT_STRING_BUILDER_SIZE);
     sb.appendFormat(" %s ", this.callsign.toString()).append(SEPARATOR);
 
@@ -42,26 +42,29 @@ public class FlightDataRecorder extends AirplaneRecorder {
 
     // heading
     sb.appendFormat(" H:  %3d => %03d/%03d  ", heading,
-        targetHeading,
-        (int) Headings.add(heading, -Context.getArea().getAirport().getDeclination())
+            targetHeading,
+            (int) Headings.add(heading, -Context.getArea().getAirport().getDeclination())
     ).append(SEPARATOR);
 
     // alt
     sb.appendFormat(" A:%7d (%5d) => %7d ",
-        altitude,
-        verticalSpeed,
-        targetAltitude)
-        .append(SEPARATOR);
+            altitude,
+            verticalSpeed,
+            targetAltitude)
+            .append(SEPARATOR);
 
     // spd
     sb.appendFormat(" S:%5d (%5d) => %5d ",
-        speed,
-        groundSpeed,
-        targetSpeed)
-        .append(SEPARATOR);
+            speed,
+            groundSpeed,
+            targetSpeed)
+            .append(SEPARATOR);
 
     // state
     sb.appendFormat("%-20s", state.toString()).append(SEPARATOR);
+
+    // nav
+    sb.appendFormat("%-30s", navigator.toString());
 
 //    // from pilot
 //    sb.appendFormat(" BEH: {%s} ", plane.getBehaviorModule().get().toLogString());

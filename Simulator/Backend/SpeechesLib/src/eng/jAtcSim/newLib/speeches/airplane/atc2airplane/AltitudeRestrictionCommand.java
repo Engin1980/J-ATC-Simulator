@@ -27,8 +27,6 @@ public class AltitudeRestrictionCommand implements ICommand {
   }
 
   public Restriction getRestriction() {
-    if (isClearRestriction())
-      throw new EApplicationException("This method should not be called when 'isClearRestriction()' is true.");
     return restriction;
   }
 

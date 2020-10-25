@@ -1,11 +1,10 @@
 package eng.jAtcSim.newLib.airplanes.modules.speeches;
 
-import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
+import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
@@ -14,19 +13,18 @@ import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ConfirmationResult;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
+import eng.jAtcSim.newLib.airplanes.other.CommandQueueRecorder;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.DelayedList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
-import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.RequestRadarContactNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
@@ -42,15 +40,26 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     extension
   }
 
+  private final static AirplaneState[] FLYING_ROUTE_STATES = {
+          AirplaneState.arrivingHigh,
+          AirplaneState.arrivingLow,
+          AirplaneState.arrivingCloseFaf,
+          AirplaneState.flyingIaf2Faf,
+          AirplaneState.departingHigh,
+          AirplaneState.departingLow,
+  };
+
   private final AfterCommandList afterCommands = new AfterCommandList();
   private String assignedDARouteName = null;
   private Navaid entryExitPoint;
   private final DelayedList<ICommand> queue = new DelayedList<>(2, 7); //Min/max item delay
   private ActiveRunwayThreshold runwayThreshold;
+  private final CommandQueueRecorder cqr;
 
-  public RoutingModule(Airplane plane, Navaid entryExitPoint) {
+  public RoutingModule(Airplane plane, Navaid entryExitPoint, CommandQueueRecorder cqr) {
     super(plane);
     this.entryExitPoint = entryExitPoint;
+    this.cqr = cqr;
   }
 
   public void applyShortcut(Navaid navaid) {
@@ -63,6 +72,8 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     obtainNewSpeeches();
     processNewSpeeches();
     processAfterSpeeches();
+
+    logAfterCommands();
   }
 
   public String getAssignedDARouteName() {
@@ -105,9 +116,24 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     EAssert.Argument.isNotNull(routeCommands, "routeCommands");
 
     SpeechList<ICommand> cmds = tryExpandThenCommands(routeCommands);
-    if (cmds == null) return; // some error
+    EAssert.isNotNull(cmds, "Route commands should not be null.");
+
     afterCommands.clearAll();
-    processSpeeches(cmds, CommandSource.route);
+
+    AfterCommand afterCommand  = new AfterImmediatelyCommand();
+    while (!cmds.isEmpty()) {
+      ICommand cmd = cmds.get(0);
+      cmds.removeAt(0);
+      if (cmd instanceof AfterCommand)
+        afterCommand = (AfterCommand) cmd;
+      else
+        afterCommands.addRoute(afterCommand, cmd);
+    }
+  }
+
+  private void logAfterCommands() {
+    String s = afterCommands.toLogString();
+    this.cqr.log(s);
   }
 
   private void addNewSpeeches(SpeechList<IForPlaneSpeech> speeches) {
@@ -211,10 +237,10 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
   private void processRadarContactNotificationIfExists(SpeechList<IForPlaneSpeech> speechList) {
     IList<RadarContactConfirmationNotification> radarContacts = speechList
-            .whereItemClassIs(RadarContactConfirmationNotification.class,false);
+            .whereItemClassIs(RadarContactConfirmationNotification.class, false);
     RadarContactConfirmationNotification radarContact = radarContacts.tryGetLast();
 
-    if (radarContact !=null) {
+    if (radarContact != null) {
       processNormalSpeech(radarContact, CommandSource.atc);
       speechList.removeMany(radarContacts);
     }
@@ -296,10 +322,12 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     wrt.getCVR().logProcessedAfterSpeeches(cmds, "extensions");
     processSpeeches(cmds, CommandSource.extension);
 
-    cmds = afterCommands.getAndRemoveSatisfiedCommands(
-            rdr, targetCoordinate, AfterCommandList.Type.route);
-    wrt.getCVR().logProcessedAfterSpeeches(cmds, "route");
-    processSpeeches(cmds, CommandSource.route);
+    if (ArrayUtils.contains(FLYING_ROUTE_STATES, rdr.getState())) {
+      cmds = afterCommands.getAndRemoveSatisfiedCommands(
+              rdr, targetCoordinate, AfterCommandList.Type.route);
+      wrt.getCVR().logProcessedAfterSpeeches(cmds, "route");
+      processSpeeches(cmds, CommandSource.route);
+    }
   }
 
   private void processNewSpeeches() {

@@ -22,6 +22,7 @@ import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.newLib.airplanes.modules.speeches.RoutingModule;
 import eng.jAtcSim.newLib.airplanes.other.CockpitVoiceRecorder;
+import eng.jAtcSim.newLib.airplanes.other.CommandQueueRecorder;
 import eng.jAtcSim.newLib.airplanes.other.FlightDataRecorder;
 import eng.jAtcSim.newLib.airplanes.pilots.*;
 import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
@@ -388,7 +389,6 @@ public class Airplane {
 
     @Override
     public void setAltitudeRestriction(Restriction restriction) {
-      EAssert.Argument.isNotNull(restriction, "restriction");
       Airplane.this.sha.setAltitudeRestriction(restriction);
     }
 
@@ -402,12 +402,6 @@ public class Airplane {
       Airplane.this.routingModule.setRunwayThreshold(activeRunwayThreshold);
       Airplane.this.routingModule.setRouting(iafRoute.getRouteCommands());
     }
-
-    // Obsolete
-//    @Override
-//    public void setRouting(IReadOnlyList<ICommand> routeCommands) {
-//      Airplane.this.routingModule.setRouting(routeCommands);
-//    }
 
     @Override
     public void setRouting(IReadOnlyList<ICommand> routeCommands) {
@@ -424,7 +418,6 @@ public class Airplane {
 
     @Override
     public void setSpeedRestriction(Restriction restriction) {
-      EAssert.Argument.isNotNull(restriction, "restriction");
       Airplane.this.sha.setSpeedRestriction(restriction);
     }
 
@@ -535,6 +528,7 @@ public class Airplane {
   private final DivertModule divertModule;
   private final EmergencyModule emergencyModule;
   private final FlightDataRecorder fdr;
+  private final CommandQueueRecorder cqr;
   private final AirplaneFlightModule flightModule;
   private final Mood mood;
   private Pilot pilot;
@@ -557,17 +551,20 @@ public class Airplane {
     this.flightModule = new AirplaneFlightModule(
             callsign, entryDelay, expectedExitTime, isDeparture);
 
+    this.fdr = new FlightDataRecorder(this.flightModule.getCallsign());
+    this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
+    this.cqr = new CommandQueueRecorder(this.flightModule.getCallsign());
+
     this.sha = new ShaModule(this, heading, altitude, speed, airplaneType);
     this.emergencyModule = new EmergencyModule();
     this.atcModule = new AtcModule(this, initialAtcId);
-    this.routingModule = new RoutingModule(this, entryExitPoint);
+    this.routingModule = new RoutingModule(this, entryExitPoint, cqr);
     if (isDeparture)
       this.divertModule = null;
     else
       this.divertModule = new DivertModule(this);
     this.mood = new Mood();
-    this.fdr = new FlightDataRecorder(this.flightModule.getCallsign());
-    this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
+
     this.state = isDeparture ? AirplaneState.holdingPoint : AirplaneState.arrivingHigh;
     this.coordinate = coordinate;
     this.airplaneType = airplaneType;
@@ -640,7 +637,8 @@ public class Airplane {
             sha.getHeading(), sha.getTargetHeading(),
             sha.getAltitude(), sha.getVerticalSpeed(), sha.getTargetAltitude(),
             sha.getSpeed(), sha.getGS(), sha.getTargetSpeed(),
-            state
+            state,
+            sha.getNavigator()
     );
   }
 

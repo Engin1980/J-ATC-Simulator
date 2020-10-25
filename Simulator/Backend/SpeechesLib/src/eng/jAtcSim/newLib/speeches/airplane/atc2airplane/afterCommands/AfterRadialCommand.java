@@ -24,4 +24,12 @@ public class AfterRadialCommand extends AfterCommandWithNavaid {
   public int getRadial() {
     return radial;
   }
+
+  @Override
+  public String toString() {
+    return "AfterRadialCommand{" +
+            "navaid=" + super.getNavaidName() +
+            "radial=" + radial +
+            '}';
+  }
 }

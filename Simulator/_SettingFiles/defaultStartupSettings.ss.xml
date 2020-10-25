@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><startupSettings>
-  <files areaXmlFile="_SettingFiles/airports/LKMT_only.ar.xml" companiesFleetsXmlFile="_SettingFiles/airlinesFleets.afl.xml" generalAviationFleetsXmlFile="_SettingFiles/countriesFleets.cfl.xml" planesXmlFile="_SettingFiles/planeTypes.tp.xml" trafficXmlFile="_SettingFiles/traffic/test_oneArrival.tr.xml" weatherXmlFile="_SettingFiles/developers/testWindChange.we.xml"/>
+  <files areaXmlFile="_SettingFiles/airports/LKMT_only.ar.xml" companiesFleetsXmlFile="_SettingFiles/airlinesFleets.afl.xml" generalAviationFleetsXmlFile="_SettingFiles/countriesFleets.cfl.xml" planesXmlFile="_SettingFiles/planeTypes.tp.xml" trafficXmlFile="_SettingFiles/traffic/test_oneDeparture.tr.xml" weatherXmlFile="_SettingFiles/developers/testWindChange.we.xml"/>
   <radar packClass="eng.jAtcSim.frmPacks.sdi.Pack"/>
   <recent icao="LKMT" time="07:00"/>
-  <simulation secondLengthInMs="300"/>
+  <simulation secondLengthInMs="150"/>
   <traffic allowDelays="false" densityPercentage="0.0" emergencyPerDayProbability="0.14285714285714285" maxPlanes="0" type="xml">
     <customTraffic departureProbability="0.5" generalAviationProbability="0.5" useExtendedCallsigns="false">
       <companies __keyType="java.lang.String" __type="eng.eSystem.collections.EMap">

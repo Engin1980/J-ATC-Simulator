@@ -39,7 +39,10 @@ public class AltitudeRestrictionApplication extends CommandApplication<AltitudeR
 
   @Override
   protected ApplicationResult adjustAirplane(Airplane plane, AltitudeRestrictionCommand c) {
-    plane.getWriter().setAltitudeRestriction(c.getRestriction());
+    if (c.isClearRestriction())
+      plane.getWriter().setAltitudeRestriction(null);
+    else
+      plane.getWriter().setAltitudeRestriction(c.getRestriction());
     return ApplicationResult.getEmpty();
   }
 }
