@@ -26,7 +26,7 @@ public class AltitudeRestrictionApplication extends CommandApplication<AltitudeR
   protected PlaneRejection checkCommandSanity(Airplane plane, AltitudeRestrictionCommand c) {
     PlaneRejection ret;
 
-    if (c.getRestriction() != null &&
+    if (c.isClearRestriction() == false &&
         (c.getRestriction().direction == AboveBelowExactly.above ||
             c.getRestriction().direction == AboveBelowExactly.exactly) &&
      c.getRestriction().value > plane.getReader().getType().maxAltitude){

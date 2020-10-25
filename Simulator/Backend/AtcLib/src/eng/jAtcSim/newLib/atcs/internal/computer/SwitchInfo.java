@@ -7,15 +7,12 @@ import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 class SwitchInfo {
-  private final Squawk squawk;
   private final AtcId atcId;
   private final EDayTimeStamp firstRequest;
   private EDayTimeStamp lastRequest;
 
-  public SwitchInfo(Squawk squawk, AtcId otherAtcId) {
-    EAssert.Argument.isNotNull(squawk, "squawk");
+  public SwitchInfo(AtcId otherAtcId) {
     EAssert.Argument.isNotNull(otherAtcId, "otherAtcId");
-    this.squawk = squawk;
     this.atcId = otherAtcId;
     this.firstRequest = Context.getShared().getNow().toStamp();
     this.lastRequest = this.firstRequest;
@@ -37,9 +34,5 @@ class SwitchInfo {
     EAssert.Argument.isNotNull(lastRequest, "lastRequest");
     EAssert.Argument.isTrue(lastRequest.isAfter(this.lastRequest));
     this.lastRequest = lastRequest;
-  }
-
-  public Squawk getSqwk() {
-    return squawk;
   }
 }

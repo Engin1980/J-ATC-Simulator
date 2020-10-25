@@ -37,10 +37,10 @@ public class ContactParser extends TextSpeechParser<ContactCommand> {
     if (blocks.get(0) != null){
       switch (blocks.get(0)) {
       case "CT":
-        atcId = atcs.getFirst(q->q.getType() == AtcType.ctr);
+        atcId = atcs.getFirst(q->q.getType() == AtcType.twr);
         break;
       case "CC":
-        atcId = atcs.getFirst(q->q.getType() == AtcType.twr);
+        atcId = atcs.getFirst(q->q.getType() == AtcType.ctr);
         break;
       default:
         throw new EEnumValueUnsupportedException(blocks.get(1));

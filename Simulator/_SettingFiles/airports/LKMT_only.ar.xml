@@ -573,9 +573,7 @@
         <navaid name="KD" type="ndb" coordinate="50.152608 14.636608"/>
         <navaid name="KNE" type="ndb" coordinate="49.046486 17.452153"/>
         <navaid name="KUN" type="ndb" coordinate="49.113922 17.501397"/>
-        <!--<navaid name="L" type="ndb" coordinate="49.150531 16.153561"/>-->
         <navaid name="L" type="ndb" coordinate="50.119928 14.286597"/>
-        <!--<navaid name="L" type="ndb" coordinate="50.195789 12.941686"/>-->
         <navaid name="LA" type="ndb" coordinate="49.136506 16.179611"/>
         <navaid name="N" type="ndb" coordinate="49.713200 18.138031"/>
         <navaid name="P" type="ndb" coordinate="50.012472 15.770506"/>
@@ -594,153 +592,46 @@
         <navaid name="PH" type="fixMinor" coordinate="50 06 15.26 N 14 13 49.23 E"/>
 
         <navaid name="ADADO" type="fix" coordinate="50.209481 17.747931"/>
-        <navaid name="ADISU" type="fix" coordinate="48.935053 16.548667"/>
-        <navaid name="ADLET" type="fix" coordinate="48.567600 14.299283"/>
-        <navaid name="ADVEX" type="fix" coordinate="50.348333 17.869722"/>
         <navaid name="AMTEK" type="fix" coordinate="50.003358 17.956975"/>
-        <navaid name="APTAS" type="fix" coordinate="50.911389 17.695833"/>
         <navaid name="ARNUM" type="fix" coordinate="50.209586 17.109944"/>
         <navaid name="ARTAV" type="fix" coordinate="50.200556 18.562222"/>
-        <navaid name="ATMEV" type="fix" coordinate="50.733056 17.503056"/>
-        <navaid name="BABUS" type="fix" coordinate="48.980314 17.301253"/>
-        <navaid name="BAREX" type="fix" coordinate="50.894445 18.738333"/>
         <navaid name="BAVOK" type="fix" coordinate="50.002778 18.195278"/>
         <navaid name="BAXEV" type="fix" coordinate="49.873245 17.441492"/>
-        <navaid name="BEDLO" type="fix" coordinate="50.185900 15.316000"/>
-        <navaid name="BELUX" type="fix" coordinate="49.377770 16.182700"/>
-        <navaid name="BERVA" type="fix" coordinate="48.617500 17.541111"/>
         <navaid name="BILNA" type="fix" coordinate="49.393553 18.447300"/>
-        <navaid name="BITSI" type="fix" coordinate="49.308278 16.236314"/>
-        <navaid name="BODAL" type="fix" coordinate="49.464108 15.782703"/>
         <navaid name="BOGTU" type="fix" coordinate="49.867942 18.165411"/>
         <navaid name="BOHUM" type="fix" coordinate="49.886511 18.328081"/>
-        <navaid name="BOLMU" type="fix" coordinate="48.985786 16.955789"/>
-        <navaid name="BUKAP" type="fix" coordinate="49.123517 17.010047"/>
         <navaid name="BUKOB" type="fix" coordinate="49.227639 18.311445"/>
-        <navaid name="BULEK" type="fix" coordinate="50.413239 15.065306"/>
-        <navaid name="CF31" type="fixMinor" coordinate="49.047778 16.348611"/>
         <navaid name="CI06" type="fixMinor" coordinate="49.161397 18.382270"/>
-        <!--<navaid name="CI06" type="fixMinor" coordinate="50.030772 13.990747"/>-->
         <navaid name="CI22" type="fixMinor" coordinate="49.807483 18.291092"/>
-        <navaid name="CI28" type="fixMinor" coordinate="49.133822 16.909553"/>
-        <navaid name="CI29Y" type="fixMinor" coordinate="51.033003 17.112436"/>
-        <navaid name="CI31" type="fixMinor" coordinate="49.812639 15.563047"/>
-        <navaid name="CN27" type="fixMinor" coordinate="50.007669 15.925695"/>
-        <navaid name="CS10" type="fixMinor" coordinate="49.180128 16.429906"/>
-        <navaid name="CV13C" type="fixMinor" coordinate="50.018250 15.114069"/>
-        <navaid name="CV13F" type="fixMinor" coordinate="50.033236 15.246411"/>
-        <navaid name="CV13I" type="fixMinor" coordinate="50.067475 15.197219"/>
-        <navaid name="CV13R" type="fixMinor" coordinate="49.859792 15.495753"/>
-        <navaid name="D010E" type="fixMinor" coordinate="48.699722 17.855834"/>
         <navaid name="D015J" type="fixMinor" coordinate="49.854900 18.192922"/>
         <navaid name="D020J" type="fixMinor" coordinate="49.849559 18.213814"/>
         <navaid name="D033J" type="fixMinor" coordinate="49.830370 18.263989"/>
-        <navaid name="D033W" type="fixMinor" coordinate="49.284167 15.899445"/>
         <navaid name="D036J" type="fixMinor" coordinate="49.824928 18.274517"/>
-        <navaid name="D045D" type="fixMinor" coordinate="50.056006 16.013714"/>
         <navaid name="D048K" type="fixMinor" coordinate="49.807331 18.319022"/>
-        <navaid name="D055X" type="fixMinor" coordinate="49.923056 15.596717"/>
-        <navaid name="D094K" type="fixMinor" coordinate="49.129650 16.959909"/>
-        <navaid name="D112L" type="fixMinor" coordinate="51.007667 17.194500"/>
-        <navaid name="D112M" type="fixMinor" coordinate="51.007611 17.194139"/>
-        <navaid name="D113P" type="fixMinor" coordinate="50.993364 17.240069"/>
-        <navaid name="D134O" type="fixMinor" coordinate="49.768014 15.626403"/>
-        <navaid name="D141U" type="fixMinor" coordinate="51.035139 17.440064"/>
-        <navaid name="D143M" type="fixMinor" coordinate="49.718467 15.625717"/>
-        <navaid name="D192C" type="fixMinor" coordinate="48.578333 17.811389"/>
         <navaid name="D229J" type="fixMinor" coordinate="49.597097 17.904478"/>
         <navaid name="D242F" type="fixMinor" coordinate="49.162164 18.371256"/>
         <navaid name="D245J" type="fixMinor" coordinate="49.637570 17.869709"/>
-        <navaid name="D260L" type="fixMinor" coordinate="50.456472 18.773806"/>
-        <navaid name="D270D" type="fixMinor" coordinate="50.016497 15.648439"/>
-        <navaid name="D270H" type="fixMinor" coordinate="50.019836 15.545403"/>
-        <navaid name="D271B" type="fixMinor" coordinate="49.152833 16.631795"/>
-        <navaid name="D286I" type="fixMinor" coordinate="50.007814 15.130606"/>
         <navaid name="D294D" type="fixMinor" coordinate="49.075831 17.362200"/>
-        <navaid name="D294R" type="fixMinor" coordinate="49.290414 16.288231"/>
-        <navaid name="D295K" type="fixMinor" coordinate="50.046128 15.097597"/>
-        <navaid name="D310O" type="fixMinor" coordinate="50.076269 15.145231"/>
-        <navaid name="D323W" type="fixMinor" coordinate="48.605617 17.741642"/>
-        <navaid name="D324K" type="fixMinor" coordinate="50.115706 15.196125"/>
         <navaid name="DESEN" type="fix" coordinate="50.270103 17.516950"/>
-        <navaid name="DEVEG" type="fix" coordinate="50.857500 17.510556"/>
-        <navaid name="DINOV" type="fix" coordinate="50.928611 16.085556"/>
-        <navaid name="DITIS" type="fix" coordinate="48.898022 15.116361"/>
-        <navaid name="DIVUK" type="fix" coordinate="50.428361 15.344150"/>
-        <navaid name="DIXEP" type="fix" coordinate="49.885045 15.616011"/>
-        <navaid name="DOBIL" type="fix" coordinate="50.038689 15.937392"/>
         <navaid name="EKMIT" type="fix" coordinate="49.723233 18.377953"/>
-        <navaid name="ELGOX" type="fix" coordinate="50.564722 18.300833"/>
-        <navaid name="ELVOT" type="fix" coordinate="50.611725 16.409208"/>
         <navaid name="EMBIK" type="fix" coordinate="50.208056 18.103056"/>
-        <navaid name="ENORU" type="fix" coordinate="50.340239 16.370231"/>
-        <navaid name="EPOPA" type="fix" coordinate="50.368056 17.799722"/>
         <navaid name="ESETO" type="fix" coordinate="49.229944 17.718278"/>
-        <navaid name="ETNEL" type="fix" coordinate="50.840834 17.156944"/>
-        <navaid name="EVIKU" type="fix" coordinate="49.669597 16.681553"/>
-        <navaid name="EVRUX" type="fix" coordinate="50.501389 18.690000"/>
         <navaid name="FD04" type="fixMinor" coordinate="49.597542 17.965806"/>
-        <navaid name="FD10" type="fixMinor" coordinate="49.171883 16.502486"/>
         <navaid name="FD22" type="fixMinor" coordinate="49.779806 18.260750"/>
-        <navaid name="FD28" type="fixMinor" coordinate="49.141072 16.885014"/>
-        <navaid name="FD29" type="fixMinor" coordinate="51.047306 17.066389"/>
-        <navaid name="FF28" type="fixMinor" coordinate="49.135903 16.884372"/>
-        <navaid name="FF31" type="fixMinor" coordinate="49.078889 16.291945"/>
         <navaid name="FI06" type="fixMinor" coordinate="49.175722 18.428083"/>
         <navaid name="FI22" type="fixMinor" coordinate="49.784536 18.253811"/>
-        <navaid name="FI29" type="fixMinor" coordinate="51.047333 17.065778"/>
         <navaid name="FN04" type="fixMinor" coordinate="49.601870 17.958975"/>
-        <navaid name="FN10" type="fixMinor" coordinate="49.166219 16.503606"/>
-        <navaid name="FN13" type="fixMinor" coordinate="49.252222 15.961667"/>
         <navaid name="FN22" type="fixMinor" coordinate="49.784167 18.253217"/>
-        <navaid name="FR29" type="fixMinor" coordinate="51.047361 17.065722"/>
-        <navaid name="GIGAL" type="fix" coordinate="51.078611 16.491945"/>
-        <navaid name="GINAT" type="fix" coordinate="48.938295 17.115094"/>
-        <navaid name="GODLO" type="fix" coordinate="51.003889 16.504167"/>
-        <navaid name="GODVI" type="fix" coordinate="48.945834 18.283333"/>
         <navaid name="GOGOB" type="fix" coordinate="49.978611 18.844167"/>
-        <navaid name="GUDVU" type="fix" coordinate="51.075806 16.526195"/>
-        <navaid name="IBEBI" type="fix" coordinate="51.048611 17.496389"/>
-        <navaid name="IBNOT" type="fix" coordinate="51.004444 17.142778"/>
-        <navaid name="IDOBA" type="fix" coordinate="50.857445 17.043389"/>
-        <navaid name="INBUX" type="fix" coordinate="50.350528 18.843917"/>
-        <navaid name="IPSAR" type="fix" coordinate="50.892500 17.455000"/>
-        <navaid name="IPSOD" type="fix" coordinate="50.868334 17.432778"/>
-        <navaid name="IVOLI" type="fix" coordinate="49.000600 16.457883"/>
-        <navaid name="IXURO" type="fix" coordinate="51.017778 15.543889"/>
-        <navaid name="JAROM" type="fix" coordinate="49.086378 15.987850"/>
         <navaid name="KOLAL" type="fix" coordinate="49.309556 18.508361"/>
         <navaid name="KOPAT" type="fix" coordinate="49.106389 18.654445"/>
-        <navaid name="KOPIT" type="fix" coordinate="50.188208 15.157953"/>
-        <navaid name="KOVEL" type="fix" coordinate="48.700903 15.597083"/>
-        <navaid name="KT383" type="fixMinor" coordinate="50.474528 18.797556"/>
-        <navaid name="KT384" type="fixMinor" coordinate="50.391278 18.797583"/>
-        <navaid name="KT393" type="fixMinor" coordinate="50.474528 18.788278"/>
-        <navaid name="KUSUL" type="fix" coordinate="51.046389 17.069167"/>
         <navaid name="LABUK" type="fix" coordinate="49.498525 17.410789"/>
-        <navaid name="LADAG" type="fix" coordinate="48.588981 15.041106"/>
-        <navaid name="LAGAR" type="fix" coordinate="50.795275 15.367089"/>
-        <navaid name="LALES" type="fix" coordinate="48.865172 17.709514"/>
-        <navaid name="LANUX" type="fix" coordinate="48.888106 15.615789"/>
         <navaid name="LAVPI" type="fix" coordinate="49.935556 18.450833"/>
-        <navaid name="LEDVA" type="fix" coordinate="48.728789 16.789195"/>
-        <navaid name="LIKSA" type="fix" coordinate="49.152767 16.014758"/>
-        <navaid name="LOKVU" type="fix" coordinate="48.874717 15.834997"/>
-        <navaid name="LUMEN" type="fix" coordinate="49.383345 15.869086"/>
         <navaid name="LUMOT" type="fix" coordinate="49.711186 17.861228"/>
         <navaid name="LURAD" type="fix" coordinate="50.191944 18.574445"/>
-        <navaid name="MABOD" type="fix" coordinate="48.574558 16.690097"/>
         <navaid name="MAKAL" type="fix" coordinate="49.246008 18.165717"/>
-        <navaid name="MAPIK" type="fix" coordinate="50.526111 18.247500"/>
-        <navaid name="MAVOR" type="fix" coordinate="48.821395 17.537503"/>
         <navaid name="MD04" type="fixMinor" coordinate="49.676783 18.079322"/>
-        <navaid name="MD10" type="fixMinor" coordinate="49.154106 16.657575"/>
         <navaid name="MD22" type="fixMinor" coordinate="49.715681 18.142517"/>
-        <navaid name="MD28" type="fixMinor" coordinate="49.148314 16.730567"/>
-        <navaid name="MERON" type="fix" coordinate="49.385189 15.878939"/>
-        <navaid name="MIKOV" type="fix" coordinate="48.784745 16.621003"/>
-        <navaid name="MOMEP" type="fix" coordinate="48.686945 18.571111"/>
-        <navaid name="MORKO" type="fix" coordinate="49.219117 17.026336"/>
         <navaid name="MORUV" type="fix" coordinate="49.529745 18.065142"/>
         <navaid name="MQ22" type="fixMinor" coordinate="49.716700 18.142758"/>
         <navaid name="MT04F" type="fixMinor" coordinate="49.601870 17.958975"/>
@@ -783,82 +674,22 @@
         <navaid name="MT825" type="fixMinor" coordinate="49.830014 18.327770"/>
         <navaid name="MT827" type="fixMinor" coordinate="49.822489 18.339747"/>
         <navaid name="NAPAG" type="fix" coordinate="49.186208 17.553422"/>
-        <navaid name="NAVTI" type="fix" coordinate="48.769611 16.205058"/>
-        <navaid name="NENRU" type="fix" coordinate="51.063139 17.309778"/>
         <navaid name="NESVO" type="fix" coordinate="49.120514 17.045022"/>
         <navaid name="NETIR" type="fix" coordinate="49.694664 18.708997"/>
-        <navaid name="NEVUS" type="fix" coordinate="50.207203 15.811983"/>
-        <navaid name="NIDOK" type="fix" coordinate="48.885834 18.811945"/>
-        <navaid name="NIMOM" type="fix" coordinate="50.946667 17.505278"/>
-        <navaid name="NOVUM" type="fix" coordinate="49.572781 16.073336"/>
-        <navaid name="NUMBA" type="fix" coordinate="50.375556 18.108611"/>
-        <navaid name="ODNEM" type="fix" coordinate="48.853200 17.167844"/>
         <navaid name="ODRAN" type="fix" coordinate="49.661895 17.870247"/>
-        <navaid name="OGIBI" type="fix" coordinate="50.845000 16.905000"/>
-        <navaid name="OKL46" type="fixMinor" coordinate="50.033286 15.442667"/>
-        <navaid name="OLMUK" type="fix" coordinate="50.700278 16.942222"/>
         <navaid name="OPAVO" type="fix" coordinate="49.905531 17.776028"/>
-        <navaid name="ORLIX" type="fix" coordinate="49.994959 16.292722"/>
-        <navaid name="ORSOX" type="fix" coordinate="50.319722 18.537222"/>
-        <navaid name="ORVAD" type="fix" coordinate="51.017500 16.544167"/>
-        <navaid name="OSNEK" type="fix" coordinate="49.513195 15.638006"/>
         <navaid name="PADKA" type="fix" coordinate="49.933884 18.283270"/>
-        <navaid name="PD27A" type="fixMinor" coordinate="50.027983 16.011864"/>
-        <navaid name="PD27C" type="fixMinor" coordinate="50.074617 15.987767"/>
-        <navaid name="PD27D" type="fixMinor" coordinate="49.974925 16.003200"/>
-        <navaid name="PD27F" type="fixMinor" coordinate="50.007297 15.932253"/>
-        <navaid name="PD27G" type="fixMinor" coordinate="49.936486 15.975961"/>
-        <navaid name="PD27I" type="fixMinor" coordinate="50.004733 16.009978"/>
-        <navaid name="PD27R" type="fixMinor" coordinate="50.015006 15.688364"/>
-        <navaid name="PEKOT" type="fix" coordinate="50.388333 17.443333"/>
-        <navaid name="PEMUR" type="fix" coordinate="50.054669 15.538236"/>
-        <navaid name="PEPIK" type="fix" coordinate="48.782778 17.079167"/>
-        <navaid name="PIMEK" type="fix" coordinate="49.684920 15.747786"/>
-        <navaid name="PISAM" type="fix" coordinate="48.892914 15.387128"/>
-        <navaid name="PIVES" type="fix" coordinate="49.921245 15.146594"/>
         <navaid name="PO06F" type="fixMinor" coordinate="49.373661 17.225125"/>
         <navaid name="PO06X" type="fixMinor" coordinate="49.354645 17.160081"/>
         <navaid name="POLOM" type="fix" coordinate="49.510420 17.817411"/>
         <navaid name="SOPAV" type="fix" coordinate="49.930922 18.052378"/>
-        <navaid name="SOTUM" type="fix" coordinate="49.511470 14.268847"/>
-        <navaid name="SUDOL" type="fix" coordinate="50.653333 18.411667"/>
-        <navaid name="SUKAV" type="fix" coordinate="49.679286 15.569581"/>
-        <navaid name="TABEM" type="fix" coordinate="49.243314 15.221472"/>
-        <navaid name="TEVRA" type="fix" coordinate="50.556833 18.797361"/>
-        <navaid name="TOMTI" type="fix" coordinate="50.953056 15.293333"/>
-        <navaid name="TUMKA" type="fix" coordinate="49.407895 15.947267"/>
         <navaid name="TUSIN" type="fix" coordinate="49.847495 18.572836"/>
-        <navaid name="UPALI" type="fix" coordinate="48.708889 18.520833"/>
-        <navaid name="UPEGU" type="fix" coordinate="49.034914 14.476483"/>
         <navaid name="UPIVA" type="fix" coordinate="48.578611 18.816945"/>
-        <navaid name="UPKIS" type="fix" coordinate="50.350278 17.998334"/>
         <navaid name="UTEVO" type="fix" coordinate="50.209928 17.511914"/>
-        <navaid name="UTORO" type="fix" coordinate="50.276642 14.551158"/>
-        <navaid name="UVSUS" type="fix" coordinate="50.155956 16.918559"/>
-        <navaid name="VADOV" type="fix" coordinate="49.129803 13.973042"/>
         <navaid name="VALPI" type="fix" coordinate="49.024639 17.950231"/>
-        <navaid name="VAMBO" type="fix" coordinate="50.017075 16.430028"/>
-        <navaid name="VAPUS" type="fix" coordinate="48.908334 18.342778"/>
-        <navaid name="WR374" type="fixMinor" coordinate="50.983389 17.272000"/>
-        <navaid name="WR376" type="fixMinor" coordinate="50.927945 17.449222"/>
-        <navaid name="WR377" type="fixMinor" coordinate="51.036333 17.101389"/>
-        <navaid name="WR378" type="fixMinor" coordinate="50.983556 17.272111"/>
-        <navaid name="WR379" type="fixMinor" coordinate="50.928334 17.448861"/>
-        <navaid name="WR381" type="fixMinor" coordinate="51.036250 17.102250"/>
-        <navaid name="WR406" type="fixMinor" coordinate="51.022389 16.845972"/>
-        <navaid name="WR501" type="fixMinor" coordinate="50.941639 17.405889"/>
-        <navaid name="WR502" type="fixMinor" coordinate="50.989584 17.252250"/>
-        <navaid name="WR503" type="fixMinor" coordinate="50.914889 17.194028"/>
-        <navaid name="WR504" type="fixMinor" coordinate="51.036389 17.101278"/>
-        <navaid name="WR506" type="fixMinor" coordinate="51.030083 16.850834"/>
-        <navaid name="WW171" type="fixMinor" coordinate="48.569597 15.889206"/>
-        <navaid name="WW181" type="fixMinor" coordinate="48.701111 15.597222"/>
-        <navaid name="XELET" type="fix" coordinate="50.837500 17.125833"/>
-        <navaid name="XERKO" type="fix" coordinate="50.867500 17.421389"/>
         <navaid name="ZI629" type="fixMinor" coordinate="49.185444 18.451278"/>
         <navaid name="ZI706" type="fixMinor" coordinate="49.176389 18.420556"/>
         <navaid name="REGLI" type="fix" coordinate="50.030278 17.995556"/>
-
     </navaids>
     <borders>
         <border name="LKMT CTR" type="ctr" enclosed="true" minAltitude="0" maxAltitude="5000">

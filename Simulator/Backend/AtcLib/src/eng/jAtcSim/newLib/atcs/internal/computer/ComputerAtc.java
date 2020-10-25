@@ -1,22 +1,24 @@
 package eng.jAtcSim.newLib.atcs.internal.computer;
 
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.Atc;
+import eng.jAtcSim.newLib.atcs.internal.IAtcSwitchManagerInterface;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.shared.*;
+import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.DelayedList;
+import eng.jAtcSim.newLib.shared.Global;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneConfirmation;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
-import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -24,29 +26,19 @@ public abstract class ComputerAtc extends Atc {
 
   private final DelayedList<Message> speechDelayer = new DelayedList<>(
           Global.MINIMUM_ATC_SPEECH_DELAY_SECONDS, Global.MAXIMUM_ATC_SPEECH_DELAY_SECONDS);
-  private final SwitchManager switchManager = new SwitchManager(this,
-          m -> sendMessage(m),
-          () -> speechDelayer.getAll());
+  protected SwitchManager switchManager;
 
   public ComputerAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
   }
 
-  protected abstract void processConfirmedOutgoingPlaneSwitch(Squawk squawk);
+  protected abstract IAtcSwitchManagerInterface getSwitchManagerInterface();
 
-  protected abstract boolean acceptsNewRouting(IAirplane airplane, PlaneSwitchRequestRouting routing);
-
-  protected abstract RequestResult canIAcceptPlaneIncomingFromAnotherAtc(IAirplane plane);
-
-  protected abstract boolean isPlaneReadyToSwitchToAnotherAtc(IAirplane airplane);
-
-  protected abstract AtcId getAtcIdWhereIAmSwitchingPlanes();
-
-  protected abstract void processMessagesFromPlane(IAirplane plane, SpeechList<IFromPlaneSpeech> spchs);
+  protected abstract void processMessagesFromPlaneExceptGoodDayNotification(IAirplane plane, SpeechList<IFromPlaneSpeech> spchs);
 
   protected abstract void processNonPlaneSwitchMessageFromAtc(Message m);
 
-  protected abstract IReadOnlyList<IAirplane> getPlanesUnderControl();
+  protected abstract void _elapseSecond();
 
   @Override
   public final void elapseSecond() {
@@ -61,12 +53,12 @@ public abstract class ComputerAtc extends Atc {
     _elapseSecond();
   }
 
-  protected abstract void _elapseSecond();
-
   @Override
   public void init() {
     Context.getMessaging().getMessenger().registerListener(
             Participant.createAtc(this.getAtcId()));
+    this.switchManager = new SwitchManager(this.getSwitchManagerInterface(),
+            () -> speechDelayer.getAll());
   }
 
   @Override
@@ -76,8 +68,7 @@ public abstract class ComputerAtc extends Atc {
 
   @Override
   public boolean isResponsibleFor(Callsign callsign) {
-    boolean ret = this.getPlanesUnderControl().isAny(q -> q.getCallsign().equals(callsign));
-    return ret;
+    return this.switchManager.isResponsibleFor(callsign);
   }
 
   private void elapseSecondProcessMessageFromAtc(Message m) {
@@ -92,8 +83,8 @@ public abstract class ComputerAtc extends Atc {
 
     AtcId sender = Context.Internal.getAtcId(m.getSource().getId());
 
-    if (m.getContent() instanceof PlaneSwitchRequest){
-      this.switchManager.processPlaneSwitchMessage((PlaneSwitchRequest) m.getContent(), sender);
+    if (m.getContent() instanceof PlaneSwitchRequest) {
+      this.switchManager.processPlaneSwitchMessage(m.getContent(), sender);
     } else {
       processNonPlaneSwitchMessageFromAtc(m);
     }
@@ -123,11 +114,11 @@ public abstract class ComputerAtc extends Atc {
 
     IList<GoodDayNotification> goodDayNotifications = spchs
             .whereItemClassIs(GoodDayNotification.class, false)
-            .where(q->q.isRepeated() == false);
-    EAssert.isTrue(goodDayNotifications.isAll(q->q.getCallsign().equals(plane.getCallsign())));
-    goodDayNotifications.forEach(q->this.switchManager.processGoodDayFromPlane(q));
+            .where(q -> q.isRepeated() == false);
+    EAssert.isTrue(goodDayNotifications.isAll(q -> q.getCallsign().equals(plane.getCallsign())));
+    goodDayNotifications.forEach(q -> this.switchManager.processGoodDayFromPlane(q));
 
-    processMessagesFromPlane(plane, spchs);
+    processMessagesFromPlaneExceptGoodDayNotification(plane, spchs);
   }
 
 //  @Override
