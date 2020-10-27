@@ -1,9 +1,11 @@
 package eng.jAtcSim.newLib.airplanes.modules;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class AtcModule extends Module {
   private static final int REPEATED_RADAR_CONTACT_REQUEST_SECONDS = 45;
@@ -46,6 +48,11 @@ public class AtcModule extends Module {
 
   public boolean hasRadarContact() {
     return secondsWithoutRadarContact == 0;
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeField(target, this, "atcId", (AtcId q) -> q.getName());
+    XmlSaveUtils.Field.storeField(target, this, "secondsWithoutRadarContact");
   }
 
   public void setHasRadarContact() {

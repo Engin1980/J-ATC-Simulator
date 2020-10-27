@@ -2,23 +2,16 @@ package eng.jAtcSim.newLib.mood;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.mood.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class Mood {
-
-  private static class Experience<T> {
-    public final EDayTimeStamp time;
-    public final T type;
-
-    public Experience(EDayTimeStamp time, T type) {
-      this.time = time;
-      this.type = type;
-    }
-  }
 
   public enum ArrivalExperience {
     shortcutToIafAbove100,
@@ -45,6 +38,16 @@ public class Mood {
     mrvaViolation,
     incorrectAltitudeChange,
     prohibitedAreaViolation
+  }
+
+  private static class Experience<T> {
+    public final EDayTimeStamp time;
+    public final T type;
+
+    public Experience(EDayTimeStamp time, T type) {
+      this.time = time;
+      this.type = type;
+    }
   }
 
   private static final String SHORTCUT_TO_EXIT = "Shortcut to SID final point";
@@ -100,10 +103,10 @@ public class Mood {
 
     if (delayMinutesPlusMinus != 0) {
       tmp.add(new MoodExperienceResult(null,
-          sf("%s (%+d minutes)",
-              DELAY,
-              delayMinutesPlusMinus),
-          (int) (delayMinutesPlusMinus * DELAY_PER_MINUTE_POINTS)));
+              sf("%s (%+d minutes)",
+                      DELAY,
+                      delayMinutesPlusMinus),
+              (int) (delayMinutesPlusMinus * DELAY_PER_MINUTE_POINTS)));
     }
 
     tmp.sort(new MoodExperienceResult.ByTimeComparer());
@@ -124,6 +127,20 @@ public class Mood {
     this.arrivalExperiences.add(new Experience<>(getNowStamp(), kindOfExperience));
   }
 
+  public void save(XElement target) {
+    target.addElement(
+            XmlSaveUtils.Items.saveAsElement("arrivalExperiences", this.arrivalExperiences,
+                    new ItemsViaStringSerializer<>(q -> q.type.toString() + ";" + q.time.toString())));
+
+    target.addElement(
+            XmlSaveUtils.Items.saveAsElement("departureExperiences", this.departureExperiences,
+                    new ItemsViaStringSerializer<>(q -> q.type.toString() + ";" + q.time.toString())));
+
+    target.addElement(
+            XmlSaveUtils.Items.saveAsElement("sharedExperiences", this.sharedExperiences,
+                    new ItemsViaStringSerializer<>(q -> q.type.toString() + ";" + q.time.toString())));
+  }
+
   private IList<MoodExperienceResult> evaluateArrivals(int delayInMinutes) {
     IList<MoodExperienceResult> ret = new EList<>();
 
@@ -140,8 +157,8 @@ public class Mood {
       ret.add(new MoodExperienceResult(tmp.time, SPEED_RESTRICTION_UNDER_FL100_CANCELED, 5));
 
     if (arrivalExperiences.isNone(q -> q.type == ArrivalExperience.leveledFlight) &&
-        arrivalExperiences.isNone(q -> q.type == ArrivalExperience.holdCycleFinished) &&
-        (delayInMinutes <= 0))
+            arrivalExperiences.isNone(q -> q.type == ArrivalExperience.holdCycleFinished) &&
+            (delayInMinutes <= 0))
       ret.add(new MoodExperienceResult(null, NO_LEVELED_FLIGHT_ON_APPROACH, 20));
 
     tmp = arrivalExperiences.tryGetFirst(q -> q.type == ArrivalExperience.landedAsEmergency);

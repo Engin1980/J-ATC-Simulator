@@ -44,6 +44,7 @@ import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class Simulation {
 
@@ -276,7 +277,6 @@ public class Simulation {
 
   public void save(XElement target) {
     /*
-      private final AirplanesModule airplanesModule;
   private final AtcModule atcModule;
   private final IOModule ioModule;
   private boolean isElapseSecondCalculationRunning = false;
@@ -284,27 +284,22 @@ public class Simulation {
   private final StatsModule statsModule;
      */
 
-    target.setAttribute("now", now.toString());
+    XmlSaveUtils.Field.storeField(target, this, "now");
 
     XElement tmp;
 
-    tmp = new XElement("airplanesModule");
-    airplanesModule.save(tmp);
-    target.addElement(tmp);
+    XmlSaveUtils.Field.storeField(target, this, "airplanesModule",
+            (XElement e, AirplanesModule q) -> q.save(e));
 
-    tmp = new XElement("timerModule");
-    tmp.setAttribute(
-            "tickInterval",
-            Integer.toString(timerModule.getTickInterval()));
-    target.addElement(tmp);
+    XmlSaveUtils.Field.storeField(target, this, "timerModule",
+            (XElement e, TimerModule q) -> q.save(e));
 
-    tmp = new XElement("trafficModule");
-    trafficModule.save(tmp);
-    target.addElement(tmp);
+    XmlSaveUtils.Field.storeField(target, this, "trafficModule",
+            (XElement e, TrafficModule q) -> q.save(e));
 
-    tmp = new XElement("weatherModule");
-    weatherModule.save(tmp);
-    target.addElement(tmp);
+    XmlSaveUtils.Field.storeField(target, this, "weatherModule",
+            (XElement e, WeatherModule q) -> q.save(e));
+
 
     // worldModule not saved
 

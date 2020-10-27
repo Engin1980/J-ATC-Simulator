@@ -5,12 +5,13 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.functionalInterfaces.Consumer2;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.ConversionUtils;
-import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.InternalAcc;
@@ -19,6 +20,9 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.DynamicSimpleObjectSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 
 import java.util.function.Predicate;
 
@@ -321,6 +325,19 @@ public class AfterCommandList {
 
   public boolean isRouteEmpty() {
     return this.rt.isEmpty();
+  }
+
+  public void save(XElement target) {
+    Consumer2<XElement, AFItem> consumer = (e, q) ->{
+      XmlSaveUtils.Field.storeField(e, q, "antecedent", new DynamicSimpleObjectSerializer<AfterCommand>());
+      XmlSaveUtils.Field.storeField(e, q, "consequent", new DynamicSimpleObjectSerializer<ICommand>());
+    };
+
+    XmlSaveUtils.Items.saveIntoElementChild(target, "rt", this.rt,
+            new ItemsSerializer<>(consumer));
+
+    XmlSaveUtils.Items.saveIntoElementChild(target, "rt", this.rt,
+            new ItemsSerializer<>(consumer));
   }
 
   public String toLogString() {

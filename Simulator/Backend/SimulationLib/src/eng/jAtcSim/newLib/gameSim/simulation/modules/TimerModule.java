@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.exceptions.EApplicationException;
@@ -12,6 +13,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 import java.util.TimerTask;
 
@@ -27,6 +29,12 @@ public class TimerModule extends SimulationModule {
 
   public int getTickInterval() {
     return this.tickInterval;
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeField(target, this, "tickInterval");
+    target.addElement(
+            XmlSaveUtils.saveAsElement("running", tmr != null));
   }
 
   public final void setTickInterval(int tickInterval) {

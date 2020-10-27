@@ -12,7 +12,6 @@ import eng.jAtcSim.newLib.shared.UnitProvider;
 import eng.jAtcSim.newLib.weather.contextLocal.Context;
 import eng.jAtcSimLib.xmlUtils.ObjectUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.formatters.EnumFormatter;
 
 /**
  * @author Marek
@@ -127,10 +126,7 @@ public class Weather {
   }
 
   public void save(XElement target) {
-    XmlSaveUtils.Field.storeFields(target, this,
-            ObjectUtils.getFieldNamesExcept(Weather.class, "snowState"));
-    XmlSaveUtils.Field.storeField(target, this,
-            "snowState", new EnumFormatter());
+    XmlSaveUtils.Field.storeFields(target, this, ObjectUtils.getFieldNames(Weather.class));
   }
 
   public String toInfoString(boolean fullText) {

@@ -4,9 +4,14 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
+import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.Squawk;
+import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
+import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSimLib.xmlUtils.formatters.CoordinateFormatter;
 
 import java.util.Map;
 
@@ -14,22 +19,27 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class XmlSaveUtils {
   public static class Items {
-
-  }
-
-  public static class Entries {
-    public static <K, V> XElement saveAsElement(String elementName, Iterable<Map.Entry<K, V>> entries,
-                                                Serializer<Iterable<Map.Entry<K, V>>> serializer) {
+    public static <T> XElement saveAsElement(String elementName, Iterable<T> items,
+                                             Serializer<Iterable<T>> serializer) {
       XElement elm = new XElement(elementName);
-      saveIntoElement(elm, entries, serializer);
+      saveIntoElementContent(elm, items, serializer);
       return elm;
     }
 
-    public static <K, V> void saveIntoElement(XElement parent, Iterable<Map.Entry<K, V>> entries,
-                                              Serializer<Iterable<Map.Entry<K, V>>> serializer) {
-      serializer.invoke(parent, entries);
+    public static <T> void saveIntoElementContent(XElement parent, Iterable<T> items,
+                                                  Serializer<Iterable<T>> serializer) {
+      serializer.invoke(parent, items);
     }
 
+    public static <T> void saveIntoElementChild(XElement parent, String innerElementName,
+                                                Iterable<T> items,
+                                                Serializer<Iterable<T>> serializer) {
+      parent.addElement(
+              saveAsElement(innerElementName, items, serializer));
+    }
+  }
+
+  public static class Entries {
     public static class IListValues {
       public static <K, V> XElement saveAsElement(String elementName, Iterable<Map.Entry<K, IList<V>>> entries,
                                                   Serializer<Iterable<Map.Entry<K, Iterable<V>>>> serializer) {
@@ -69,9 +79,22 @@ public class XmlSaveUtils {
       }
     }
 
+    public static <K, V> XElement saveAsElement(String elementName, Iterable<Map.Entry<K, V>> entries,
+                                                Serializer<Iterable<Map.Entry<K, V>>> serializer) {
+      XElement elm = new XElement(elementName);
+      saveIntoElement(elm, entries, serializer);
+      return elm;
+    }
+
+    public static <K, V> void saveIntoElement(XElement parent, Iterable<Map.Entry<K, V>> entries,
+                                              Serializer<Iterable<Map.Entry<K, V>>> serializer) {
+      serializer.invoke(parent, entries);
+    }
+
   }
 
   public static class Field {
+
     public static void storeField(XElement target, Object object, String fieldName) {
       Object v = ObjectUtils.getFieldValue(object, fieldName);
 
@@ -79,7 +102,7 @@ public class XmlSaveUtils {
       target.addElement(tmp);
 
       if (v == null)
-        XmlSaveUtils.saveNullIntoElement(tmp);
+        XmlSaveUtils.saveNullIntoElementContent(tmp);
       else if (v instanceof Short)
         XmlSaveUtils.saveIntoElementContent(tmp, (short) v);
       else if (v instanceof Byte)
@@ -96,28 +119,43 @@ public class XmlSaveUtils {
         XmlSaveUtils.saveIntoElementContent(tmp, (boolean) v);
       else if (v instanceof Character)
         XmlSaveUtils.saveIntoElementContent(tmp, (char) v);
+      else if (v.getClass().isEnum())
+        XmlSaveUtils.saveIntoElementContent(tmp, v.toString());
       else if (v instanceof String)
         XmlSaveUtils.saveIntoElementContent(tmp, (String) v);
+      else if (v instanceof ETimeStamp)
+        XmlSaveUtils.saveIntoElementContent(tmp, ((ETimeStamp) v).toString());
+      else if (v instanceof EDayTimeStamp)
+        XmlSaveUtils.saveIntoElementContent(tmp, ((EDayTimeStamp) v).toString());
+      else if (v instanceof EDayTimeRun)
+        XmlSaveUtils.saveIntoElementContent(tmp, ((EDayTimeRun) v).toString());
+      else if (v instanceof Callsign)
+        XmlSaveUtils.saveIntoElementContent(tmp, ((Callsign) v).toString(false));
+      else if (v instanceof Squawk)
+        XmlSaveUtils.saveIntoElementContent(tmp, ((Squawk) v).toString());
+      else if (v instanceof AtcId)
+        XmlSaveUtils.saveIntoElementContent(tmp, ((AtcId) v).getName());
+      else if (v instanceof Coordinate)
+        XmlSaveUtils.saveIntoElementContent(tmp, (Coordinate) v, new CoordinateFormatter());
       else
         throw new XmlUtilsException(sf("Failed to save type '%s'. This type is not supported by this function.", v.getClass()));
     }
 
     public static <T> void storeField(XElement target, Object object, String fieldName, Formatter<T> formatter) {
       Object v = ObjectUtils.getFieldValue(object, fieldName);
-
-      XElement tmp = new XElement(fieldName);
-      target.addElement(tmp);
-
-      saveIntoElementChild(target, fieldName, (T) v, formatter);
+      if (v == null)
+        saveNullIntoElementChild(target, fieldName);
+      else
+        saveIntoElementChild(target, fieldName, (T) v, formatter);
     }
 
     public static <T> void storeField(XElement target, Object object, String fieldName, Serializer<T> serializer) {
       Object v = ObjectUtils.getFieldValue(object, fieldName);
 
-      XElement tmp = new XElement(fieldName);
-      target.addElement(tmp);
-
-      saveIntoElementChild(target, fieldName, (T) v, serializer);
+      if (v == null)
+        saveNullIntoElementChild(target, fieldName);
+      else
+        saveIntoElementChild(target, fieldName, (T) v, serializer);
     }
 
     public static void storeFields(XElement target, Object object, String... fieldNames) {
@@ -162,6 +200,12 @@ public class XmlSaveUtils {
     return ret;
   }
 
+  public static XElement saveNullAsElement(String elementName) {
+    XElement ret = new XElement(elementName);
+    saveNullIntoElementContent(ret);
+    return ret;
+  }
+
   public static XElement saveAsElement(String elementName, String value) {
     XElement ret = new XElement(elementName);
     saveIntoElementContent(ret, value);
@@ -178,6 +222,10 @@ public class XmlSaveUtils {
     XElement ret = new XElement(elementName);
     serializer.invoke(ret, value);
     return ret;
+  }
+
+  public static void saveNullIntoElementChild(XElement parent, String innerElementName) {
+    parent.addElement(saveNullAsElement(innerElementName));
   }
 
   public static void saveIntoElementChild(XElement parent, String innerElementName, long value) {
@@ -233,7 +281,7 @@ public class XmlSaveUtils {
 
   public static void saveIntoElementContent(XElement target, String value) {
     if (value == null)
-      saveNullIntoElement(target);
+      saveNullIntoElementContent(target);
     else
       target.setContent(value);
   }
@@ -245,12 +293,12 @@ public class XmlSaveUtils {
 
   public static void saveIntoElementContent(XElement target, Number value) {
     if (value == null)
-      saveNullIntoElement(target);
+      saveNullIntoElementContent(target);
     else
       saveIntoElementContent(target, value.toString());
   }
 
-  public static void saveNullIntoElement(XElement target) {
+  public static void saveNullIntoElementContent(XElement target) {
     target.setContent(NULL_STRING);
   }
 

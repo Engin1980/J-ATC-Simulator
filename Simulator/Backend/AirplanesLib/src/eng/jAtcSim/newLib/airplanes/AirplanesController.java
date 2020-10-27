@@ -86,12 +86,9 @@ public class AirplanesController {
 
   public void save(XElement target){
 
-    XmlSaveUtils.Field.storeField(target, this, "departureInitialAtcId", (AtcId q) -> q.getName());
-    XmlSaveUtils.Field.storeField(target, this, "arrivalInitialAtId", (AtcId q) -> q.getName());
+    XmlSaveUtils.Field.storeFields(target, this, "departureInitialAtcId", "arrivalInitialAtId");
     XmlSaveUtils.Field.storeField(target, this, "planes",
             new ItemsSerializer<Airplane>((e,q)-> q.save(e)));
-
-    tady dopsat ukládání letadla
   }
 
 //

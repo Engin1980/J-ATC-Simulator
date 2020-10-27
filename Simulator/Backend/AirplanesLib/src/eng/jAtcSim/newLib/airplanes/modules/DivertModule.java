@@ -1,15 +1,18 @@
 package eng.jAtcSim.newLib.airplanes.modules;
 
 
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class DivertModule extends Module {
   private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
   private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
+  private static final int[] divertAnnounceTimes = new int[]{30, 15, 10, 5};
 
   private static EDayTimeStamp generateDivertTime() {
     EDayTimeStamp now = Context.getShared().getNow().toStamp();
@@ -17,7 +20,6 @@ public class DivertModule extends Module {
     EDayTimeStamp ret = now.addMinutes(divertTimeMinutes);
     return ret;
   }
-  private final int[] divertAnnounceTimes = new int[]{30, 15, 10, 5};
   private final EDayTimeStamp divertTime;
   private int lastAnnouncedMinute = Integer.MAX_VALUE;
   private boolean possible = true;
@@ -42,6 +44,10 @@ public class DivertModule extends Module {
 
   public boolean isPossible() {
     return possible;
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeFields(target, this, "lastAnnouncedMinute", "possible", "divertTime");
   }
 
   private void checkForDivert() {

@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes.modules.speeches;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.utilites.ArrayUtils;
@@ -30,6 +31,7 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.RequestRadarContactNoti
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
@@ -112,6 +114,19 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     return afterCommands.hasProceedDirectToNavaidAsConseqent(navaid);
   }
 
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeFields(target, this, "assignedDARouteName");
+
+    XmlSaveUtils.saveIntoElementChild(target, "entryExitPoint", this.entryExitPoint.getName());
+    XmlSaveUtils.saveIntoElementChild(target, "runwayThreshold", this.runwayThreshold.getFullName());
+
+    XmlSaveUtils.Field.storeField(target, this, "queue",
+            (XElement e, DelayedList<ICommand> q) -> q.save(e));
+
+    XmlSaveUtils.Field.storeField(target, this, "afterCommands",
+            (XElement e, AfterCommandList q) -> q.save(e));
+  }
+
   public void setRouting(IReadOnlyList<ICommand> routeCommands) {
     EAssert.Argument.isNotNull(routeCommands, "routeCommands");
 
@@ -120,7 +135,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
     afterCommands.clearAll();
 
-    AfterCommand afterCommand  = new AfterImmediatelyCommand();
+    AfterCommand afterCommand = new AfterImmediatelyCommand();
     while (!cmds.isEmpty()) {
       ICommand cmd = cmds.get(0);
       cmds.removeAt(0);

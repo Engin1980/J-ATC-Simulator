@@ -64,11 +64,11 @@ public class SimpleObjectSerializer implements Serializer<Object> {
   @Override
   public void invoke(XElement targetElement, Object value) {
     if (value == null)
-      XmlSaveUtils.saveNullIntoElement(targetElement);
+      XmlSaveUtils.saveNullIntoElementContent(targetElement);
     else {
       EAssert.isTrue(
               this.expectedClass.isAssignableFrom(value.getClass()),
-              sf("This SimpleObjectSerializer expectes type '%s', but got '%s'.",
+              sf("This SimpleObjectSerializer expects type '%s', but got '%s'.",
                       this.expectedClass, value.getClass()));
       XmlSaveUtils.Field.storeFields(targetElement, value, includedFieldNames);
     }

@@ -4,6 +4,7 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
@@ -47,6 +48,7 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertingNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.weather.Weather;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -602,6 +604,33 @@ public class Airplane {
 
   public IAirplaneWriter getWriter() {
     return this.wrt;
+  }
+
+  public void save(XElement target) {
+
+    XmlSaveUtils.Field.storeFields(target, this,
+            "coordinate", "squawk", "state", "lastGoAroundReasonIfAny");
+    XmlSaveUtils.Field.storeField(target, this, "airplaneType", (AirplaneType q) -> q.name);
+
+    XmlSaveUtils.Field.storeField(target, this, "atcModule", (
+            XElement e, AtcModule q) -> q.save(e));
+    XmlSaveUtils.Field.storeField(target, this, "mood",
+            (XElement e, Mood q) -> q.save(e));
+    XmlSaveUtils.Field.storeField(target, this, "divertModule",
+            (XElement e, DivertModule q) -> q.save(e));
+    XmlSaveUtils.Field.storeField(target, this, "emergencyModule",
+            (XElement e, EmergencyModule q) -> q.save(e));
+    XmlSaveUtils.Field.storeField(target, this, "flightModule",
+            (XElement e, AirplaneFlightModule q) -> q.save(e));
+    XmlSaveUtils.Field.storeField(target, this, "routingModule",
+            (XElement e, RoutingModule q) -> q.save(e));
+    XmlSaveUtils.Field.storeField(target, this, "sha",
+            (XElement e, ShaModule q) -> q.save(e));
+
+    tady dopsat ukaladani pilota, tady se budu drbat s dedicnosti
+    XmlSaveUtils.Field.storeField(target, this, "pilot",
+            (XElement e, Pilot q) -> q.pilot(e));
+//    private Pilot pilot;
   }
 
   private void flushSpeeches() {

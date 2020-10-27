@@ -5,7 +5,7 @@ class InertialValue {
   private final double maxNegativeInertiaChange;
   protected double value;
   private double inertia;
-  private Double minimum;
+  private final Double minimum;
 
   public InertialValue(double value,
                        double maxPositiveInertiaChange, double maxNegativeInertiaChange,

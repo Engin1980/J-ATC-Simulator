@@ -3,7 +3,12 @@ package eng.jAtcSim.newLib.shared;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.DynamicSimpleObjectSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -11,11 +16,11 @@ import java.util.function.Predicate;
 
 public class DelayedList<T> {
 
-  static class DelayedItem<T> {
+  private static class DelayedItem<T> {
     public final T item;
     public int delayLeft;
 
-    public DelayedItem(T item, int delay) {
+    private DelayedItem(T item, int delay) {
       this.item = item;
       this.delayLeft = delay;
     }
@@ -35,7 +40,7 @@ public class DelayedList<T> {
   /**
    * Adds item with random delay
    *
-   * @param item<T>
+   * @param item<T> Item to add
    */
   public void add(T item) {
     int minDelay = Math.min(getLastDelay(maximalDelay), currentDelay);
@@ -102,6 +107,16 @@ public class DelayedList<T> {
 
   public void removeAt(int index) {
     inner.removeAt(index);
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeFields(target, this, "minimalDelay", "maximalDelay", "currentDelay");
+
+    XmlSaveUtils.Items.saveIntoElementChild(target, "inner", this.inner,
+            new ItemsSerializer<>((e, q) -> {
+              XmlSaveUtils.saveIntoElementChild(e, "delayLeft", q.delayLeft);
+              XmlSaveUtils.saveIntoElementChild(e, "item", q.item, new DynamicSimpleObjectSerializer<T>());
+            }));
   }
 
   public int size() {

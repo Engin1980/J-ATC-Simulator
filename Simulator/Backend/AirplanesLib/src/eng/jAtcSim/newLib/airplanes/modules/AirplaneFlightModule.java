@@ -1,9 +1,13 @@
 package eng.jAtcSim.newLib.airplanes.modules;
 
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
+import eng.jAtcSimLib.xmlUtils.ObjectUtils;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class AirplaneFlightModule {
   private final Callsign callsign;
@@ -52,5 +56,10 @@ public class AirplaneFlightModule {
 
   public void raiseEmergency() {
     this.departure = false;
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeFields(target, this,
+            ObjectUtils.getFieldNames(AirplaneFlightModule.class));
   }
 }

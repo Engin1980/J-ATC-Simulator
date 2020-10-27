@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
@@ -14,6 +15,8 @@ import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.NavigatorResult;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
 
 public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
@@ -35,7 +38,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
         break;
       default:
         throw new UnsupportedOperationException("Heading-change-denominator for category " + planeType.category
-            + " cannot be determined.");
+                + " cannot be determined.");
     }
     return ret;
   }
@@ -80,6 +83,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
     return ret;
   }
+
   private final InertialValue altitude;
   private final HeadingInertialValue heading;
   private double lastVerticalSpeed = 0;
@@ -90,14 +94,6 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private LeftRight targetHeadingTurn;
   private final RestrictableItem targetSpeed;
 
-  public Navigator getNavigator() {
-    return this.navigator;
-  }
-
-  public void resetHeading(double heading){
-    this.heading.reset(heading);
-  }
-
   public ShaModule(Airplane plane, int heading, int altitude, int speed, AirplaneType planeType) {
     super(plane);
     this.targetAltitude = new RestrictableItem(altitude);
@@ -107,21 +103,21 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     this.navigator = new HeadingNavigator(heading);
     double headingChangeDenominator = getHeadingChangeDenominator(planeType);
     this.heading = new HeadingInertialValue(
-        heading,
-        planeType.headingChangeRate,
-        planeType.headingChangeRate / headingChangeDenominator);
+            heading,
+            planeType.headingChangeRate,
+            planeType.headingChangeRate / headingChangeDenominator);
 
     this.altitude = new InertialValue(
-        altitude,
-        planeType.lowClimbRate / 7d / 60,
-        planeType.highDescendRate / 7d / 60,
-        (double) Context.getArea().getAirport().getAltitude());
+            altitude,
+            planeType.lowClimbRate / 7d / 60,
+            planeType.highDescendRate / 7d / 60,
+            (double) Context.getArea().getAirport().getAltitude());
 
     this.speed = new InertialValue(
-        speed,
-        planeType.speedIncreaseRate / 4d,
-        planeType.speedDecreaseRate / 6d,
-        0d);
+            speed,
+            planeType.speedIncreaseRate / 4d,
+            planeType.speedDecreaseRate / 6d,
+            0d);
   }
 
   public void clearTargetAltitudeRestriction() {
@@ -136,11 +132,11 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   public void elapseSecond() {
     // TODO here is && or || ???
     boolean isSpeedPreffered = rdr.getState().is(
-        AirplaneState.takeOffGoAround, AirplaneState.takeOffRoll);
+            AirplaneState.takeOffGoAround, AirplaneState.takeOffRoll);
 
 
     if (this.getTargetAltitude() != this.getAltitude()
-        || this.getTargetSpeed() != this.getSpeed()) {
+            || this.getTargetSpeed() != this.getSpeed()) {
       ValueRequest speedRequest = getSpeedRequest();
       ValueRequest altitudeRequest = getAltitudeRequest();
 
@@ -187,6 +183,15 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     return (int) Math.round(heading.value);
   }
 
+  public Navigator getNavigator() {
+    return this.navigator;
+  }
+
+  public void setNavigator(Navigator navigator) {
+    EAssert.Argument.isNotNull(navigator, "navigator");
+    this.navigator = navigator;
+  }
+
   public int getSpeed() {
     return (int) Math.round(speed.value);
   }
@@ -229,13 +234,35 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     return (int) Math.round(this.lastVerticalSpeed);
   }
 
-  public void setAltitudeRestriction(Restriction altitudeRestriction) {
-    this.targetAltitude.setRestriction(altitudeRestriction);
+  public void resetHeading(double heading) {
+    this.heading.reset(heading);
   }
 
-  public void setNavigator(Navigator navigator) {
-    EAssert.Argument.isNotNull(navigator, "navigator");
-    this.navigator = navigator;
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeFields(target, this,
+            "lastVerticalSpeed", "targetHeading", "targetHeadingTurn");
+
+    XmlSaveUtils.Field.storeField(target, this, "altitude",
+            SimpleObjectSerializer.createFor(InertialValue.class));
+
+    XmlSaveUtils.Field.storeField(target, this, "heading",
+            SimpleObjectSerializer.createFor(HeadingInertialValue.class));
+
+    XmlSaveUtils.Field.storeField(target, this, "speed",
+            SimpleObjectSerializer.createFor(InertialValue.class));
+
+    XmlSaveUtils.Field.storeField(target, this, "targetAltitude",
+            SimpleObjectSerializer.createFor(RestrictableItem.class));
+
+    XmlSaveUtils.Field.storeField(target, this, "targetSpeed",
+            SimpleObjectSerializer.createFor(RestrictableItem.class));
+
+    tady jak ukladat navigatora?
+//    private Navigator navigator;
+  }
+
+  public void setAltitudeRestriction(Restriction altitudeRestriction) {
+    this.targetAltitude.setRestriction(altitudeRestriction);
   }
 
   public Coordinate tryGetTargetCoordinate() {
@@ -326,10 +353,10 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
       double descentRateForAltitude = rdr.getType().getDescendRateForAltitude(this.altitude.getValue());
       descentRateForAltitude = adjustDescentRateByApproachStateIfRequired(descentRateForAltitude);
       ret = getRequest(
-          this.altitude.getValue(),
-          this.targetAltitude.getTargetValue(),
-          climbRateForAltitude,
-          descentRateForAltitude);
+              this.altitude.getValue(),
+              this.targetAltitude.getTargetValue(),
+              climbRateForAltitude,
+              descentRateForAltitude);
     }
 
     return ret;
@@ -351,9 +378,9 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
         decStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
       }
       ret = getRequest(
-          this.speed.getValue(),
-          this.targetSpeed.getTargetValue(),
-          incStep, decStep);
+              this.speed.getValue(),
+              this.targetSpeed.getTargetValue(),
+              incStep, decStep);
     }
 
     return ret;
