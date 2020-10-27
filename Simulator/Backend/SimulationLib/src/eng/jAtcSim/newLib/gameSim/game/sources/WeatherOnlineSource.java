@@ -1,8 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.game.sources;
 
 import eng.eSystem.validation.EAssert;
-import eng.eSystem.validation.EAssertException;
-import eng.eSystem.validation.Validator;
 import eng.jAtcSim.newLib.weather.DynamicWeatherProvider;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.weather.WeatherProvider;
@@ -10,19 +8,26 @@ import eng.jAtcSim.newLib.weather.downloaders.MetarDownloaderNoaaGov;
 
 public class WeatherOnlineSource extends WeatherSource {
   private final String icao;
-  private final Weather defaultWeather;
+  private final Weather fallbackWeather;
   private WeatherProvider content;
 
-  public WeatherOnlineSource(boolean refreshOnInit, String icao, Weather defaultWeather) {
+  public WeatherOnlineSource(boolean refreshOnInit, String icao, Weather fallbackWeather) {
     EAssert.matchPattern(icao, "^[A-Z]{4}$");
-//    this.refreshOnInit = refreshOnInit;
     this.icao = icao;
-    this.defaultWeather = defaultWeather;
+    this.fallbackWeather = fallbackWeather;
+  }
+
+  public String getIcao() {
+    return icao;
+  }
+
+  public Weather getFallbackWeather() {
+    return fallbackWeather;
   }
 
   @Override
   public void init() {
-    content = new DynamicWeatherProvider(new MetarDownloaderNoaaGov(), icao, defaultWeather, true);
+    content = new DynamicWeatherProvider(new MetarDownloaderNoaaGov(), icao, fallbackWeather, true);
     super.setInitialized();
   }
 

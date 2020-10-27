@@ -7,10 +7,16 @@ import eng.jAtcSim.newLib.weather.WeatherProvider;
 
 public class WeatherUserSource extends WeatherSource {
   private WeatherProvider content;
+  private final Weather initialWeather;
 
   public WeatherUserSource(Weather weather) {
     EAssert.Argument.isNotNull(weather, "weather");
     this.content = new StaticWeatherProvider(weather);
+    this.initialWeather = weather;
+  }
+
+  public Weather getInitialWeather() {
+    return initialWeather;
   }
 
   @Override

@@ -28,5 +28,6 @@
     <orderEntry type="module" module-name="FleetXmlLoaderLib" />
     <orderEntry type="module" module-name="TrafficXmlLoaderLib" />
     <orderEntry type="module" module-name="SpeechesLib" />
+    <orderEntry type="module" module-name="XmlUtilsLib" />
   </component>
 </module>

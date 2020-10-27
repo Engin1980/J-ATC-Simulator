@@ -1,11 +1,19 @@
 package eng.jAtcSim.newLib.gameSim.game;
 
 import eng.eSystem.collections.IMap;
-import eng.eSystem.exceptions.ToDoException;
+import eng.eSystem.eXml.XDocument;
+import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EXmlException;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
+import eng.jAtcSim.newLib.gameSim.xml.WeatherSourceFormatter;
+import eng.jAtcSimLib.xmlUtils.EMapSerializer;
+import eng.jAtcSimLib.xmlUtils.XmlUtils;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class Game implements IGame {
   private AreaSource areaSource;
@@ -29,11 +37,6 @@ public class Game implements IGame {
     return this.simulation.isim;
   }
 
-  @Override
-  public void save(String toString, IMap<String, Object> tmp) {
-    //TODO Implement this: Implement saving
-    throw new ToDoException("Implement saving");
-  }
 
 //  public static Game load(String fileName, IMap<String, Object> customData) {
 //    eng.jAtcSim.newLib.gameSim.Game ret = new eng.jAtcSim.newLib.gameSim.Game();
@@ -104,56 +107,39 @@ public class Game implements IGame {
 //    return ret;
 //  }
 //
-//  public void save(String fileName, IMap<String, Object> customData) {
-//    long saveStart = System.currentTimeMillis();
-//    XElement root = new XElement("game");
-//
-//    LoadSave.saveField(root, this, "areaSource");
-//    LoadSave.saveField(root, this, "airplaneTypesSource");
-//    LoadSave.saveField(root, this, "fleetsSource");
-//    LoadSave.saveField(root, this, "trafficSource");
-//    LoadSave.saveField(root, this, "weatherSource");
-//
-//    {
+
+
+  @Override
+  public void save(String fileName, IMap<String, String> customData) {
+    long saveStart = System.currentTimeMillis();
+    XElement root = new XElement("game");
+
+    XmlUtils.saveIntoElementChild(root, "areaSource", this.areaSource,
+            q -> sf("%s;%s", q.getFileName(), q.getIcao()));
+    XmlUtils.saveIntoElementChild(root, "airplaneTypesSource", this.airplaneTypesSource,
+            q -> q.getFileName());
+    XmlUtils.saveIntoElementChild(root, "fleetsSource", this.fleetsSource,
+            q -> sf("%s;%s", q.getCompanyFileName(), q.getGeneralAviationFileName()));
+    XmlUtils.saveIntoElementChild(root, "trafficSource", this.trafficSource,
+            q -> ((TrafficXmlSource) q).getFileName());
+    XmlUtils.saveIntoElementChild(root, "weatherSource", this.weatherSource, new WeatherSourceFormatter());
+
+    // sim saving here
+    //    {
 //      XElement tmp = new XElement("simulation");
 //      simulation.save(tmp);
 //      root.addElement(tmp);
 //    }
-//
-//    {
-//      XElement tmp = new XElement("simulation");
-//      LoadSave.saveAsElement(root, "shortcuts", simulation.getCommandShortcuts());
-//    }
-//
-//    {
-//      XElement tmp = new XElement("custom");
-//      for (Map.Entry<String, Object> entry : customData) {
-//        try {
-//          LoadSave.saveAsElement(tmp, entry.getKey(), entry.getValue());
-//        } catch (Exception ex) {
-//          throw new ERuntimeException("Failed to save custom data to game. Data key: " + entry.getKey() + ", data value: " + entry.getValue(), ex);
-//        }
-//      }
-//      root.addElement(tmp);
-//    }
-//
-//    long saveIn= System.currentTimeMillis();
-//
-//    XDocument doc = new XDocument(root);
-//    try {
-//      doc.save(fileName);
-//    } catch (EXmlException e) {
-//      throw new EApplicationException("Failed to save simulation.", e);
-//    }
-//
-//    long saveEnd = System.currentTimeMillis();
-//
-//    System.out.println("## save output:");
-//    System.out.println("## storing: " + (saveIn - saveStart));
-//    System.out.println("## writing: " + (saveEnd - saveIn));
-//  }
 
-//  public Simulation getSimulation() {
-//    return simulation;
-//  }
+    XmlUtils.saveIntoElementChild(root, "customData", customData,
+            new EMapSerializer<>(q -> q, q -> q));
+
+
+    XDocument doc = new XDocument(root);
+    try {
+      doc.save(fileName);
+    } catch (EXmlException e) {
+      throw new EApplicationException("Failed to save simulation.", e);
+    }
+  }
 }

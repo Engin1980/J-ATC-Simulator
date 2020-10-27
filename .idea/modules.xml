@@ -30,6 +30,7 @@
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/TrafficLib/TrafficLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/TrafficLib/TrafficLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/TrafficXmlLoaderLib/TrafficXmlLoaderLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/TrafficXmlLoaderLib/TrafficXmlLoaderLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/WeatherLib/WeatherLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/WeatherLib/WeatherLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Simulator/XmlUtilsLib/XmlUtilsLib.iml" filepath="$PROJECT_DIR$/Simulator/XmlUtilsLib/XmlUtilsLib.iml" />
     </modules>
   </component>
 </project>

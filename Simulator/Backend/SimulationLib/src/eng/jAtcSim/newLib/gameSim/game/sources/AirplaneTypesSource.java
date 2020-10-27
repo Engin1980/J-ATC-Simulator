@@ -9,7 +9,12 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class AirplaneTypesSource extends Source<AirplaneTypes> {
 
   private AirplaneTypes content;
-  private String fileName;
+  private final String fileName;
+
+
+  public String getFileName() {
+    return fileName;
+  }
 
   public AirplaneTypesSource(String xmlFile) {
     this.fileName = xmlFile;

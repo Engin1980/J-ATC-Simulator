@@ -18,6 +18,14 @@ public class AreaSource extends Source<Area> {
     this.icao = icao;
   }
 
+  public Area getArea() {
+    return area;
+  }
+
+  public String getFileName() {
+    return fileName;
+  }
+
   public String getIcao() {
     return icao;
   }

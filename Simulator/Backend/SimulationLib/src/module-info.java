@@ -16,6 +16,7 @@ module JAtcSim.Modules.Backend.SimulationLib {
   requires FleetXmlLoaderLib;
   requires TrafficXmlLoaderLib;
   requires JAtcSim.Modules.Backend.SpeechesLib;
+  requires eng.jAtcSim.XmlUtilsLib;
   exports eng.jAtcSim.newLib.gameSim;
   exports eng.jAtcSim.newLib.gameSim.game.startupInfos;
   exports eng.jAtcSim.newLib.gameSim.simulation;

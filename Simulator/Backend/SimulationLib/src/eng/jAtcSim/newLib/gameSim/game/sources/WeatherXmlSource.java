@@ -1,7 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.game.sources;
 
 import eng.eSystem.validation.EAssert;
-import eng.eSystem.validation.Validator;
 import eng.jAtcSim.newLib.weather.PresetWeatherProvider;
 import eng.jAtcSim.newLib.weather.WeatherProvider;
 import java.nio.file.Paths;
@@ -9,17 +8,21 @@ import java.nio.file.Paths;
 public class WeatherXmlSource extends WeatherSource {
 
   private WeatherProvider content;
-  private String xmlFileName;
+  private String fileName;
 
-  public WeatherXmlSource(String xmlFileName) {
-    EAssert.Argument.isNotNull(xmlFileName, "xmlFileName");
-    EAssert.isTrue(java.nio.file.Files.exists(Paths.get(xmlFileName)));
-    this.xmlFileName = xmlFileName;
+  public WeatherXmlSource(String fileName) {
+    EAssert.Argument.isNotNull(fileName, "xmlFileName");
+    EAssert.isTrue(java.nio.file.Files.exists(Paths.get(fileName)));
+    this.fileName = fileName;
+  }
+
+  public String getFileName() {
+    return fileName;
   }
 
   @Override
   public void init() {
-    content = new PresetWeatherProvider(this.xmlFileName);
+    content = new PresetWeatherProvider(this.fileName);
     super.setInitialized();
   }
 
