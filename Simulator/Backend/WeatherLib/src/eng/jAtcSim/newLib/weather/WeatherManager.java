@@ -1,15 +1,16 @@
 package eng.jAtcSim.newLib.weather;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.weather.contextLocal.Context;
 import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 import java.util.TooManyListenersException;
 
 public class WeatherManager {
   private Weather currentWeather;
-  private boolean newWeatherFlag; //TODO delete if not used outside of this class
+  private boolean newWeatherFlag;
   private final WeatherProvider provider;
 
   public WeatherManager(WeatherProvider provider) {
@@ -43,6 +44,18 @@ public class WeatherManager {
 
   public boolean isNewWeather() {
     return newWeatherFlag;
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeField(target, this, "newWeatherFlag");
+    XElement elm;
+
+    elm = new XElement("currentWeather");
+    this.currentWeather.save(elm);
+    target.addElement(elm);
+
+    System.out.println("### provider not saved");
+    //provider is from settings, I hope
   }
 
   public void setWeather(String metarString) {

@@ -22,33 +22,26 @@ public class WorldModule extends SimulationModule {
   private final AirplaneTypes airplaneTypes;
   private final AirlinesFleets airlinesFleets;
   private final GeneralAviationFleets gaFleets;
-  private final ITrafficModel traffic;
   private final Airport activeAirport;
-  private final WeatherProvider weatherProvider;
 
   public WorldModule(
       Simulation parent,
       Area area, Airport activeAirport,
                      AirplaneTypes airplaneTypes,
-                     AirlinesFleets airlinesFleets, GeneralAviationFleets gaFleets,
-                     ITrafficModel traffic,
-                     WeatherProvider weatherProvider) {
+                     AirlinesFleets airlinesFleets, GeneralAviationFleets gaFleets) {
     super(parent);
     EAssert.Argument.isTrue(area.getAirports().contains(activeAirport));
     this.area = area;
     this.airplaneTypes = airplaneTypes;
     this.airlinesFleets = airlinesFleets;
     this.gaFleets = gaFleets;
-    this.traffic = traffic;
     this.activeAirport = activeAirport;
-    this.weatherProvider = weatherProvider;
   }
 
   public WorldModule(Simulation parent, SimulationStartupContext simulationContext) {
     this(parent,
         simulationContext.area, simulationContext.activeAirport,
-        simulationContext.airplaneTypes, simulationContext.airlinesFleets, simulationContext.gaFleets,
-        simulationContext.traffic, simulationContext.weatherProvider);
+        simulationContext.airplaneTypes, simulationContext.airlinesFleets, simulationContext.gaFleets);
   }
 
   public Area getArea() {
@@ -67,16 +60,8 @@ public class WorldModule extends SimulationModule {
     return gaFleets;
   }
 
-  public ITrafficModel getTraffic() {
-    return traffic;
-  }
-
   public Airport getActiveAirport() {
     return activeAirport;
-  }
-
-  public WeatherProvider getWeatherProvider() {
-    return weatherProvider;
   }
 
   public void init() {

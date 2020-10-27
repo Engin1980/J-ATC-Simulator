@@ -5,15 +5,13 @@ import eng.eSystem.TryResult;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
-import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
-import eng.jAtcSim.newLib.airplanes.AirproxType;
-import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.DepartureAirplaneTemplate;
@@ -22,19 +20,15 @@ import eng.jAtcSim.newLib.fleet.TypeAndWeight;
 import eng.jAtcSim.newLib.fleet.airliners.CompanyFleet;
 import eng.jAtcSim.newLib.fleet.generalAviation.CountryFleet;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
-import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
-import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.CallsignFactory;
-import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.traffic.movementTemplating.*;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -61,6 +55,20 @@ public class TrafficModule extends SimulationModule {
 
   public void init() {
     this.trafficProvider.prepareTrafficForDay(Context.getShared().getNow().getDays());
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeFields(target, this, "delayStep", "delayStepProbability");
+
+    XElement tmp ;
+
+    tmp = new XElement("callsignFactory");
+    callsignFactory.save(tmp);
+    target.addElement(tmp);
+
+    tmp = new XElement("trafficProvider");
+    trafficProvider.save(tmp);
+    target.addElement(tmp);
   }
 
   private FlightMovementTemplate convertGenericMovementTemplateToFlightMovementTemplate(MovementTemplate m) {

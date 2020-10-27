@@ -1,10 +1,14 @@
 package eng.jAtcSim.newLib.traffic;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ToDoException;
+import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.time.EDayTime;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.EntriesWithListValuesSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -29,27 +33,38 @@ public class TrafficProvider {
     IList<MovementTemplate> ret = new EList<>();
     for (Integer dayKey : movementsForDay.getKeys()) {
       if (dayKey > untilTime.getDays()) continue;
-      IReadOnlyList<MovementTemplate> tmp = movementsForDay.get(dayKey).where(q->q.getAppearanceTime().isBeforeOrEq(untilTime.getTime()));
+      IReadOnlyList<MovementTemplate> tmp = movementsForDay.get(dayKey).where(q -> q.getAppearanceTime().isBeforeOrEq(untilTime.getTime()));
       ret.addMany(tmp);
       movementsForDay.get(dayKey).removeMany(tmp);
     }
 
     // delete empty days
     movementsForDay.remove(
-        movementsForDay.whereValue(q->q.isEmpty()).getKeys()        );
+            movementsForDay.whereValue(q -> q.isEmpty()).getKeys());
 
     return ret;
   }
 
-  public void prepareTrafficForDay(int dayIndex){
+  public void prepareTrafficForDay(int dayIndex) {
     EAssert.isTrue(
-        movementsForDay.containsKey(dayIndex) == false,
-        sf("Cannot generate movements for day %d, as it has been already generated.", dayIndex));
-   prepareMovementsForDay(dayIndex);
+            movementsForDay.containsKey(dayIndex) == false,
+            sf("Cannot generate movements for day %d, as it has been already generated.", dayIndex));
+    prepareMovementsForDay(dayIndex);
   }
 
   public void init() {
     // intentionally blank
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeField(target, this, "movementsForDay",
+            new EntriesWithListValuesSerializer<Integer, MovementTemplate>(
+                    (e, q) -> e.setContent(Integer.toString(q)),
+                    (e, q) -> q.save(e)));
+
+    //Todel
+    System.out.println("### trafficModel not saved");
+    // traffic model should be loaded from startup info?
   }
 
   private void prepareMovementsForDay(int dayIndex) {

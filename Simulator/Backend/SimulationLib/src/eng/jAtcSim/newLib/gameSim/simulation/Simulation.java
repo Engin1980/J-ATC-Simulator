@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.gameSim.simulation;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
@@ -15,7 +16,6 @@ import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.SimulationStartupContext;
-import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.AirproxController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.KeyShortcutManager;
@@ -221,7 +221,7 @@ public class Simulation {
 
     this.trafficModule = new TrafficModule(
             this,
-            new TrafficProvider(worldModule.getTraffic()),
+            new TrafficProvider(simulationContext.traffic),
             simulationSettings.trafficSettings.trafficDelayStepProbability,
             simulationSettings.trafficSettings.trafficDelayStep,
             simulationSettings.trafficSettings.useExtendedCallsigns);
@@ -272,6 +272,42 @@ public class Simulation {
 
   public WorldModule getWorldModule() {
     return worldModule;
+  }
+
+  public void save(XElement target) {
+    /*
+      private final AirplanesModule airplanesModule;
+  private final AtcModule atcModule;
+  private final IOModule ioModule;
+  private boolean isElapseSecondCalculationRunning = false;
+  public ISimulation isim = this.new MySimulation();
+  private final StatsModule statsModule;
+     */
+
+    target.setAttribute("now", now.toString());
+
+    XElement tmp;
+
+    tmp = new XElement("airplanesModule");
+    airplanesModule.save(tmp);
+    target.addElement(tmp);
+
+    tmp = new XElement("timerModule");
+    tmp.setAttribute(
+            "tickInterval",
+            Integer.toString(timerModule.getTickInterval()));
+    target.addElement(tmp);
+
+    tmp = new XElement("trafficModule");
+    trafficModule.save(tmp);
+    target.addElement(tmp);
+
+    tmp = new XElement("weatherModule");
+    weatherModule.save(tmp);
+    target.addElement(tmp);
+
+    // worldModule not saved
+
   }
 
   private void elapseSecond() {

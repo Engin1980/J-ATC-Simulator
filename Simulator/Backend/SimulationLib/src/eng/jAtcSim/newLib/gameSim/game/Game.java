@@ -10,8 +10,8 @@ import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.xml.WeatherSourceFormatter;
-import eng.jAtcSimLib.xmlUtils.EMapSerializer;
-import eng.jAtcSimLib.xmlUtils.XmlUtils;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.EntriesViaStringSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -111,28 +111,27 @@ public class Game implements IGame {
 
   @Override
   public void save(String fileName, IMap<String, String> customData) {
-    long saveStart = System.currentTimeMillis();
     XElement root = new XElement("game");
 
-    XmlUtils.saveIntoElementChild(root, "areaSource", this.areaSource,
+    XmlSaveUtils.saveIntoElementChild(root, "areaSource", this.areaSource,
             q -> sf("%s;%s", q.getFileName(), q.getIcao()));
-    XmlUtils.saveIntoElementChild(root, "airplaneTypesSource", this.airplaneTypesSource,
+    XmlSaveUtils.saveIntoElementChild(root, "airplaneTypesSource", this.airplaneTypesSource,
             q -> q.getFileName());
-    XmlUtils.saveIntoElementChild(root, "fleetsSource", this.fleetsSource,
+    XmlSaveUtils.saveIntoElementChild(root, "fleetsSource", this.fleetsSource,
             q -> sf("%s;%s", q.getCompanyFileName(), q.getGeneralAviationFileName()));
-    XmlUtils.saveIntoElementChild(root, "trafficSource", this.trafficSource,
+    XmlSaveUtils.saveIntoElementChild(root, "trafficSource", this.trafficSource,
             q -> ((TrafficXmlSource) q).getFileName());
-    XmlUtils.saveIntoElementChild(root, "weatherSource", this.weatherSource, new WeatherSourceFormatter());
+    XmlSaveUtils.saveIntoElementChild(root, "weatherSource", this.weatherSource, new WeatherSourceFormatter());
 
-    // sim saving here
-    //    {
-//      XElement tmp = new XElement("simulation");
-//      simulation.save(tmp);
-//      root.addElement(tmp);
-//    }
+    //sim saving here
+    {
+      XElement tmp = new XElement("simulation");
+      this.simulation.save(tmp);
+      root.addElement(tmp);
+    }
 
-    XmlUtils.saveIntoElementChild(root, "customData", customData,
-            new EMapSerializer<>(q -> q, q -> q));
+    XmlSaveUtils.saveIntoElementChild(root, "customData", customData,
+            new EntriesViaStringSerializer<>(q -> q, q -> q));
 
 
     XDocument doc = new XDocument(root);

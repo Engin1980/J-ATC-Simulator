@@ -1,8 +1,11 @@
 package eng.jAtcSim.newLib.traffic.movementTemplating;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.traffic.contextLocal.Context;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.formatters.CoordinateFormatter;
 
 public class EntryExitInfo {
   public static EntryExitInfo getRandom() {
@@ -47,5 +50,10 @@ public class EntryExitInfo {
 
   public Integer getRadial() {
     return radial;
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeFields(target, this, "navaid", "radial");
+    XmlSaveUtils.Field.storeField(target, this, "otherAirportCoordinate", new CoordinateFormatter());
   }
 }

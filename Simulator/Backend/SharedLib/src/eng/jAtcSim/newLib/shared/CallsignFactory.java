@@ -5,9 +5,12 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
 
 public class CallsignFactory {
   public enum Type {
@@ -39,22 +42,22 @@ public class CallsignFactory {
   private static String generateCommercial(Type type) {
     ERandom rnd = Context.getApp().getRnd();
     StringBuilder ret = new StringBuilder();
-    boolean addFourth =  rnd.nextDouble() > COMPANY_THREE_CHAR_NUMBER_PROBABILITY;
+    boolean addFourth = rnd.nextDouble() > COMPANY_THREE_CHAR_NUMBER_PROBABILITY;
     switch (type) {
       case NNN:
-        ret.append((char)  rnd.nextDouble('0', '9'));
-        ret.append((char)  rnd.nextDouble('0', '9'));
-        ret.append((char)  rnd.nextDouble('0', '9'));
-        if (addFourth) ret.append((char)  rnd.nextDouble('0', '9'));
+        ret.append((char) rnd.nextDouble('0', '9'));
+        ret.append((char) rnd.nextDouble('0', '9'));
+        ret.append((char) rnd.nextDouble('0', '9'));
+        if (addFourth) ret.append((char) rnd.nextDouble('0', '9'));
         break;
       case NNX:
-        ret.append((char)  rnd.nextDouble('0', '9'));
-        ret.append((char)  rnd.nextDouble('0', '9'));
+        ret.append((char) rnd.nextDouble('0', '9'));
+        ret.append((char) rnd.nextDouble('0', '9'));
         ret.append(getNumericalChar());
         if (addFourth) ret.append(getNumericalChar());
         break;
       case NXX:
-        ret.append((char)  rnd.nextDouble('0', '9'));
+        ret.append((char) rnd.nextDouble('0', '9'));
         ret.append(getNumericalChar());
         ret.append(getNumericalChar());
         if (addFourth) ret.append(getNumericalChar());
@@ -124,5 +127,11 @@ public class CallsignFactory {
   public Callsign generateGeneralAviation(String countryAircraftPrefix) {
     Callsign ret = generate(countryAircraftPrefix, false);
     return ret;
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeField(target, this, "useExtendedCallsigns");
+    XmlSaveUtils.Field.storeField(target, this, "previouslyGeneratedCallsigns",
+            new ItemsViaStringSerializer<String>(q -> q));
   }
 }

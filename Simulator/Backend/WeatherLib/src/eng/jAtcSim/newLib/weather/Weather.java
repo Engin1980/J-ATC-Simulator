@@ -7,8 +7,12 @@
 package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.UnitProvider;
 import eng.jAtcSim.newLib.weather.contextLocal.Context;
+import eng.jAtcSimLib.xmlUtils.ObjectUtils;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.formatters.EnumFormatter;
 
 /**
  * @author Marek
@@ -25,7 +29,7 @@ public class Weather {
 
   public static Weather createClear() {
     Weather ret = new Weather(
-        210, 4, 4, 9999, 13000, .2, eSnowState.none
+            210, 4, 4, 9999, 13000, .2, eSnowState.none
     );
     return ret;
   }
@@ -122,6 +126,13 @@ public class Weather {
     return windSpeetInKts;
   }
 
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeFields(target, this,
+            ObjectUtils.getFieldNamesExcept(Weather.class, "snowState"));
+    XmlSaveUtils.Field.storeField(target, this,
+            "snowState", new EnumFormatter());
+  }
+
   public String toInfoString(boolean fullText) {
     EStringBuilder sb = new EStringBuilder();
     if (fullText) {
@@ -154,12 +165,12 @@ public class Weather {
       sb.append(" ...");
     } else {
       sb.appendFormatLine("Wind %d° at %d (%d) kts, visibility %1.0f miles, cloud base at %d ft at %1.0f %%.",
-          this.getWindHeading(),
-          this.getWindSpeetInKts(),
-          this.getWindGustSpeedInKts(),
-          this.getVisibilityInMiles(),
-          this.getCloudBaseInFt(),
-          this.getCloudBaseHitProbability() * 100
+              this.getWindHeading(),
+              this.getWindSpeetInKts(),
+              this.getWindGustSpeedInKts(),
+              this.getVisibilityInMiles(),
+              this.getCloudBaseInFt(),
+              this.getCloudBaseHitProbability() * 100
       );
       if (snowState == eSnowState.normal)
         sb.append(" Snowing.");

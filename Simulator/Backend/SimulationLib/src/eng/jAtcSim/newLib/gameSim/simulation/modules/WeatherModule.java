@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
@@ -22,6 +23,7 @@ public class WeatherModule extends SimulationModule {
   public void elapseSecond() {
     weatherManager.elapseSecond();
     if (weatherManager.isNewWeather()) {
+      //FIXME rewrite let this does not use atcModule, but atcModule registers for (newly created) event in this class
       parent.getAtcModule().adviceWeatherUpdated();
       parent.getAtcModule().getUserAtcIds().forEach(q ->
               parent.getIoModule().sendTextMessageForUser(q, new MetarNotification(true)));
@@ -32,5 +34,11 @@ public class WeatherModule extends SimulationModule {
     IWeatherAcc weatherContext = new WeatherAcc(this.weatherManager);
     ContextManager.setContext(IWeatherAcc.class, weatherContext);
     weatherManager.init();
+  }
+
+  public void save(XElement target) {
+    XElement elm = new XElement("weatherManager");
+    weatherManager.save(elm);
+    target.addElement(elm);
   }
 }

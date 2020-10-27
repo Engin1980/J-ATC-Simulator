@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.airplanes;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinates;
@@ -17,6 +18,8 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 
 public class AirplanesController {
   private final AirplaneList<Airplane> planes = new AirplaneList<>(
@@ -79,6 +82,16 @@ public class AirplanesController {
   public void init(){
     this.arrivalInitialAtId = Context.getShared().getAtcs().getFirst(q->q.getType() == AtcType.ctr);
     this.departureInitialAtcId = Context.getShared().getAtcs().getFirst(q->q.getType() == AtcType.twr);
+  }
+
+  public void save(XElement target){
+
+    XmlSaveUtils.Field.storeField(target, this, "departureInitialAtcId", (AtcId q) -> q.getName());
+    XmlSaveUtils.Field.storeField(target, this, "arrivalInitialAtId", (AtcId q) -> q.getName());
+    XmlSaveUtils.Field.storeField(target, this, "planes",
+            new ItemsSerializer<Airplane>((e,q)-> q.save(e)));
+
+    tady dopsat ukládání letadla
   }
 
 //

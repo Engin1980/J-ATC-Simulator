@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.gameSim.simulation.modules;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
@@ -38,6 +39,7 @@ import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -151,6 +153,22 @@ public class AirplanesModule extends SimulationModule {
     this.mrvaController.unregisterPlane(callsign);
     this.planes4public.remove(q -> q.callsign().equals(callsign));
 
+  }
+
+  public void save(XElement target) {
+
+    XmlSaveUtils.Field.storeField(target, this, "airplanesController",
+            (XElement e, AirplanesController q) -> q.save(e));
+
+    tady dopsat
+
+//    private final AirplanesController airplanesController;
+//    private final AirproxController airproxController;
+//    private final EmergencyAppearanceController emergencyAppearanceController;
+//    private final MoodManager moodManager;
+//    private final MrvaController mrvaController;
+//    private final IList<IAirplaneInfo> planes4public = new EList<>();
+//    private final IList<AirplaneTemplate> planesPrepared = new EList<>();
   }
 
   private void addAirplaneInfo(IAirplane tmp) {

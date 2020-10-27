@@ -11,7 +11,8 @@ import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.swing.other.HistoryForJFileChooser;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
-import eng.jAtcSim.newLib.shared.xml.XmlSaverUtils;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.EntriesWithListValuesSerializer;
 
 import java.awt.*;
 import java.io.IOException;
@@ -69,9 +70,9 @@ public class FileHistoryManager {
     }
 
     XmlLoaderUtils.loadMap(doc.getRoot(), tmp,
-        e -> e.getAttribute("key"),
-        e -> XmlLoaderUtils.loadList(e, new EList<String>(),
-            f -> f.getContent()));
+            e -> e.getAttribute("key"),
+            e -> XmlLoaderUtils.loadList(e, new EList<String>(),
+                    f -> f.getContent()));
 
     FileHistoryManager.histories = tmp;
   }
@@ -79,13 +80,12 @@ public class FileHistoryManager {
   private static void saveHistories() {
     Path userHomeHistoryFile = getHistoryFilePath();
 
-    XElement root = new XElement("root");
-    XmlSaverUtils.saveMap(histories, root,
-        q -> "entry",
-        (q, e) -> e.setAttribute("key", q),
-        (q, e) -> XmlSaverUtils.saveList(q, e,
-            p -> "item",
-            (p, f) -> f.setContent(p)));
+    XElement root = XmlSaveUtils.Entries.IListValues.saveAsElement(
+            "root",
+            histories,
+            new EntriesWithListValuesSerializer<>(
+                    (e, q) -> e.setContent(q),
+                    (e, q) -> e.setContent(q)));
 
     XDocument doc = new XDocument(root);
 
