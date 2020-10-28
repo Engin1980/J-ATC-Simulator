@@ -36,6 +36,7 @@ import eng.jAtcSim.newLib.shared.logging.SimulationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
@@ -284,7 +285,7 @@ public class Simulation {
   private final StatsModule statsModule;
      */
 
-    XmlSaveUtils.Field.storeField(target, this, "now");
+    XmlSaveUtils.Field.storeField(target, this, "now", SharedXmlUtils.iTimeFormatter);
 
     XElement tmp;
 

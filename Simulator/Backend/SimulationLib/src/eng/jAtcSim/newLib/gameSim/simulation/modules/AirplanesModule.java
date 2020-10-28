@@ -4,6 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
@@ -160,7 +161,7 @@ public class AirplanesModule extends SimulationModule {
     XmlSaveUtils.Field.storeField(target, this, "airplanesController",
             (XElement e, AirplanesController q) -> q.save(e));
 
-    tady dopsat
+    throw new ToDoException("tady dopsat");
 
 //    private final AirplanesController airplanesController;
 //    private final AirproxController airproxController;

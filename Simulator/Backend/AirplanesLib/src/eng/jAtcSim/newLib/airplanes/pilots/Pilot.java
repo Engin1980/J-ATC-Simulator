@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
@@ -7,10 +8,11 @@ import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.IAirplaneWriter;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.shared.Restriction;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -25,6 +27,22 @@ public abstract class Pilot {
     this.rdr = plane.getReader();
     this.wrt = plane.getWriter();
   }
+
+  public final void save(XElement target){
+    XmlSaveUtils.Class.storeType(target, this);
+    XmlSaveUtils.Field.storeField(target, this, "isFirstElapseSecond");
+    _save(target);
+  }
+
+  public abstract boolean isDivertable();
+
+  protected abstract void elapseSecondInternal();
+
+  protected abstract void _save(XElement target);
+
+  protected abstract AirplaneState[] getInitialStates();
+
+  protected abstract AirplaneState[] getValidStates();
 
   public void adjustTargetSpeed() {
     int minOrdered;
@@ -101,31 +119,23 @@ public abstract class Pilot {
     if (isFirstElapseSecond) {
       if (ArrayUtils.contains(getInitialStates(), rdr.getState()) == false)
         throw new EApplicationException(sf(
-            "Airplane %s has illegal initial state %s for pilot %s.",
-            rdr.getCallsign().toString(), rdr.getState().toString(), this.getClass().getName()
+                "Airplane %s has illegal initial state %s for pilot %s.",
+                rdr.getCallsign().toString(), rdr.getState().toString(), this.getClass().getName()
         ));
       isFirstElapseSecond = false;
     } else {
       if (ArrayUtils.contains(getValidStates(), rdr.getState()) == false)
         throw new EApplicationException(sf(
-            "Airplane %s has illegal state %s for pilot %s.",
-            rdr.getCallsign().toString(), rdr.getState().toString(), this.getClass().getName()
+                "Airplane %s has illegal state %s for pilot %s.",
+                rdr.getCallsign().toString(), rdr.getState().toString(), this.getClass().getName()
         ));
     }
     elapseSecondInternal();
   }
 
-  public abstract boolean isDivertable();
-
-  protected abstract void elapseSecondInternal();
-
-  protected abstract AirplaneState[] getInitialStates();
-
-  protected abstract AirplaneState[] getValidStates();
-
   void throwIllegalStateException() {
     throw new ERuntimeException(
-        "Illegal state " + rdr.getState() + " for behavior " + this.getClass().getSimpleName() + "."
+            "Illegal state " + rdr.getState() + " for behavior " + this.getClass().getSimpleName() + "."
     );
   }
 }

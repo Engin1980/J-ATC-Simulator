@@ -5,7 +5,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSimLib.xmlUtils.ObjectUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
@@ -59,7 +59,8 @@ public class AirplaneFlightModule {
   }
 
   public void save(XElement target) {
-    XmlSaveUtils.Field.storeFields(target, this,
-            ObjectUtils.getFieldNames(AirplaneFlightModule.class));
+    XmlSaveUtils.Field.storeFields(target,
+            this, ObjectUtils.getFieldNames(AirplaneFlightModule.class).toArray(String.class),
+            SharedXmlUtils.formattersMap, null);
   }
 }

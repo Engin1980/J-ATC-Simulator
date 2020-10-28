@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
@@ -10,7 +11,6 @@ import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
@@ -23,13 +23,15 @@ import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.shared.RadialCalculator;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
-import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ThenCommand;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.recursiveObjectSerializer.RecursiveObjectSerializer;
 
 public class ApproachPilot extends Pilot {
 
@@ -58,15 +60,15 @@ public class ApproachPilot extends Pilot {
       ret.removeAt(0);
     }
     ret.insert(0,
-        ChangeHeadingCommand.create((int) this.getRunwayThreshold().getCourse(), LeftRightAny.any));
+            ChangeHeadingCommand.create((int) this.getRunwayThreshold().getCourse(), LeftRightAny.any));
 
     // check if is before runway threshold.
     // if is far before, then first point will still be runway threshold
     if (isBeforeRunwayThreshold()) {
       Navaid runwayThresholdNavaid = Context.getArea().getNavaids().addRunwayThresholdPoint(
-          this.getRunwayThreshold().getParent().getParent().getIcao(),
-          this.getRunwayThreshold().getName(),
-          this.getRunwayThreshold().getCoordinate()
+              this.getRunwayThreshold().getParent().getParent().getIcao(),
+              this.getRunwayThreshold().getName(),
+              this.getRunwayThreshold().getCoordinate()
       );
       ret.insert(0, ProceedDirectCommand.create(runwayThresholdNavaid.getName()));
       ret.insert(1, ThenCommand.create());
@@ -118,16 +120,27 @@ public class ApproachPilot extends Pilot {
     }
   }
 
+  @Override
+  protected void _save(XElement target) {
+    XmlSaveUtils.Field.storeField(target, this, "currentStageIndex");
+    XmlSaveUtils.Field.storeField(target, this, "iafRoute",
+            (XElement e, IafRoute q) ->
+                    new RecursiveObjectSerializer<>().with(Navaid.class, n->n.getName()));
+    XmlSaveUtils.Field.storeField(target, this, "approach",
+            (XElement e, Approach a) ->
+                    new RecursiveObjectSerializer<>().with(Navaid.class, n->n.getName()));
+  }
+
   private void flyRadialBehavior(FlyRadialBehavior behavior) {
     if (behavior instanceof FlyRadialWithDescentBehavior) {
       flyRadialWithDescentBehavior((FlyRadialWithDescentBehavior) behavior);
     }
     double heading = RadialCalculator.getHeadingToFollowRadial(
-        rdr.getCoordinate(), behavior.getCoordinate(), behavior.getInboundRadial(),
-        MAX_HEADING_DIFFERENCE, rdr.getSha().getSpeed());
+            rdr.getCoordinate(), behavior.getCoordinate(), behavior.getInboundRadial(),
+            MAX_HEADING_DIFFERENCE, rdr.getSha().getSpeed());
 
     wrt.setTargetHeading(
-        new HeadingNavigator(heading, LeftRightAny.any));
+            new HeadingNavigator(heading, LeftRightAny.any));
   }
 
   private void flyRadialWithDescentBehavior(FlyRadialWithDescentBehavior behavior) {
@@ -162,21 +175,21 @@ public class ApproachPilot extends Pilot {
   @Override
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
-        AirplaneState.arrivingHigh,
-        AirplaneState.arrivingLow
+            AirplaneState.arrivingHigh,
+            AirplaneState.arrivingLow
     };
   }
 
   @Override
   protected AirplaneState[] getValidStates() {
     return new AirplaneState[]{
-        AirplaneState.arrivingCloseFaf,
-        AirplaneState.flyingIaf2Faf,
-        AirplaneState.approachEnter,
-        AirplaneState.approachDescend,
-        AirplaneState.longFinal,
-        AirplaneState.shortFinal,
-        AirplaneState.landed
+            AirplaneState.arrivingCloseFaf,
+            AirplaneState.flyingIaf2Faf,
+            AirplaneState.approachEnter,
+            AirplaneState.approachDescend,
+            AirplaneState.longFinal,
+            AirplaneState.shortFinal,
+            AirplaneState.landed
     };
   }
 

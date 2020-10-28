@@ -1,11 +1,17 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class HoldingPointPilot extends Pilot {
   public HoldingPointPilot(Airplane plane) {
     super(plane);
+  }
+
+  @Override
+  protected void _save(XElement target) {
   }
 
   @Override

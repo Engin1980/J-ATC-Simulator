@@ -15,7 +15,10 @@ import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.NavigatorResult;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
+import eng.jAtcSimLib.xmlUtils.ObjectUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.DynamicSimpleObjectSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
 
 public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
@@ -246,7 +249,12 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
             SimpleObjectSerializer.createFor(InertialValue.class));
 
     XmlSaveUtils.Field.storeField(target, this, "heading",
-            SimpleObjectSerializer.createFor(HeadingInertialValue.class));
+            (XElement e, HeadingInertialValue q) -> {
+              XmlSaveUtils.Field.storeFields(e,
+                      q, ObjectUtils.getFieldNamesExcept(HeadingInertialValue.class, "thresholds"));
+              XmlSaveUtils.Field.storeField(e,
+                      q, "thresholds", new ItemsViaStringSerializer<Double>(p -> Double.toString(p)));
+            });
 
     XmlSaveUtils.Field.storeField(target, this, "speed",
             SimpleObjectSerializer.createFor(InertialValue.class));
@@ -257,8 +265,8 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     XmlSaveUtils.Field.storeField(target, this, "targetSpeed",
             SimpleObjectSerializer.createFor(RestrictableItem.class));
 
-    tady jak ukladat navigatora?
-//    private Navigator navigator;
+    XmlSaveUtils.Field.storeField(target, this, "navigator",
+            new DynamicSimpleObjectSerializer<Navigator>());
   }
 
   public void setAltitudeRestriction(Restriction altitudeRestriction) {

@@ -1,5 +1,6 @@
 package eng.jAtcSim.frmPacks.sdi;
 
+import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.utilites.ExceptionUtils;
@@ -307,7 +308,7 @@ public class FrmMain extends JFrame {
 
       IMap<String, Object> tmp = this.parent.getDataToStore();
 
-      this.parent.getGame().save(fileName, tmp);
+      this.parent.getGame().save(fileName, new EMap<>());
       lastFileName = fileName;
       //TODO do somehow:
 //      this.parent.getSim().sendTextMessageForUser("Game saved.");

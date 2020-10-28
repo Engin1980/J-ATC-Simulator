@@ -41,6 +41,7 @@ import eng.jAtcSim.newLib.shared.*;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
@@ -217,7 +218,7 @@ public class Airplane {
 
     @Override
     public Squawk getSqwk() {
-      return Airplane.this.sqwk;
+      return Airplane.this.squawk;
     }
 
     @Override
@@ -486,7 +487,7 @@ public class Airplane {
     public String toString() {
       return sf("%s (%s)",
               Airplane.this.flightModule.getCallsign().toString(),
-              Airplane.this.sqwk.toString());
+              Airplane.this.squawk.toString());
     }
 
     @Override
@@ -537,19 +538,19 @@ public class Airplane {
   private final IAirplane rdr = new AirplaneImpl();
   private final RoutingModule routingModule;
   private final ShaModule sha;
-  private final Squawk sqwk;
+  private final Squawk squawk;
   private AirplaneState state;
   private final IAirplaneWriter wrt = new AirplaneWriterImpl();
   private GoingAroundNotification.GoAroundReason lastGoAroundReasonIfAny = null;
   private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> speechCache = new EMap<>();
 
-  private Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneType,
+  private Airplane(Callsign callsign, Coordinate coordinate, Squawk squawk, AirplaneType airplaneType,
                    int heading, int altitude, int speed, boolean isDeparture,
                    Navaid entryExitPoint, EDayTimeStamp expectedExitTime, int entryDelay,
                    AtcId initialAtcId) {
 
 
-    this.sqwk = sqwk;
+    this.squawk = squawk;
     this.flightModule = new AirplaneFlightModule(
             callsign, entryDelay, expectedExitTime, isDeparture);
 
@@ -609,7 +610,9 @@ public class Airplane {
   public void save(XElement target) {
 
     XmlSaveUtils.Field.storeFields(target, this,
-            "coordinate", "squawk", "state", "lastGoAroundReasonIfAny");
+            "state", "lastGoAroundReasonIfAny");
+    XmlSaveUtils.Field.storeField(target, this, "coordinate", SharedXmlUtils.coordinateFormatter);
+    XmlSaveUtils.Field.storeField(target, this, "squawk", SharedXmlUtils.squawkFormatter);
     XmlSaveUtils.Field.storeField(target, this, "airplaneType", (AirplaneType q) -> q.name);
 
     XmlSaveUtils.Field.storeField(target, this, "atcModule", (
@@ -627,9 +630,8 @@ public class Airplane {
     XmlSaveUtils.Field.storeField(target, this, "sha",
             (XElement e, ShaModule q) -> q.save(e));
 
-    tady dopsat ukaladani pilota, tady se budu drbat s dedicnosti
     XmlSaveUtils.Field.storeField(target, this, "pilot",
-            (XElement e, Pilot q) -> q.pilot(e));
+            (XElement e, Pilot q) -> q.save(e));
 //    private Pilot pilot;
   }
 

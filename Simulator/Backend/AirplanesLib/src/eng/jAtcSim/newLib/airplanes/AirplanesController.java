@@ -1,13 +1,8 @@
 package eng.jAtcSim.newLib.airplanes;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.ToDoException;
-import eng.eSystem.geo.Coordinates;
-import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
@@ -18,31 +13,28 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
+import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
+import eng.jAtcSimLib.xmlUtils.Formatter;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 
 public class AirplanesController {
   private final AirplaneList<Airplane> planes = new AirplaneList<>(
-      q -> q.getReader().getCallsign(),
-      q -> q.getReader().getSqwk());
+          q -> q.getReader().getCallsign(),
+          q -> q.getReader().getSqwk());
   private final AirplaneList<IAirplane> publicPlanes = new AirplaneList<>(
-      q -> q.getCallsign(),
-      q -> q.getSqwk());
+          q -> q.getCallsign(),
+          q -> q.getSqwk());
   private AtcId departureInitialAtcId;
   private AtcId arrivalInitialAtId;
 
-  public void updatePlanes() {
-    for (Airplane plane : planes) {
-      try {
-        plane.elapseSecond();
-      } catch (Exception ex) {
-        throw new EApplicationException("Error processing elapseSecond() on plane " + plane.getReader().getCallsign() + ".", ex);
-      }
-    }
-  }
-
   public AirplaneList<IAirplane> getPlanes() {
     return publicPlanes;
+  }
+
+  public void init() {
+    this.arrivalInitialAtId = Context.getShared().getAtcs().getFirst(q -> q.getType() == AtcType.ctr);
+    this.departureInitialAtcId = Context.getShared().getAtcs().getFirst(q -> q.getType() == AtcType.twr);
   }
 
   public IAirplane registerPlane(AirplaneTemplate at, Squawk sqwk) {
@@ -59,17 +51,25 @@ public class AirplanesController {
     this.publicPlanes.add(airplane.getReader());
 
     Context.getMessaging().getMessenger().registerListener(
-        Participant.createAirplane(airplane.getReader().getCallsign()));
+            Participant.createAirplane(airplane.getReader().getCallsign()));
 
     return airplane.getReader();
   }
 
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeFields(target, this,
+            new String[]{"departureInitialAtcId", "arrivalInitialAtId"},
+            SharedXmlUtils.formattersMap, null);
+    XmlSaveUtils.Field.storeField(target, this, "planes",
+            new ItemsSerializer<Airplane>((e, q) -> q.save(e)));
+  }
+
   public void throwEmergency() {
     Airplane p = this.planes
-        .where(q -> q.getReader().getState().is(AirplaneState.departingLow,
-            AirplaneState.departingHigh, AirplaneState.arrivingHigh,
-            AirplaneState.arrivingLow, AirplaneState.arrivingCloseFaf))
-        .tryGetRandom();
+            .where(q -> q.getReader().getState().is(AirplaneState.departingLow,
+                    AirplaneState.departingHigh, AirplaneState.arrivingHigh,
+                    AirplaneState.arrivingLow, AirplaneState.arrivingCloseFaf))
+            .tryGetRandom();
     if (p != null)
       p.getWriter().raiseEmergency();
   }
@@ -79,16 +79,14 @@ public class AirplanesController {
     publicPlanes.remove(q -> q.getCallsign().equals(callsign));
   }
 
-  public void init(){
-    this.arrivalInitialAtId = Context.getShared().getAtcs().getFirst(q->q.getType() == AtcType.ctr);
-    this.departureInitialAtcId = Context.getShared().getAtcs().getFirst(q->q.getType() == AtcType.twr);
-  }
-
-  public void save(XElement target){
-
-    XmlSaveUtils.Field.storeFields(target, this, "departureInitialAtcId", "arrivalInitialAtId");
-    XmlSaveUtils.Field.storeField(target, this, "planes",
-            new ItemsSerializer<Airplane>((e,q)-> q.save(e)));
+  public void updatePlanes() {
+    for (Airplane plane : planes) {
+      try {
+        plane.elapseSecond();
+      } catch (Exception ex) {
+        throw new EApplicationException("Error processing elapseSecond() on plane " + plane.getReader().getCallsign() + ".", ex);
+      }
+    }
   }
 
 //

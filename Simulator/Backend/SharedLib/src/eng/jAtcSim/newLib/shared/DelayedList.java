@@ -8,7 +8,6 @@ import eng.jAtcSim.newLib.shared.contextLocal.Context;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.DynamicSimpleObjectSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
 
 import java.util.Collection;
 import java.util.LinkedList;

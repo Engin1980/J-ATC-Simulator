@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinates;
@@ -14,6 +15,8 @@ import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSimLib.xmlUtils.ObjectUtils;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class HoldPilot extends Pilot {
 
@@ -73,8 +76,8 @@ public class HoldPilot extends Pilot {
             wrt.addExperience(Mood.DepartureExperience.holdCycleFinished);
         } else {
           double newHeading = Coordinates.getHeadingToRadial(
-              rdr.getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial,
-              Coordinates.eHeadingToRadialBehavior.standard);
+                  rdr.getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial,
+                  Coordinates.eHeadingToRadialBehavior.standard);
           setTargetHeading(newHeading, LeftRightAny.any);
 
         }
@@ -102,8 +105,8 @@ public class HoldPilot extends Pilot {
 
           double newHeading;
           newHeading = this.turn == LeftRight.left
-              ? Headings.add(this.inboundRadial, -150)
-              : Headings.add(this.inboundRadial, 150);
+                  ? Headings.add(this.inboundRadial, -150)
+                  : Headings.add(this.inboundRadial, 150);
           setTargetHeading(newHeading, LeftRightAny.any);
           this.secondTurnTime = now.toStamp().addSeconds(120);
 
@@ -136,8 +139,8 @@ public class HoldPilot extends Pilot {
       case parallelAgainst:
         if (now.isAfter(this.secondTurnTime)) {
           double newHeading = (turn == LeftRight.left)
-              ? Headings.add(this.getOutboundHeading(), -210)
-              : Headings.add(this.getOutboundHeading(), +210);
+                  ? Headings.add(this.getOutboundHeading(), -210)
+                  : Headings.add(this.getOutboundHeading(), +210);
           setTargetHeading(newHeading, turn.getOpposite().toLeftRightAny());
           this.phase = eHoldPhase.parallelTurn;
         }
@@ -170,6 +173,14 @@ public class HoldPilot extends Pilot {
     return true;
   }
 
+  @Override
+  protected void _save(XElement target) {
+    XmlSaveUtils.Field.storeFields(target, this,
+            ObjectUtils.getFieldNamesExcept(this.getClass(), "navaid"));
+
+    XmlSaveUtils.Field.storeField(target, this, "navaid", (Navaid q) -> q.getName());
+  }
+
   private int getAfterSecondTurnHeading() {
     int ret;
     if (turn == LeftRight.left)
@@ -182,11 +193,11 @@ public class HoldPilot extends Pilot {
   @Override
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
-        AirplaneState.arrivingHigh,
-        AirplaneState.arrivingLow,
-        AirplaneState.holding,
-        AirplaneState.departingLow,
-        AirplaneState.departingHigh
+            AirplaneState.arrivingHigh,
+            AirplaneState.arrivingLow,
+            AirplaneState.holding,
+            AirplaneState.departingLow,
+            AirplaneState.departingHigh
     };
   }
 

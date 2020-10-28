@@ -1,10 +1,11 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class ArrivalPilot extends BasicPilot {
 
@@ -13,6 +14,11 @@ public class ArrivalPilot extends BasicPilot {
 
   public ArrivalPilot(Airplane plane) {
     super(plane);
+  }
+
+  @Override
+  protected void _save(XElement target) {
+    // nothing to save
   }
 
   @Override
@@ -39,8 +45,8 @@ public class ArrivalPilot extends BasicPilot {
   @Override
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
-        AirplaneState.arrivingHigh,
-        AirplaneState.arrivingLow
+            AirplaneState.arrivingHigh,
+            AirplaneState.arrivingLow
     };
   }
 
@@ -51,8 +57,8 @@ public class ArrivalPilot extends BasicPilot {
 
   private void setArrivingCloseFafStateIfReady() {
     double distToFaf = Context.getArea().getCurrentRunwayConfiguration()
-        .getArrivals().where(q -> q.isForCategory(rdr.getType().category))
-        .minDouble(q -> Coordinates.getDistanceInNM(rdr.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
+            .getArrivals().where(q -> q.isForCategory(rdr.getType().category))
+            .minDouble(q -> Coordinates.getDistanceInNM(rdr.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
     if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
       wrt.setState(AirplaneState.arrivingCloseFaf);
     }

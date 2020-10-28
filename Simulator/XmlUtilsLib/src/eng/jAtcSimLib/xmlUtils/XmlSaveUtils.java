@@ -4,14 +4,7 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.Squawk;
-import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
-import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.shared.time.ETimeStamp;
-import eng.jAtcSimLib.xmlUtils.formatters.CoordinateFormatter;
+import eng.jAtcSimLib.xmlUtils.serializers.DefaultXmlNames;
 
 import java.util.Map;
 
@@ -95,7 +88,9 @@ public class XmlSaveUtils {
 
   public static class Field {
 
-    public static void storeField(XElement target, Object object, String fieldName) {
+    public static void storeField(XElement target, Object object, String fieldName,
+                                  IMap<java.lang.Class<?>, Formatter<?>> customFormatters,
+                                  IMap<java.lang.Class<?>, Serializer<?>> customSerializers) {
       Object v = ObjectUtils.getFieldValue(object, fieldName);
 
       XElement tmp = new XElement(fieldName);
@@ -123,22 +118,16 @@ public class XmlSaveUtils {
         XmlSaveUtils.saveIntoElementContent(tmp, v.toString());
       else if (v instanceof String)
         XmlSaveUtils.saveIntoElementContent(tmp, (String) v);
-      else if (v instanceof ETimeStamp)
-        XmlSaveUtils.saveIntoElementContent(tmp, ((ETimeStamp) v).toString());
-      else if (v instanceof EDayTimeStamp)
-        XmlSaveUtils.saveIntoElementContent(tmp, ((EDayTimeStamp) v).toString());
-      else if (v instanceof EDayTimeRun)
-        XmlSaveUtils.saveIntoElementContent(tmp, ((EDayTimeRun) v).toString());
-      else if (v instanceof Callsign)
-        XmlSaveUtils.saveIntoElementContent(tmp, ((Callsign) v).toString(false));
-      else if (v instanceof Squawk)
-        XmlSaveUtils.saveIntoElementContent(tmp, ((Squawk) v).toString());
-      else if (v instanceof AtcId)
-        XmlSaveUtils.saveIntoElementContent(tmp, ((AtcId) v).getName());
-      else if (v instanceof Coordinate)
-        XmlSaveUtils.saveIntoElementContent(tmp, (Coordinate) v, new CoordinateFormatter());
+      else if (customFormatters != null && customFormatters.containsKey(v.getClass()))
+        XmlSaveUtils.saveIntoElementContent(tmp, v, (Formatter<Object>) customFormatters.get(v.getClass()));
+      else if (customSerializers != null && customSerializers.containsKey(v.getClass()))
+        XmlSaveUtils.saveIntoElementContent(tmp, v, (Serializer<Object>) customSerializers.get(v.getClass()));
       else
         throw new XmlUtilsException(sf("Failed to save type '%s'. This type is not supported by this function.", v.getClass()));
+    }
+
+    public static void storeField(XElement target, Object object, String fieldName) {
+      storeField(target, object, fieldName, null, null);
     }
 
     public static <T> void storeField(XElement target, Object object, String fieldName, Formatter<T> formatter) {
@@ -160,7 +149,15 @@ public class XmlSaveUtils {
 
     public static void storeFields(XElement target, Object object, String... fieldNames) {
       for (String fieldName : fieldNames) {
-        storeField(target, object, fieldName);
+        storeField(target, object, fieldName, null, null);
+      }
+    }
+
+    public static void storeFields(XElement target, Object object, String[] fieldNames,
+                                   IMap<java.lang.Class<?>, Formatter<?>> customFormatters,
+                                   IMap<java.lang.Class<?>, Serializer<?>> customSerializers) {
+      for (String fieldName : fieldNames) {
+        storeField(target, object, fieldName, customFormatters, customSerializers);
       }
     }
 
@@ -169,9 +166,13 @@ public class XmlSaveUtils {
         storeField(target, object, fieldName);
       }
     }
+
   }
 
   public static class Class {
+    public static void storeType(XElement target, Object value) {
+      saveIntoElementChild(target, DefaultXmlNames.CLASS_NAME, value.getClass().getName());
+    }
   }
 
   private static final String NULL_STRING = "(null)";
@@ -289,6 +290,10 @@ public class XmlSaveUtils {
   public static <T> void saveIntoElementContent(XElement target, T value, Formatter<T> formatter) {
     String s = formatter.invoke(value);
     saveIntoElementContent(target, s);
+  }
+
+  public static <T> void saveIntoElementContent(XElement target, T value, Serializer<T> serializer) {
+    serializer.invoke(target, value);
   }
 
   public static void saveIntoElementContent(XElement target, Number value) {

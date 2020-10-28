@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
@@ -7,6 +8,7 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class TakeOffPilot extends Pilot {
   //TODO add to airport config the acceleration altitude and use it here
@@ -53,6 +55,17 @@ public class TakeOffPilot extends Pilot {
   }
 
   @Override
+  public boolean isDivertable() {
+    return false;
+  }
+
+  @Override
+  protected void _save(XElement target) {
+    XmlSaveUtils.Field.storeField(target, this, "takeOffThreshold",
+            (ActiveRunwayThreshold q) -> q.getFullName());
+  }
+
+  @Override
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
             AirplaneState.holdingPoint
@@ -65,10 +78,5 @@ public class TakeOffPilot extends Pilot {
             AirplaneState.takeOffRoll,
             AirplaneState.takeOffGoAround
     };
-  }
-
-  @Override
-  public boolean isDivertable() {
-    return false;
   }
 }

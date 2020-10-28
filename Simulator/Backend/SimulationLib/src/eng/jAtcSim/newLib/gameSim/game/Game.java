@@ -9,7 +9,7 @@ import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
-import eng.jAtcSim.newLib.gameSim.xml.WeatherSourceFormatter;
+import eng.jAtcSim.newLib.gameSim.xml.WeatherSourceSerializer;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.EntriesViaStringSerializer;
 
@@ -121,17 +121,16 @@ public class Game implements IGame {
             q -> sf("%s;%s", q.getCompanyFileName(), q.getGeneralAviationFileName()));
     XmlSaveUtils.saveIntoElementChild(root, "trafficSource", this.trafficSource,
             q -> ((TrafficXmlSource) q).getFileName());
-    XmlSaveUtils.saveIntoElementChild(root, "weatherSource", this.weatherSource, new WeatherSourceFormatter());
+    XmlSaveUtils.saveIntoElementChild(root, "weatherSource", this.weatherSource, new WeatherSourceSerializer());
 
-    //sim saving here
     {
       XElement tmp = new XElement("simulation");
       this.simulation.save(tmp);
       root.addElement(tmp);
     }
-
-    XmlSaveUtils.saveIntoElementChild(root, "customData", customData,
-            new EntriesViaStringSerializer<>(q -> q, q -> q));
+//
+//    XmlSaveUtils.saveIntoElementChild(root, "customData", customData,
+//            new EntriesViaStringSerializer<>(q -> q, q -> q));
 
 
     XDocument doc = new XDocument(root);

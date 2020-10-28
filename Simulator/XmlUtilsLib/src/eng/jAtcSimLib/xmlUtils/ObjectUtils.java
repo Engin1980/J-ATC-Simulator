@@ -8,6 +8,7 @@ import eng.eSystem.utilites.ReflectionUtils;
 import eng.eSystem.validation.EAssert;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -29,13 +30,15 @@ public class ObjectUtils {
       f.setAccessible(true);
       v = f.get(object);
     } catch (NoSuchFieldException | IllegalAccessException ex) {
-      throw new EApplicationException(sf("Failed to read field value of object - %s.%s", object.getClass(), fieldName));
+      throw new EApplicationException(sf("Failed to read field value of object - %s.%s", object.getClass(), fieldName), ex);
     }
     return v;
   }
 
   public static IReadOnlyList<Field> getFields(Class<?> clazz) {
-    return ReflectionUtils.ClassUtils.getFields(clazz);
+    IReadOnlyList<Field>  ret = ReflectionUtils.ClassUtils.getFields(clazz);
+    ret = ret.where(q-> Modifier.isStatic(q.getModifiers()) == false);
+    return ret;
   }
 
   public static IReadOnlyList<String> getFieldNames(Class<?> clazz) {
