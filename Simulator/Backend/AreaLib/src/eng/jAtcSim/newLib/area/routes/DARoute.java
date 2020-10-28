@@ -3,7 +3,6 @@ package eng.jAtcSim.newLib.area.routes;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
@@ -15,8 +14,8 @@ public class DARoute extends Route {
 
   public static DARoute createNewVectoringByFix(Navaid n) {
     DARoute ret = new DARoute(new EList<>(),
-        DARouteType.vectoring, n.getName() + "/v", PlaneCategoryDefinitions.getAll(),
-        -1, n, null, null);
+            DARouteType.vectoring, n.getName() + "/v", PlaneCategoryDefinitions.getAll(),
+            -1, n, null, null);
     return ret;
   }
 
@@ -41,10 +40,6 @@ public class DARoute extends Route {
     this.entryAltitude = entryAltitude;
     this.maxMrvaAltitude = maxMrvaAltitude;
     this.calculatedRouteNavaids = calculateRouteNavaids();
-  }
-
-  public IReadOnlyList<Navaid> getRouteNavaids() {
-    return calculatedRouteNavaids;
   }
 
   public PlaneCategoryDefinitions getCategory() {
@@ -72,6 +67,10 @@ public class DARoute extends Route {
     return routeLength;
   }
 
+  public IReadOnlyList<Navaid> getRouteNavaids() {
+    return calculatedRouteNavaids;
+  }
+
   public DARouteType getType() {
     return type;
   }
@@ -81,18 +80,18 @@ public class DARoute extends Route {
     return ret;
   }
 
-  private IReadOnlyList<Navaid> calculateRouteNavaids(){
-    IList<String> navaidNames = this.getRouteCommands()
-        .whereItemClassIs(ToNavaidCommand.class,true)
-        .select(q->q.getNavaidName());
-    IList<Navaid> ret = navaidNames.select(q -> Context.getArea().getNavaids().getWithPBD(q));
-    return ret;
-  }
-
   @Override
   public String toString() {
     return "Route{" +
-        type +
-        ",'" + name + "'}";
+            type +
+            ",'" + name + "'}";
+  }
+
+  private IReadOnlyList<Navaid> calculateRouteNavaids() {
+    IList<String> navaidNames = this.getRouteCommands()
+            .whereItemClassIs(ToNavaidCommand.class, true)
+            .select(q -> q.getNavaidName());
+    IList<Navaid> ret = navaidNames.select(q -> Context.getArea().getNavaids().getWithPBD(q));
+    return ret;
   }
 }

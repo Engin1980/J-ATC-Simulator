@@ -1,11 +1,14 @@
 package eng.jAtcSim.newLib.atcs.internal;
 
 import eng.eSystem.collections.IList;
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public abstract class Atc {
 
@@ -53,6 +56,16 @@ public abstract class Atc {
   public int getReleaseAltitude() {
     return releaseAltitude;
   }
+
+  public final void save(XElement target) {
+    XmlSaveUtils.Field.storeField(target, this, "atcId", SharedXmlUtils.atcIdFormatter);
+
+    // altitudes are not saved as they are loaded from Area file
+
+    _save(target);
+  }
+
+  protected abstract void _save(XElement target);
 
   @Override
   public String toString() {

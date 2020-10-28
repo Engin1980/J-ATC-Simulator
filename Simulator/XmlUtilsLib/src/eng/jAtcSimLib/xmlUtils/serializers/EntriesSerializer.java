@@ -8,11 +8,11 @@ import java.util.Map;
 
 public class EntriesSerializer<TKey, TValue> implements Serializer<Iterable<Map.Entry<TKey, TValue>>> {
 
-  private final Consumer2<XElement, TKey> keyToElementConsumer;
-  private final Consumer2<XElement, TValue> valueToElementConsumer;
+  private final Serializer<TKey> keyToElementConsumer;
+  private final Serializer<TValue> valueToElementConsumer;
 
-  public EntriesSerializer(Consumer2<XElement, TKey> keyToElementConsumer,
-                           Consumer2<XElement, TValue> valueToElementConsumer) {
+  public EntriesSerializer(Serializer<TKey> keyToElementConsumer,
+                           Serializer<TValue> valueToElementConsumer) {
     this.keyToElementConsumer = keyToElementConsumer;
     this.valueToElementConsumer = valueToElementConsumer;
   }

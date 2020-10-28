@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.area;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
 

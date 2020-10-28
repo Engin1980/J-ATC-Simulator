@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.utilites.CacheUsingProducer;
 import eng.eSystem.validation.EAssert;
@@ -13,10 +14,11 @@ import eng.jAtcSim.newLib.atcs.context.AtcAcc;
 import eng.jAtcSim.newLib.atcs.context.IAtcAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.ContextManager;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class AtcModule {
   private final AtcProvider atcProvider;
-  private CacheUsingProducer<IReadOnlyList<AtcId>> userAtcsCache = new CacheUsingProducer<>(this::evaluateUserAtcs);
+  private final CacheUsingProducer<IReadOnlyList<AtcId>> userAtcsCache = new CacheUsingProducer<>(this::evaluateUserAtcs);
 
   public AtcModule(AtcProvider atcProvider) {
     EAssert.Argument.isNotNull(atcProvider, "atcProvider");
@@ -70,6 +72,11 @@ public class AtcModule {
 
   public void registerNewPlane(IAirplane tmp) {
     this.atcProvider.registerNewPlane(tmp.getAtc().getTunedAtc(), tmp.getCallsign());
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeField(target, this, "atcProvider",
+            (XElement e, AtcProvider q)->q.save(e));
   }
 
   public RunwayConfiguration tryGetSchedulerRunwayConfiguration() {

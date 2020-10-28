@@ -44,7 +44,7 @@ public class RunwayCheckInfo {
     RunwayCheckInfo ret = new RunwayCheckInfo(maxTime, SNOW_MAINENANCE_DURATION);
     return ret;
   }
-  private int expectedDurationInMinutes;
+  private final int expectedDurationInMinutes;
   private EDayTimeStamp realDurationEnd;
   private SchedulerForAdvice scheduler;
 

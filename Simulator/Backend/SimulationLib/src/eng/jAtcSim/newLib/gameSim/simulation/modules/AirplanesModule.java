@@ -4,7 +4,6 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
@@ -38,9 +37,12 @@ import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
+import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -161,15 +163,20 @@ public class AirplanesModule extends SimulationModule {
     XmlSaveUtils.Field.storeField(target, this, "airplanesController",
             (XElement e, AirplanesController q) -> q.save(e));
 
-    throw new ToDoException("tady dopsat");
+    XmlSaveUtils.Field.storeField(target, this, "airproxController",
+            (XElement e, AirproxController q) -> q.save(e));
 
-//    private final AirplanesController airplanesController;
-//    private final AirproxController airproxController;
-//    private final EmergencyAppearanceController emergencyAppearanceController;
-//    private final MoodManager moodManager;
-//    private final MrvaController mrvaController;
-//    private final IList<IAirplaneInfo> planes4public = new EList<>();
-//    private final IList<AirplaneTemplate> planesPrepared = new EList<>();
+    XmlSaveUtils.Field.storeField(target, this, "emergencyAppearanceController",
+            SimpleObjectSerializer.createFor(EmergencyAppearanceController.class, true)
+                    .useFormatters(SharedXmlUtils.formattersMap));
+
+    XmlSaveUtils.Field.storeField(target, this, "moodManager",
+            (XElement e, MoodManager q) -> q.save(e));
+
+    // mrvaController not saved, everything can be restored on load
+
+    XmlSaveUtils.Items.saveIntoElementChild(target, "planesPrepared", planesPrepared,
+            new ItemsSerializer<>((e, q) -> q.save(e)));
   }
 
   private void addAirplaneInfo(IAirplane tmp) {
@@ -307,7 +314,6 @@ public class AirplanesModule extends SimulationModule {
     airplanesController.updatePlanes();
   }
 }
-
 
 class AirplaneInfo implements IAirplaneInfo {
 

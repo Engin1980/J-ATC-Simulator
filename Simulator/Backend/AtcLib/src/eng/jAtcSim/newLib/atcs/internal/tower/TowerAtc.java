@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.atcs.internal.tower;
 
 
 import eng.eSystem.collections.*;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
@@ -34,6 +35,10 @@ import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.weather.Weather;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.EntriesSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.recursiveObjectSerializer.RecursiveObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -124,6 +129,11 @@ public class TowerAtc extends ComputerAtc {
     }
 
     @Override
+    public void onAfterIncomingPlaneGoodDayNotificationConfirmed(Squawk sqwk) {
+
+    }
+
+    @Override
     public void onOutgoingPlaneSwitchCompleted(Squawk squawk) {
       IAirplane plane = Context.Internal.getPlane(squawk);
       if (plane.isDeparture()) {
@@ -131,11 +141,6 @@ public class TowerAtc extends ComputerAtc {
       } else {
         arrivalManager.goAroundPlane(plane);
       }
-    }
-
-    @Override
-    public void onAfterIncomingPlaneGoodDayNotificationConfirmed(Squawk sqwk) {
-
     }
 
     @Override
@@ -155,6 +160,16 @@ public class TowerAtc extends ComputerAtc {
 
     public RunwayConfiguration getScheduled() {
       return scheduled;
+    }
+
+    public void save(XElement target) {
+      XmlSaveUtils.Field.storeField(target, this, "scheduler",
+              SimpleObjectSerializer.createFor(SchedulerForAdvice.class, true));
+      XmlSaveUtils.Field.storeField(target, this, "current",
+              (RunwayConfiguration q) -> q.getGID().toString());
+      if (scheduled != null)
+        XmlSaveUtils.Field.storeField(target, this, "scheduled",
+                (RunwayConfiguration q) -> q.getGID().toString());
     }
   }
 
@@ -293,6 +308,21 @@ public class TowerAtc extends ComputerAtc {
       RunwayCheckInfo rwyCheck = RunwayCheckInfo.createImmediateAfterEmergency();
       runwayChecks.set(rwy.getName(), rwyCheck);
     }
+  }
+
+  @Override
+  protected void __save(XElement target) {
+    XmlSaveUtils.Field.storeField(target, this, "isUpdatedWeather");
+    XmlSaveUtils.Field.storeField(target, this, "departureManager",
+            (XElement e, DepartureManager q) -> q.save(e));
+    XmlSaveUtils.Field.storeField(target, this, "arrivalManager",
+            (XElement e, ArrivalManager q) -> q.save(e));
+    XmlSaveUtils.Field.storeField(target, this, "inUseInfo",
+            (XElement e, RunwaysInUseInfo q) -> q.save(e));
+    XmlSaveUtils.Field.storeField(target, this, "runwayChecks",
+            new EntriesSerializer<String, RunwayCheckInfo>(
+                    (e, q) -> e.setContent(q),
+                    new RecursiveObjectSerializer<>()));
   }
 
   @Override

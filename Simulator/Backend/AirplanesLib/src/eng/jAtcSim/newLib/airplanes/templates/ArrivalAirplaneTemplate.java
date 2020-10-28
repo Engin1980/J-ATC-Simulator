@@ -1,10 +1,13 @@
 package eng.jAtcSim.newLib.airplanes.templates;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.area.EntryExitPoint;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class ArrivalAirplaneTemplate extends AirplaneTemplate {
   private final Coordinate coordinate;
@@ -41,5 +44,11 @@ public class ArrivalAirplaneTemplate extends AirplaneTemplate {
 
   public int getSpeed() {
     return speed;
+  }
+
+  @Override
+  protected void _save(XElement target) {
+    XmlSaveUtils.Field.storeFields(target, this, "heading", "altitude", "speed");
+    XmlSaveUtils.Field.storeField(target, this, "coordinate", SharedXmlUtils.coordinateFormatter);
   }
 }

@@ -2,8 +2,12 @@ package eng.jAtcSim.newLib.mood;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.EntriesSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -24,6 +28,13 @@ public class MoodManager {
   public void registerCallsign(Callsign callsign) {
     EAssert.isTrue(inner.containsKey(callsign));
     inner.set(callsign, new Mood());
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Entries.saveIntoElementContent(target, inner,
+            new EntriesSerializer<>(
+                    (e, q) -> SharedXmlUtils.callsignSerializer.invoke(e, q),
+                    (e, q) -> q.save(e)));
   }
 
   public void unregister(Callsign callsign) {

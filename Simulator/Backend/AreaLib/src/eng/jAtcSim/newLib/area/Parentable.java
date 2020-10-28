@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.area;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventAnonymousSimple;
 
 public abstract class Parentable<T> {

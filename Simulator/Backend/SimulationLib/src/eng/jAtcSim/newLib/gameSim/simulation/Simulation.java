@@ -278,10 +278,7 @@ public class Simulation {
 
   public void save(XElement target) {
     /*
-  private final AtcModule atcModule;
   private final IOModule ioModule;
-  private boolean isElapseSecondCalculationRunning = false;
-  public ISimulation isim = this.new MySimulation();
   private final StatsModule statsModule;
      */
 
@@ -292,6 +289,9 @@ public class Simulation {
     XmlSaveUtils.Field.storeField(target, this, "airplanesModule",
             (XElement e, AirplanesModule q) -> q.save(e));
 
+    XmlSaveUtils.Field.storeField(target, this, "atcModule",
+            (XElement e, AtcModule q) -> q.save(e));
+
     XmlSaveUtils.Field.storeField(target, this, "timerModule",
             (XElement e, TimerModule q) -> q.save(e));
 
@@ -301,9 +301,7 @@ public class Simulation {
     XmlSaveUtils.Field.storeField(target, this, "weatherModule",
             (XElement e, WeatherModule q) -> q.save(e));
 
-
     // worldModule not saved
-
   }
 
   private void elapseSecond() {

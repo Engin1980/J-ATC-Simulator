@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 public class EmergencyAppearanceController {
   private EDayTimeStamp nextEmergencyTime;
-  private double emergencyPerDayProbability;
+  private final double emergencyPerDayProbability;
 
   public EmergencyAppearanceController(double emergencyPerDayProbability) {
     this.emergencyPerDayProbability = emergencyPerDayProbability;

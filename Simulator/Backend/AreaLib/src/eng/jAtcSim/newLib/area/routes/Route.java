@@ -6,9 +6,11 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Parentable;
+import eng.jAtcSim.newLib.shared.GID;
+import eng.jAtcSim.newLib.shared.WithGID;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 
-public abstract class Route extends Parentable<Airport> {
+public abstract class Route extends Parentable<Airport> implements WithGID {
 
   //  protected static IList<XElement> lookForElementRecursively(XElement source, String elementName) {
 //    IList<XElement> ret = new EList<>();
@@ -157,9 +159,17 @@ public abstract class Route extends Parentable<Airport> {
 //    return cmd;
 //  }
 
+  private final GID gid;
+
   public Route(IReadOnlyList<ICommand> routeCommands) {
     EAssert.Argument.isNotNull(routeCommands, "routeCommands");
+    this.gid = GID.create();
     this.routeCommands = new EList<>(routeCommands);
+  }
+
+  @Override
+  public GID getGID() {
+    return this.gid;
   }
 
   public IReadOnlyList<ICommand> getRouteCommands() {

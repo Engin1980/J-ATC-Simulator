@@ -23,13 +23,13 @@ public class WeatherSourceSerializer implements Serializer<WeatherSource> {
       target.setAttribute(DefaultXmlNames.CLASS_NAME, "WeatherUserSource");
       WeatherUserSource w = (WeatherUserSource) value;
       XmlSaveUtils.Field.storeField(target, w, "initialWeather",
-              SimpleObjectSerializer.createFor(Weather.class));
+              SimpleObjectSerializer.createFor(Weather.class, true));
     } else if (value instanceof WeatherOnlineSource) {
       target.setAttribute(DefaultXmlNames.CLASS_NAME, "WeatherUserSource");
       WeatherOnlineSource w = (WeatherOnlineSource) value;
       XmlSaveUtils.Field.storeField(target, w, "icao");
       XmlSaveUtils.Field.storeField(target, w, "fallbackWeather",
-              SimpleObjectSerializer.createFor(Weather.class));
+              SimpleObjectSerializer.createFor(Weather.class, true));
     } else {
       throw new EApplicationException("Unsupported weather source type " + value.getClass().getName());
     }

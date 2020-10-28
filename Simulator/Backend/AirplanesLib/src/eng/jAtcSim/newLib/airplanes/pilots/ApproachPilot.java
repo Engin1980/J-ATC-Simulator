@@ -124,8 +124,7 @@ public class ApproachPilot extends Pilot {
   protected void _save(XElement target) {
     XmlSaveUtils.Field.storeField(target, this, "currentStageIndex");
     XmlSaveUtils.Field.storeField(target, this, "iafRoute",
-            (XElement e, IafRoute q) ->
-                    new RecursiveObjectSerializer<>().with(Navaid.class, n->n.getName()));
+            (IafRoute q) -> q.getGID().toString());
     XmlSaveUtils.Field.storeField(target, this, "approach",
             (XElement e, Approach a) ->
                     new RecursiveObjectSerializer<>().with(Navaid.class, n->n.getName()));

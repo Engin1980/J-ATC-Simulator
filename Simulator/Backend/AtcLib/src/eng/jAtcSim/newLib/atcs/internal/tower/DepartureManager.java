@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.atcs.internal.tower;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
@@ -17,6 +18,9 @@ import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToRouteCommand;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.EntriesViaStringSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
 
 import java.util.function.Consumer;
 
@@ -147,6 +151,33 @@ class DepartureManager {
             Participant.createAirplane(plane.getCallsign()),
             new SpeechList<ICommand>(ClearedToRouteCommand.create(r.getName(), r.getType(), runwayThreshold.getName())));
     this.messageSenderConsumer.accept(m);
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeField(target, this, "holdingPointNotAssigned",
+            new ItemsViaStringSerializer<IAirplane>(q -> q.getSqwk().toString()));
+    XmlSaveUtils.Field.storeField(target, this, "holdingPointWaitingForAppSwitchConfirmation",
+            new ItemsViaStringSerializer<IAirplane>(q -> q.getSqwk().toString()));
+    XmlSaveUtils.Field.storeField(target, this, "holdingPointReady",
+            new ItemsViaStringSerializer<IAirplane>(q -> q.getSqwk().toString()));
+    XmlSaveUtils.Field.storeField(target, this, "departing",
+            new ItemsViaStringSerializer<IAirplane>(q -> q.getSqwk().toString()));
+
+    XmlSaveUtils.Field.storeField(target, this, "departureSwitchAltitude",
+            new EntriesViaStringSerializer<IAirplane, Double>(
+                    q -> q.getSqwk().toString(), q -> Double.toString(q)));
+
+    XmlSaveUtils.Field.storeField(target, this, "holdingPointWaitingTimeMap",
+            new EntriesViaStringSerializer<IAirplane, EDayTimeStamp>(
+                    q -> q.getSqwk().toString(), q -> q.toString()));
+
+    XmlSaveUtils.Field.storeField(target,this,"lastDepartingPlane",
+            new EntriesViaStringSerializer<ActiveRunwayThreshold, IAirplane>(
+                    q -> q.getFullName(), q->q.getSqwk().toString()));
+
+    XmlSaveUtils.Field.storeField(target,this,"lastDeparturesTime",
+            new EntriesViaStringSerializer<ActiveRunwayThreshold, EDayTimeStamp>(
+                    q -> q.getFullName(), q->q.toString()));
   }
 
   public IAirplane tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {

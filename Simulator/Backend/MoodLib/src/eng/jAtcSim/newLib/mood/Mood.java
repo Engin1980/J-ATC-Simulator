@@ -72,9 +72,9 @@ public class Mood {
     return Context.getShared().getNow().toStamp();
   }
 
-  private IList<Experience<ArrivalExperience>> arrivalExperiences;
-  private IList<Experience<DepartureExperience>> departureExperiences;
-  private IList<Experience<SharedExperience>> sharedExperiences;
+  private final IList<Experience<ArrivalExperience>> arrivalExperiences;
+  private final IList<Experience<DepartureExperience>> departureExperiences;
+  private final IList<Experience<SharedExperience>> sharedExperiences;
 
   public Mood() {
     this.arrivalExperiences = new EList<>();

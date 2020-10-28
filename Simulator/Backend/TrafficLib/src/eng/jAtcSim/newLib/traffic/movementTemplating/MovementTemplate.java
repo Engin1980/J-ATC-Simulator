@@ -3,8 +3,8 @@ package eng.jAtcSim.newLib.traffic.movementTemplating;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
 
 public abstract class MovementTemplate {
   public enum eKind {
@@ -48,7 +48,7 @@ public abstract class MovementTemplate {
   public void save(XElement target) {
     XmlSaveUtils.Field.storeField(target, this, "kind");
     XmlSaveUtils.Field.storeField(target, this, "appearanceTime",
-            SimpleObjectSerializer.createFor(ETimeStamp.class));
+            SharedXmlUtils.iTimeFormatter);
     XmlSaveUtils.Field.storeField(target, this, "entryExitInfo",
             (XElement e, EntryExitInfo q) -> q.save(e));
   }

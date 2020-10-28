@@ -246,7 +246,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
             "lastVerticalSpeed", "targetHeading", "targetHeadingTurn");
 
     XmlSaveUtils.Field.storeField(target, this, "altitude",
-            SimpleObjectSerializer.createFor(InertialValue.class));
+            SimpleObjectSerializer.createFor(InertialValue.class, true));
 
     XmlSaveUtils.Field.storeField(target, this, "heading",
             (XElement e, HeadingInertialValue q) -> {
@@ -257,13 +257,13 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
             });
 
     XmlSaveUtils.Field.storeField(target, this, "speed",
-            SimpleObjectSerializer.createFor(InertialValue.class));
+            SimpleObjectSerializer.createFor(InertialValue.class,true));
 
     XmlSaveUtils.Field.storeField(target, this, "targetAltitude",
-            SimpleObjectSerializer.createFor(RestrictableItem.class));
+            SimpleObjectSerializer.createFor(RestrictableItem.class,true));
 
     XmlSaveUtils.Field.storeField(target, this, "targetSpeed",
-            SimpleObjectSerializer.createFor(RestrictableItem.class));
+            SimpleObjectSerializer.createFor(RestrictableItem.class,true));
 
     XmlSaveUtils.Field.storeField(target, this, "navigator",
             new DynamicSimpleObjectSerializer<Navigator>());

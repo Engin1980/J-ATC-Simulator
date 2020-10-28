@@ -8,6 +8,7 @@ package eng.jAtcSim.newLib.atcs.internal;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.atcs.IUserAtcInterface;
@@ -27,6 +28,8 @@ import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -149,6 +152,14 @@ public class UserAtc extends Atc implements IUserAtcInterface {
     this.planes.tryRemove(plane);
   }
 
+  @Override
+  protected void _save(XElement target) {
+    XmlSaveUtils.Field.storeField(target,this, "planes",
+            new ItemsViaStringSerializer<IAirplane>(q->q.getSqwk().toString()));
+
+    // thisSecondMessages ignored as they should be deleted after "elapseSecond"
+  }
+
   //TODEL
   private void processIncomingGoodDayFromPlane(IAirplane plane) {
     // intentionally blank
@@ -168,193 +179,4 @@ public class UserAtc extends Atc implements IUserAtcInterface {
     IAirplane plane = Context.Internal.getPlane(toCallsign);
     this.planes.remove(plane);
   }
-
-//  @Override
-//  protected void _load(XElement elm) {
-//
-//  }
-//
-//  @Override
-//  protected void _save(XElement elm) {
-//
-//  }
-
-//  private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(IAirplane plane, SpeechList<IForPlaneSpeech> speeches) {
-//    ContactCommand cc = (ContactCommand) speeches.tryGetFirst(q -> q instanceof ContactCommand);
-//    if (cc != null)
-//      Context.Internal.getPre().setResponsibleAtc(plane.getSqwk(), this.getAtcId());
-//  }
-
-
-//  private void raiseError(String text) {
-//    //TODO do not know what this is doing:
-//    super.getRecorder().write("ERR", text);
-//    switch (this.errorBehavior) {
-//      case sendSystemErrors:
-//        sendError(text);
-//        break;
-//      case throwExceptions:
-//        throw new ERuntimeException(text);
-//      default:
-//        throw new UnsupportedOperationException();
-//    }
-//  }
-
-//  private String[] splitToCallsignAndMessages(String msg) {
-//    String[] ret = new String[2];
-//    int i = msg.indexOf(" ");
-//    if (i == msg.length() || i < 0) {
-//      ret[0] = msg;
-//      ret[1] = "";
-//    } else {
-//      ret[0] = msg.substring(0, i);
-//      ret[1] = msg.substring(i + 1);
-//    }
-//    return ret;
-//  }
-
-  // TODEL
-//  private void processOutgoingPlaneSwitchMessage(AtcId atcId, Callsign callsign, String additionalMessage) {
-//
-//    IAtcSpeech msg;
-//    Squawk sqwk = Context.Internal.getPlane(callsign).getSqwk();
-//    if (this.planes.isAny(q -> q.getCallsign().equals(callsign)))
-//
-//      if (pre.getResponsibleAtc(sqwk).equals(this.getAtcId())) {
-//        // it is my plane
-//        if (prm.forAtc().isUnderSwitchRequest(callsign, this.getAtcId(), null)) {
-//          // is already under switch request?
-//          prm.forAtc().cancelSwitchRequest(this.getAtcId(), callsign);
-//          msg = new PlaneSwitchRequestCancelation(sqwk);
-//        } else {
-//          // create new switch request
-//          prm.forAtc().createSwitchRequest(this.getAtcId(), otherAtc.getAtcId(), callsign);
-//          msg = PlaneSwitchRequest.createFromUser(sqwk, null, null);
-//        }
-//      } else {
-//        // it is not my plane
-//        if (prm.forAtc().isUnderSwitchRequest(callsign, otherAtc.getAtcId(), this.getAtcId())) {
-//          // is under switch request to me, I am making a confirmation
-//          if (additionalMessage == null) {
-//            prm.forAtc().confirmSwitchRequest(callsign, this.getAtcId(), null);
-//            //TODO this is not correct, the original message should be passed somehow here
-//            msg = new AtcConfirmation(PlaneSwitchRequest.createFromComputer(sqwk));
-//          } else {
-//            Tuple<SwitchRoutingRequest, String> routing = decodeAdditionalRouting(
-//                    additionalMessage, callsign);
-//            if (routing.getB() != null) {
-//              sendError(new AtcRejection(PlaneSwitchRequest.createFromComputer(sqwk), routing.getB()));
-//              return;
-//            } else
-//              prm.forAtc().confirmSwitchRequest(callsign, this.getAtcId(), routing.getA());
-//            msg = new AtcConfirmation(PlaneSwitchRequest.createFromComputer(sqwk));
-//          }
-//        } else {
-//          // making a confirmation to non-requested switch? or probably an error
-//          sendError(new AtcRejection(PlaneSwitchRequest.createFromComputer(sqwk),
-//                  "SQWK " + sqwk + " not under your control and not under a switch request."));
-//          return;
-//        }
-//      }
-//
-//    Message m = new Message(
-//            Participant.createAtc(this.getAtcId()),
-//            Participant.createAtc(otherAtc.getAtcId()),
-//            msg);
-//    super.sendMessage(m);
-//  }
-
-  //TODEL delete when unused
-//  public void sendToPlane(String line) {
-//    throw new ToDoException("This definitely must be somewhere else.");
-////    String[] tmp = splitToCallsignAndMessages((line));
-////    String airplaneCallsignOrPart = tmp[0];
-////    String commands = tmp[1];
-////
-////    Airplane p = Airplanes.tryGetByCallsingOrNumber(Acc.planes(), airplaneCallsignOrPart);
-////    if (p == null) {
-////      raiseError(
-////          "Cannot identify airplane under callsign (or part) \"" + airplaneCallsignOrPart + "\". None or multiple planes identified.");
-////      return;
-////    }
-////
-////    SpeechList cmdList;
-////    try {
-////      cmdList = parser.parseMulti(commands);
-////    } catch (Exception ex) {
-////      raiseError(ex.getMessage());
-////      return;
-////    }
-////    sendToPlane(p, cmdList);
-//  }
-
-  //TODEL delete when unused
-//  public void sendToPlane(Callsign c, SpeechList speeches) {
-//    //TODO remove after some verification
-//    try {
-//      Context.Internal.getPlane(c);
-//    } catch (Exception ex) {
-//      throw new EApplicationException("Messages for plane " + c + " cannot be send. Plane not found.");
-//    }
-//
-//    confirmAtcChangeInPlaneResponsibilityManagerIfRequired(c, speeches);
-//    Message m = new Message(
-//            Participant.createAtc(this.getAtcId()),
-//            Participant.createAirplane(c),
-//            speeches);
-//    super.sendMessage(m);
-//  }
-
-
-  //TODO delete this when unused
-//  public void sendPlaneSwitchMessageToAtc(AtcType type, String message) {
-//    //TODO Implement this: Rewrite using new idea when parsing is already done here
-//    throw new ToDoException("Rewrite using new idea when parsing is already done here");
-//
-////    if (message.matches("\\d{4}.*")) {
-////      //TODO rewrite using custom message class
-////      // it is plane switch message
-////      String[] tmp = RegexUtils.extractGroups(message, "^(\\d{4})( (.+))?$");
-////      Squawk s = Squawk.tryCreate(tmp[1]);
-////      if (s == null) {
-////        raiseError("\"" + tmp[1] + "\" is not valid transponder code.");
-////        return;
-////      }
-////      IAirplane plane = AirplaneAcc.getAirplanes().tryGet(s);
-////      if (plane == null) {
-////        raiseError("SQWK " + s.toString() + " does not exist.");
-////        return;
-////      }
-////      AtcId atcId = InternalAcc.getAtc(type).getAtcId();
-////      sendPlaneSwitchMessageToAtc(atcId, plane.getCallsign(), tmp[3]);
-////    } else {
-////      throw new ToDoException("Rewrite using custom command/notification classes.");
-//    // it is different message to atc
-////      try {
-////        IAtc2Atc content = parser.parseAtc(message);
-////        sendOtherMessageToAtc(type, content);
-////      } catch (Exception ex) {
-////        raiseError("\"" + message + "\" has invalid syntax as message for ATC");
-////      }
-////    }
-//  }
-
-  //TODEL
-//  public void sendError(IMessageContent content) {
-//    Message m = new Message(
-//            Participant.createSystem(),
-//            Participant.createAtc(this.getAtcId()),
-//            content);
-//    super.sendMessage(m);
-//  }
-
-//TODEL
-//  public void sendOtherMessageToAtc(AtcId recieverAtcId, IMessageContent msg) {
-//    Message m = new Message(
-//            Participant.createAtc(this.getAtcId()),
-//            Participant.createAtc(recieverAtcId),
-//            msg);
-//    super.sendMessage(m);
-//  }
-
 }

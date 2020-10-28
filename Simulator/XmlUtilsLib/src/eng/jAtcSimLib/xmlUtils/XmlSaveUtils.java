@@ -75,20 +75,25 @@ public class XmlSaveUtils {
     public static <K, V> XElement saveAsElement(String elementName, Iterable<Map.Entry<K, V>> entries,
                                                 Serializer<Iterable<Map.Entry<K, V>>> serializer) {
       XElement elm = new XElement(elementName);
-      saveIntoElement(elm, entries, serializer);
+      saveIntoElementContent(elm, entries, serializer);
       return elm;
     }
 
-    public static <K, V> void saveIntoElement(XElement parent, Iterable<Map.Entry<K, V>> entries,
+    public static <K, V> void saveIntoElementContent(XElement parent, Iterable<Map.Entry<K, V>> entries,
                                               Serializer<Iterable<Map.Entry<K, V>>> serializer) {
       serializer.invoke(parent, entries);
     }
 
+    public static <K, V> void saveIntoElementChild(XElement parent, String innerElementName, Iterable<Map.Entry<K, V>> entries,
+                                                     Serializer<Iterable<Map.Entry<K, V>>> serializer) {
+      parent.addElement(
+              saveAsElement(innerElementName, entries, serializer));
+    }
   }
 
   public static class Field {
 
-    public static void storeField(XElement target, Object object, String fieldName,
+    private static void storeField(XElement target, Object object, String fieldName,
                                   IMap<java.lang.Class<?>, Formatter<?>> customFormatters,
                                   IMap<java.lang.Class<?>, Serializer<?>> customSerializers) {
       Object v = ObjectUtils.getFieldValue(object, fieldName);

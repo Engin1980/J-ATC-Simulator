@@ -4,12 +4,15 @@ import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
 
 class ArrivalManager {
   private final IList<IAirplane> goAroundedPlanesToSwitchList = new EDistinctList<>(EDistinctList.Behavior.exception);
@@ -92,6 +95,14 @@ class ArrivalManager {
       this.landingPlanesList.add(plane);
     else
       this.goAroundedPlanesToSwitchList.add(plane);
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeField(target,this, "goAroundedPlanesToSwitchList",
+      new ItemsViaStringSerializer<IAirplane>(q->q.getSqwk().toString()));
+
+    XmlSaveUtils.Field.storeField(target,this, "landingPlanesList",
+            new ItemsViaStringSerializer<IAirplane>(q->q.getSqwk().toString()));
   }
 
   public void unregisterFinishedArrival(IAirplane plane) {

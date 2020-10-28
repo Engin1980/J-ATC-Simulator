@@ -1,10 +1,15 @@
 package eng.jAtcSim.newLib.airplanes.templates;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.area.EntryExitPoint;
+import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
 
 public abstract class AirplaneTemplate {
   private final Callsign callsign;
@@ -33,12 +38,18 @@ public abstract class AirplaneTemplate {
     this.entryDelay = entryDelay;
   }
 
+  protected abstract void _save(XElement target);
+
   public AirplaneType getAirplaneType() {
     return airplaneType;
   }
 
   public Callsign getCallsign() {
     return callsign;
+  }
+
+  public int getEntryDelay() {
+    return entryDelay;
   }
 
   public EDayTimeStamp getEntryTime() {
@@ -49,7 +60,14 @@ public abstract class AirplaneTemplate {
     return expectedExitTime;
   }
 
-  public int getEntryDelay() {
-    return entryDelay;
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeFields(target, this,
+            new String[]{"callsign", "airplaneType", "expectedExitTime", "entryTime", "entryDelay"},
+            SharedXmlUtils.formattersMap, null);
+    XmlSaveUtils.Field.storeField(target, this, "entryExitPoint",
+            SimpleObjectSerializer.createFor(entryExitPoint.getClass(), true)
+                    .useFormatter(Navaid.class, q -> q.getName()));
+
+    this._save(target);
   }
 }

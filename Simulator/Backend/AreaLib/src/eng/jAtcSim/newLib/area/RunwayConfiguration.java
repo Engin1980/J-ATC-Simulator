@@ -5,18 +5,20 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
+import eng.jAtcSim.newLib.shared.GID;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
+import eng.jAtcSim.newLib.shared.WithGID;
 
-public class RunwayConfiguration {
+public class RunwayConfiguration implements WithGID {
 
   public static RunwayConfiguration createForThresholds(IReadOnlyList<ActiveRunwayThreshold> rts) {
     IList<RunwayThresholdConfiguration> lst;
     lst = rts.select(q -> new RunwayThresholdConfiguration(
-        PlaneCategoryDefinitions.getAll(),
-        q,
-        false,
-        true,
-        true));
+            PlaneCategoryDefinitions.getAll(),
+            q,
+            false,
+            true,
+            true));
     RunwayConfiguration ret = new RunwayConfiguration(0, 359, 0, 999, lst, lst);
     ret.bind();
     return ret;
@@ -36,20 +38,21 @@ public class RunwayConfiguration {
 //    boolean ret = lineA.intersectsLine(lineB);
 
     boolean ret = LineUtils.linesIntersect(
-        //l1-from
-        (float) a.getThresholdA().getCoordinate().getLatitude().get(),
-        (float) a.getThresholdA().getCoordinate().getLongitude().get(),
-        //l1-to
-        (float) a.getThresholdB().getCoordinate().getLatitude().get(),
-        (float) a.getThresholdB().getCoordinate().getLongitude().get(),
-        //l2-from
-        (float) b.getThresholdA().getCoordinate().getLatitude().get(),
-        (float) b.getThresholdA().getCoordinate().getLongitude().get(),
-        //l2-to
-        (float) b.getThresholdB().getCoordinate().getLatitude().get(),
-        (float) b.getThresholdB().getCoordinate().getLongitude().get());
+            //l1-from
+            (float) a.getThresholdA().getCoordinate().getLatitude().get(),
+            (float) a.getThresholdA().getCoordinate().getLongitude().get(),
+            //l1-to
+            (float) a.getThresholdB().getCoordinate().getLatitude().get(),
+            (float) a.getThresholdB().getCoordinate().getLongitude().get(),
+            //l2-from
+            (float) b.getThresholdA().getCoordinate().getLatitude().get(),
+            (float) b.getThresholdA().getCoordinate().getLongitude().get(),
+            //l2-to
+            (float) b.getThresholdB().getCoordinate().getLatitude().get(),
+            (float) b.getThresholdB().getCoordinate().getLongitude().get());
     return ret;
   }
+  private final GID gid;
   private final IList<RunwayThresholdConfiguration> arrivals;
   private IList<ISet<ActiveRunwayThreshold>> crossedThresholdSets = null;
   private final IList<RunwayThresholdConfiguration> departures;
@@ -57,9 +60,11 @@ public class RunwayConfiguration {
   private final int windSpeedFrom;
   private final int windSpeedTo;
   private final int windTo;
+
   public RunwayConfiguration(int windFrom, int windTo, int windSpeedFrom, int windSpeedTo,
                              IList<RunwayThresholdConfiguration> arrivals,
                              IList<RunwayThresholdConfiguration> departures) {
+    this.gid = GID.create();
     this.windFrom = windFrom;
     this.windTo = windTo;
     this.windSpeedFrom = windSpeedFrom;
@@ -70,9 +75,9 @@ public class RunwayConfiguration {
 
   public boolean accepts(int heading, int speed) {
     boolean ret =
-        Headings.isBetween(this.windFrom, heading, this.windTo)
-            &&
-            NumberUtils.isBetweenOrEqual(this.windSpeedFrom, speed, this.windSpeedTo);
+            Headings.isBetween(this.windFrom, heading, this.windTo)
+                    &&
+                    NumberUtils.isBetweenOrEqual(this.windSpeedFrom, speed, this.windSpeedTo);
     return ret;
   }
 
@@ -91,6 +96,11 @@ public class RunwayConfiguration {
 
   public IReadOnlyList<RunwayThresholdConfiguration> getDepartures() {
     return departures;
+  }
+
+  @Override
+  public GID getGID() {
+    return this.gid;
   }
 
   public int getWindFrom() {
@@ -131,15 +141,15 @@ public class RunwayConfiguration {
 
     sb.append("Departures - ");
     sb.appendItems(
-        departures.select(q -> new Tuple<>(q.getThreshold().getName(), q.getCategories().toString())),
-        q -> q.getA() + " for " + q.getB(),
-        ", ");
+            departures.select(q -> new Tuple<>(q.getThreshold().getName(), q.getCategories().toString())),
+            q -> q.getA() + " for " + q.getB(),
+            ", ");
     sb.append(departureArrivalSeparator);
     sb.append("Arrivals - ");
     sb.appendItems(
-        arrivals.select(q -> new Tuple<>(q.getThreshold().getName(), q.getCategories().toString())),
-        q -> q.getA() + " for " + q.getB(),
-        ", ");
+            arrivals.select(q -> new Tuple<>(q.getThreshold().getName(), q.getCategories().toString())),
+            q -> q.getA() + " for " + q.getB(),
+            ", ");
 
     return sb.toString();
   }
@@ -158,7 +168,7 @@ public class RunwayConfiguration {
       rwys.removeAt(0);
       set.add(r);
       set.add(
-          rwys.where(q -> isIntersectionBetweenRunways(r, q))
+              rwys.where(q -> isIntersectionBetweenRunways(r, q))
       );
       rwys.tryRemoveMany(set);
       crossedRwys.add(set);

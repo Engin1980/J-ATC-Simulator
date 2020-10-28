@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.atcs.internal.computer;
 
 import eng.eSystem.collections.IList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
@@ -19,6 +20,7 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneConfirmation;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -39,6 +41,8 @@ public abstract class ComputerAtc extends Atc {
   protected abstract void processNonPlaneSwitchMessageFromAtc(Message m);
 
   protected abstract void _elapseSecond();
+
+  protected abstract void __save(XElement target);
 
   @Override
   public final void elapseSecond() {
@@ -69,6 +73,17 @@ public abstract class ComputerAtc extends Atc {
   @Override
   public boolean isResponsibleFor(Callsign callsign) {
     return this.switchManager.isResponsibleFor(callsign);
+  }
+
+  @Override
+  protected final void _save(XElement target) {
+
+    XmlSaveUtils.Field.storeField(target, this, "speechDelayer",
+            (XElement e, DelayedList<Message> q) -> q.save(e));
+    XmlSaveUtils.Field.storeField(target, this, "switchManager",
+            (XElement e, SwitchManager q) -> q.save(e));
+
+    this.__save(target);
   }
 
   private void elapseSecondProcessMessageFromAtc(Message m) {

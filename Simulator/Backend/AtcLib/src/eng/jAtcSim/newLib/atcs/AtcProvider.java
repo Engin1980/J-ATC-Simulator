@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.atcs;
 import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.CacheUsingProducer;
@@ -19,6 +20,10 @@ import eng.jAtcSim.newLib.atcs.internal.tower.TowerAtc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
+import eng.jAtcSim.newLib.shared.xml.XmlException;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -101,6 +106,11 @@ public class AtcProvider {
   public void registerNewPlane(AtcId atcId, Callsign callsign) {
     Atc atc = atcs.getFirst(q -> q.getAtcId().equals(atcId));
     atc.registerNewPlaneInGame(callsign, true);
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeField(target, this, "atcs",
+            new ItemsSerializer<Atc>((e,q)->q.save(e)));
   }
 
   public RunwayConfiguration tryGetSchedulerRunwayConfiguration() {

@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.atcs.internal.computer;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
@@ -13,6 +14,7 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
+import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
@@ -22,7 +24,10 @@ import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
-import eng.jAtcSim.newLib.speeches.system.system2user.CurrentTickNotification;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.EntriesSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -35,8 +40,7 @@ class SwitchManager {
   private final Producer<IReadOnlyList<Message>> delayedMessagesProducer;
 
   public SwitchManager(IAtcSwitchManagerInterface parent,
-                       Producer<IReadOnlyList<Message>> delayedMessagesProducer
-  ) {
+                       Producer<IReadOnlyList<Message>> delayedMessagesProducer) {
     EAssert.Argument.isNotNull(parent, "parent");
     this.parent = parent;
     this.delayedMessagesProducer = delayedMessagesProducer;
@@ -80,6 +84,18 @@ class SwitchManager {
       this.processIncomingPlaneSwitchMessage(planeSwitchRequest, sender);
     else
       this.processOutgoingPlaneSwitchMessage(si, planeSwitchRequest, sender);
+  }
+
+  public void save(XElement target) {
+
+    XmlSaveUtils.Field.storeField(target, this, "incomingPlanes",
+            new ItemsViaStringSerializer<>(SharedXmlUtils.squawkFormatter));
+    XmlSaveUtils.Field.storeField(target, this, "outgoingPlanes",
+            new EntriesSerializer<Squawk, SwitchInfo>(
+                    SharedXmlUtils.squawkSerializer,
+                    SimpleObjectSerializer
+                            .createFor(SwitchInfo.class, true)
+                            .useFormatters(SharedXmlUtils.formattersMap)));
   }
 
   private void elapCheckAndProcessPlanesReadyToSwitch() {
