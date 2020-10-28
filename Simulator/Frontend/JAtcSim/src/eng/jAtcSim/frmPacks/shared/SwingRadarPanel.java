@@ -187,7 +187,7 @@ public class SwingRadarPanel extends JPanel {
   }
 
   public void setRadarStoredPositions(IMap<Integer, RadarViewPort> positions) {
-    this.storedRadarPositions.set(positions);
+    this.storedRadarPositions.setMany(positions);
   }
 
   public void init(InitialPosition initialPosition,
