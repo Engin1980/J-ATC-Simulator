@@ -89,6 +89,7 @@ public class AirplanesController {
     }
   }
 
+//TODEL
 //
 //  private boolean isInSeparationConflictWithTraffic(ArrivalAirplaneTemplate template) {
 //    Integer checkedAtEntryPointSeconds = null;

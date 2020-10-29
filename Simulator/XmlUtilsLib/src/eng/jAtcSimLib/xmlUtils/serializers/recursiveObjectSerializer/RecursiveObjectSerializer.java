@@ -1,9 +1,6 @@
 package eng.jAtcSimLib.xmlUtils.serializers.recursiveObjectSerializer;
 
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IMap;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.collections.ISet;
+import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSimLib.xmlUtils.Formatter;
@@ -13,6 +10,7 @@ import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.formatters.CoordinateFormatter;
 import eng.jAtcSimLib.xmlUtils.serializers.DefaultXmlNames;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 
 public class RecursiveObjectSerializer<T> implements Serializer<T> {
@@ -89,8 +87,12 @@ public class RecursiveObjectSerializer<T> implements Serializer<T> {
   }
 
   private void serializeArrayValue(XElement target, Object arrayValue) {
-    java.util.List<?> lst = java.util.Arrays.asList(arrayValue);
-    serializeItemsValue(target, lst);
+    IList<Object> tmp = new EList<>();
+    for (int i = 0; i < Array.getLength(arrayValue); i++) {
+      Object item = Array.get(arrayValue, i);
+      tmp.add(item);
+    }
+    serializeItemsValue(target, tmp);
   }
 
   private void serializeItemsValue(XElement target, Iterable<?> items) {

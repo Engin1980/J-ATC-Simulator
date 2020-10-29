@@ -5,33 +5,38 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.StringUtils;
 import eng.jAtcSimLib.xmlUtils.*;
 
-import java.lang.reflect.Field;
-
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class SimpleObjectSerializer<T> implements Serializer<T> {
 
   public static <T> SimpleObjectSerializer<T> createFor(Class<T> type) {
-    SimpleObjectSerializer<T> ret = new SimpleObjectSerializer<>(type);
+    SimpleObjectSerializer<T> ret = new SimpleObjectSerializer<>(type, false);
+    return ret;
+  }
+
+  public static <T> SimpleObjectSerializer<T> createForSubclass(Class<T> type) {
+    SimpleObjectSerializer<T> ret = new SimpleObjectSerializer<>(type, true);
     return ret;
   }
 
   public static <T> SimpleObjectSerializer<T> create() {
-    SimpleObjectSerializer<T> ret = new SimpleObjectSerializer<>(null);
+    SimpleObjectSerializer<T> ret = new SimpleObjectSerializer<>(null, true);
     return ret;
   }
 
   private final Class<? extends T> expectedClass;
+  private final boolean subClassAllowed;
   private boolean generateIncludedFields = true;
   private boolean validateFieldNames = true;
   private boolean storeType = false;
-  private ISet<String> includedFieldNames = new ESet<>();
-  private ISet<String> excludedFieldNames = new ESet<>();
+  private final ISet<String> includedFieldNames = new ESet<>();
+  private final ISet<String> excludedFieldNames = new ESet<>();
   private final IMap<Class<?>, Formatter<?>> customFormatters = new EMap<>();
   private final IMap<Class<?>, Serializer<?>> customSerializers = new EMap<>();
 
-  private SimpleObjectSerializer(Class<? extends T> expectedClass) {
+  private SimpleObjectSerializer(Class<? extends T> expectedClass, boolean subClassAllowed) {
     this.expectedClass = expectedClass;
+    this.subClassAllowed = subClassAllowed;
   }
 
   public SimpleObjectSerializer<T> excludeFields(ICollection<String> excludedFieldNames) {
@@ -56,10 +61,14 @@ public class SimpleObjectSerializer<T> implements Serializer<T> {
     if (value == null)
       XmlSaveUtils.saveNullIntoElementContent(targetElement);
     else {
-      if (this.expectedClass != null && this.expectedClass.equals(value.getClass()) == false)
-        throw new XmlUtilsException(sf("This SimpleObjectSerializer expects type '%s', but got '%s'.",
-                this.expectedClass, value.getClass()));
-
+      if (this.expectedClass != null) {
+        if (!subClassAllowed && this.expectedClass.equals(value.getClass()) == false)
+          throw new XmlUtilsException(sf("This SimpleObjectSerializer expects type '%s', but got '%s'.",
+                  this.expectedClass, value.getClass()));
+        else if (subClassAllowed && this.expectedClass.isAssignableFrom(value.getClass()) == false)
+          throw new XmlUtilsException(sf("This SimpleObjectSerializer expects type '%s' or subclass, but got '%s'.",
+                  this.expectedClass, value.getClass()));
+      }
       if (storeType)
         targetElement.setAttribute(DefaultXmlNames.CLASS_NAME, value.getClass().getName());
 
@@ -75,7 +84,7 @@ public class SimpleObjectSerializer<T> implements Serializer<T> {
       fieldNames.tryRemoveMany(excludedFieldNames);
 
       XmlSaveUtils.Field.storeFields(targetElement,
-              value, includedFieldNames.toArray(String.class),
+              value, fieldNames.toArray(String.class),
               customFormatters, customSerializers);
     }
   }
@@ -111,23 +120,23 @@ public class SimpleObjectSerializer<T> implements Serializer<T> {
   }
 
   private void validateExludedFieldNames() {
-    validateFieldNames(this.excludedFieldNames, "There is an error in the exluded-field-names.");
+    validateFieldNames(this.excludedFieldNames, "There is an error in the excluded-field-names.");
   }
 
   private void validateFieldNames(ISet<String> fieldNames, String message) {
-    ISet<Field> invalidFields = ObjectUtils.getFields(this.expectedClass)
-            .where(q -> fieldNames.contains(q.getName()) == false).toSet();
-    if (invalidFields.isEmpty() == false)
-      throwInvalidFieldsException(message, invalidFields);
+    ISet<String> trueFieldNames = ObjectUtils.getFieldNames(this.expectedClass);
+    ISet<String> invalidFieldNames = fieldNames.where(q -> trueFieldNames.contains(q) == false);
+    if (invalidFieldNames.isEmpty() == false)
+      throwInvalidFieldsException(message, invalidFieldNames);
   }
 
   private void validateIncludedFieldNames() {
     validateFieldNames(this.includedFieldNames, "There is an error in the included-field-names.");
   }
 
-  private void throwInvalidFieldsException(String message, ISet<Field> invalidFields) {
+  private void throwInvalidFieldsException(String message, ISet<String> invalidFieldNames) {
     throw new XmlUtilsException(message +
             "The following explicitly specified fields are missing" +
-            sf("in the type %s: %s.", this.expectedClass.getName(), StringUtils.join(",", invalidFields.select(q -> q.getName()))));
+            sf("in the type %s: %s.", this.expectedClass.getName(), StringUtils.join(",", invalidFieldNames)));
   }
 }

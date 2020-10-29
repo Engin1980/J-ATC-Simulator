@@ -1,6 +1,8 @@
 package eng.jAtcSim.newLib.airplanes.modules.speeches;
 
+import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
@@ -20,6 +22,7 @@ import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.messaging.xml.ParticipantSerializer;
 import eng.jAtcSim.newLib.shared.DelayedList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -31,7 +34,10 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.RequestRadarContactNoti
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
+import eng.jAtcSimLib.xmlUtils.Serializer;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
 
 public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
@@ -120,8 +126,13 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     XmlSaveUtils.saveIntoElementChild(target, "entryExitPoint", this.entryExitPoint.getName());
     XmlSaveUtils.saveIntoElementChild(target, "runwayThreshold", this.runwayThreshold.getFullName());
 
+    IMap<Class<?>, Serializer<?>> customDelayListSerializers = EMap.of(
+            Participant.class, new ParticipantSerializer(),
+            SpeechList.class, new ItemsSerializer<>(SimpleObjectSerializer.create().withStoredType())
+    );
+
     XmlSaveUtils.Field.storeField(target, this, "queue",
-            (XElement e, DelayedList<ICommand> q) -> q.save(e));
+            (XElement e, DelayedList<ICommand> q) -> q.save(e, customDelayListSerializers));
 
     XmlSaveUtils.Field.storeField(target, this, "afterCommands",
             (XElement e, AfterCommandList q) -> q.save(e));

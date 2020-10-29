@@ -2,9 +2,11 @@ package eng.jAtcSim.newLib.shared;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
+import eng.jAtcSimLib.xmlUtils.Serializer;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
@@ -108,13 +110,16 @@ public class DelayedList<T> {
     inner.removeAt(index);
   }
 
-  public void save(XElement target) {
+  public void save(XElement target, IMap<Class<?>, Serializer<?>> customSerializers) {
     XmlSaveUtils.Field.storeFields(target, this, "minimalDelay", "maximalDelay", "currentDelay");
 
     XmlSaveUtils.Items.saveIntoElementChild(target, "inner", this.inner,
             new ItemsSerializer<>((e, q) -> {
               XmlSaveUtils.saveIntoElementChild(e, "delayLeft", q.delayLeft);
-              XmlSaveUtils.saveIntoElementChild(e, "item", q.item, SimpleObjectSerializer.create().withStoredType());
+              XmlSaveUtils.saveIntoElementChild(e, "item", q.item,
+                      SimpleObjectSerializer.create()
+                              .withStoredType()
+                              .useSerializers(customSerializers));
             }));
   }
 

@@ -265,7 +265,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
             SimpleObjectSerializer.createFor(RestrictableItem.class));
 
     XmlSaveUtils.Field.storeField(target, this, "navigator",
-            SimpleObjectSerializer.createFor(Navigator.class).withStoredType());
+            SimpleObjectSerializer.createForSubclass(Navigator.class).withStoredType());
   }
 
   public void setAltitudeRestriction(Restriction altitudeRestriction) {

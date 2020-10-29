@@ -1,6 +1,8 @@
 package eng.jAtcSim.newLib.atcs.internal.computer;
 
+import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
@@ -10,6 +12,7 @@ import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.atcs.internal.IAtcSwitchManagerInterface;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.messaging.xml.ParticipantSerializer;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.DelayedList;
@@ -20,7 +23,10 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneConfirmation;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
+import eng.jAtcSimLib.xmlUtils.Serializer;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -78,8 +84,13 @@ public abstract class ComputerAtc extends Atc {
   @Override
   protected final void _save(XElement target) {
 
+    IMap<Class<?>, Serializer<?>> customDelayListSerializers = EMap.of(
+            Participant.class, new ParticipantSerializer(),
+            SpeechList.class, new ItemsSerializer<>(SimpleObjectSerializer.create().withStoredType())
+    );
+
     XmlSaveUtils.Field.storeField(target, this, "speechDelayer",
-            (XElement e, DelayedList<Message> q) -> q.save(e));
+            (XElement e, DelayedList<Message> q) -> q.save(e, customDelayListSerializers));
     XmlSaveUtils.Field.storeField(target, this, "switchManager",
             (XElement e, SwitchManager q) -> q.save(e));
 
