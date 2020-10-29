@@ -144,16 +144,20 @@ public class XmlSaveUtils {
       XElement tmp = new XElement(fieldName);
       target.addElement(tmp);
 
-      Serializer<?> ser = XmlFieldHelper.tryGetDefaultSerializer(v);
-      if (ser == null && customSerializers != null && customSerializers.containsKey(v.getClass()))
-        ser = customSerializers.get(v.getClass());
-      if (ser == null && defaultSerializer != null)
-        ser = defaultSerializer;
+      if (v == null)
+        saveNullIntoElementContent(tmp);
+      else {
+        Serializer<?> ser = XmlFieldHelper.tryGetDefaultSerializer(v);
+        if (ser == null && customSerializers != null && customSerializers.containsKey(v.getClass()))
+          ser = customSerializers.get(v.getClass());
+        if (ser == null && defaultSerializer != null)
+          ser = defaultSerializer;
 
-      if (ser != null)
-        saveIntoElementContent(target, v, (Serializer<Object>) ser);
-      else
-        throw new XmlUtilsException(sf("Failed to save type '%s'. This type is not supported by this function.", v.getClass()));
+        if (ser != null)
+          saveIntoElementContent(target, v, (Serializer<Object>) ser);
+        else
+          throw new XmlUtilsException(sf("Failed to save type '%s'. This type is not supported by this function.", v.getClass()));
+      }
     }
 
   }

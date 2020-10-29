@@ -25,6 +25,7 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
@@ -322,7 +323,12 @@ public class TowerAtc extends ComputerAtc {
             new EntriesSerializer<String, RunwayCheckInfo>(
                     (e, q) -> e.setContent(q),
                     ObjectSerializer.createFor(RunwayCheckInfo.class)
-                            .useDefaultSerializer(ObjectSerializer.create().withStoredType())));
+                            .useDefaultSerializer(
+                                    ObjectSerializer.create()
+                                            .withStoredType()
+                                            .useSerializers(SharedXmlUtils.serializersMap)
+                                            .useSerializer(int[].class, ObjectSerializer.create()))));
+    tady je to blbe bo to neuklada pole
   }
 
   @Override
