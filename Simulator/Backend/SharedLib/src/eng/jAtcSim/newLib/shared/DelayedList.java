@@ -6,8 +6,8 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.DynamicSimpleObjectSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -114,7 +114,7 @@ public class DelayedList<T> {
     XmlSaveUtils.Items.saveIntoElementChild(target, "inner", this.inner,
             new ItemsSerializer<>((e, q) -> {
               XmlSaveUtils.saveIntoElementChild(e, "delayLeft", q.delayLeft);
-              XmlSaveUtils.saveIntoElementChild(e, "item", q.item, new DynamicSimpleObjectSerializer<T>());
+              XmlSaveUtils.saveIntoElementChild(e, "item", q.item, SimpleObjectSerializer.create().withStoredType());
             }));
   }
 

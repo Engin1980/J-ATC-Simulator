@@ -164,7 +164,7 @@ public class TowerAtc extends ComputerAtc {
 
     public void save(XElement target) {
       XmlSaveUtils.Field.storeField(target, this, "scheduler",
-              SimpleObjectSerializer.createFor(SchedulerForAdvice.class, true));
+              SimpleObjectSerializer.createFor(SchedulerForAdvice.class));
       XmlSaveUtils.Field.storeField(target, this, "current",
               (RunwayConfiguration q) -> q.getGID().toString());
       if (scheduled != null)

@@ -39,7 +39,7 @@ public class TrafficProvider {
     }
 
     // delete empty days
-    movementsForDay.remove(
+    movementsForDay.removeMany(
             movementsForDay.whereValue(q -> q.isEmpty()).getKeys());
 
     return ret;

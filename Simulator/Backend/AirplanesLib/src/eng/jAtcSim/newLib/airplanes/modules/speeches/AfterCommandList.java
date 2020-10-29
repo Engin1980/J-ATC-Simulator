@@ -21,8 +21,8 @@ import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.DynamicSimpleObjectSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
 
 import java.util.function.Predicate;
 
@@ -329,8 +329,8 @@ public class AfterCommandList {
 
   public void save(XElement target) {
     Consumer2<XElement, AFItem> consumer = (e, q) ->{
-      XmlSaveUtils.Field.storeField(e, q, "antecedent", new DynamicSimpleObjectSerializer<AfterCommand>());
-      XmlSaveUtils.Field.storeField(e, q, "consequent", new DynamicSimpleObjectSerializer<ICommand>());
+      XmlSaveUtils.Field.storeField(e, q, "antecedent", SimpleObjectSerializer.createFor(AfterCommand.class).withStoredType());
+      XmlSaveUtils.Field.storeField(e, q, "consequent", SimpleObjectSerializer.createFor(ICommand.class).withStoredType());
     };
 
     XmlSaveUtils.Items.saveIntoElementChild(target, "rt", this.rt,

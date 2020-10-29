@@ -3,6 +3,7 @@ package eng.jAtcSimLib.xmlUtils.serializers.recursiveObjectSerializer;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSimLib.xmlUtils.Formatter;
@@ -106,7 +107,7 @@ public class RecursiveObjectSerializer<T> implements Serializer<T> {
   }
 
   private void serializeObjectValue(XElement target, Object value) {
-    IReadOnlyList<Field> fields = ObjectUtils.getFields(value.getClass());
+    ISet<Field> fields = ObjectUtils.getFields(value.getClass());
     for (Field field : fields) {
       Object fieldValue = ObjectUtils.getFieldValue(value, field.getName());
       XElement fieldElement = new XElement(field.getName());

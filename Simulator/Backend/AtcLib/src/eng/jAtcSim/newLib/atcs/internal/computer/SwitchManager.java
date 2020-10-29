@@ -94,7 +94,7 @@ class SwitchManager {
             new EntriesSerializer<Squawk, SwitchInfo>(
                     SharedXmlUtils.squawkSerializer,
                     SimpleObjectSerializer
-                            .createFor(SwitchInfo.class, true)
+                            .createFor(SwitchInfo.class)
                             .useFormatters(SharedXmlUtils.formattersMap)));
   }
 

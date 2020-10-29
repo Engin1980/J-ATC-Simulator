@@ -1,8 +1,6 @@
 package eng.jAtcSimLib.xmlUtils;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.ReflectionUtils;
 import eng.eSystem.validation.EAssert;
@@ -13,8 +11,8 @@ import java.lang.reflect.Modifier;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class ObjectUtils {
-  public static IReadOnlyList<String> getFieldNamesExcept(Class<?> clazz, String ... ignoredFieldNames) {
-    IList<String> tmp = new EList<>(ignoredFieldNames);
+  public static ISet<String> getFieldNamesExcept(Class<?> clazz, String ... ignoredFieldNames) {
+    ISet<String> tmp = new ESet<>(ignoredFieldNames);
     return getFieldNames(clazz).minus(tmp);
   }
 
@@ -35,14 +33,14 @@ public class ObjectUtils {
     return v;
   }
 
-  public static IReadOnlyList<Field> getFields(Class<?> clazz) {
-    IReadOnlyList<Field>  ret = ReflectionUtils.ClassUtils.getFields(clazz);
+  public static ISet<Field> getFields(Class<?> clazz) {
+    ISet<Field>  ret = ReflectionUtils.ClassUtils.getFields(clazz).toSet();
     ret = ret.where(q-> Modifier.isStatic(q.getModifiers()) == false);
     return ret;
   }
 
-  public static IReadOnlyList<String> getFieldNames(Class<?> clazz) {
-    return getFields(clazz).select(q->q.getName());
+  public static ISet<String> getFieldNames(Class<?> clazz) {
+    return getFields(clazz).select(q->q.getName()).toSet();
   }
 
   private static Field getField(Class<?> type, String name) throws NoSuchFieldException {

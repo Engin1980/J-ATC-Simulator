@@ -167,7 +167,7 @@ public class AirplanesModule extends SimulationModule {
             (XElement e, AirproxController q) -> q.save(e));
 
     XmlSaveUtils.Field.storeField(target, this, "emergencyAppearanceController",
-            SimpleObjectSerializer.createFor(EmergencyAppearanceController.class, true)
+            SimpleObjectSerializer.createFor(EmergencyAppearanceController.class)
                     .useFormatters(SharedXmlUtils.formattersMap));
 
     XmlSaveUtils.Field.storeField(target, this, "moodManager",
