@@ -26,7 +26,7 @@ import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.jAtcSimLib.xmlUtils.Serializer;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -86,7 +86,7 @@ public abstract class ComputerAtc extends Atc {
 
     IMap<Class<?>, Serializer<?>> customDelayListSerializers = EMap.of(
             Participant.class, new ParticipantSerializer(),
-            SpeechList.class, new ItemsSerializer<>(SimpleObjectSerializer.create().withStoredType())
+            SpeechList.class, new ItemsSerializer<>(ObjectSerializer.create().withStoredType())
     );
 
     XmlSaveUtils.Field.storeField(target, this, "speechDelayer",

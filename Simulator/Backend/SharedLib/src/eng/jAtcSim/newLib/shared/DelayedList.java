@@ -9,7 +9,7 @@ import eng.jAtcSim.newLib.shared.contextLocal.Context;
 import eng.jAtcSimLib.xmlUtils.Serializer;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -117,7 +117,7 @@ public class DelayedList<T> {
             new ItemsSerializer<>((e, q) -> {
               XmlSaveUtils.saveIntoElementChild(e, "delayLeft", q.delayLeft);
               XmlSaveUtils.saveIntoElementChild(e, "item", q.item,
-                      SimpleObjectSerializer.create()
+                      ObjectSerializer.create()
                               .withStoredType()
                               .useSerializers(customSerializers));
             }));

@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
@@ -12,6 +13,7 @@ import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.stats.context.IStatsAcc;
 import eng.jAtcSim.newLib.stats.context.StatsAcc;
+import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class StatsModule extends SimulationModule {
   private final StatsProvider statsProvider;
@@ -39,5 +41,10 @@ public class StatsModule extends SimulationModule {
 
   public void registerElapseSecondDuration(int simulationRecalculationLength) {
     statsProvider.registerElapseSecondDuration(simulationRecalculationLength);
+  }
+
+  public void save(XElement target) {
+    XmlSaveUtils.Field.storeField(target, this, "statsProvider",
+            (XElement e, StatsProvider q) -> q.save(e));
   }
 }

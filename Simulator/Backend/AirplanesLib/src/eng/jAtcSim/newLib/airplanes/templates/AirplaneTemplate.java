@@ -9,7 +9,7 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 public abstract class AirplaneTemplate {
   private final Callsign callsign;
@@ -63,9 +63,9 @@ public abstract class AirplaneTemplate {
   public void save(XElement target) {
     XmlSaveUtils.Field.storeFields(target, this,
             new String[]{"callsign", "airplaneType", "expectedExitTime", "entryTime", "entryDelay"},
-            SharedXmlUtils.formattersMap, null);
+            SharedXmlUtils.serializersMap);
     XmlSaveUtils.Field.storeField(target, this, "entryExitPoint",
-            SimpleObjectSerializer.createFor(entryExitPoint.getClass())
+            ObjectSerializer.createFor(entryExitPoint.getClass())
                     .useFormatter(Navaid.class, q -> q.getName()));
 
     this._save(target);

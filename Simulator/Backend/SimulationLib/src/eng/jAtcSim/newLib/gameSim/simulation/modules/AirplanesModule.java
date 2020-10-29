@@ -42,7 +42,7 @@ import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -167,7 +167,7 @@ public class AirplanesModule extends SimulationModule {
             (XElement e, AirproxController q) -> q.save(e));
 
     XmlSaveUtils.Field.storeField(target, this, "emergencyAppearanceController",
-            SimpleObjectSerializer.createFor(EmergencyAppearanceController.class)
+            ObjectSerializer.createFor(EmergencyAppearanceController.class)
                     .useFormatters(SharedXmlUtils.formattersMap));
 
     XmlSaveUtils.Field.storeField(target, this, "moodManager",

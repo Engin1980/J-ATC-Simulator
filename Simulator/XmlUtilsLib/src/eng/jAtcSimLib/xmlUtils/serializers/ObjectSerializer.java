@@ -5,22 +5,24 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.StringUtils;
 import eng.jAtcSimLib.xmlUtils.*;
 
+import java.util.Map;
+
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class SimpleObjectSerializer<T> implements Serializer<T> {
+public class ObjectSerializer<T> implements Serializer<T> {
 
-  public static <T> SimpleObjectSerializer<T> createFor(Class<T> type) {
-    SimpleObjectSerializer<T> ret = new SimpleObjectSerializer<>(type, false);
+  public static <T> ObjectSerializer<T> createFor(Class<T> type) {
+    ObjectSerializer<T> ret = new ObjectSerializer<>(type, false);
     return ret;
   }
 
-  public static <T> SimpleObjectSerializer<T> createForSubclass(Class<T> type) {
-    SimpleObjectSerializer<T> ret = new SimpleObjectSerializer<>(type, true);
+  public static <T> ObjectSerializer<T> createForSubclass(Class<T> type) {
+    ObjectSerializer<T> ret = new ObjectSerializer<>(type, true);
     return ret;
   }
 
-  public static <T> SimpleObjectSerializer<T> create() {
-    SimpleObjectSerializer<T> ret = new SimpleObjectSerializer<>(null, true);
+  public static <T> ObjectSerializer<T> create() {
+    ObjectSerializer<T> ret = new ObjectSerializer<>(null, true);
     return ret;
   }
 
@@ -29,28 +31,33 @@ public class SimpleObjectSerializer<T> implements Serializer<T> {
   private boolean generateIncludedFields = true;
   private boolean validateFieldNames = true;
   private boolean storeType = false;
+  private Serializer<Object> defaultSerializer = null;
   private final ISet<String> includedFieldNames = new ESet<>();
   private final ISet<String> excludedFieldNames = new ESet<>();
-  private final IMap<Class<?>, Formatter<?>> customFormatters = new EMap<>();
   private final IMap<Class<?>, Serializer<?>> customSerializers = new EMap<>();
 
-  private SimpleObjectSerializer(Class<? extends T> expectedClass, boolean subClassAllowed) {
+  private ObjectSerializer(Class<? extends T> expectedClass, boolean subClassAllowed) {
     this.expectedClass = expectedClass;
     this.subClassAllowed = subClassAllowed;
   }
 
-  public SimpleObjectSerializer<T> excludeFields(ICollection<String> excludedFieldNames) {
+  public ObjectSerializer<T> applyRecursivelyOnObjectClass() {
+    this.useDefaultSerializer((Serializer<Object>) this);
+    return this;
+  }
+
+  public ObjectSerializer<T> excludeFields(ICollection<String> excludedFieldNames) {
     excludedFieldNames.forEach(q -> this.includedFieldNames.tryRemove(q));
     return this;
   }
 
-  public SimpleObjectSerializer<T> includeFields(Class<?> type) {
+  public ObjectSerializer<T> includeFields(Class<?> type) {
     IReadOnlySet<String> fieldNames = ObjectUtils.getFields(type).select(q -> q.getName());
     this.includeFields(fieldNames);
     return this;
   }
 
-  public SimpleObjectSerializer<T> includeFields(ICollection<String> includedFieldNames) {
+  public ObjectSerializer<T> includeFields(ICollection<String> includedFieldNames) {
     this.generateIncludedFields = false;
     this.includedFieldNames.addMany(includedFieldNames);
     return this;
@@ -85,36 +92,43 @@ public class SimpleObjectSerializer<T> implements Serializer<T> {
 
       XmlSaveUtils.Field.storeFields(targetElement,
               value, fieldNames.toArray(String.class),
-              customFormatters, customSerializers);
+              customSerializers, defaultSerializer);
     }
   }
 
-  public <TType> SimpleObjectSerializer<T> useFormatter(Class<TType> clazz, Formatter<TType> formatter) {
-    this.customFormatters.set(clazz, formatter);
+  public ObjectSerializer<T> useDefaultSerializer(Serializer<Object> defaultSerializer) {
+    this.defaultSerializer = defaultSerializer;
     return this;
   }
 
-  public SimpleObjectSerializer<T> useFormatters(IMap<Class<?>, Formatter<?>> formatters) {
-    this.customFormatters.setMany(formatters);
+  public <TType> ObjectSerializer<T> useFormatter(Class<TType> clazz, Formatter<TType> formatter) {
+    this.customSerializers.set(clazz, formatter.toSerializer());
     return this;
   }
 
-  public <TType> SimpleObjectSerializer<T> useSerializer(Class<TType> clazz, Serializer<TType> serializer) {
+  public ObjectSerializer<T> useFormatters(IMap<Class<?>, Formatter<?>> formatters) {
+    for (Map.Entry<Class<?>, Formatter<?>> entry : formatters) {
+      this.customSerializers.set(entry.getKey(), entry.getValue().toSerializer());
+    }
+    return this;
+  }
+
+  public <TType> ObjectSerializer<T> useSerializer(Class<TType> clazz, Serializer<TType> serializer) {
     this.customSerializers.set(clazz, serializer);
     return this;
   }
 
-  public SimpleObjectSerializer<T> useSerializers(IMap<Class<?>, Serializer<?>> serializers) {
+  public ObjectSerializer<T> useSerializers(IMap<Class<?>, Serializer<?>> serializers) {
     this.customSerializers.setMany(serializers);
     return this;
   }
 
-  public SimpleObjectSerializer<T> withStoredType() {
+  public ObjectSerializer<T> withStoredType() {
     this.storeType = true;
     return this;
   }
 
-  public SimpleObjectSerializer<T> withoutFieldNamesValidation() {
+  public ObjectSerializer<T> withoutFieldNamesValidation() {
     this.validateFieldNames = false;
     return this;
   }

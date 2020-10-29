@@ -10,7 +10,7 @@ import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSimLib.xmlUtils.Serializer;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.DefaultXmlNames;
-import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 public class WeatherSourceSerializer implements Serializer<WeatherSource> {
   @Override
@@ -23,13 +23,13 @@ public class WeatherSourceSerializer implements Serializer<WeatherSource> {
       target.setAttribute(DefaultXmlNames.CLASS_NAME, "WeatherUserSource");
       WeatherUserSource w = (WeatherUserSource) value;
       XmlSaveUtils.Field.storeField(target, w, "initialWeather",
-              SimpleObjectSerializer.createFor(Weather.class));
+              ObjectSerializer.createFor(Weather.class));
     } else if (value instanceof WeatherOnlineSource) {
       target.setAttribute(DefaultXmlNames.CLASS_NAME, "WeatherUserSource");
       WeatherOnlineSource w = (WeatherOnlineSource) value;
       XmlSaveUtils.Field.storeField(target, w, "icao");
       XmlSaveUtils.Field.storeField(target, w, "fallbackWeather",
-              SimpleObjectSerializer.createFor(Weather.class));
+              ObjectSerializer.createFor(Weather.class));
     } else {
       throw new EApplicationException("Unsupported weather source type " + value.getClass().getName());
     }

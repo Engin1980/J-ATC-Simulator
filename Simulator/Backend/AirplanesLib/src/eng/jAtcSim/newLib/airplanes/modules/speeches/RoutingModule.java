@@ -37,7 +37,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
 import eng.jAtcSimLib.xmlUtils.Serializer;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
@@ -128,7 +128,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
     IMap<Class<?>, Serializer<?>> customDelayListSerializers = EMap.of(
             Participant.class, new ParticipantSerializer(),
-            SpeechList.class, new ItemsSerializer<>(SimpleObjectSerializer.create().withStoredType())
+            SpeechList.class, new ItemsSerializer<>(ObjectSerializer.create().withStoredType())
     );
 
     XmlSaveUtils.Field.storeField(target, this, "queue",

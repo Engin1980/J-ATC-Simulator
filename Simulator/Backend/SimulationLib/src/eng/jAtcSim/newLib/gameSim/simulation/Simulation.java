@@ -301,7 +301,12 @@ public class Simulation {
     XmlSaveUtils.Field.storeField(target, this, "weatherModule",
             (XElement e, WeatherModule q) -> q.save(e));
 
-    // worldModule not saved
+    // ioModule not saved, no need
+
+    XmlSaveUtils.Field.storeField(target, this, "statsModule",
+            (XElement e, StatsModule q) -> q.save(e));
+
+    // worldModule not saved, no need
   }
 
   private void elapseSecond() {

@@ -37,8 +37,7 @@ import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.EntriesSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.recursiveObjectSerializer.RecursiveObjectSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -164,7 +163,7 @@ public class TowerAtc extends ComputerAtc {
 
     public void save(XElement target) {
       XmlSaveUtils.Field.storeField(target, this, "scheduler",
-              SimpleObjectSerializer.createFor(SchedulerForAdvice.class));
+              ObjectSerializer.createFor(SchedulerForAdvice.class));
       XmlSaveUtils.Field.storeField(target, this, "current",
               (RunwayConfiguration q) -> q.getGID().toString());
       if (scheduled != null)
@@ -322,7 +321,8 @@ public class TowerAtc extends ComputerAtc {
     XmlSaveUtils.Field.storeField(target, this, "runwayChecks",
             new EntriesSerializer<String, RunwayCheckInfo>(
                     (e, q) -> e.setContent(q),
-                    new RecursiveObjectSerializer<>()));
+                    ObjectSerializer.createFor(RunwayCheckInfo.class)
+                            .useDefaultSerializer(ObjectSerializer.create().withStoredType())));
   }
 
   @Override

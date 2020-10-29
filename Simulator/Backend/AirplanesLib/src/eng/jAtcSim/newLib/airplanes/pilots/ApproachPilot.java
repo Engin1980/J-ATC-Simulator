@@ -31,7 +31,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ThenCommand;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.recursiveObjectSerializer.RecursiveObjectSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 public class ApproachPilot extends Pilot {
 
@@ -127,7 +127,10 @@ public class ApproachPilot extends Pilot {
             (IafRoute q) -> q.getGID().toString());
     XmlSaveUtils.Field.storeField(target, this, "approach",
             (XElement e, Approach a) ->
-                    new RecursiveObjectSerializer<>().with(Navaid.class, n->n.getName()));
+                    ObjectSerializer.create()
+                            .withStoredType()
+                            .applyRecursivelyOnObjectClass()
+                            .useFormatter(Navaid.class, n -> n.getName()));
   }
 
   private void flyRadialBehavior(FlyRadialBehavior behavior) {

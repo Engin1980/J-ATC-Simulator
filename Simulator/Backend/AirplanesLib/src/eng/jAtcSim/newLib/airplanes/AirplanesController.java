@@ -15,6 +15,7 @@ import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSimLib.xmlUtils.Formatter;
+import eng.jAtcSimLib.xmlUtils.Serializer;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 
@@ -58,8 +59,7 @@ public class AirplanesController {
 
   public void save(XElement target) {
     XmlSaveUtils.Field.storeFields(target, this,
-            new String[]{"departureInitialAtcId", "arrivalInitialAtId"},
-            SharedXmlUtils.formattersMap, null);
+            new String[]{"departureInitialAtcId", "arrivalInitialAtId"}, SharedXmlUtils.serializersMap);
     XmlSaveUtils.Field.storeField(target, this, "planes",
             new ItemsSerializer<Airplane>((e, q) -> q.save(e)));
   }

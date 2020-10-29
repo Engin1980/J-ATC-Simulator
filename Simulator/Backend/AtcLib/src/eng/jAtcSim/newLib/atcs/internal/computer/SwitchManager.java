@@ -27,7 +27,7 @@ import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.EntriesSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.SimpleObjectSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -93,7 +93,7 @@ class SwitchManager {
     XmlSaveUtils.Field.storeField(target, this, "outgoingPlanes",
             new EntriesSerializer<Squawk, SwitchInfo>(
                     SharedXmlUtils.squawkSerializer,
-                    SimpleObjectSerializer
+                    ObjectSerializer
                             .createFor(SwitchInfo.class)
                             .useFormatters(SharedXmlUtils.formattersMap)));
   }

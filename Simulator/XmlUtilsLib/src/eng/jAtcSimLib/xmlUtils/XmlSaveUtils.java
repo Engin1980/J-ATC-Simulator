@@ -1,5 +1,6 @@
 package eng.jAtcSimLib.xmlUtils;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
@@ -80,56 +81,18 @@ public class XmlSaveUtils {
     }
 
     public static <K, V> void saveIntoElementContent(XElement parent, Iterable<Map.Entry<K, V>> entries,
-                                              Serializer<Iterable<Map.Entry<K, V>>> serializer) {
+                                                     Serializer<Iterable<Map.Entry<K, V>>> serializer) {
       serializer.invoke(parent, entries);
     }
 
     public static <K, V> void saveIntoElementChild(XElement parent, String innerElementName, Iterable<Map.Entry<K, V>> entries,
-                                                     Serializer<Iterable<Map.Entry<K, V>>> serializer) {
+                                                   Serializer<Iterable<Map.Entry<K, V>>> serializer) {
       parent.addElement(
               saveAsElement(innerElementName, entries, serializer));
     }
   }
 
   public static class Field {
-
-    private static void storeField(XElement target, Object object, String fieldName,
-                                  IMap<java.lang.Class<?>, Formatter<?>> customFormatters,
-                                  IMap<java.lang.Class<?>, Serializer<?>> customSerializers) {
-      Object v = ObjectUtils.getFieldValue(object, fieldName);
-
-      XElement tmp = new XElement(fieldName);
-      target.addElement(tmp);
-
-      if (v == null)
-        XmlSaveUtils.saveNullIntoElementContent(tmp);
-      else if (v instanceof Short)
-        XmlSaveUtils.saveIntoElementContent(tmp, (short) v);
-      else if (v instanceof Byte)
-        XmlSaveUtils.saveIntoElementContent(tmp, (byte) v);
-      else if (v instanceof Integer)
-        XmlSaveUtils.saveIntoElementContent(tmp, (int) v);
-      else if (v instanceof Long)
-        XmlSaveUtils.saveIntoElementContent(tmp, (long) v);
-      else if (v instanceof Float)
-        XmlSaveUtils.saveIntoElementContent(tmp, (float) v);
-      else if (v instanceof Double)
-        XmlSaveUtils.saveIntoElementContent(tmp, (double) v);
-      else if (v instanceof Boolean)
-        XmlSaveUtils.saveIntoElementContent(tmp, (boolean) v);
-      else if (v instanceof Character)
-        XmlSaveUtils.saveIntoElementContent(tmp, (char) v);
-      else if (v.getClass().isEnum())
-        XmlSaveUtils.saveIntoElementContent(tmp, v.toString());
-      else if (v instanceof String)
-        XmlSaveUtils.saveIntoElementContent(tmp, (String) v);
-      else if (customFormatters != null && customFormatters.containsKey(v.getClass()))
-        XmlSaveUtils.saveIntoElementContent(tmp, v, (Formatter<Object>) customFormatters.get(v.getClass()));
-      else if (customSerializers != null && customSerializers.containsKey(v.getClass()))
-        XmlSaveUtils.saveIntoElementContent(tmp, v, (Serializer<Object>) customSerializers.get(v.getClass()));
-      else
-        throw new XmlUtilsException(sf("Failed to save type '%s'. This type is not supported by this function.", v.getClass()));
-    }
 
     public static void storeField(XElement target, Object object, String fieldName) {
       storeField(target, object, fieldName, null, null);
@@ -153,23 +116,44 @@ public class XmlSaveUtils {
     }
 
     public static void storeFields(XElement target, Object object, String... fieldNames) {
-      for (String fieldName : fieldNames) {
-        storeField(target, object, fieldName, null, null);
-      }
-    }
-
-    public static void storeFields(XElement target, Object object, String[] fieldNames,
-                                   IMap<java.lang.Class<?>, Formatter<?>> customFormatters,
-                                   IMap<java.lang.Class<?>, Serializer<?>> customSerializers) {
-      for (String fieldName : fieldNames) {
-        storeField(target, object, fieldName, customFormatters, customSerializers);
-      }
+      storeFields(target, object, fieldNames, null, null);
     }
 
     public static void storeFields(XElement target, Object object, Iterable<String> fieldNames) {
+      storeFields(target, object, new EList<>(fieldNames).toArray(String.class), null, null);
+    }
+
+    public static void storeFields(XElement target, Object object, String[] fieldNames,
+                                   IMap<java.lang.Class<?>, Serializer<?>> customSerializers) {
+      storeFields(target, object, fieldNames, customSerializers, null);
+    }
+
+    public static void storeFields(XElement target, Object object, String[] fieldNames,
+                                   IMap<java.lang.Class<?>, Serializer<?>> customSerializers,
+                                   Serializer<Object> defaultSerializer) {
       for (String fieldName : fieldNames) {
-        storeField(target, object, fieldName);
+        storeField(target, object, fieldName, customSerializers, defaultSerializer);
       }
+    }
+
+    private static void storeField(XElement target, Object object, String fieldName,
+                                   IMap<java.lang.Class<?>, Serializer<?>> customSerializers,
+                                   Serializer<Object> defaultSerializer) {
+      Object v = ObjectUtils.getFieldValue(object, fieldName);
+
+      XElement tmp = new XElement(fieldName);
+      target.addElement(tmp);
+
+      Serializer<?> ser = XmlFieldHelper.tryGetDefaultSerializer(v);
+      if (ser == null && customSerializers != null && customSerializers.containsKey(v.getClass()))
+        ser = customSerializers.get(v.getClass());
+      if (ser == null && defaultSerializer != null)
+        ser = defaultSerializer;
+
+      if (ser != null)
+        saveIntoElementContent(target, v, (Serializer<Object>) ser);
+      else
+        throw new XmlUtilsException(sf("Failed to save type '%s'. This type is not supported by this function.", v.getClass()));
     }
 
   }
