@@ -117,8 +117,7 @@ public class DelayedList<T> {
             new ItemsSerializer<>((e, q) -> {
               XmlSaveUtils.saveIntoElementChild(e, "delayLeft", q.delayLeft);
               XmlSaveUtils.saveIntoElementChild(e, "item", q.item,
-                      ObjectSerializer.create()
-                              .withStoredType()
+                      ObjectSerializer.createDeepSerializer()
                               .useSerializers(customSerializers));
             }));
   }

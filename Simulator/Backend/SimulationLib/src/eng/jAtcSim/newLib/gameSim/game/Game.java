@@ -10,8 +10,9 @@ import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.xml.WeatherSourceSerializer;
+import eng.jAtcSimLib.xmlUtils.Parser;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.EntriesViaStringSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -38,29 +39,69 @@ public class Game implements IGame {
   }
 
 
-//  public static Game load(String fileName, IMap<String, Object> customData) {
-//    eng.jAtcSim.newLib.gameSim.Game ret = new eng.jAtcSim.newLib.gameSim.Game();
+  @Override
+  public void save(String fileName, IMap<String, String> customData) {
+    XElement root = new XElement("game");
+
+    XmlSaveUtils.saveIntoElementChild(root, "areaSource", this.areaSource,
+            q -> sf("%s;%s", q.getFileName(), q.getIcao()));
+    XmlSaveUtils.saveIntoElementChild(root, "airplaneTypesSource", this.airplaneTypesSource,
+            q -> q.getFileName());
+    XmlSaveUtils.saveIntoElementChild(root, "fleetsSource", this.fleetsSource,
+            q -> sf("%s;%s", q.getCompanyFileName(), q.getGeneralAviationFileName()));
+    XmlSaveUtils.saveIntoElementChild(root, "trafficSource", this.trafficSource,
+            q -> ((TrafficXmlSource) q).getFileName());
+    XmlSaveUtils.saveIntoElementChild(root, "weatherSource", this.weatherSource, new WeatherSourceSerializer());
+
+    {
+      XElement tmp = new XElement("simulation");
+      this.simulation.save(tmp);
+      root.addElement(tmp);
+    }
 //
-//    Context.getShared().getAppLog().writeLine(ApplicationLog.eType.info, "Loading xml document...");
-//    XDocument doc;
-//    try {
-//      doc = XDocument.load(fileName);
-//    } catch (EXmlException e) {
-//      throw new EApplicationException("Unable to load xml document.", e);
-//    }
-//
-//    XElement root = doc.getRoot();
-//
-//    Context.getShared().getAppLog().writeLine(ApplicationLog.eType.info, "Loading area...");
-//    LoadSave.loadField(root, ret, "areaSource");
-//    Context.getShared().getAppLog().writeLine(ApplicationLog.eType.info, "Loading airplane types...");
-//    LoadSave.loadField(root, ret, "airplaneTypesSource");
-//    Context.getShared().getAppLog().writeLine(ApplicationLog.eType.info, "Loading fleets...");
-//    LoadSave.loadField(root, ret, "fleetsSource");
-//    Context.getShared().getAppLog().writeLine(ApplicationLog.eType.info, "Loading traffic...");
-//    LoadSave.loadField(root, ret, "trafficSource");
-//    Context.getShared().getAppLog().writeLine(ApplicationLog.eType.info, "Loading weather...");
-//    LoadSave.loadField(root, ret, "weatherSource");
+//    XmlSaveUtils.saveIntoElementChild(root, "customData", customData,
+//            new EntriesViaStringSerializer<>(q -> q, q -> q));
+
+
+    XDocument doc = new XDocument(root);
+    try {
+      doc.save(fileName);
+    } catch (EXmlException e) {
+      throw new EApplicationException("Failed to save simulation.", e);
+    }
+  }
+
+  public static Game load(String fileName, IMap<String, Object> customData) {
+    Game game = Game();
+
+//    Context.getShared().getSimLog().writeLine(ApplicationLog.eType.info, "Loading xml document...");
+    XDocument doc;
+    try {
+      doc = XDocument.load(fileName);
+    } catch (EXmlException e) {
+      throw new EApplicationException("Unable to load xml document.", e);
+    }
+
+    XElement root = doc.getRoot();
+
+    XmlLoadUtils.Field.loadField(root, game, "areaSource", (XElement e) -> {
+      String[] pts = e.getContent().split(";");
+      AreaSource ret = new AreaSource(pts[0], pts[1]);
+      return ret;
+    });
+    XmlLoadUtils.Field.loadField(root, game, "airplaneTypesSource",
+            (Parser) q -> new AirplaneTypesSource(q));
+    XmlLoadUtils.Field.loadField(root, game, "fleetsSource",
+            (Parser) q -> {
+              String[] pts = q.split(";");
+              return new FleetsSource(pts[1], pts[0]);
+            });
+    XmlLoadUtils.Field.loadField(root, game, "trafficSource",
+            (Parser) q -> new TrafficXmlSource(q));
+
+    XmlLoadUtils.Field.loadField(root, game, "weatherSource",
+            new WeatherSourceDeserializer());
+
 //
 //    Context.getShared().getAppLog().writeLine(ApplicationLog.eType.info, "Initializing area...");
 //    ret.areaSource.init();
@@ -105,39 +146,6 @@ public class Game implements IGame {
 //    }
 //
 //    return ret;
-//  }
-//
-
-
-  @Override
-  public void save(String fileName, IMap<String, String> customData) {
-    XElement root = new XElement("game");
-
-    XmlSaveUtils.saveIntoElementChild(root, "areaSource", this.areaSource,
-            q -> sf("%s;%s", q.getFileName(), q.getIcao()));
-    XmlSaveUtils.saveIntoElementChild(root, "airplaneTypesSource", this.airplaneTypesSource,
-            q -> q.getFileName());
-    XmlSaveUtils.saveIntoElementChild(root, "fleetsSource", this.fleetsSource,
-            q -> sf("%s;%s", q.getCompanyFileName(), q.getGeneralAviationFileName()));
-    XmlSaveUtils.saveIntoElementChild(root, "trafficSource", this.trafficSource,
-            q -> ((TrafficXmlSource) q).getFileName());
-    XmlSaveUtils.saveIntoElementChild(root, "weatherSource", this.weatherSource, new WeatherSourceSerializer());
-
-    {
-      XElement tmp = new XElement("simulation");
-      this.simulation.save(tmp);
-      root.addElement(tmp);
-    }
-//
-//    XmlSaveUtils.saveIntoElementChild(root, "customData", customData,
-//            new EntriesViaStringSerializer<>(q -> q, q -> q));
-
-
-    XDocument doc = new XDocument(root);
-    try {
-      doc.save(fileName);
-    } catch (EXmlException e) {
-      throw new EApplicationException("Failed to save simulation.", e);
-    }
   }
+
 }

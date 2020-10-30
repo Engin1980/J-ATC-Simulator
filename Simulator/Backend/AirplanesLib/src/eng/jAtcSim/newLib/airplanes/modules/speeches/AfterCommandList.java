@@ -329,14 +329,22 @@ public class AfterCommandList {
 
   public void save(XElement target) {
     Consumer2<XElement, AFItem> consumer = (e, q) ->{
-      XmlSaveUtils.Field.storeField(e, q, "antecedent", ObjectSerializer.createForSubclass(AfterCommand.class).withStoredType());
-      XmlSaveUtils.Field.storeField(e, q, "consequent", ObjectSerializer.createForSubclass(ICommand.class).withStoredType());
+      XmlSaveUtils.Field.storeField(e, q, "antecedent",
+              ObjectSerializer.createFor(AfterCommand.class)
+                      .useForSubclass()
+                      .withStoredType()
+                      .useDefaultSerializer(ObjectSerializer.createDeepSerializer()));
+      XmlSaveUtils.Field.storeField(e, q, "consequent", ObjectSerializer
+              .createFor(ICommand.class)
+              .useForSubclass()
+              .withStoredType()
+              .useDefaultSerializer(ObjectSerializer.createDeepSerializer()));
     };
 
     XmlSaveUtils.Items.saveIntoElementChild(target, "rt", this.rt,
             new ItemsSerializer<>(consumer));
 
-    XmlSaveUtils.Items.saveIntoElementChild(target, "rt", this.rt,
+    XmlSaveUtils.Items.saveIntoElementChild(target, "ex", this.ex,
             new ItemsSerializer<>(consumer));
   }
 

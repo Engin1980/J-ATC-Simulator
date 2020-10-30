@@ -324,11 +324,8 @@ public class TowerAtc extends ComputerAtc {
                     (e, q) -> e.setContent(q),
                     ObjectSerializer.createFor(RunwayCheckInfo.class)
                             .useDefaultSerializer(
-                                    ObjectSerializer.create()
-                                            .withStoredType()
-                                            .useSerializers(SharedXmlUtils.serializersMap)
-                                            .useSerializer(int[].class, ObjectSerializer.create()))));
-    tady je to blbe bo to neuklada pole
+                                    ObjectSerializer.createDeepSerializer()
+                                            .useSerializers(SharedXmlUtils.serializersMap))));
   }
 
   @Override

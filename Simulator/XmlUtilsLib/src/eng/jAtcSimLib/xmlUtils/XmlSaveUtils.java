@@ -99,11 +99,7 @@ public class XmlSaveUtils {
     }
 
     public static <T> void storeField(XElement target, Object object, String fieldName, Formatter<T> formatter) {
-      Object v = ObjectUtils.getFieldValue(object, fieldName);
-      if (v == null)
-        saveNullIntoElementChild(target, fieldName);
-      else
-        saveIntoElementChild(target, fieldName, (T) v, formatter);
+      storeField(target, object, fieldName, formatter == null ? null : formatter.toSerializer());
     }
 
     public static <T> void storeField(XElement target, Object object, String fieldName, Serializer<T> serializer) {
@@ -147,14 +143,14 @@ public class XmlSaveUtils {
       if (v == null)
         saveNullIntoElementContent(tmp);
       else {
-        Serializer<?> ser = XmlFieldHelper.tryGetDefaultSerializer(v);
+        Serializer<?> ser = XmlFieldHelper.tryGetDefaultSerializerByValue(v);
         if (ser == null && customSerializers != null && customSerializers.containsKey(v.getClass()))
           ser = customSerializers.get(v.getClass());
         if (ser == null && defaultSerializer != null)
           ser = defaultSerializer;
 
         if (ser != null)
-          saveIntoElementContent(target, v, (Serializer<Object>) ser);
+          saveIntoElementContent(tmp, v, (Serializer<Object>) ser);
         else
           throw new XmlUtilsException(sf("Failed to save type '%s'. This type is not supported by this function.", v.getClass()));
       }

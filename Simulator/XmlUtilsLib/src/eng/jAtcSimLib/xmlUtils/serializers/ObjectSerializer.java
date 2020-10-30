@@ -3,6 +3,7 @@ package eng.jAtcSimLib.xmlUtils.serializers;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.StringUtils;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSimLib.xmlUtils.*;
 
 import java.util.Map;
@@ -12,37 +13,50 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class ObjectSerializer<T> implements Serializer<T> {
 
   public static <T> ObjectSerializer<T> createFor(Class<T> type) {
-    ObjectSerializer<T> ret = new ObjectSerializer<>(type, false);
+    ObjectSerializer<T> ret = new ObjectSerializer<>(type);
     return ret;
   }
 
-  public static <T> ObjectSerializer<T> createForSubclass(Class<T> type) {
-    ObjectSerializer<T> ret = new ObjectSerializer<>(type, true);
+  public static <T> ObjectSerializer<T> createEmpty() {
+    ObjectSerializer<T> ret = new ObjectSerializer<>(null);
     return ret;
   }
 
-  public static <T> ObjectSerializer<T> create() {
-    ObjectSerializer<T> ret = new ObjectSerializer<>(null, true);
+  public static <T> ObjectSerializer<T> createDeepSerializer() {
+    ObjectSerializer<T> ret = new ObjectSerializer<>(null);
+    ret = ret
+            .useDefaultSerializer((Serializer<Object>) ret)
+            .withStoredType();
     return ret;
   }
 
   private final Class<? extends T> expectedClass;
-  private final boolean subClassAllowed;
+  private boolean subClassAllowed = false;
   private boolean generateIncludedFields = true;
-  private boolean validateFieldNames = true;
   private boolean storeType = false;
   private Serializer<Object> defaultSerializer = null;
   private final ISet<String> includedFieldNames = new ESet<>();
   private final ISet<String> excludedFieldNames = new ESet<>();
   private final IMap<Class<?>, Serializer<?>> customSerializers = new EMap<>();
 
-  private ObjectSerializer(Class<? extends T> expectedClass, boolean subClassAllowed) {
+  private ObjectSerializer(Class<? extends T> expectedClass) {
     this.expectedClass = expectedClass;
-    this.subClassAllowed = subClassAllowed;
   }
 
-  public ObjectSerializer<T> applyRecursivelyOnObjectClass() {
-    this.useDefaultSerializer((Serializer<Object>) this);
+//  public ObjectSerializer<T> applyRecursivelyOnObjectClass() {
+//    this.useDefaultSerializer((Serializer<Object>) this);
+//    return this;
+//  }
+
+  //TODEL
+//  public ObjectSerializer<T> withArraySerializer(Serializer<Object> arraySerializer) {
+//    this.arraySerializer = arraySerializer;
+//    return this;
+//  }
+
+  public ObjectSerializer<T> useForSubclass() {
+    EAssert.isTrue(expectedClass != null, "Cannot set 'useForSubclass()' when no expected class specified.");
+    this.subClassAllowed = true;
     return this;
   }
 
@@ -65,9 +79,9 @@ public class ObjectSerializer<T> implements Serializer<T> {
 
   @Override
   public void invoke(XElement targetElement, Object value) {
-    if (value == null)
+    if (value == null) {
       XmlSaveUtils.saveNullIntoElementContent(targetElement);
-    else {
+    } else {
       if (this.expectedClass != null) {
         if (!subClassAllowed && this.expectedClass.equals(value.getClass()) == false)
           throw new XmlUtilsException(sf("This SimpleObjectSerializer expects type '%s', but got '%s'.",
@@ -75,14 +89,12 @@ public class ObjectSerializer<T> implements Serializer<T> {
         else if (subClassAllowed && this.expectedClass.isAssignableFrom(value.getClass()) == false)
           throw new XmlUtilsException(sf("This SimpleObjectSerializer expects type '%s' or subclass, but got '%s'.",
                   this.expectedClass, value.getClass()));
-      }
-      if (storeType)
-        targetElement.setAttribute(DefaultXmlNames.CLASS_NAME, value.getClass().getName());
 
-      if (validateFieldNames) {
         validateIncludedFieldNames();
         validateExludedFieldNames();
       }
+      if (storeType)
+        targetElement.setAttribute(DefaultXmlNames.CLASS_NAME, value.getClass().getName());
 
       ISet<String> fieldNames = generateIncludedFields
               ? ObjectUtils.getFieldNames(value.getClass())
@@ -125,11 +137,6 @@ public class ObjectSerializer<T> implements Serializer<T> {
 
   public ObjectSerializer<T> withStoredType() {
     this.storeType = true;
-    return this;
-  }
-
-  public ObjectSerializer<T> withoutFieldNamesValidation() {
-    this.validateFieldNames = false;
     return this;
   }
 

@@ -128,7 +128,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
     IMap<Class<?>, Serializer<?>> customDelayListSerializers = EMap.of(
             Participant.class, new ParticipantSerializer(),
-            SpeechList.class, new ItemsSerializer<>(ObjectSerializer.create().withStoredType())
+            SpeechList.class, new ItemsSerializer<>(ObjectSerializer.createDeepSerializer())
     );
 
     XmlSaveUtils.Field.storeField(target, this, "queue",

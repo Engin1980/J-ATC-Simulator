@@ -19,10 +19,8 @@ public class CollectorSerializer implements Serializer<Collector> {
 
   public CollectorSerializer() {
     initSerializers();
-    this.sos = ObjectSerializer.create()
-            .withoutFieldNamesValidation()
-            .withStoredType()
-            .applyRecursivelyOnObjectClass()
+    this.sos = ObjectSerializer
+            .createDeepSerializer()
             .useSerializers(serializers);
   }
 

@@ -3,6 +3,8 @@ package eng.jAtcSimLib.xmlUtils;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.utilites.ReflectionUtils;
+import eng.jAtcSimLib.xmlUtils.serializers.ArraySerializer;
 
 import java.util.Map;
 
@@ -12,7 +14,7 @@ public class XmlFieldHelper {
   public static IMap<Class<?>, Formatter<?>> defaultFormatters;
   public static IMap<Class<?>, Serializer<?>> defaultSerializers;
 
-  static{
+  static {
     defaultFormatters = new EMap<>();
     addDefaultFormatter(Integer.class, q -> Integer.toString(q));
     addDefaultFormatter(Short.class, q -> Short.toString(q));
@@ -30,33 +32,44 @@ public class XmlFieldHelper {
     }
   }
 
-  private static <T> void addDefaultFormatter(Class<T> cls, Formatter<T> formatter){
+  private static <T> void addDefaultFormatter(Class<T> cls, Formatter<T> formatter) {
     defaultFormatters.set(cls, formatter);
   }
 
-  private static <T> void addDefaultSerializer(Class<T> cls, Serializer<T> serializer){
+  private static <T> void addDefaultSerializer(Class<T> cls, Serializer<T> serializer) {
     defaultSerializers.set(cls, serializer);
   }
 
-  private static <T> void addDefaultSerializer(Class<T> cls, Formatter<T> formatter){
+  private static <T> void addDefaultSerializer(Class<T> cls, Formatter<T> formatter) {
     defaultSerializers.set(cls, (XElement e, T q) -> e.setContent(formatter.invoke(q)));
   }
 
-  private static void addDefaultSerializer2(Class cls, Formatter formatter){
-    defaultSerializers.set(cls, (XElement e, Object q) -> e.setContent((String)formatter.invoke(q)));
+  private static void addDefaultSerializer2(Class cls, Formatter formatter) {
+    defaultSerializers.set(cls, (XElement e, Object q) -> e.setContent((String) formatter.invoke(q)));
   }
 
-  public static Serializer<?> tryGetDefaultSerializer(Object value){
-    Class<?> type = value.getClass();
+  public static Serializer<?> tryGetDefaultSerializerByValue(Object value) {
+    Serializer<?> ret = tryGetDefaultSerializerByClass(value.getClass());
+    return ret;
+  }
+
+  public static Serializer<?> tryGetDefaultSerializerByClass(Class<?> type) {
+    Serializer<?> ret = null;
     if (defaultSerializers.containsKey(type))
-    return defaultSerializers.get(type);
-    else if (value.getClass().isEnum())
-      return (e, q) -> e.setContent(q.toString());
-    else
-      return null;
+      ret = defaultSerializers.get(type);
+    if (ret == null && type.isEnum())
+      ret = (e, q) -> e.setContent(q.toString());
+    if (ret == null && type.isArray()) {
+      Class<?> arrayItemType = type.getComponentType();
+      arrayItemType = ReflectionUtils.ClassUtils.tryWrapPrimitive(arrayItemType);
+      Serializer<?> itemSerializer = tryGetDefaultSerializerByClass(arrayItemType);
+      if (itemSerializer != null)
+        ret = new ArraySerializer(itemSerializer);
+    }
+    return ret;
   }
 
-  public static Serializer<?> tryGetSerializer(Object value, IMap<Class<?>, Serializer<?>> customSerializers){
+  public static Serializer<?> tryGetSerializer(Object value, IMap<Class<?>, Serializer<?>> customSerializers) {
     Class<?> type = value.getClass();
     if (customSerializers.containsKey(type))
       return customSerializers.get(type);

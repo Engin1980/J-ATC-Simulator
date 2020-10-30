@@ -127,9 +127,7 @@ public class ApproachPilot extends Pilot {
             (IafRoute q) -> q.getGID().toString());
     XmlSaveUtils.Field.storeField(target, this, "approach",
             (XElement e, Approach a) ->
-                    ObjectSerializer.create()
-                            .withStoredType()
-                            .applyRecursivelyOnObjectClass()
+                    ObjectSerializer.createDeepSerializer()
                             .useFormatter(Navaid.class, n -> n.getName()));
   }
 

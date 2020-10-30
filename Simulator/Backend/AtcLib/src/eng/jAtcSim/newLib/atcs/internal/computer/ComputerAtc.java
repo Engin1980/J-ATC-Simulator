@@ -86,7 +86,7 @@ public abstract class ComputerAtc extends Atc {
 
     IMap<Class<?>, Serializer<?>> customDelayListSerializers = EMap.of(
             Participant.class, new ParticipantSerializer(),
-            SpeechList.class, new ItemsSerializer<>(ObjectSerializer.create().withStoredType())
+            SpeechList.class, new ItemsSerializer<>(ObjectSerializer.createDeepSerializer())
     );
 
     XmlSaveUtils.Field.storeField(target, this, "speechDelayer",
