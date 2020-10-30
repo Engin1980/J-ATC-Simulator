@@ -164,8 +164,6 @@ public class XmlSaveUtils {
     }
   }
 
-  private static final String NULL_STRING = "(null)";
-
   public static XElement saveAsElement(String elementName, long value) {
     XElement ret = new XElement(elementName);
     saveIntoElementContent(ret, value);
@@ -293,7 +291,7 @@ public class XmlSaveUtils {
   }
 
   public static void saveNullIntoElementContent(XElement target) {
-    target.setContent(NULL_STRING);
+    target.setContent(DefaultXmlNames.NULL_CONTENT);
   }
 
 }

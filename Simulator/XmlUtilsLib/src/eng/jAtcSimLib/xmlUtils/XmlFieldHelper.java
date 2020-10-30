@@ -4,6 +4,7 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.ReflectionUtils;
+import eng.jAtcSimLib.xmlUtils.deserializers.ArrayDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ArraySerializer;
 
 import java.util.Map;
@@ -13,6 +14,8 @@ public class XmlFieldHelper {
 
   public static IMap<Class<?>, Formatter<?>> defaultFormatters;
   public static IMap<Class<?>, Serializer<?>> defaultSerializers;
+  public static IMap<Class<?>, Parser> defaultParsers;
+  public static IMap<Class<?>, Deserializer> defaultDeserializers;
 
   static {
     defaultFormatters = new EMap<>();
@@ -27,25 +30,42 @@ public class XmlFieldHelper {
     addDefaultFormatter(String.class, q -> q);
 
     defaultSerializers = new EMap<>();
-    for (Map.Entry<Class<?>, Formatter<?>> defaultFormatter : defaultFormatters) {
-      addDefaultSerializer2(defaultFormatter.getKey(), defaultFormatter.getValue());
+    for (Map.Entry<Class<?>, Formatter<?>> entry : defaultFormatters) {
+      addDefaultSerializer(entry.getKey(), entry.getValue());
     }
+
+    defaultParsers = new EMap<>();
+    defaultParsers.set(Integer.class, q -> Integer.valueOf(q));
+    defaultParsers.set(Short.class, q -> Short.valueOf(q));
+    defaultParsers.set(Byte.class, q -> Byte.valueOf(q));
+    defaultParsers.set(Long.class, q -> Long.valueOf(q));
+    defaultParsers.set(Float.class, q -> Float.valueOf(q));
+    defaultParsers.set(Double.class, q -> Double.valueOf(q));
+    defaultParsers.set(Boolean.class, q -> Boolean.valueOf(q));
+    defaultParsers.set(Character.class, q -> q.charAt(0));
+    defaultParsers.set(String.class, q -> q);
+
+    defaultDeserializers = new EMap<>();
+    for (Map.Entry<Class<?>, Parser> entry : defaultParsers) {
+      defaultDeserializers.set(entry.getKey(), entry.getValue().toDeserializer());
+    }
+
   }
 
-  private static <T> void addDefaultFormatter(Class<T> cls, Formatter<T> formatter) {
-    defaultFormatters.set(cls, formatter);
-  }
-
-  private static <T> void addDefaultSerializer(Class<T> cls, Serializer<T> serializer) {
-    defaultSerializers.set(cls, serializer);
-  }
-
-  private static <T> void addDefaultSerializer(Class<T> cls, Formatter<T> formatter) {
-    defaultSerializers.set(cls, (XElement e, T q) -> e.setContent(formatter.invoke(q)));
-  }
-
-  private static void addDefaultSerializer2(Class cls, Formatter formatter) {
-    defaultSerializers.set(cls, (XElement e, Object q) -> e.setContent((String) formatter.invoke(q)));
+  public static Deserializer tryGetDefaultDeserializer(Class<?> type) {
+    Deserializer ret = null;
+    if (defaultDeserializers.containsKey(type))
+      ret = defaultDeserializers.get(type);
+    else if (ret == null && type.isEnum())
+      ret = (e, q) -> Enum.valueOf((Class<Enum>) type, e.getContent());
+    else if (ret == null && type.isArray()) {
+      Class<?> arrayItemType = type.getComponentType();
+      arrayItemType = ReflectionUtils.ClassUtils.tryWrapPrimitive(arrayItemType);
+      Deserializer itemDeserializer = tryGetDefaultDeserializer(arrayItemType);
+      if (itemDeserializer != null)
+        ret = new ArrayDeserializer(itemDeserializer);
+    }
+    return ret;
   }
 
   public static Serializer<?> tryGetDefaultSerializerByValue(Object value) {
@@ -75,6 +95,14 @@ public class XmlFieldHelper {
       return customSerializers.get(type);
     else
       return null;
+  }
+
+  private static <T> void addDefaultFormatter(Class<T> cls, Formatter<T> formatter) {
+    defaultFormatters.set(cls, formatter);
+  }
+
+  private static void addDefaultSerializer(Class cls, Formatter formatter) {
+    defaultSerializers.set(cls, (XElement e, Object q) -> e.setContent((String) formatter.invoke(q)));
   }
 
 }

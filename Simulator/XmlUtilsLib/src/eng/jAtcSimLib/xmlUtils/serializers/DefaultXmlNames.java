@@ -8,4 +8,5 @@ public static final String DEFAULT_ITEM_ELEMENT_NAME = "item";
   public static final String ENTRY = "entry";
   public static final String CLASS_NAME = "__type";
   public static final String ITEMS_COUNT = "__count";
+  public static final String NULL_CONTENT = "(null)";
 }
