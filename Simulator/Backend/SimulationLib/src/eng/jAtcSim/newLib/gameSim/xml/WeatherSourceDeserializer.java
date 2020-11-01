@@ -8,24 +8,32 @@ import eng.jAtcSim.newLib.gameSim.game.sources.WeatherXmlSource;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSimLib.xmlUtils.Deserializer;
 import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
+import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.DefaultXmlNames;
 
 public class WeatherSourceDeserializer implements Deserializer {
   @Override
-  public Object deserialize(XElement element) {
+  public Object deserialize(XElement element, Class<?> type) {
     WeatherSource ret;
     String className = element.getAttribute(DefaultXmlNames.CLASS_NAME);
-    if (className.equals("WeatherXmlSource"))
-      ret = new WeatherXmlSource(element.getContent());
-    else if (className.equals("WeatherUserSource")) {
-      WeatherUserSource weatherUserSource = new WeatherUserSource(new Weather());
-      XmlLoadUtils.Field.loadFields(element, weatherUserSource, "initialWeather",
-              ObjectDeserializer.createFor(Weather.class));
-      ret = weatherUserSource;
-    } else if (className.equals("WeatherOnlineSource")){
-      WeatherOnlineSource weatherOnlineSource = new WeatherOnlineSource(false, "", new Weather());
-      XmlLoadUtils.Field.loadField(element, weatherOnlineSource, "icao");
-      Xml
+    switch (className) {
+      case "WeatherXmlSource":
+        ret = new WeatherXmlSource(element.getContent());
+        break;
+      case "WeatherUserSource":
+        WeatherUserSource weatherUserSource = new WeatherUserSource(new Weather());
+        XmlLoadUtils.Field.restoreField(element, weatherUserSource, "initialWeather",
+                new ObjectDeserializer());
+        ret = weatherUserSource;
+        break;
+      case "WeatherOnlineSource":
+        WeatherOnlineSource weatherOnlineSource = new WeatherOnlineSource(false, "", new Weather());
+        XmlLoadUtils.Field.restoreField(element, weatherOnlineSource, "fallbackWeather", new ObjectDeserializer());
+        XmlLoadUtils.Field.restoreField(element, weatherOnlineSource, "icao");
+        ret = weatherOnlineSource;
+        break;
+      default:
+        throw new UnsupportedOperationException("Unknown weather-source type.");
     }
 
     return ret;

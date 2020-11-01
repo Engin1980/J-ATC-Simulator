@@ -10,5 +10,6 @@ public class GameStartupInfo {
   public TrafficStartupSourceInfo trafficSource = null;
   public TrafficStartupSettingsInfo trafficSettings = null;
   public SimulationStartupSettingsInfo simulationSettings = null;
-  public ParserFormatterStartInfo parserFormatterStartInfo = null;
+  //TODEL
+//  public ParserFormatterStartInfo parserFormatterStartInfo = null;
 }

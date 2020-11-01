@@ -250,19 +250,19 @@ public class JAtcSim {
         throw new EApplicationException(
             sf("Unable to load speech responses from xml file '%s'.", appSettings.speechFormatterFile), ex);
       }
-      //TODO do somehow configurable
-      gsi.parserFormatterStartInfo = new ParserFormatterStartInfo(
-          new ParserFormatterStartInfo.Parsers(
-              new PlaneParser(),
-              new AtcParser(),
-              new SystemParser()
-          ),
-          new ParserFormatterStartInfo.Formatters<>(
-              new DynamicPlaneFormatter(speechResponses),
-              new AtcFormatter(),
-              new SystemFormatter()
-          )
-      );
+//      //TODO do somehow configurable
+//      gsi.parserFormatterStartInfo = new ParserFormatterStartInfo(
+//          new ParserFormatterStartInfo.Parsers(
+//              new PlaneParser(),
+//              new AtcParser(),
+//              new SystemParser()
+//          ),
+//          new ParserFormatterStartInfo.Formatters<>(
+//              new DynamicPlaneFormatter(speechResponses),
+//              new AtcFormatter(),
+//              new SystemFormatter()
+//          )
+//      );
 
 
       IGame g;

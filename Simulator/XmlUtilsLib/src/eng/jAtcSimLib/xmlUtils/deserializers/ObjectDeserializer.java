@@ -23,8 +23,8 @@ public class ObjectDeserializer implements Deserializer {
   private Deserializer defaultDeserializer = null;
 
   @Override
-  public <T> T deserialize(XElement element, Class<T> type) {
-    T ret;
+  public Object deserialize(XElement element, Class<?> type) {
+    Object ret;
     if (element.getContent().equals(DefaultXmlNames.NULL_CONTENT))
       ret = null;
     else {

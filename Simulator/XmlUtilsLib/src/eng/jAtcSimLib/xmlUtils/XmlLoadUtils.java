@@ -1,9 +1,9 @@
 package eng.jAtcSimLib.xmlUtils;
 
+import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlySet;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.functionalInterfaces.Producer;
 
 import java.lang.reflect.Constructor;
@@ -47,28 +47,48 @@ public class XmlLoadUtils {
       restoreField(element, target, fieldName, parser.toDeserializer());
     }
 
-    public static void restoreField(XElement element, Object target, String fieldName, Deserializer parser) {
-      throw new ToDoException();
+    public static void restoreField(XElement element, Object target, String fieldName, Deserializer deserializer) {
+      java.lang.reflect.Field field = getFieldByName(target.getClass(), fieldName);
+      restoreField(element, target, field, deserializer);
     }
 
     public static <T> void restoreField(XElement element, T ret, String fieldName, IMap<java.lang.Class<?>, Deserializer> customDeserializers, Deserializer defaultDeserializer, IMap<java.lang.Class<?>, Producer<?>> instanceProviders) {
-      java.lang.reflect.Field field = ObjectUtils.getFields(ret.getClass()).getFirst(q -> q.getName().equals(fieldName));
+      java.lang.reflect.Field field = getFieldByName(ret.getClass(), fieldName);
       Deserializer deserializer = customDeserializers.tryGet(field.getType());
       if (deserializer == null)
         deserializer = XmlFieldHelper.tryGetDefaultDeserializer(field.getType());
       if (deserializer == null)
         deserializer = defaultDeserializer;
 
-      Object value = deserializer.deserialize(element, field.getType());
-      field.setAccessible(true);
-      field.set(ret, value);
-      field.setAccessible(false);
+      restoreField(element, ret, field, deserializer);
+    }
+
+    public static void restoreField(XElement element, Object target, String fieldName) {
+      restoreField(element, target, fieldName, new EMap<>(), null, new EMap<>());
     }
 
     public static <T> void restoreFields(XElement element, T ret, IReadOnlySet<String> fieldNames, IMap<java.lang.Class<?>, Deserializer> customDeserializers, Deserializer defaultDeserializer, IMap<java.lang.Class<?>, Producer<?>> instanceProviders) {
       for (String fieldName : fieldNames) {
         restoreField(element, ret, fieldName, customDeserializers, defaultDeserializer, instanceProviders);
       }
+    }
+
+    private static java.lang.reflect.Field getFieldByName(java.lang.Class<?> type, String fieldName) {
+      return ObjectUtils.getFields(type).getFirst(q -> q.getName().equals(fieldName));
+    }
+
+    private static <T> void restoreField(XElement sourceElement, T targetObject, java.lang.reflect.Field field, Deserializer deserializer) {
+      Object value = deserializer.deserialize(sourceElement, field.getType());
+      field.setAccessible(true);
+      try {
+        field.set(targetObject, value);
+      } catch (IllegalAccessException e) {
+        throw new XmlUtilsException(sf("Failed to set value '%s' into field '%s' of '%s'.",
+                value,
+                field.getName(),
+                targetObject.getClass()), e);
+      }
+      field.setAccessible(false);
     }
   }
 }

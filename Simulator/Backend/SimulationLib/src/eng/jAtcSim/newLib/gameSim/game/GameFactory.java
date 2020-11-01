@@ -98,7 +98,6 @@ public class GameFactory {
           weatherSource.getContent()
       );
       SimulationSettings simulationSettings = new SimulationSettings(
-          gsi.parserFormatterStartInfo,
           gsi.trafficSettings,
           gsi.simulationSettings
       );
@@ -117,5 +116,9 @@ public class GameFactory {
       throw new EApplicationException("Unable to create or initialize the simulation.", ex);
     }
     return game;
+  }
+
+  public Game load(String fileName){
+
   }
 }

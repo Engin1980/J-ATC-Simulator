@@ -5,12 +5,10 @@ import eng.jAtcSim.newLib.gameSim.game.startupInfos.SimulationStartupSettingsInf
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.TrafficStartupSettingsInfo;
 
 public class SimulationSettings {
-  public final ParserFormatterStartInfo parserFormatterStartInfo;
   public final TrafficStartupSettingsInfo trafficSettings;
   public final SimulationStartupSettingsInfo simulationSettings;
 
-  public SimulationSettings(ParserFormatterStartInfo parserFormatterStartInfo, TrafficStartupSettingsInfo trafficSettings, SimulationStartupSettingsInfo simulationSettings) {
-    this.parserFormatterStartInfo = parserFormatterStartInfo;
+  public SimulationSettings(TrafficStartupSettingsInfo trafficSettings, SimulationStartupSettingsInfo simulationSettings) {
     this.trafficSettings = trafficSettings;
     this.simulationSettings = simulationSettings;
   }

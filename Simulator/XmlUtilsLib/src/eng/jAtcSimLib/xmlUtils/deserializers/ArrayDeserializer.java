@@ -18,9 +18,9 @@ public class ArrayDeserializer implements Deserializer {
   public Object deserialize(XElement element, Class<?> type) {
     EAssert.Argument.isTrue(type.isArray());
 
-    IterableDeserializer iterableDeserializer = new IterableDeserializer(type.getComponentType(), itemDeserializer);
+    ItemsDeserializer itemsDeserializer = new ItemsDeserializer(type.getComponentType(), itemDeserializer);
 
-    Iterable<?> iterable = (Iterable<?>) iterableDeserializer.deserialize(element, type);
+    Iterable<?> iterable = (Iterable<?>) itemsDeserializer.deserialize(element, type);
     int count = getItemsCountFromIterable(iterable);
 
     Object ret = Array.newInstance(type.getComponentType(), count);
