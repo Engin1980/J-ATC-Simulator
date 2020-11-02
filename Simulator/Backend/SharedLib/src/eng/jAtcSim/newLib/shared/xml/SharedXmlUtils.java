@@ -8,7 +8,9 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Format;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.time.*;
+import eng.jAtcSimLib.xmlUtils.Deserializer;
 import eng.jAtcSimLib.xmlUtils.Formatter;
+import eng.jAtcSimLib.xmlUtils.Parser;
 import eng.jAtcSimLib.xmlUtils.Serializer;
 
 public class SharedXmlUtils {
@@ -20,11 +22,15 @@ public class SharedXmlUtils {
   public static Serializer<Coordinate> coordinateSerializer = (e, q) -> e.setContent(coordinateFormatter.invoke(q));
   public static Formatter<Squawk> squawkFormatter = q -> q.toString();
   public static Serializer<Squawk> squawkSerializer = (e, q) -> e.setContent(squawkFormatter.invoke(q));
-  public static Formatter<ITime> iTimeFormatter = q -> q.toString();
+  public static Formatter<ITime> iTimeFormatter = q -> q.format();
   public static Serializer<ITime> iTimeSerializer = (e, q) -> e.setContent(iTimeFormatter.invoke(q));
+
+  public static Parser dayTimeStampParser = q-> EDayTimeStamp.parse(q);
+  public static Parser dayTimeRunParser = q-> EDayTimeRun.parse(q);
 
   public static IMap<Class<?>, Serializer<?>> serializersMap;
   public static IMap<Class<?>, Formatter<?>> formattersMap;
+
 
   static {
     serializersMap = new EMap<>();

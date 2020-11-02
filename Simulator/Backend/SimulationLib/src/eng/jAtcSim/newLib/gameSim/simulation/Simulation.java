@@ -4,6 +4,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.IEventListenerSimple;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.area.Airport;
@@ -45,6 +46,7 @@ import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class Simulation {
@@ -183,6 +185,70 @@ public class Simulation {
   private final WeatherModule weatherModule;
   private final WorldModule worldModule;
 
+  public Simulation(SimulationStartupContext simulationContext, XElement source) {
+    EAssert.Argument.isNotNull(simulationContext, "simulationContext");
+    EAssert.Argument.isNotNull(source, "source");
+
+    now = new EDayTimeRun(0);
+    XmlLoadUtils.Field.restoreField(source, this, "now", SharedXmlUtils.dayTimeRunParser);
+
+    SharedAcc sharedContext = new SharedAcc(
+            simulationContext.activeAirport.getIcao(),
+            simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()),
+            this.now,
+            new SimulationLog()
+    );
+    ContextManager.setContext(ISharedAcc.class, sharedContext);
+
+    this.worldModule = new WorldModule(this, simulationContext);
+    this.worldModule.init();
+
+    this.weatherModule = new WeatherModule(this, new WeatherManager(simulationContext.weatherProvider));
+    this.weatherModule.init();
+
+    this.ioModule = new IOModule(
+            this,
+            new KeyShortcutManager(),
+            new SystemMessagesModule(this)
+    );
+    this.ioModule.init();
+
+    XmlLoadUtils.Field.restoreField(source, this, "trafficModule",
+            (e, q) -> TrafficModule.load(this, e));
+//    this.trafficModule = new TrafficModule(
+//            this,
+//            new TrafficProvider(simulationContext.traffic),
+//            simulationSettings.trafficSettings.trafficDelayStepProbability,
+//            simulationSettings.trafficSettings.trafficDelayStep,
+//            simulationSettings.trafficSettings.useExtendedCallsigns);
+//    this.trafficModule.init();
+
+    throw new ToDoException();
+
+    this.statsModule = new StatsModule(this, new StatsProvider(simulationSettings.simulationSettings.statsSnapshotDistanceInMinutes));
+    this.statsModule.init();
+
+    this.atcModule = new AtcModule(
+            new AtcProvider(worldModule.getActiveAirport()));
+    this.atcModule.init();
+
+
+
+    this.airplanesModule = new AirplanesModule(
+            this,
+            new AirplanesController(),
+            new AirproxController(),
+            new MrvaController(worldModule.getArea().getBorders().where(q -> q.getType() == Border.eType.mrva)),
+            new EmergencyAppearanceController(simulationSettings.trafficSettings.emergencyPerDayProbability),
+            new MoodManager()
+    );
+    this.airplanesModule.init();
+
+
+    this.timerModule = new TimerModule(this, simulationSettings.simulationSettings.secondLengthInMs);
+    this.timerModule.registerOnTickListener(this::timerTicked);
+  }
+
   public Simulation(
           SimulationStartupContext simulationContext,
           SimulationSettings simulationSettings) {
@@ -198,8 +264,6 @@ public class Simulation {
             new SimulationLog()
     );
     ContextManager.setContext(ISharedAcc.class, sharedContext);
-
-    AtcId userAtcId = simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()).getFirst(q -> q.getType() == AtcType.app);
 
     this.worldModule = new WorldModule(this, simulationContext);
     this.worldModule.init();

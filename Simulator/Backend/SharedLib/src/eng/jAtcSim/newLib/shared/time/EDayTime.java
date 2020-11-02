@@ -33,6 +33,13 @@ public abstract class EDayTime implements ITime, ITimeComparable<EDayTime> {
         this.getSeconds());
   }
 
+  @Override
+  public String format(){
+    return toDayTimeString();
+  }
+
+
+
   public LocalTime toLocalTime() {
     return LocalTime.of(this.getDays(), this.getMinutes(), this.getSeconds());
   }

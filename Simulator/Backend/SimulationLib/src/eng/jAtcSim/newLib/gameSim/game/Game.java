@@ -69,9 +69,7 @@ public class Game implements IGame {
     );
     SimulationSettings settings = new SimulationSettings(null, null);
 
-    game.simulation = new Simulation(
-            context,
-            settings);
+    game.simulation = new Simulation(context, root.getChild("simulation"));
 
     throw new ToDoException();
 

@@ -1,9 +1,22 @@
 package eng.jAtcSim.newLib.shared.time;
 
+import eng.eSystem.utilites.RegexUtils;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 public class EDayTimeRun extends EDayTime {
+  public static EDayTimeRun parse(String value) {
+    String pattern = "(\\d)\\.(\\d{2}):(\\d{2}):(\\d{2})";
+
+    String[] groups = RegexUtils.extractGroups(value, pattern);
+
+    int day = Integer.parseInt(groups[1]);
+    int hour = Integer.parseInt(groups[2]);
+    int minute = Integer.parseInt(groups[3]);
+    int second = Integer.parseInt(groups[4]);
+
+    return new EDayTimeRun(day, hour, minute, second);
+  }
+
   private int value;
 
   public EDayTimeRun(int value) {
@@ -15,13 +28,13 @@ public class EDayTimeRun extends EDayTime {
     this(days * SECONDS_PER_DAY + hours * SECONDS_PER_HOUR + minutes * SECONDS_PER_MINUTE + seconds);
   }
 
-  public void increaseSecond() {
-    this.value++;
-  }
-
   @Override
   public int getValue() {
     return value;
+  }
+
+  public void increaseSecond() {
+    this.value++;
   }
 
   public EDayTimeStamp toStamp() {

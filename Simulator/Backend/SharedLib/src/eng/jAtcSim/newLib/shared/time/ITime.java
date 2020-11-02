@@ -23,6 +23,8 @@ public interface ITime {
 
   int getValue();
 
+  String format();
+
   default String toHourMinuteString(){
     return sf("%02d:%02d",
         this.getHours(), this.getMinutes());

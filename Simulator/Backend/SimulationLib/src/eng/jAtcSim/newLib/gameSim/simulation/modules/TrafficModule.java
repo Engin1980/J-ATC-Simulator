@@ -28,16 +28,38 @@ import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.traffic.movementTemplating.*;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class TrafficModule extends SimulationModule {
-  private final TrafficProvider trafficProvider;
   private static final int MAX_ALLOWED_DELAY = 120;
+
+  public static TrafficModule load(Simulation parent, XElement source) {
+
+
+    int dsp = XmlLoadUtils.Field.loadFieldValue(source, "delayStepProbability", int.class);
+    int ds = XmlLoadUtils.Field.loadFieldValue(source, "delayStep", int.class);
+    TrafficProvider tp = XmlLoadUtils.Field.loadFieldValue(source, "trafficProvider", TrafficProvider.class, (e, q) -> TrafficProvider.load(e));
+    CallsignFactory cf = XmlLoadUtils.Field.loadFieldValue(source, "callsignFactory", CallsignFactory.class, (e, q) -> CallsignFactory.load(e));
+
+    TrafficModule ret = new TrafficModule(parent, tp, cf, ds, dsp);
+    return ret;
+  }
+
+  private final TrafficProvider trafficProvider;
   private final CallsignFactory callsignFactory;
   private final int delayStep;
   private final double delayStepProbability;
+
+  private TrafficModule(Simulation parent, TrafficProvider trafficProvider, CallsignFactory callsignFactory, int delayStep, double delayStepProbability) {
+    super(parent);
+    this.trafficProvider = trafficProvider;
+    this.callsignFactory = callsignFactory;
+    this.delayStep = delayStep;
+    this.delayStepProbability = delayStepProbability;
+  }
 
   public TrafficModule(Simulation parent, TrafficProvider trafficProvider,
                        double delayStepProbability, int delayStep, boolean useExtendedCallsigns) {
@@ -60,15 +82,22 @@ public class TrafficModule extends SimulationModule {
   public void save(XElement target) {
     XmlSaveUtils.Field.storeFields(target, this, "delayStep", "delayStepProbability");
 
-    XElement tmp ;
+    XElement tmp;
 
-    tmp = new XElement("callsignFactory");
-    callsignFactory.save(tmp);
-    target.addElement(tmp);
+    XmlSaveUtils.Field.storeField(target, this, "callsignFactory",
+            (XElement e, CallsignFactory q) -> q.save(e));
 
-    tmp = new XElement("trafficProvider");
-    trafficProvider.save(tmp);
-    target.addElement(tmp);
+    XmlSaveUtils.Field.storeField(target, this, "trafficProvider",
+            (XElement e, TrafficProvider q) -> q.save(e));
+
+    //TODEL
+//    tmp = new XElement("callsignFactory");
+//    callsignFactory.save(tmp);
+//    target.addElement(tmp);
+//
+//    tmp = new XElement("trafficProvider");
+//    trafficProvider.save(tmp);
+//    target.addElement(tmp);
   }
 
   private FlightMovementTemplate convertGenericMovementTemplateToFlightMovementTemplate(MovementTemplate m) {
@@ -84,14 +113,14 @@ public class TrafficModule extends SimulationModule {
       CompanyFleet companyFleet = parent.getWorldModule().getAirlinesFleets().tryGetByIcaoOrDefault(gcmt.getCompanyIcao());
       callsign = this.callsignFactory.generateCommercial(companyFleet.getIcao());
       IList<TypeAndWeight> availableTypes = companyFleet.getTypes()
-          .where(q -> parent.getWorldModule().getAirplaneTypes()
-              .getTypeNames()
-              .contains(q.getTypeName()));
+              .where(q -> parent.getWorldModule().getAirplaneTypes()
+                      .getTypeNames()
+                      .contains(q.getTypeName()));
       if (availableTypes.isEmpty())
         airplaneTypeName = "N/A";
       else
         airplaneTypeName = availableTypes.getRandomByWeights(
-            q -> (double) q.getWeight()).getTypeName();
+                q -> (double) q.getWeight()).getTypeName();
 
     } else if (m instanceof GenericGeneralAviationMovementTemplate) {
       GenericGeneralAviationMovementTemplate ggamt = (GenericGeneralAviationMovementTemplate) m;
@@ -99,20 +128,20 @@ public class TrafficModule extends SimulationModule {
       CountryFleet countryFleet = parent.getWorldModule().getGaFleets().tryGetByIcaoOrDefault(ggamt.getCountryIcao());
       callsign = this.callsignFactory.generateGeneralAviation(countryFleet.getAircraftPrefix());
       IList<TypeAndWeight> availableTypes = countryFleet.getTypes()
-          .where(q -> parent.getWorldModule().getAirplaneTypes()
-              .getTypeNames()
-              .contains(q.getTypeName()));
+              .where(q -> parent.getWorldModule().getAirplaneTypes()
+                      .getTypeNames()
+                      .contains(q.getTypeName()));
       if (availableTypes.isEmpty())
         airplaneTypeName = "N/A";
       else
         airplaneTypeName = availableTypes.getRandomByWeights(
-            q -> (double) q.getWeight()).getTypeName();
+                q -> (double) q.getWeight()).getTypeName();
 
     } else
       throw new UnsupportedOperationException();
 
     ret = new FlightMovementTemplate(
-        callsign, airplaneTypeName, m.getKind(), m.getAppearanceTime(), m.getEntryExitInfo());
+            callsign, airplaneTypeName, m.getKind(), m.getAppearanceTime(), m.getEntryExitInfo());
 
     return ret;
   }
@@ -156,7 +185,7 @@ public class TrafficModule extends SimulationModule {
     {
       final double thousandsFeetPerMile = 500;
       final double distance = Coordinates.getDistanceInNM(Context.getArea().getAirport().getLocation(), eep.getNavaid().getCoordinate())
-          + Coordinates.getDistanceInNM(eep.getNavaid().getCoordinate(), planeCoordinate);
+              + Coordinates.getDistanceInNM(eep.getNavaid().getCoordinate(), planeCoordinate);
       int tmp = (int) (distance * thousandsFeetPerMile);
       ret = Math.max(ret, tmp);
     }
@@ -218,15 +247,15 @@ public class TrafficModule extends SimulationModule {
     int spd = pt.vCruise;
 
     EDayTimeStamp entryTime =
-        m.getAppearanceTime().isAfterOrEq(Context.getShared().getNow().getTime()) ?
-            new EDayTimeStamp(Context.getShared().getNow().getDays(), m.getAppearanceTime()) :
-            new EDayTimeStamp(Context.getShared().getNow().getDays() + 1, m.getAppearanceTime());
+            m.getAppearanceTime().isAfterOrEq(Context.getShared().getNow().getTime()) ?
+                    new EDayTimeStamp(Context.getShared().getNow().getDays(), m.getAppearanceTime()) :
+                    new EDayTimeStamp(Context.getShared().getNow().getDays() + 1, m.getAppearanceTime());
 
     EDayTimeStamp expectedExitTime = entryTime.addMinutes(25);
     int delay = generateDelay();
 
     ret = new ArrivalAirplaneTemplate(
-        cs, pt, entryPoint, entryTime, delay, expectedExitTime, coord, heading, alt, spd);
+            cs, pt, entryPoint, entryTime, delay, expectedExitTime, coord, heading, alt, spd);
 
     return new TryResult<>(ret);
   }
@@ -245,16 +274,16 @@ public class TrafficModule extends SimulationModule {
     }
 
     EDayTimeStamp entryTime =
-        m.getAppearanceTime().isAfterOrEq(Context.getShared().getNow().getTime()) ?
-            new EDayTimeStamp(Context.getShared().getNow().getDays(), m.getAppearanceTime()) :
-            new EDayTimeStamp(Context.getShared().getNow().getDays() + 1, m.getAppearanceTime());
+            m.getAppearanceTime().isAfterOrEq(Context.getShared().getNow().getTime()) ?
+                    new EDayTimeStamp(Context.getShared().getNow().getDays(), m.getAppearanceTime()) :
+                    new EDayTimeStamp(Context.getShared().getNow().getDays() + 1, m.getAppearanceTime());
 
     int entryDelay = generateDelay();
 
     EDayTimeStamp expectedExitTime = entryTime.addMinutes(3); // 3 minutes from hp to take-off
 
     ret = new DepartureAirplaneTemplate(
-        cs, pt, entryPoint, entryTime, entryDelay, expectedExitTime);
+            cs, pt, entryPoint, entryTime, entryDelay, expectedExitTime);
 
     return new TryResult<>(ret);
   }
@@ -266,8 +295,8 @@ public class TrafficModule extends SimulationModule {
       TryResult<AirplaneTemplate> res = convertMovementToAirplane(newMovement);
       if (res.getException() != null)
         Context.getApp().getAppLog().write(ApplicationLog.eType.warning,
-            sf("Unable to create a flight, error when creating instance: %s.",
-                res.getException().getMessage()));
+                sf("Unable to create a flight, error when creating instance: %s.",
+                        res.getException().getMessage()));
       else
         newTemplates.add(res.getValue());
     }
@@ -287,9 +316,9 @@ public class TrafficModule extends SimulationModule {
     tmp = tmp.where(q -> q.getMaxMrvaAltitudeOrHigh() < pt.maxAltitude);
     if (tmp.isEmpty()) {
       Context.getApp().getAppLog().write(ApplicationLog.eType.warning,
-          sf("There are no available entry/exit points for plane of kind %s with service ceiling at %d ft. " +
-                  "Flight must be cancelled.",
-              pt.name, pt.maxAltitude));
+              sf("There are no available entry/exit points for plane of kind %s with service ceiling at %d ft. " +
+                              "Flight must be cancelled.",
+                      pt.name, pt.maxAltitude));
       return null;
     }
 
@@ -299,9 +328,9 @@ public class TrafficModule extends SimulationModule {
       ret = tmp.tryGetFirst(q -> q.getName().equals(entryExitInfo.getNavaid()));
       if (ret == null) {
         Context.getApp().getAppLog().write(ApplicationLog.eType.warning,
-            sf("Plane generation asks for entry point %s, but there is not such " +
-                    "entry-exit point available.",
-                entryExitInfo.getNavaid()));
+                sf("Plane generation asks for entry point %s, but there is not such " +
+                                "entry-exit point available.",
+                        entryExitInfo.getNavaid()));
         ret = tmp.getRandom();
       }
     } else if (entryExitInfo.getOtherAirportCoordinate() != null) {
