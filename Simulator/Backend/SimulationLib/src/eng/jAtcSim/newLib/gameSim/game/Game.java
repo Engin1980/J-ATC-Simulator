@@ -5,6 +5,7 @@ import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
+import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
@@ -12,8 +13,6 @@ import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.SimulationSettings;
 import eng.jAtcSim.newLib.gameSim.xml.WeatherSourceDeserializer;
 import eng.jAtcSim.newLib.gameSim.xml.WeatherSourceSerializer;
-import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
-import eng.jAtcSim.newLib.traffic.TrafficManagerSettings;
 import eng.jAtcSimLib.xmlUtils.Parser;
 import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
@@ -21,10 +20,12 @@ import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class Game implements IGame {
-  public static Game load(String fileName, IMap<String, Object> customData) {
-    Game game = Game();
 
-//    Context.getShared().getSimLog().writeLine(ApplicationLog.eType.info, "Loading xml document...");
+  private Game(){}
+
+  static Game load(String fileName, IMap<String, Object> customData) {
+    Game game = new Game(); //TODEL can public ctor be used?
+
     XDocument doc;
     try {
       doc = XDocument.load(fileName);
@@ -36,21 +37,21 @@ public class Game implements IGame {
 
     XmlLoadUtils.Field.restoreField(root, game, "areaSource", (Parser) (q) -> {
       String[] pts = q.split(";");
-      AreaSource ret = new AreaSource(pts[0], pts[1]);
+      AreaSource ret = SourceFactory.createAreaSource(pts[0], pts[1]);
       return ret;
     });
     game.areaSource.init();
     XmlLoadUtils.Field.restoreField(root, game, "airplaneTypesSource",
-            (Parser) q -> new AirplaneTypesSource(q));
+            (Parser) q -> SourceFactory.createAirplaneTypesSource(q));
     game.airplaneTypesSource.init();
     XmlLoadUtils.Field.restoreField(root, game, "fleetsSource",
             (Parser) q -> {
               String[] pts = q.split(";");
-              return new FleetsSource(pts[1], pts[0]);
+              return SourceFactory.createFleetsSource(pts[1], pts[0]);
             });
     game.fleetsSource.init();
     XmlLoadUtils.Field.restoreField(root, game, "trafficSource",
-            (Parser) q -> new TrafficXmlSource(q));
+            (Parser) q -> SourceFactory.createTrafficXmlSource(q));
     game.trafficSource.init();
     XmlLoadUtils.Field.restoreField(root, game, "weatherSource",
             new WeatherSourceDeserializer());
@@ -72,7 +73,9 @@ public class Game implements IGame {
             context,
             settings);
 
-    game.simulation.load(root.getChild("simulation"));
+    throw new ToDoException();
+
+    //game.simulation.load(root.getChild("simulation"));
 
 
 //    Context.getShared().getAppLog().writeLine(ApplicationLog.eType.info, "Loading radar shortcuts...");
@@ -92,6 +95,8 @@ public class Game implements IGame {
 //    }
 //
 //    return ret;
+
+//    return game;
   }
 
   private AreaSource areaSource;

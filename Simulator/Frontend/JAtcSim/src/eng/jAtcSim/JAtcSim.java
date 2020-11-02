@@ -18,19 +18,14 @@ import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.frmPacks.shared.FrmLog;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.game.GameFactory;
+import eng.jAtcSim.newLib.gameSim.game.sources.SourceFactory;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.*;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.context.AppAcc;
 import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
-import eng.jAtcSim.newLib.textProcessing.implemented.atcFormatter.AtcFormatter;
-import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.AtcParser;
-import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
-import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.PlaneParser;
-import eng.jAtcSim.newLib.textProcessing.implemented.systemFormatter.SystemFormatter;
-import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.SystemParser;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 import eng.jAtcSim.newLib.weather.Weather;
@@ -68,6 +63,9 @@ public class JAtcSim {
   }
 
   public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
+
+    new GameFactory().load(xmlFileName);
+
     //TODO Implement this: loading of the simulation
     throw new ToDoException("loading of the simulation");
 //    Context.getShared().getAppLog().write(ApplicationLog.eType.info, "Loading saved simulation game");
@@ -187,17 +185,17 @@ public class JAtcSim {
     try {
       GameStartupInfo gsi = new GameStartupInfo();
 
-      gsi.areaSource = new AreaStartupSourceInfo(
+      gsi.areaSource = SourceFactory.createAreaSource(
           startupSettings.files.areaXmlFile,
           startupSettings.recent.icao
       );
 
-      gsi.simulationSettings = new SimulationStartupSettingsInfo();
+      gsi.simulationSettings = new SimulationSettings();
       gsi.simulationSettings.secondLengthInMs = startupSettings.simulation.secondLengthInMs;
       gsi.simulationSettings.startTime = new ETimeStamp(startupSettings.recent.time);
       gsi.simulationSettings.statsSnapshotDistanceInMinutes = appSettings.stats.snapshotIntervalDistance;
 
-      gsi.trafficSettings = new TrafficStartupSettingsInfo();
+      gsi.trafficSettings = new TrafficSettings();
       gsi.trafficSettings.emergencyPerDayProbability = startupSettings.traffic.emergencyPerDayProbability;
       gsi.trafficSettings.maxTrafficPlanes = startupSettings.traffic.maxPlanes;
       gsi.trafficSettings.trafficDensityPercentage = startupSettings.traffic.densityPercentage;
@@ -209,34 +207,32 @@ public class JAtcSim {
         gsi.trafficSettings.trafficDelayStep = 0;
       }
 
-      gsi.companyFleetsXmlFile = startupSettings.files.companiesFleetsXmlFile;
-      gsi.generalAviationFleetsXmlFile = startupSettings.files.generalAviationFleetsXmlFile;
-      gsi.planesXmlFile = startupSettings.files.planesXmlFile;
+      gsi.fleetsSource = SourceFactory.createFleetsSource(startupSettings.files.generalAviationFleetsXmlFile,
+              startupSettings.files.companiesFleetsXmlFile);
+      gsi.airplaneTypesSource = SourceFactory.createAirplaneTypesSource(startupSettings.files.planesXmlFile);
 
-      gsi.trafficSource = new TrafficStartupSourceInfo();
-      gsi.trafficSource.trafficXmlFile = startupSettings.files.trafficXmlFile;
+      gsi.trafficSource = SourceFactory.createTrafficXmlSource(startupSettings.files.trafficXmlFile);
 
+      //TODEL
       //FIXME local debug hack, should be removed in future
-      if (enginSpecificTraffic != null) {
-        gsi.trafficSource.specificTraffic = enginSpecificTraffic;
-        gsi.trafficSource.trafficXmlFile = null;
-      } else {
-        gsi.trafficSource.specificTraffic = null;
-        gsi.trafficSource.trafficXmlFile = startupSettings.files.trafficXmlFile;
-      }
+//      if (enginSpecificTraffic != null) {
+//        gsi.trafficSource.specificTraffic = enginSpecificTraffic;
+//        gsi.trafficSource.trafficXmlFile = null;
+//      } else {
+//        gsi.trafficSource.specificTraffic = null;
+//        gsi.trafficSource.trafficXmlFile = startupSettings.files.trafficXmlFile;
+//      }
 
-      gsi.weatherSource = new WeatherStartupSourceInfo();
-      gsi.weatherSource.weatherXmlFile = startupSettings.files.weatherXmlFile;
-      gsi.weatherSource.initialWeather = convertStartupWeatherToInitialWeather(startupSettings.weather);
+      Weather customWeather = convertStartupWeatherToInitialWeather(startupSettings.weather);
       switch (startupSettings.weather.type) {
         case user:
-          gsi.weatherSource.weatherProviderType = WeatherStartupSourceInfo.WeatherSourceType.user;
+          gsi.weatherSource = SourceFactory.createWeatherUserSource(customWeather);
           break;
         case online:
-          gsi.weatherSource.weatherProviderType = WeatherStartupSourceInfo.WeatherSourceType.online;
+          gsi.weatherSource = SourceFactory.createWeatherOnlineSource(startupSettings.recent.icao, customWeather);
           break;
         case xml:
-          gsi.weatherSource.weatherProviderType = WeatherStartupSourceInfo.WeatherSourceType.xml;
+          gsi.weatherSource = SourceFactory.createWeatherXmlSource(startupSettings.files.weatherXmlFile);
           break;
         default:
           throw new EEnumValueUnsupportedException(startupSettings.weather.type);

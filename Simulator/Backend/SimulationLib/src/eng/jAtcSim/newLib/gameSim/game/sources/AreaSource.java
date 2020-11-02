@@ -13,7 +13,7 @@ public class AreaSource extends Source<Area> {
   private String fileName;
   private String icao;
 
-  public AreaSource(String fileName, String icao) {
+  AreaSource(String fileName, String icao) {
     this.fileName = fileName;
     this.icao = icao;
   }
@@ -42,20 +42,6 @@ public class AreaSource extends Source<Area> {
   }
 
   public void init() {
-//    XmlSettings sett = new XmlSettings();
-//
-//    sett.forType(int.class)
-//        .setCustomParser(new AltitudeValueParser());
-//    sett.forType(Integer.class)
-//        .setCustomParser(new AltitudeValueParser());
-//    sett.forType(Coordinate.class)
-//        .setCustomParser(new CoordinateValueParser());
-//
-//    XmlSerializer ser = new XmlSerializer(sett);
-//
-//    XmlArea xmlArea = ser.deserialize(this.fileName, XmlArea.class);
-//    this.area = XmlModelBinder.convert(xmlArea);
-
     try {
       this.area = AreaXmlLoader.load(this.fileName);
     } catch (Exception e) {

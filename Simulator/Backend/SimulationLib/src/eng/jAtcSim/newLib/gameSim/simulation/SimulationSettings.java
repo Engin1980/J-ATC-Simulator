@@ -1,14 +1,12 @@
 package eng.jAtcSim.newLib.gameSim.simulation;
 
-import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
-import eng.jAtcSim.newLib.gameSim.game.startupInfos.SimulationStartupSettingsInfo;
-import eng.jAtcSim.newLib.gameSim.game.startupInfos.TrafficStartupSettingsInfo;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.TrafficSettings;
 
 public class SimulationSettings {
-  public final TrafficStartupSettingsInfo trafficSettings;
-  public final SimulationStartupSettingsInfo simulationSettings;
+  public final TrafficSettings trafficSettings;
+  public final eng.jAtcSim.newLib.gameSim.game.startupInfos.SimulationSettings simulationSettings;
 
-  public SimulationSettings(TrafficStartupSettingsInfo trafficSettings, SimulationStartupSettingsInfo simulationSettings) {
+  public SimulationSettings(TrafficSettings trafficSettings, eng.jAtcSim.newLib.gameSim.game.startupInfos.SimulationSettings simulationSettings) {
     this.trafficSettings = trafficSettings;
     this.simulationSettings = simulationSettings;
   }

@@ -1,10 +1,7 @@
 package eng.jAtcSim.newLib.gameSim.xml;
 
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.gameSim.game.sources.WeatherOnlineSource;
-import eng.jAtcSim.newLib.gameSim.game.sources.WeatherSource;
-import eng.jAtcSim.newLib.gameSim.game.sources.WeatherUserSource;
-import eng.jAtcSim.newLib.gameSim.game.sources.WeatherXmlSource;
+import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSimLib.xmlUtils.Deserializer;
 import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
@@ -18,24 +15,21 @@ public class WeatherSourceDeserializer implements Deserializer {
     String className = element.getAttribute(DefaultXmlNames.CLASS_NAME);
     switch (className) {
       case "WeatherXmlSource":
-        ret = new WeatherXmlSource(element.getContent());
+        ret = SourceFactory.createWeatherXmlSource(element.getContent());
         break;
       case "WeatherUserSource":
-        WeatherUserSource weatherUserSource = new WeatherUserSource(new Weather());
-        XmlLoadUtils.Field.restoreField(element, weatherUserSource, "initialWeather",
+        ret = SourceFactory.createWeatherUserSource(new Weather());
+        XmlLoadUtils.Field.restoreField(element, ret, "initialWeather",
                 new ObjectDeserializer());
-        ret = weatherUserSource;
         break;
       case "WeatherOnlineSource":
-        WeatherOnlineSource weatherOnlineSource = new WeatherOnlineSource(false, "", new Weather());
-        XmlLoadUtils.Field.restoreField(element, weatherOnlineSource, "fallbackWeather", new ObjectDeserializer());
-        XmlLoadUtils.Field.restoreField(element, weatherOnlineSource, "icao");
-        ret = weatherOnlineSource;
+        ret = SourceFactory.createWeatherOnlineSource( "", new Weather());
+        XmlLoadUtils.Field.restoreField(element, ret, "fallbackWeather", new ObjectDeserializer());
+        XmlLoadUtils.Field.restoreField(element, ret, "icao");
         break;
       default:
         throw new UnsupportedOperationException("Unknown weather-source type.");
     }
-
     return ret;
   }
 

@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.gameSim.game.startupInfos;
 
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
-public class SimulationStartupSettingsInfo {
+public class SimulationSettings {
   public ETimeStamp startTime;
   public int secondLengthInMs;
   /**

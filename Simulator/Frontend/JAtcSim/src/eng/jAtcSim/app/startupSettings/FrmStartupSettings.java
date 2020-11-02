@@ -167,8 +167,8 @@ public class FrmStartupSettings extends JPanel {
     this.fillSettingsBy(ss);
 
     btnValidate.setEnabled(false);
-    AirplaneTypesSource types = new AirplaneTypesSource(ss.files.planesXmlFile);
-    FleetsSource fleets = new FleetsSource(ss.files.generalAviationFleetsXmlFile, ss.files.companiesFleetsXmlFile);
+    AirplaneTypesSource types = SourceFactory.createAirplaneTypesSource(ss.files.planesXmlFile);
+    FleetsSource fleets = SourceFactory.createFleetsSource(ss.files.generalAviationFleetsXmlFile, ss.files.companiesFleetsXmlFile);
     try {
       types.init();
     } catch (Exception ex) {
@@ -193,7 +193,7 @@ public class FrmStartupSettings extends JPanel {
     }
 
     if (ss.weather.type == StartupSettings.Weather.WeatherSourceType.xml) {
-      WeatherSource ws = new WeatherXmlSource(ss.files.weatherXmlFile);
+      WeatherSource ws = SourceFactory.createWeatherXmlSource(ss.files.weatherXmlFile);
       try {
         ws.init();
       } catch (Exception ex) {
@@ -206,7 +206,7 @@ public class FrmStartupSettings extends JPanel {
     }
 
     if (ss.traffic.type == StartupSettings.Traffic.eTrafficType.xml) {
-      TrafficSource traffics = new TrafficXmlSource(ss.files.trafficXmlFile);
+      TrafficSource traffics = SourceFactory.createTrafficXmlSource(ss.files.trafficXmlFile);
       try {
         traffics.init();
       } catch (Exception ex) {

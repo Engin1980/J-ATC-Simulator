@@ -9,7 +9,7 @@ import eng.eSystem.events.Event;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParsersSet;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
@@ -77,10 +77,10 @@ public class CommandInputTextFieldExtender {
   private final Producer<IReadOnlyList<AtcId>> atcIdsProducer;
   private final Producer<IReadOnlyList<Callsign>> planeCallsignsProducer;
   private final JTextField txt;
-  private final ParserFormatterStartInfo.Parsers parsers;
+  private final ParsersSet parsers;
   private boolean isCtr = false;
   public CommandInputTextFieldExtender(JTextField txt,
-                                       ParserFormatterStartInfo.Parsers parsers,
+                                       ParsersSet parsers,
                                        Producer<IReadOnlyList<AtcId>> atcIdsProducer,
                                        Producer<IReadOnlyList<Callsign>> planeCallsignsProducer) {
     this.txt = txt;
@@ -90,7 +90,7 @@ public class CommandInputTextFieldExtender {
     this.assignListeners();
   }
 
-  public CommandInputTextFieldExtender(ParserFormatterStartInfo.Parsers parsers,
+  public CommandInputTextFieldExtender(ParsersSet parsers,
                                        Producer<IReadOnlyList<AtcId>> atcIdsProducer,
                                        Producer<IReadOnlyList<Callsign>> planeCallsignsProducer) {
     this(new JFormattedTextField(), parsers, atcIdsProducer, planeCallsignsProducer);

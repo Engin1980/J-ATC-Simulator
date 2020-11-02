@@ -4,9 +4,9 @@ import eng.jAtcSim.newLib.traffic.ITrafficModel;
 
 public class TrafficUserSource extends TrafficSource {
 
-  ITrafficModel traffic;
+  private final ITrafficModel traffic;
 
-  public TrafficUserSource(ITrafficModel userTraffic) {
+  TrafficUserSource(ITrafficModel userTraffic) {
     this.traffic = userTraffic;
   }
 

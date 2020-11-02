@@ -1,15 +1,14 @@
 package eng.jAtcSim.newLib.gameSim.game.startupInfos;
 
+import eng.jAtcSim.newLib.gameSim.game.sources.*;
+
 public class GameStartupInfo {
 
-  public AreaStartupSourceInfo areaSource = null;
-  public String planesXmlFile = null;
-  public String companyFleetsXmlFile = null;
-  public String generalAviationFleetsXmlFile = null;
-  public WeatherStartupSourceInfo weatherSource = null;
-  public TrafficStartupSourceInfo trafficSource = null;
-  public TrafficStartupSettingsInfo trafficSettings = null;
-  public SimulationStartupSettingsInfo simulationSettings = null;
-  //TODEL
-//  public ParserFormatterStartInfo parserFormatterStartInfo = null;
+  public AreaSource areaSource = null;
+  public AirplaneTypesSource airplaneTypesSource = null;
+  public FleetsSource fleetsSource = null;
+  public WeatherSource weatherSource = null;
+  public TrafficSource trafficSource = null;
+  public TrafficSettings trafficSettings = null;
+  public SimulationSettings simulationSettings = null;
 }

@@ -13,7 +13,7 @@ public class TrafficXmlSource extends TrafficSource {
     return fileName;
   }
 
-  public TrafficXmlSource(String fileName) {
+  TrafficXmlSource(String fileName) {
     this.fileName = fileName;
   }
 

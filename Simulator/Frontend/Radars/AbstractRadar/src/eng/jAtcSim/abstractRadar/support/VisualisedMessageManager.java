@@ -5,7 +5,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.utilites.StringUtils;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.FormattersSet;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -20,10 +20,10 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class VisualisedMessageManager {
   private final int delay;
-  private ParserFormatterStartInfo.Formatters<String> formatters;
+  private FormattersSet<String> formatters;
   private List<VisualisedMessage> items = new ArrayList<>();
 
-  public VisualisedMessageManager(int delay, ParserFormatterStartInfo.Formatters<String> formatters) {
+  public VisualisedMessageManager(int delay, FormattersSet<String> formatters) {
     EAssert.Argument.isTrue(NumberUtils.isBetweenOrEqual(0, delay, 30));
     EAssert.Argument.isNotNull(formatters, "formatters");
     this.delay = delay;

@@ -20,7 +20,7 @@ import eng.jAtcSim.newLib.area.InitialPosition;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
-import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParsersSet;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -457,8 +457,8 @@ public class SwingRadarPanel extends JPanel {
     }
   }
 
-  private ParserFormatterStartInfo.Parsers buildParsers() {
-    return new ParserFormatterStartInfo.Parsers(
+  private ParsersSet buildParsers() {
+    return new ParsersSet(
             new PlaneParser(),
             new AtcParser(),
             new SystemParser());

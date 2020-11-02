@@ -12,6 +12,7 @@ import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.gameSim.game.sources.AreaSource;
+import eng.jAtcSim.newLib.gameSim.game.sources.SourceFactory;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.shared.MessageBox;
 
@@ -147,7 +148,7 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
 
   private void btnLoadArea_click(ActionEvent actionEvent) {
     btnLoadArea.setEnabled(false);
-    AreaSource area = new AreaSource(fleArea.getFileName(), "");
+    AreaSource area = SourceFactory.createAreaSource(fleArea.getFileName(), "");
     try{
       area.init();
     } catch (Exception ex){

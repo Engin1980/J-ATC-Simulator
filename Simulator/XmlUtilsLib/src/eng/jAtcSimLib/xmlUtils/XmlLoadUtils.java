@@ -78,7 +78,8 @@ public class XmlLoadUtils {
     }
 
     private static <T> void restoreField(XElement sourceElement, T targetObject, java.lang.reflect.Field field, Deserializer deserializer) {
-      Object value = deserializer.deserialize(sourceElement, field.getType());
+      XElement fieldElement = sourceElement.getChild(field.getName());
+      Object value = deserializer.deserialize(fieldElement, field.getType());
       field.setAccessible(true);
       try {
         field.set(targetObject, value);

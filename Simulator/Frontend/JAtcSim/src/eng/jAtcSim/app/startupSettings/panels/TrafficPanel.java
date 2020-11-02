@@ -26,6 +26,7 @@ import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.frmPacks.shared.FrmTrafficBarGraph;
 import eng.jAtcSim.newLib.gameSim.game.sources.FleetsSource;
+import eng.jAtcSim.newLib.gameSim.game.sources.SourceFactory;
 import eng.jAtcSim.newLib.gameSim.game.sources.TrafficSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.TrafficXmlSource;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
@@ -361,7 +362,7 @@ public class TrafficPanel extends JStartupPanel {
   private ITrafficModel getCurrentTraffic() {
     ITrafficModel ret;
     if (rdbXml.isSelected()) {
-      TrafficSource trafficSource = new TrafficXmlSource(fleTraffic.getFileName());
+      TrafficSource trafficSource = SourceFactory.createTrafficXmlSource(fleTraffic.getFileName());
       trafficSource.init();
       ret = trafficSource.getContent();
     } else {

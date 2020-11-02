@@ -1,12 +1,13 @@
 package eng.jAtcSim.newLib.gameSim.game;
 
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.GameStartupInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
-import eng.jAtcSim.newLib.gameSim.simulation.modules.WorldModule;
 import eng.jAtcSim.newLib.gameSim.simulation.SimulationSettings;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
@@ -24,92 +25,88 @@ public class GameFactory {
 
     try {
       appLog.write(ApplicationLog.eType.info, "Loading area");
-      areaSource = new AreaSource(gsi.areaSource.areaXmlFile, gsi.areaSource.icao);
-      areaSource.init();
+      EAssert.isNotNull(gsi.areaSource, "Area-Source not set.");
+      gsi.areaSource.init();
     } catch (Exception ex) {
       throw new EApplicationException("Unable to load or initialize area.", ex);
     }
 
     try {
       appLog.write(ApplicationLog.eType.info, "Loading plane types");
-      airplaneTypesSource = new AirplaneTypesSource(gsi.planesXmlFile);
-      airplaneTypesSource.init();
+      EAssert.isNotNull(gsi.airplaneTypesSource, "Airplane-Type-Source not set.");
+      gsi.airplaneTypesSource.init();
     } catch (Exception ex) {
       throw new EApplicationException("Unable to load or initialize plane types.", ex);
     }
 
     try {
       appLog.write(ApplicationLog.eType.info, "Loading fleets");
-      fleetsSource = new FleetsSource(gsi.generalAviationFleetsXmlFile, gsi.companyFleetsXmlFile);
-      fleetsSource.init();
+      EAssert.isNotNull(gsi.fleetsSource, "Fleet-Source not set.");
+      gsi.fleetsSource.init();
     } catch (Exception ex) {
       throw new EApplicationException("Unable to load or initialize fleets.", ex);
     }
 
     try {
       appLog.write(ApplicationLog.eType.info, "Loading traffic");
-      if (gsi.trafficSource.specificTraffic != null) {
-        trafficSource = new TrafficUserSource(gsi.trafficSource.specificTraffic);
-      } else {
-        trafficSource = new TrafficXmlSource(gsi.trafficSource.trafficXmlFile);
-      }
-      trafficSource.init();
+//TODEL if not required
+      //      if (gsi.trafficSource.specificTraffic != null) {
+//        trafficSource = new TrafficUserSource(gsi.trafficSource.specificTraffic);
+//      } else {
+//        trafficSource = new TrafficXmlSource(gsi.trafficSource.trafficXmlFile);
+//      }
+      EAssert.isNotNull(gsi.trafficSource, "Traffic-Source not set.");
+      gsi.trafficSource.init();
     } catch (Exception ex) {
       throw new EApplicationException("Unable to load or initialize traffic.", ex);
     }
 
     try {
       appLog.write(ApplicationLog.eType.info, "Initializing weather");
-      switch (gsi.weatherSource.weatherProviderType) {
-        case online:
-          weatherSource = new WeatherOnlineSource(true, gsi.areaSource.icao, gsi.weatherSource.initialWeather);
-          break;
-        case xml:
-          weatherSource = new WeatherXmlSource(gsi.weatherSource.weatherXmlFile);
-          break;
-        case user:
-          weatherSource = new WeatherUserSource(gsi.weatherSource.initialWeather);
-          break;
-        default:
-          throw new EEnumValueUnsupportedException(gsi.weatherSource.weatherProviderType);
-      }
-      weatherSource.init();
+      //TODEL
+//      switch (gsi.weatherSource.weatherProviderType) {
+//        case online:
+//          weatherSource = new WeatherOnlineSource(true, gsi.areaSource.icao, gsi.weatherSource.initialWeather);
+//          break;
+//        case xml:
+//          weatherSource = new WeatherXmlSource(gsi.weatherSource.weatherXmlFile);
+//          break;
+//        case user:
+//          weatherSource = new WeatherUserSource(gsi.weatherSource.initialWeather);
+//          break;
+//        default:
+//          throw new EEnumValueUnsupportedException(gsi.weatherSource.weatherProviderType);
+//      }
+      EAssert.isNotNull(gsi.weatherSource, "Weather-Source not set.");
+      gsi.weatherSource.init();
     } catch (Exception ex) {
       throw new EApplicationException("Unable to load, download or initialize weather.", ex);
     }
 
-//    TrafficManager.TrafficManagerSettings tms;
-//    try {
-//      tms = new TrafficManager.TrafficManagerSettings(
-//          gsi.allowTrafficDelays, gsi.maxTrafficPlanes, gsi.trafficDensityPercentage);
-//    } catch (Exception ex){
-//      throw new EApplicationException("Unable to initialize the traffic manager.", ex);
-//    }
-
     try {
       appLog.write(ApplicationLog.eType.info, "Creating the simulation");
       SimulationStartupContext simulationContext = new SimulationStartupContext(
-          areaSource.getContent(),
-          areaSource.getIcao(),
-          airplaneTypesSource.getContent(),
-          fleetsSource.getContent().companyFleets,
-          fleetsSource.getContent().gaFleets,
-          trafficSource.getContent(),
-          weatherSource.getContent()
+              gsi.areaSource.getContent(),
+              gsi.areaSource.getIcao(),
+              gsi.airplaneTypesSource.getContent(),
+              gsi.fleetsSource.getContent().companyFleets,
+              gsi.fleetsSource.getContent().gaFleets,
+              gsi.trafficSource.getContent(),
+              gsi.weatherSource.getContent()
       );
       SimulationSettings simulationSettings = new SimulationSettings(
-          gsi.trafficSettings,
-          gsi.simulationSettings
+              gsi.trafficSettings,
+              gsi.simulationSettings
       );
 
       simulation = new Simulation(simulationContext, simulationSettings);
       game = new Game(
-          areaSource,
-          airplaneTypesSource,
-          fleetsSource,
-          trafficSource,
-          weatherSource,
-          simulation
+              gsi.areaSource,
+              gsi.airplaneTypesSource,
+              gsi.fleetsSource,
+              gsi.trafficSource,
+              gsi.weatherSource,
+              simulation
       );
       appLog.write(ApplicationLog.eType.info, "Initializing the simulation");
     } catch (Exception ex) {
@@ -118,7 +115,9 @@ public class GameFactory {
     return game;
   }
 
-  public Game load(String fileName){
-
+  public Game load(String fileName) {
+    IMap<String, Object> customData = new EMap<>();
+    Game ret = Game.load(fileName, customData);
+    return ret;
   }
 }

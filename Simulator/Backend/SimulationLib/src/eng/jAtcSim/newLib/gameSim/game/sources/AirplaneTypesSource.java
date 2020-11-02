@@ -16,7 +16,7 @@ public class AirplaneTypesSource extends Source<AirplaneTypes> {
     return fileName;
   }
 
-  public AirplaneTypesSource(String xmlFile) {
+  AirplaneTypesSource(String xmlFile) {
     this.fileName = xmlFile;
   }
 

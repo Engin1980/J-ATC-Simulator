@@ -4,7 +4,7 @@ import eng.eSystem.collections.*;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
-public class TrafficStartupSettingsInfo {
+public class TrafficSettings {
   public double emergencyPerDayProbability;
   public double trafficDelayStepProbability;
   public int trafficDelayStep;

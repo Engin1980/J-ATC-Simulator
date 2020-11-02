@@ -20,8 +20,8 @@ public class FleetsSource extends Source<FleetsSource.Fleets> {
   }
 
   private FleetsSource.Fleets content;
-  private String generalAviationFileName;
-  private String companyFileName;
+  private final String generalAviationFileName;
+  private final String companyFileName;
 
   public String getGeneralAviationFileName() {
     return generalAviationFileName;
@@ -31,7 +31,7 @@ public class FleetsSource extends Source<FleetsSource.Fleets> {
     return companyFileName;
   }
 
-  public FleetsSource(String generalAviationFileName, String companyFileName) {
+  FleetsSource(String generalAviationFileName, String companyFileName) {
     this.generalAviationFileName = generalAviationFileName;
     this.companyFileName = companyFileName;
   }

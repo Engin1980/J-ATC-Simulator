@@ -24,7 +24,7 @@ import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
-import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.FormattersSet;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.messaging.Participant;
@@ -112,7 +112,7 @@ public class Radar {
     buildDrawnRoutesList();
     buildDrawnApproachesList();
 
-    ParserFormatterStartInfo.Formatters<String> formatters = buildFormatters(dynamicPlaneFormatter);
+    FormattersSet<String> formatters = buildFormatters(dynamicPlaneFormatter);
 
     this.messageManager = new VisualisedMessageManager(
         this.styleSettings.displayTextDelay,
@@ -139,9 +139,9 @@ public class Radar {
     this.c.getResizedEvent().add(o -> tl.resetPosition());
   }
 
-  protected ParserFormatterStartInfo.Formatters<String> buildFormatters(DynamicPlaneFormatter dynamicPlaneFormatter) {
+  protected FormattersSet<String> buildFormatters(DynamicPlaneFormatter dynamicPlaneFormatter) {
     EAssert.Argument.isNotNull(dynamicPlaneFormatter, "dynamicPlaneFormatter");
-    return new ParserFormatterStartInfo.Formatters<>(
+    return new FormattersSet<>(
             dynamicPlaneFormatter,
             new AtcFormatter(),
             new SystemFormatter());

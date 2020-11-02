@@ -10,7 +10,7 @@ public class WeatherXmlSource extends WeatherSource {
   private WeatherProvider content;
   private String fileName;
 
-  public WeatherXmlSource(String fileName) {
+  WeatherXmlSource(String fileName) {
     EAssert.Argument.isNotNull(fileName, "xmlFileName");
     EAssert.isTrue(java.nio.file.Files.exists(Paths.get(fileName)));
     this.fileName = fileName;
