@@ -38,13 +38,15 @@ public class TrafficModule extends SimulationModule {
 
   public static TrafficModule load(Simulation parent, XElement source) {
 
+    Object[] params = XmlLoadUtils.Field.loadFieldValues(source, TrafficModule.class, "delayStepProbability", "delayStep").toArray(Object.class);
 
-    int dsp = XmlLoadUtils.Field.loadFieldValue(source, "delayStepProbability", int.class);
-    int ds = XmlLoadUtils.Field.loadFieldValue(source, "delayStep", int.class);
+
+//    int dsp = XmlLoadUtils.Field.loadFieldValue(source, "delayStepProbability", int.class);
+//    int ds = XmlLoadUtils.Field.loadFieldValue(source, "delayStep", int.class);
     TrafficProvider tp = XmlLoadUtils.Field.loadFieldValue(source, "trafficProvider", TrafficProvider.class, (e, q) -> TrafficProvider.load(e));
     CallsignFactory cf = XmlLoadUtils.Field.loadFieldValue(source, "callsignFactory", CallsignFactory.class, (e, q) -> CallsignFactory.load(e));
 
-    TrafficModule ret = new TrafficModule(parent, tp, cf, ds, dsp);
+    TrafficModule ret = new TrafficModule(parent, tp, cf, (int) (Integer) params[1], (int) (Integer) params[0]);
     return ret;
   }
 

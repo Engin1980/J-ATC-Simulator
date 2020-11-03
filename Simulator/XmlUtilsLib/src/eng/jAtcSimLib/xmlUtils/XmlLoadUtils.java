@@ -1,9 +1,6 @@
 package eng.jAtcSimLib.xmlUtils;
 
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.ESet;
-import eng.eSystem.collections.IMap;
-import eng.eSystem.collections.IReadOnlySet;
+import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
@@ -95,6 +92,16 @@ public class XmlLoadUtils {
 
       Object tmp = deserializer.deserialize(fieldElement, targetClass);
       T ret = (T) tmp;
+      return ret;
+    }
+
+    public static IList<Object> loadFieldValues(XElement source, java.lang.Class<?> type, String ... fieldNames) {
+      IList<Object> ret = new EList<>();
+      for (String fieldName : fieldNames) {
+        java.lang.reflect.Field field = getFieldByName(type, fieldName);
+        Object val = loadFieldValue(source, fieldName, field.getType());
+        ret.add(val);
+      }
       return ret;
     }
 
