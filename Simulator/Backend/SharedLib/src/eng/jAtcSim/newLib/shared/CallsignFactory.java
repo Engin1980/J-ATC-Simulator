@@ -9,7 +9,9 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.deserializers.ItemsDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
 
 public class CallsignFactory {
@@ -22,6 +24,18 @@ public class CallsignFactory {
   private static final Character[] numericalChars;
   private static final double COMPANY_THREE_CHAR_NUMBER_PROBABILITY = 0.3;
   private static final double EXTENDED_CALLSIGN_PROBABILITY = 0.3;
+
+  public static CallsignFactory load(XElement element) {
+    boolean uec = XmlLoadUtils.Field.loadFieldValue(element, "useExtendedCallsign", boolean.class);
+
+    CallsignFactory ret = new CallsignFactory(uec);
+
+    XmlLoadUtils.Field.restoreField(element, ret, "previouslyGeneratedCallsigns",
+            new ItemsDeserializer(String.class, (e, q) -> e.getContent(), ret.previouslyGeneratedCallsigns));
+
+    return ret;
+  }
+
 
   private static Type getCallsignType(boolean useExtended) {
     ERandom rnd = Context.getApp().getRnd();

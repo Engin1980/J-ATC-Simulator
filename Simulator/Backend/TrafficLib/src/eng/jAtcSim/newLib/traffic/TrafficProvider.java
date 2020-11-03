@@ -3,16 +3,31 @@ package eng.jAtcSim.newLib.traffic;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ToDoException;
-import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.time.EDayTime;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.EntriesWithListValuesSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class TrafficProvider {
+  public static TrafficProvider load(XElement element) {
+
+    ITrafficModel tm = null;
+    System.out.println("Traffic-model not loaded");
+
+    TrafficProvider ret = new TrafficProvider(tm);
+
+    XmlLoadUtils.Field.restoreField(element, ret, "movementsForDay",
+            new EntriesWithListValuesDeserializer(
+                    (e, q) -> Integer.parseInt(e.getContent())),
+                    (e, q) -> q.load(e));
+
+    return ret;
+  }
+
   private final ITrafficModel trafficModel;
   private final IMap<Integer, IList<MovementTemplate>> movementsForDay = new EMap<>();
 

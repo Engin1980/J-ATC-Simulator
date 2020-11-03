@@ -30,6 +30,11 @@ public class ETimeStamp implements ITime, ITimeComparable<ETimeStamp> {
   }
 
   @Override
+  public String format(){
+    return this.toTimeString();
+  }
+
+  @Override
   public String toString() {
     return toTimeString();
   }

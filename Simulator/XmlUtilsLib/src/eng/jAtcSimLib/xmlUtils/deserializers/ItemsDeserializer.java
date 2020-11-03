@@ -19,26 +19,21 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class ItemsDeserializer implements Deserializer {
   private final Class<?> componentType;
   private final Deserializer itemDeserializer;
-  private final Producer<Object> instanceProvider;
+  private final Object targetInstance;
 
-  public ItemsDeserializer(Class<?> componentType, Deserializer itemDeserializer) {
-    this(componentType, itemDeserializer, () -> new EList<>());
-  }
-
-  public ItemsDeserializer(Class<?> componentType, Deserializer itemDeserializer, Producer<Object> instanceProvider) {
+  public ItemsDeserializer(Class<?> componentType, Deserializer itemDeserializer, Object targetInstance) {
     this.componentType = componentType;
     this.itemDeserializer = itemDeserializer;
-    this.instanceProvider = instanceProvider;
+    this.targetInstance = targetInstance;
   }
 
   @Override
   public Object deserialize(XElement element, Class<?> type) {
-    Object items = instanceProvider.invoke();
     for (XElement itemElement : element.getChildren(DefaultXmlNames.DEFAULT_ITEM_ELEMENT_NAME)) {
       Object item = itemDeserializer.deserialize(itemElement, componentType);
-      addToIterable(items, item);
+      addToIterable(targetInstance, item);
     }
-    return items;
+    return targetInstance;
   }
 
   private void addToIterable(Object items, Object item) {

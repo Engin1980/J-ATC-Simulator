@@ -1,5 +1,6 @@
 package eng.jAtcSimLib.xmlUtils.deserializers;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSimLib.xmlUtils.Deserializer;
@@ -18,7 +19,7 @@ public class ArrayDeserializer implements Deserializer {
   public Object deserialize(XElement element, Class<?> type) {
     EAssert.Argument.isTrue(type.isArray());
 
-    ItemsDeserializer itemsDeserializer = new ItemsDeserializer(type.getComponentType(), itemDeserializer);
+    ItemsDeserializer itemsDeserializer = new ItemsDeserializer(type.getComponentType(), itemDeserializer, new EList<>());
 
     Iterable<?> iterable = (Iterable<?>) itemsDeserializer.deserialize(element, type);
     int count = getItemsCountFromIterable(iterable);
