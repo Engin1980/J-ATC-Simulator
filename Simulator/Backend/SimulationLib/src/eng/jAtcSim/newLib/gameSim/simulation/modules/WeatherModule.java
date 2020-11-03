@@ -7,11 +7,18 @@ import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
 import eng.jAtcSim.newLib.weather.WeatherManager;
+import eng.jAtcSim.newLib.weather.WeatherProvider;
 import eng.jAtcSim.newLib.weather.context.IWeatherAcc;
 import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 
 public class WeatherModule extends SimulationModule {
   private final WeatherManager weatherManager;
+
+  public static WeatherModule load(Simulation parent, WeatherProvider weatherProvider, XElement element) {
+    WeatherManager wm = WeatherManager.load(weatherProvider, element);
+    WeatherModule ret = new WeatherModule(parent, wm);
+    return ret;
+  }
 
   public WeatherModule(Simulation parent, WeatherManager weatherManager) {
     super(parent);

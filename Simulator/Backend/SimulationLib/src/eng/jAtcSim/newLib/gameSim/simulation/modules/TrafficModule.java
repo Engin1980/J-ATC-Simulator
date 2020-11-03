@@ -26,8 +26,10 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.CallsignFactory;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.traffic.movementTemplating.*;
+import eng.jAtcSimLib.xmlUtils.Deserializer;
 import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
@@ -36,17 +38,22 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class TrafficModule extends SimulationModule {
   private static final int MAX_ALLOWED_DELAY = 120;
 
-  public static TrafficModule load(Simulation parent, XElement source) {
+  public static TrafficModule load(
+          Simulation parent,
+          ITrafficModel trafficModel,
+          XElement source) {
 
-    Object[] params = XmlLoadUtils.Field.loadFieldValues(source, TrafficModule.class, "delayStepProbability", "delayStep").toArray(Object.class);
-
+    Object[] params = XmlLoadUtils.Field.loadFieldValues(source, TrafficModule.class,
+            "delayStepProbability", "delayStep").toArray(Object.class);
 
 //    int dsp = XmlLoadUtils.Field.loadFieldValue(source, "delayStepProbability", int.class);
 //    int ds = XmlLoadUtils.Field.loadFieldValue(source, "delayStep", int.class);
-    TrafficProvider tp = XmlLoadUtils.Field.loadFieldValue(source, "trafficProvider", TrafficProvider.class, (e, q) -> TrafficProvider.load(e));
-    CallsignFactory cf = XmlLoadUtils.Field.loadFieldValue(source, "callsignFactory", CallsignFactory.class, (e, q) -> CallsignFactory.load(e));
+    TrafficProvider tp = XmlLoadUtils.Field.loadFieldValue(source, "trafficProvider",
+            e -> TrafficProvider.load(e, trafficModel));
+    CallsignFactory cf = XmlLoadUtils.Field.loadFieldValue(source, "callsignFactory",
+            e -> CallsignFactory.load(e));
 
-    TrafficModule ret = new TrafficModule(parent, tp, cf, (int) (Integer) params[1], (int) (Integer) params[0]);
+    TrafficModule ret = new TrafficModule(parent, tp, cf, (Integer) params[1], (Double) params[0]);
     return ret;
   }
 

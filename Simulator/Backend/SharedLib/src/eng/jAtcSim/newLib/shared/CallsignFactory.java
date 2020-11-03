@@ -26,12 +26,12 @@ public class CallsignFactory {
   private static final double EXTENDED_CALLSIGN_PROBABILITY = 0.3;
 
   public static CallsignFactory load(XElement element) {
-    boolean uec = XmlLoadUtils.Field.loadFieldValue(element, "useExtendedCallsign", boolean.class);
+    boolean uec = XmlLoadUtils.Field.loadFieldValue(element, "useExtendedCallsigns", boolean.class);
 
     CallsignFactory ret = new CallsignFactory(uec);
 
     XmlLoadUtils.Field.restoreField(element, ret, "previouslyGeneratedCallsigns",
-            new ItemsDeserializer(String.class, (e, q) -> e.getContent(), ret.previouslyGeneratedCallsigns));
+            new ItemsDeserializer(e -> e.getContent(), ret.previouslyGeneratedCallsigns));
 
     return ret;
   }

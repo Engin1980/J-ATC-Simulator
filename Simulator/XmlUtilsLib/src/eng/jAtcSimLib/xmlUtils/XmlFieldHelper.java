@@ -58,13 +58,13 @@ public class XmlFieldHelper {
     if (defaultDeserializers.containsKey(wrappedType))
       ret = defaultDeserializers.get(wrappedType);
     else if (ret == null && wrappedType.isEnum())
-      ret = (e, q) -> Enum.valueOf((Class<Enum>) wrappedType, e.getContent());
+      ret = e -> Enum.valueOf((Class<Enum>) wrappedType, e.getContent());
     else if (ret == null && type.isArray()) {
       Class<?> arrayItemType = type.getComponentType();
       arrayItemType = ReflectionUtils.ClassUtils.tryWrapPrimitive(arrayItemType);
       Deserializer itemDeserializer = tryGetDefaultDeserializer(arrayItemType);
       if (itemDeserializer != null)
-        ret = new ArrayDeserializer(itemDeserializer);
+        ret = new ArrayDeserializer(type.getComponentType(), itemDeserializer);
     }
     return ret;
   }

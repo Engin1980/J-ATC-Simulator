@@ -43,17 +43,6 @@ public class ObjectSerializer<T> implements Serializer<T> {
     this.expectedClass = expectedClass;
   }
 
-//  public ObjectSerializer<T> applyRecursivelyOnObjectClass() {
-//    this.useDefaultSerializer((Serializer<Object>) this);
-//    return this;
-//  }
-
-  //TODEL
-//  public ObjectSerializer<T> withArraySerializer(Serializer<Object> arraySerializer) {
-//    this.arraySerializer = arraySerializer;
-//    return this;
-//  }
-
   public ObjectSerializer<T> useForSubclass() {
     EAssert.isTrue(expectedClass != null, "Cannot set 'useForSubclass()' when no expected class specified.");
     this.subClassAllowed = true;

@@ -31,7 +31,6 @@ import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.context.ISharedAcc;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
-import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
@@ -46,6 +45,7 @@ import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
+import eng.jAtcSimLib.xmlUtils.Deserializer;
 import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
@@ -200,12 +200,11 @@ public class Simulation {
     );
     ContextManager.setContext(ISharedAcc.class, sharedContext);
 
+    // world module not saved, so not loaded
     this.worldModule = new WorldModule(this, simulationContext);
     this.worldModule.init();
 
-    this.weatherModule = new WeatherModule(this, new WeatherManager(simulationContext.weatherProvider));
-    this.weatherModule.init();
-
+    // io module not saved, not loaded
     this.ioModule = new IOModule(
             this,
             new KeyShortcutManager(),
@@ -213,40 +212,55 @@ public class Simulation {
     );
     this.ioModule.init();
 
+    // here the loading starts:
+
+    this.weatherModule = XmlLoadUtils.Field.loadFieldValue(source, "weatherModule",
+            e -> WeatherModule.load(this, simulationContext.weatherProvider, source));
+    //this.weatherModule.init(); - i guess not necessary
+    //TODEL
+    this.airplanesModule = XmlLoadUtils.Field.loadFieldValue(source, "airplanesModule",
+            e -> AirplanesModule.load(e));
+
     XmlLoadUtils.Field.restoreField(source, this, "trafficModule",
-            (e, q) -> TrafficModule.load(this, e));
-//    this.trafficModule = new TrafficModule(
-//            this,
-//            new TrafficProvider(simulationContext.traffic),
-//            simulationSettings.trafficSettings.trafficDelayStepProbability,
-//            simulationSettings.trafficSettings.trafficDelayStep,
-//            simulationSettings.trafficSettings.useExtendedCallsigns);
-//    this.trafficModule.init();
+            (Deserializer) e -> TrafficModule.load(this, simulationContext.traffic, e));
+
+    // tady odsud nové přepisování
+    // this should be the last in the queue as it may start the timer
+    this.timerModule = XmlLoadUtils.Field.loadFieldValue(source, "timerModule", e -> TimerModule.load(this, e));
+    this.timerModule.registerOnTickListener(this::timerTicked);
 
     throw new ToDoException();
 
-    this.statsModule = new StatsModule(this, new StatsProvider(simulationSettings.simulationSettings.statsSnapshotDistanceInMinutes));
-    this.statsModule.init();
+    /*
+    must be loaded:
+    airplanesModule
+    atcModule
+    trafficModule (done)
+    weatherModule (done)
+    statsModule
+     */
 
-    this.atcModule = new AtcModule(
-            new AtcProvider(worldModule.getActiveAirport()));
-    this.atcModule.init();
+//    this.statsModule = new StatsModule(this, new StatsProvider(simulationSettings.simulationSettings.statsSnapshotDistanceInMinutes));
+//    this.statsModule.init();
+//
+//    this.atcModule = new AtcModule(
+//            new AtcProvider(worldModule.getActiveAirport()));
+//    this.atcModule.init();
+//
+//
+//
+//    this.airplanesModule = new AirplanesModule(
+//            this,
+//            new AirplanesController(),
+//            new AirproxController(),
+//            new MrvaController(worldModule.getArea().getBorders().where(q -> q.getType() == Border.eType.mrva)),
+//            new EmergencyAppearanceController(simulationSettings.trafficSettings.emergencyPerDayProbability),
+//            new MoodManager()
+//    );
+//    this.airplanesModule.init();
+//
+//
 
-
-
-    this.airplanesModule = new AirplanesModule(
-            this,
-            new AirplanesController(),
-            new AirproxController(),
-            new MrvaController(worldModule.getArea().getBorders().where(q -> q.getType() == Border.eType.mrva)),
-            new EmergencyAppearanceController(simulationSettings.trafficSettings.emergencyPerDayProbability),
-            new MoodManager()
-    );
-    this.airplanesModule.init();
-
-
-    this.timerModule = new TimerModule(this, simulationSettings.simulationSettings.secondLengthInMs);
-    this.timerModule.registerOnTickListener(this::timerTicked);
   }
 
   public Simulation(

@@ -13,11 +13,22 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 import java.util.TimerTask;
 
 public class TimerModule extends SimulationModule {
+
+  public static TimerModule load(Simulation parent, XElement source) {
+    int ti = XmlLoadUtils.Field.loadFieldValue(source, "tickInterval", int.class);
+    TimerModule ret = new TimerModule(parent, ti);
+
+    boolean running = XmlLoadUtils.Field.loadFieldValue(source, "running", boolean.class);
+    if (running)
+      ret.start();
+    return ret;
+  }
 
   private java.util.Timer tmr = null;
   private final EventSimple<TimerModule> tickEvent = new EventSimple<>(this);

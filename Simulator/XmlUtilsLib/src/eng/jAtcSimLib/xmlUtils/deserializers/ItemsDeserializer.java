@@ -1,11 +1,9 @@
 package eng.jAtcSimLib.xmlUtils.deserializers;
 
-import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.functionalInterfaces.Producer;
 import eng.jAtcSimLib.xmlUtils.Deserializer;
 import eng.jAtcSimLib.xmlUtils.XmlUtilsException;
 import eng.jAtcSimLib.xmlUtils.serializers.DefaultXmlNames;
@@ -17,20 +15,18 @@ import java.util.Set;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class ItemsDeserializer implements Deserializer {
-  private final Class<?> componentType;
   private final Deserializer itemDeserializer;
   private final Object targetInstance;
 
-  public ItemsDeserializer(Class<?> componentType, Deserializer itemDeserializer, Object targetInstance) {
-    this.componentType = componentType;
+  public ItemsDeserializer(Deserializer itemDeserializer, Object targetInstance) {
     this.itemDeserializer = itemDeserializer;
     this.targetInstance = targetInstance;
   }
 
   @Override
-  public Object deserialize(XElement element, Class<?> type) {
+  public Object deserialize(XElement element) {
     for (XElement itemElement : element.getChildren(DefaultXmlNames.DEFAULT_ITEM_ELEMENT_NAME)) {
-      Object item = itemDeserializer.deserialize(itemElement, componentType);
+      Object item = itemDeserializer.deserialize(itemElement);
       addToIterable(targetInstance, item);
     }
     return targetInstance;

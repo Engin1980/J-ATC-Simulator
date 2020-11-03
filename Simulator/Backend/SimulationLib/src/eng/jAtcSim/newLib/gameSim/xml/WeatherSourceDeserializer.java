@@ -10,7 +10,7 @@ import eng.jAtcSimLib.xmlUtils.serializers.DefaultXmlNames;
 
 public class WeatherSourceDeserializer implements Deserializer {
   @Override
-  public Object deserialize(XElement element, Class<?> type) {
+  public Object deserialize(XElement element) {
     WeatherSource ret;
     String className = element.getAttribute(DefaultXmlNames.CLASS_NAME);
     switch (className) {
@@ -20,11 +20,11 @@ public class WeatherSourceDeserializer implements Deserializer {
       case "WeatherUserSource":
         ret = SourceFactory.createWeatherUserSource(new Weather());
         XmlLoadUtils.Field.restoreField(element, ret, "initialWeather",
-                new ObjectDeserializer());
+                ObjectDeserializer.createFor(Weather.class));
         break;
       case "WeatherOnlineSource":
         ret = SourceFactory.createWeatherOnlineSource( "", new Weather());
-        XmlLoadUtils.Field.restoreField(element, ret, "fallbackWeather", new ObjectDeserializer());
+        XmlLoadUtils.Field.restoreField(element, ret, "fallbackWeather", ObjectDeserializer.createFor(Weather.class));
         XmlLoadUtils.Field.restoreField(element, ret, "icao");
         break;
       default:

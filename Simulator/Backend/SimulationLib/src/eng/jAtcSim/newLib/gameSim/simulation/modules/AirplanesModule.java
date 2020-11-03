@@ -40,13 +40,50 @@ import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.deserializers.ItemsDeserializer;
+import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class AirplanesModule extends SimulationModule {
+  public static AirplanesModule load(Simulation parent, XElement element) {
+
+    AirplanesController aic = XmlLoadUtils.Field.loadFieldValue(element, "airplanesController",
+            e -> AirplanesController.load(e));
+
+    AirproxController apc = XmlLoadUtils.Field.loadFieldValue(element, "airproxController",
+            e -> AirproxController.load(e));
+
+    EmergencyAppearanceController eac = XmlLoadUtils.Field.loadFieldValue(element, "emergencyAppearanceController",
+            ObjectDeserializer.createFor(EmergencyAppearanceController.class)
+            .useParser(SharedXmlUtils.parsersMap));
+
+    MoodManager mm = XmlLoadUtils.Field.loadFieldValue(element, "moodManager",
+            e -> MoodManager.load(e));
+
+    AirplanesController ac = XmlLoadUtils.Field.loadFieldValue(element, "airplanesController",
+            e -> AirplanesController.load(e));
+
+    IList<AirplaneTemplate> pp = XmlLoadUtils.Field.loadFieldValue(element, "planesPrepared",
+            new ItemsDeserializer(e -> AirplaneTemplate.load(e)));
+
+    // init planes for public
+
+    /*
+
+    // mrvaController not saved, everything can be restored on load
+
+    XmlSaveUtils.Items.saveIntoElementChild(target, "", planesPrepared,
+            new ItemsSerializer<>((e, q) -> q.save(e)));
+     */
+
+    return ret;
+  }
+
   private final AirplanesController airplanesController;
   private final AirproxController airproxController;
   private final EmergencyAppearanceController emergencyAppearanceController;

@@ -8,22 +8,26 @@ import eng.jAtcSim.newLib.shared.time.EDayTime;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.deserializers.EntriesWithListValuesDeserializer;
+import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.EntriesWithListValuesSerializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class TrafficProvider {
-  public static TrafficProvider load(XElement element) {
+  public static TrafficProvider load(XElement element, ITrafficModel trafficModel) {
 
-    ITrafficModel tm = null;
     System.out.println("Traffic-model not loaded");
 
-    TrafficProvider ret = new TrafficProvider(tm);
+    TrafficProvider ret = new TrafficProvider(trafficModel);
 
     XmlLoadUtils.Field.restoreField(element, ret, "movementsForDay",
             new EntriesWithListValuesDeserializer(
-                    (e, q) -> Integer.parseInt(e.getContent())),
-                    (e, q) -> q.load(e));
+                    e -> Integer.parseInt(e.getContent()),
+                    ObjectDeserializer.createEmpty(),
+                    () -> new EList<>(),
+                    ret.movementsForDay));
 
     return ret;
   }
@@ -75,7 +79,7 @@ public class TrafficProvider {
     XmlSaveUtils.Field.storeField(target, this, "movementsForDay",
             new EntriesWithListValuesSerializer<Integer, MovementTemplate>(
                     (e, q) -> e.setContent(Integer.toString(q)),
-                    (e, q) -> q.save(e)));
+                    ObjectSerializer.createDeepSerializer()));
 
     //Todel
     System.out.println("### trafficModel not saved");

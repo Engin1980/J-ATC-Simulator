@@ -4,7 +4,10 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 import java.util.TooManyListenersException;
 
@@ -18,6 +21,16 @@ public class WeatherManager {
 
     this.provider = provider;
     this.newWeatherFlag = true;
+  }
+
+  public static WeatherManager load(WeatherProvider provider, XElement element){
+    WeatherManager ret = new WeatherManager(provider);
+
+    XmlLoadUtils.Field.restoreField(element, ret, "newWeatherFlat");
+    XmlLoadUtils.Field.restoreField(element, ret, "weather",
+            ObjectDeserializer.createFor(Weather.class));
+
+    return ret;
   }
 
   public void elapseSecond() {
@@ -48,14 +61,10 @@ public class WeatherManager {
 
   public void save(XElement target) {
     XmlSaveUtils.Field.storeField(target, this, "newWeatherFlag");
-    XElement elm;
+    XmlSaveUtils.Field.storeField(target, this, "weather",
+            ObjectSerializer.createFor(Weather.class));
 
-    elm = new XElement("currentWeather");
-    this.currentWeather.save(elm);
-    target.addElement(elm);
-
-    System.out.println("### provider not saved");
-    //provider is from settings, I hope
+    //provider is obtained from settings
   }
 
   public void setWeather(String metarString) {
