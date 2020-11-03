@@ -219,7 +219,7 @@ public class Simulation {
     //this.weatherModule.init(); - i guess not necessary
     //TODEL
     this.airplanesModule = XmlLoadUtils.Field.loadFieldValue(source, "airplanesModule",
-            e -> AirplanesModule.load(e));
+            e -> AirplanesModule.load(this, e));
 
     XmlLoadUtils.Field.restoreField(source, this, "trafficModule",
             (Deserializer) e -> TrafficModule.load(this, simulationContext.traffic, e));

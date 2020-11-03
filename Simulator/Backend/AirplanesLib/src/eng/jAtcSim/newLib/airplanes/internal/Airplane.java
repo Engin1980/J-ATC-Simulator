@@ -524,6 +524,11 @@ public class Airplane {
     return ret;
   }
 
+  public static Airplane load(XElement element, IReadOnlyList<AtcId> atcs) {
+    return null;
+    tady jsem skončil, protože tady toho je kvantum fakt :-/
+  }
+
   private final AirplaneType airplaneType;
   private final AtcModule atcModule;
   private Coordinate coordinate;

@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes;
 
-import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
@@ -14,12 +15,26 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
-import eng.jAtcSimLib.xmlUtils.Formatter;
-import eng.jAtcSimLib.xmlUtils.Serializer;
+import eng.jAtcSimLib.xmlUtils.Deserializer;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.deserializers.ItemsDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 
 public class AirplanesController {
+  public static AirplanesController load(IReadOnlyList<AtcId> atcs, XElement element) {
+    AirplanesController ret = new AirplanesController();
+
+    EMap<Class<?>, Deserializer> dess = new EMap<>();
+    dess.set(AtcId.class, SharedXmlUtils.getAtcIdDeseralizer(atcs));
+
+    XmlLoadUtils.Field.restoreFields(element, ret, new String[]{"departureInitialAtcId", "arrivalInitialAtId"}, dess);
+    XmlLoadUtils.Field.restoreField(element, ret, "planes",
+            new ItemsDeserializer(e -> Airplane.load(e, atcs), ret.planes));
+    return ret;
+  }
+
+
   private final AirplaneList<Airplane> planes = new AirplaneList<>(
           q -> q.getReader().getCallsign(),
           q -> q.getReader().getSqwk());

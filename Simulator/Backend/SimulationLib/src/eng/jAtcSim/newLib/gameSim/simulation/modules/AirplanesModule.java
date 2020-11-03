@@ -50,10 +50,10 @@ import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class AirplanesModule extends SimulationModule {
-  public static AirplanesModule load(Simulation parent, XElement element) {
+  public static AirplanesModule load(Simulation parent, XElement element, IReadOnlyList<AtcId> atcs) {
 
     AirplanesController aic = XmlLoadUtils.Field.loadFieldValue(element, "airplanesController",
-            e -> AirplanesController.load(e));
+            e -> AirplanesController.load(atcs, e));
 
     AirproxController apc = XmlLoadUtils.Field.loadFieldValue(element, "airproxController",
             e -> AirproxController.load(e));
