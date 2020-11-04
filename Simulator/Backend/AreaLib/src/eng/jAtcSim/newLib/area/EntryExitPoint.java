@@ -22,7 +22,7 @@ public class EntryExitPoint extends Parentable<Airport> {
   private Integer maxMrvaAltitude;
   private int radialFromAirport;
 
-  //TODO delete if not used!
+  //TODEL delete if not used!
   public EntryExitPoint() {
   }
 

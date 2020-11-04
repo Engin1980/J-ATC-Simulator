@@ -16,13 +16,47 @@ import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.ToCoordinateNavigator
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSimLib.xmlUtils.ObjectUtils;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
   private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
+
+  public void load(Airplane parent, XElement element) {
+
+    XmlLoadUtils.Field.restoreFields(element, this,
+            "lastVerticalSpeed", "targetHeading", "targetHeadingTurn");
+
+    XmlLoadUtils.Field.restoreField(element, this, "altitude",
+            ObjectDeserializer.createFor(InertialValue.class));
+
+    XmlLoadUtils.Field.restoreField(element, this, "heading",
+            (XElement e, HeadingInertialValue q) -> {
+              XmlSaveUtils.Field.storeFields(e,
+                      q, ObjectUtils.getFieldNamesExcept(HeadingInertialValue.class, "thresholds"));
+              XmlSaveUtils.Field.storeField(e,
+                      q, "thresholds", new ItemsViaStringSerializer<Double>(p -> Double.toString(p)));
+            });
+
+    XmlLoadUtils.Field.restoreField(element, this, "speed",
+            ObjectDeserializer.createFor(InertialValue.class));
+
+    XmlLoadUtils.Field.restoreField(element, this, "targetAltitude",
+            ObjectDeserializer.createFor(RestrictableItem.class));
+
+    XmlLoadUtils.Field.restoreField(element, this, "targetSpeed",
+            ObjectDeserializer.createFor(RestrictableItem.class));
+
+    XmlLoadUtils.Field.restoreField(element, this, "navigator",
+            ObjectDeserializer.createFor(Navigator.class)
+                    .useForSubclass()
+                    .withStoredType()
+                    .useDefaultSerializer(ObjectSerializer.createDeepSerializer()));
+  }
 
   private static double getHeadingChangeDenominator(AirplaneType planeType) {
     double ret;

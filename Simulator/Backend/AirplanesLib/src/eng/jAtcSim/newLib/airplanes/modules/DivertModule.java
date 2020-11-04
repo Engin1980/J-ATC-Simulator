@@ -46,10 +46,6 @@ public class DivertModule extends Module {
     return possible;
   }
 
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeFields(target, this, "lastAnnouncedMinute", "possible", "divertTime");
-  }
-
   private void checkForDivert() {
     if (possible
             && rdr.getRouting().isDivertable()

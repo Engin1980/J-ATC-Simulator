@@ -50,11 +50,6 @@ public class AtcModule extends Module {
     return secondsWithoutRadarContact == 0;
   }
 
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "atcId", (AtcId q) -> q.getName());
-    XmlSaveUtils.Field.storeField(target, this, "secondsWithoutRadarContact");
-  }
-
   public void setHasRadarContact() {
     this.secondsWithoutRadarContact = 0;
   }

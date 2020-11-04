@@ -11,6 +11,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
+import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.airplanes.*;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.modules.AirplaneFlightModule;
@@ -38,6 +39,7 @@ import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.*;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
@@ -49,7 +51,11 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertingNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.weather.Weather;
+import eng.jAtcSimLib.xmlUtils.Deserializer;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
+import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -524,9 +530,43 @@ public class Airplane {
     return ret;
   }
 
-  public static Airplane load(XElement element, IReadOnlyList<AtcId> atcs) {
-    return null;
-    tady jsem skončil, protože tady toho je kvantum fakt :-/
+  public static Airplane load(XElement element, IMap<String, Object> context) {
+    IReadOnlyList<AtcId> atcs = (IReadOnlyList<AtcId>) context.get("atcs");
+
+    String callsignString = element.getChild("flightModule").getChild("callsign").getContent();
+    Callsign callsign = new Callsign(callsignString);
+
+    Airplane ret = new Airplane(callsign);
+
+    XmlLoadUtils.Field.restoreField(element, ret, "squawk", SharedXmlUtils.Deserializers.squawkDeserializer);
+    XmlLoadUtils.Field.restoreField(element,ret, "state");
+    XmlLoadUtils.Field.restoreField(element, ret, "lastGoAroundReasonIfAny");
+
+    XmlLoadUtils.Field.restoreField(element, ret, "flightModule",
+            ObjectDeserializer.createFor(AirplaneFlightModule.class)
+                    .useDeserializers(SharedXmlUtils.Deserializers.deserializersMap));
+
+    XmlLoadUtils.Field.restoreField(element, ret, "shaModule", (Deserializer) e -> ShaModule.load(ret, e));
+
+    XmlLoadUtils.Field.restoreField(element, ret, "atcModule",
+            ObjectDeserializer.createFor(AtcModule.class)
+                    .useDeserializer(AtcId.class, SharedXmlUtils.DeserializersDynamic.getAtcIdDeseralizer(atcs)));
+
+    XmlLoadUtils.Field.restoreField(element, ret, "routingModule", (Deserializer) e -> RoutingModule.load(e));
+
+    XmlLoadUtils.Field.restoreField(element,ret, "divertModule",
+            ObjectDeserializer.createFor(DivertModule.class)
+                    .useDeserializers(SharedXmlUtils.Deserializers.deserializersMap));
+
+    XmlLoadUtils.Field.restoreField(element,ret, "mood", (Deserializer) e -> Mood.load(e));
+
+    XmlLoadUtils.Field.restoreField(element,ret, "emergencyModule", (Deserializer) e -> EmergencyModule.load(e));
+
+    XmlLoadUtils.Field.restoreField(element,ret, "coordinate", SharedXmlUtils.Deserializers.coordinateDeserializer);
+
+    XmlLoadUtils.Field.restoreField(element,ret, "pilot", (Deserializer)  e -> Pilot.load(e));
+
+    return ret;
   }
 
   private final AirplaneType airplaneType;
@@ -549,6 +589,55 @@ public class Airplane {
   private GoingAroundNotification.GoAroundReason lastGoAroundReasonIfAny = null;
   private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> speechCache = new EMap<>();
 
+  private Airplane(Callsign callsign) {
+    this.squawk = Squawk.create("0000");
+    this.flightModule = new AirplaneFlightModule(
+            callsign,
+            0, new EDayTimeStamp(0), true);
+
+    this.airplaneType = new AirplaneType(
+            "NOTYP", "only-for-loading", 'A', 0, 0, 0, 0, 0, 0
+            , 0, 0, 0, 0, 0, 0, 0, 0
+            , 0, 0);
+
+    this.atcModule = new AtcModule(this, new AtcId("LOADING", 0, AtcType.app));
+
+    this.divertModule = new DivertModule(this);
+    this.emergencyModule = new EmergencyModule();
+    this.mood = new Mood();
+    this.routingModule = new RoutingModule(this, Navaid.create(
+            "LOADN", Navaid.eType.auxiliary, new Coordinate(0, 0)));
+    this.sha = new ShaModule(this, 0, 0, 0, this.airplaneType);
+
+    this.fdr = new FlightDataRecorder(this.flightModule.getCallsign());
+    this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
+    this.cqr = new CommandQueueRecorder(this.flightModule.getCallsign());
+    this.routingModule.setCqr(this.cqr);
+  }
+
+  private Airplane(Squawk squawk, AirplaneType airplaneType,
+                   AirplaneFlightModule flightModule,
+                   ShaModule shaModule, AtcModule atcModule, RoutingModule routingModule,
+                   DivertModule divertModule, Mood mood, EmergencyModule emergencyModule,
+                   Coordinate coordinate, Pilot pilot, AirplaneState state) {
+    this.squawk = squawk;
+    this.flightModule = flightModule;
+    this.fdr = new FlightDataRecorder(this.flightModule.getCallsign());
+    this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
+    this.cqr = new CommandQueueRecorder(this.flightModule.getCallsign());
+    this.sha = shaModule;
+    this.emergencyModule = emergencyModule;
+    this.atcModule = atcModule;
+    this.routingModule = routingModule;
+    this.routingModule.setCqr(this.cqr);
+    this.divertModule = divertModule;
+    this.mood = mood;
+    this.state = state;
+    this.coordinate = coordinate;
+    this.airplaneType = airplaneType;
+    this.pilot = pilot;
+  }
+
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk squawk, AirplaneType airplaneType,
                    int heading, int altitude, int speed, boolean isDeparture,
                    Navaid entryExitPoint, EDayTimeStamp expectedExitTime, int entryDelay,
@@ -566,7 +655,8 @@ public class Airplane {
     this.sha = new ShaModule(this, heading, altitude, speed, airplaneType);
     this.emergencyModule = new EmergencyModule();
     this.atcModule = new AtcModule(this, initialAtcId);
-    this.routingModule = new RoutingModule(this, entryExitPoint, cqr);
+    this.routingModule = new RoutingModule(this, entryExitPoint);
+    this.routingModule.setCqr(this.cqr);
     if (isDeparture)
       this.divertModule = null;
     else
@@ -620,16 +710,18 @@ public class Airplane {
     XmlSaveUtils.Field.storeField(target, this, "squawk", SharedXmlUtils.squawkFormatter);
     XmlSaveUtils.Field.storeField(target, this, "airplaneType", (AirplaneType q) -> q.name);
 
-    XmlSaveUtils.Field.storeField(target, this, "atcModule", (
-            XElement e, AtcModule q) -> q.save(e));
+    XmlSaveUtils.Field.storeField(target, this, "atcModule",
+            ObjectSerializer.createFor(AtcModule.class)
+                    .useSerializer(AtcId.class, SharedXmlUtils.atcIdSerializer));
     XmlSaveUtils.Field.storeField(target, this, "mood",
             (XElement e, Mood q) -> q.save(e));
     XmlSaveUtils.Field.storeField(target, this, "divertModule",
-            (XElement e, DivertModule q) -> q.save(e));
+            ObjectSerializer.createFor(DivertModule.class).useSerializers(SharedXmlUtils.serializersMap));
     XmlSaveUtils.Field.storeField(target, this, "emergencyModule",
             (XElement e, EmergencyModule q) -> q.save(e));
     XmlSaveUtils.Field.storeField(target, this, "flightModule",
-            (XElement e, AirplaneFlightModule q) -> q.save(e));
+            ObjectSerializer.createFor(AirplaneFlightModule.class)
+                    .useSerializers(SharedXmlUtils.serializersMap));
     XmlSaveUtils.Field.storeField(target, this, "routingModule",
             (XElement e, RoutingModule q) -> q.save(e));
     XmlSaveUtils.Field.storeField(target, this, "sha",
