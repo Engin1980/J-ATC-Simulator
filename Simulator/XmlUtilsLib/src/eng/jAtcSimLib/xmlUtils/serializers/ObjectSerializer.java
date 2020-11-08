@@ -54,6 +54,10 @@ public class ObjectSerializer<T> implements Serializer<T> {
     return this;
   }
 
+  public ObjectSerializer<T> excludeFields(String ... excludedFieldNames) {
+    return this.excludeFields(new EList<>(excludedFieldNames));
+  }
+
   public ObjectSerializer<T> includeFields(Class<?> type) {
     IReadOnlySet<String> fieldNames = ObjectUtils.getFields(type).select(q -> q.getName());
     this.includeFields(fieldNames);

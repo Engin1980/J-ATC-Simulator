@@ -20,7 +20,11 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
+import eng.jAtcSimLib.xmlUtils.Deserializer;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.deserializers.ItemsDeserializer;
+import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
@@ -327,8 +331,32 @@ public class AfterCommandList {
     return this.rt.isEmpty();
   }
 
+  public AfterCommandList load(XElement element) {
+    Deserializer deserializer = e -> {
+
+      Object antecedent = XmlLoadUtils.Field.loadFieldValue(element, "antecedent",
+              ObjectDeserializer.createEmpty()
+                      .useDefaultDeserializer(ObjectDeserializer.createDeepDeserializer()));
+
+      Object consequent = XmlLoadUtils.Field.loadFieldValue(element, "consequent",
+              ObjectDeserializer.createEmpty()
+                      .useDefaultDeserializer(ObjectDeserializer.createDeepDeserializer()));
+
+      AFItem ret = new AFItem((AfterCommand) antecedent, (ICommand) consequent);
+      return ret;
+    };
+
+    XmlLoadUtils.Field.restoreField(element, this, "rt",
+            new ItemsDeserializer(deserializer, this.rt, AFItem.class));
+
+    XmlLoadUtils.Field.restoreField(element, this, "ex",
+            new ItemsDeserializer(deserializer, this.ex, AFItem.class));
+
+    return this;
+  }
+
   public void save(XElement target) {
-    Consumer2<XElement, AFItem> consumer = (e, q) ->{
+    Consumer2<XElement, AFItem> consumer = (e, q) -> {
       XmlSaveUtils.Field.storeField(e, q, "antecedent",
               ObjectSerializer.createFor(AfterCommand.class)
                       .useForSubclass()
@@ -339,12 +367,18 @@ public class AfterCommandList {
               .useForSubclass()
               .withStoredType()
               .useDefaultSerializer(ObjectSerializer.createDeepSerializer()));
-    };
 
-    XmlSaveUtils.Items.saveIntoElementChild(target, "rt", this.rt,
+    };
+//    XmlSaveUtils.Items.saveIntoElementChild(target, "rt", this.rt,
+//            new ItemsSerializer<>(consumer));
+//
+//    XmlSaveUtils.Items.saveIntoElementChild(target, "ex", this.ex,
+//            new ItemsSerializer<>(consumer));
+
+    XmlSaveUtils.Field.storeField(target, this, "rt",
             new ItemsSerializer<>(consumer));
 
-    XmlSaveUtils.Items.saveIntoElementChild(target, "ex", this.ex,
+    XmlSaveUtils.Field.storeField(target, this, "ex",
             new ItemsSerializer<>(consumer));
   }
 

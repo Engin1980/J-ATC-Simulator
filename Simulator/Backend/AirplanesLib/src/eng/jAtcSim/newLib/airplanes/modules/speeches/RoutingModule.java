@@ -18,6 +18,8 @@ import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.other.CommandQueueRecorder;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.area.Airport;
+import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
@@ -34,7 +36,9 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.RequestRadarContactNoti
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
+import eng.jAtcSimLib.xmlUtils.Deserializer;
 import eng.jAtcSimLib.xmlUtils.Serializer;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
@@ -56,6 +60,31 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
           AirplaneState.departingHigh,
           AirplaneState.departingLow,
   };
+
+  public  RoutingModule load(XElement element, IMap<String, Object> context) {
+    Area area =(Area) context.get("area");
+    Airport airport = (Airport) context.get("airport");
+
+    XmlLoadUtils.Field.restoreField(element, this, "assignedDARouteName");
+
+    String eepName = XmlLoadUtils.Field.loadFieldValue(element, "entryExitPoint", String.class);
+    this.entryExitPoint = area.getNavaids().get(eepName);
+
+    String rtName = XmlLoadUtils.Field.loadFieldValue(element, "runwaythreshold", String.class);
+    this.runwayThreshold = airport.getRunwayThreshold(rtName);
+
+tady jsem skončil
+    IMap<Class<?>, Serializer<?>> customDelayListSerializers = EMap.of(
+            Participant.class, new ParticipantSerializer(),
+            SpeechList.class, new ItemsSerializer<>(ObjectSerializer.createDeepSerializer())
+    );
+
+    XmlLoadUtils.Field.restoreField(element, this, "queue",
+            (Deserializer)(e -> this.queue.load(e, customDelayListDeserializers)));
+
+    XmlLoadUtils.Field.restoreField(element, this, "afterCommands",
+            (Deserializer)(e -> this.afterCommands.load(e)));
+  }
 
   private final AfterCommandList afterCommands = new AfterCommandList();
   private String assignedDARouteName = null;

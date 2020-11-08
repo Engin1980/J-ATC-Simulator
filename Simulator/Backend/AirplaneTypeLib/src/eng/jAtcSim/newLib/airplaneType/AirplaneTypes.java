@@ -21,6 +21,10 @@ public class AirplaneTypes {
     return inner.tryGetFirst(q->q.name.equals(airplaneTypeName));
   }
 
+  public AirplaneType getByName(String airplaneTypeName) {
+    return inner.getFirst(q->q.name.equals(airplaneTypeName));
+  }
+
   public IReadOnlyList<String> getTypeNames() {
     return typeNamesOnly;
   }

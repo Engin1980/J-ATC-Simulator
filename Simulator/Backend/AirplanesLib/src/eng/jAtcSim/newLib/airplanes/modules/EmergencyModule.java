@@ -14,10 +14,6 @@ public class EmergencyModule {
     return this.emergencyWanishTime != null;
   }
 
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "emergencyWanishTime");
-  }
-
   public void setEmergencyWanishTime(EDayTimeStamp emergencyWanishTime) {
     this.emergencyWanishTime = emergencyWanishTime;
   }

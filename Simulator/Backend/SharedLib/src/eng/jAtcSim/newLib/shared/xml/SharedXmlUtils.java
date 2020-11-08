@@ -90,7 +90,7 @@ public class SharedXmlUtils {
   public static class DeserializersDynamic{
     public static IMap<Class<?>, Deserializer> deserializersMap;
 
-    public static Deserializer getAtcIdDeseralizer(IReadOnlyList<AtcId> atcs) {
+    public static Deserializer getAtcIdDeserializer(IReadOnlyList<AtcId> atcs) {
       return new ProxyDeserializer<>(
               q -> q.getContent(),
               q -> q.getName(),

@@ -1,8 +1,6 @@
 package eng.jAtcSimLib.xmlUtils.deserializers;
 
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IMap;
-import eng.eSystem.collections.IReadOnlySet;
+import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.jAtcSimLib.xmlUtils.*;
@@ -20,6 +18,11 @@ public class ObjectDeserializer implements Deserializer {
 
   public static ObjectDeserializer createFor(Class<?> type) {
     return new ObjectDeserializer(type);
+  }
+
+  public ObjectDeserializer excludeFields(String ... fieldNames) {
+    this.excludedFields.addMany(fieldNames);
+    return this;
   }
 
   public ObjectDeserializer useDefaultDeserializer(Deserializer deserializer) {
@@ -66,6 +69,7 @@ public class ObjectDeserializer implements Deserializer {
   private final IMap<Class<?>, Producer<?>> instanceProviders = new EMap<>();
   private final IMap<Class<?>, Deserializer> customDeserializers = new EMap<>();
   private Deserializer defaultDeserializer = null;
+  private final ISet<String> excludedFields = new ESet<>();
   private final Class<?> type;
 
   private ObjectDeserializer(Class<?> type) {

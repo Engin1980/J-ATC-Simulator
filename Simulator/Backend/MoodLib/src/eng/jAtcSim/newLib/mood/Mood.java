@@ -6,7 +6,11 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.mood.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSimLib.xmlUtils.Deserializer;
+import eng.jAtcSimLib.xmlUtils.Parser;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.deserializers.ItemsViaStringDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -68,6 +72,20 @@ public class Mood {
   private static final String INCORRECT_ALTITUDE_CHANGE = "Incorrect altitude change";
   private static final double DELAY_PER_MINUTE_POINTS = -1;
 
+  public static Mood load(XElement element) {
+    IList<Experience<ArrivalExperience>> arrivalExperiences = XmlLoadUtils.Field.loadFieldValue(element, "arrivalExperiences",
+            new ItemsViaStringDeserializer(q -> ArrivalExperience.valueOf(q), new EList<>(), ArrivalExperience.class));
+
+    IList<Experience<DepartureExperience>> departureExperiences = XmlLoadUtils.Field.loadFieldValue(element, "departureExperiences",
+            new ItemsViaStringDeserializer(q -> DepartureExperience.valueOf(q), new EList<>(), DepartureExperience.class));
+
+    IList<Experience<SharedExperience>> sharedExperiences = XmlLoadUtils.Field.loadFieldValue(element, "sharedExperiences",
+            new ItemsViaStringDeserializer(q->SharedExperience.valueOf(q), new EList<>(), SharedExperience.class));
+
+    Mood ret = new Mood(arrivalExperiences, departureExperiences, sharedExperiences);
+    return ret;
+  }
+
   private static EDayTimeStamp getNowStamp() {
     return Context.getShared().getNow().toStamp();
   }
@@ -75,6 +93,12 @@ public class Mood {
   private final IList<Experience<ArrivalExperience>> arrivalExperiences;
   private final IList<Experience<DepartureExperience>> departureExperiences;
   private final IList<Experience<SharedExperience>> sharedExperiences;
+
+  private Mood(IList<Experience<ArrivalExperience>> arrivalExperiences, IList<Experience<DepartureExperience>> departureExperiences, IList<Experience<SharedExperience>> sharedExperiences) {
+    this.arrivalExperiences = arrivalExperiences;
+    this.departureExperiences = departureExperiences;
+    this.sharedExperiences = sharedExperiences;
+  }
 
   public Mood() {
     this.arrivalExperiences = new EList<>();

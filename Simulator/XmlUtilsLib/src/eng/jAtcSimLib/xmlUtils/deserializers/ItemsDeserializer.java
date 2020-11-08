@@ -17,16 +17,27 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class ItemsDeserializer implements Deserializer {
   private final Deserializer itemDeserializer;
   private final Object targetInstance;
+  private final Class<?> expectedItemType;
 
   public ItemsDeserializer(Deserializer itemDeserializer, Object targetInstance) {
+    this(itemDeserializer, targetInstance, null);
+  }
+
+  public ItemsDeserializer(Deserializer itemDeserializer, Object targetInstance, Class<?> expectedItemType) {
     this.itemDeserializer = itemDeserializer;
     this.targetInstance = targetInstance;
+    this.expectedItemType = expectedItemType;
   }
 
   @Override
   public Object deserialize(XElement element) {
     for (XElement itemElement : element.getChildren(DefaultXmlNames.DEFAULT_ITEM_ELEMENT_NAME)) {
       Object item = itemDeserializer.deserialize(itemElement);
+
+      if (expectedItemType != null && expectedItemType.isAssignableFrom(item.getClass()) == false)
+        throw new XmlUtilsException(sf("Item added to the items-object should be of type '%s', but is of type '%s'.",
+                this.expectedItemType, item.getClass()));
+
       addToIterable(targetInstance, item);
     }
     return targetInstance;
