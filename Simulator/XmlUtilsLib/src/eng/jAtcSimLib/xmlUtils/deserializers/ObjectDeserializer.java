@@ -8,6 +8,7 @@ import eng.jAtcSimLib.xmlUtils.serializers.DefaultXmlNames;
 
 import java.util.Map;
 
+import static eng.eSystem.utilites.FunctionShortcuts.coalesce;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class ObjectDeserializer implements Deserializer {
@@ -18,6 +19,12 @@ public class ObjectDeserializer implements Deserializer {
 
   public static ObjectDeserializer createFor(Class<?> type) {
     return new ObjectDeserializer(type);
+  }
+
+  public static ObjectDeserializer createDeepDeserializer() {
+    ObjectDeserializer ret = ObjectDeserializer.createEmpty();
+    ret.useDefaultDeserializer(ret);
+    return ret;
   }
 
   public ObjectDeserializer excludeFields(String ... fieldNames) {
@@ -82,7 +89,7 @@ public class ObjectDeserializer implements Deserializer {
     if (element.getContent().equals(DefaultXmlNames.NULL_CONTENT))
       ret = null;
     else {
-      Class<?> expectedType = type == null ? tryLoadTypeFromElement(element) : type;
+      Class<?> expectedType = getExpectedType(element);
 
       if (expectedType == null)
         throw new XmlUtilsException(sf("Object-Deserializer unable to deserialize from xml-element '%s'. Neither default type attribute nor xml-attribute for type set.", element.getName()));
@@ -92,6 +99,12 @@ public class ObjectDeserializer implements Deserializer {
       ret = XmlLoadUtils.Class.provideInstance(type);
       XmlLoadUtils.Field.restoreFields(element, ret, fieldNames, customDeserializers, defaultDeserializer, instanceProviders);
     }
+    return ret;
+  }
+
+  private Class<?> getExpectedType(XElement element) {
+    Class<?> typeByAttribute = tryLoadTypeFromElement(element);
+    Class<?> ret = coalesce(typeByAttribute, type);
     return ret;
   }
 

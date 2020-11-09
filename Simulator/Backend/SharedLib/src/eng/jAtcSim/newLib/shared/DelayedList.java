@@ -6,8 +6,12 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
+import eng.jAtcSimLib.xmlUtils.Deserializer;
 import eng.jAtcSimLib.xmlUtils.Serializer;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.deserializers.ItemsDeserializer;
+import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
@@ -102,6 +106,21 @@ public class DelayedList<T> {
     return false;
   }
 
+  public DelayedList<T> load(XElement element, IMap<Class<?>, Deserializer> customDeserializers, Class<T> itemType) {
+    XmlLoadUtils.Field.restoreFields(element, this, "minimalDelay", "maximalDelay", "currentDelay");
+
+    XmlLoadUtils.Field.restoreField(element, this, "inner",
+            new ItemsDeserializer(e -> {
+              int delayLeft = XmlLoadUtils.Field.loadFieldValue(e, "delayLeft", int.class);
+              T item = XmlLoadUtils.Field.loadFieldValue(e, "item",
+                      ObjectDeserializer.createDeepDeserializer()
+                              .useDeserializers(customDeserializers));
+              DelayedItem<T> tmp = new DelayedItem<>(item, delayLeft);
+              return tmp;
+            }, this.inner));
+    return this;
+  }
+
   public void newRandomDelay() {
     this.currentDelay = Context.getApp().getRnd().nextInt(minimalDelay, maximalDelay + 1);
   }
@@ -113,8 +132,8 @@ public class DelayedList<T> {
   public void save(XElement target, IMap<Class<?>, Serializer<?>> customSerializers) {
     XmlSaveUtils.Field.storeFields(target, this, "minimalDelay", "maximalDelay", "currentDelay");
 
-    XmlSaveUtils.Items.saveIntoElementChild(target, "inner", this.inner,
-            new ItemsSerializer<>((e, q) -> {
+    XmlSaveUtils.Field.storeField(target, this, "inner",
+            new ItemsSerializer<DelayedItem>((e, q) -> {
               XmlSaveUtils.saveIntoElementChild(e, "delayLeft", q.delayLeft);
               XmlSaveUtils.saveIntoElementChild(e, "item", q.item,
                       ObjectSerializer.createDeepSerializer()

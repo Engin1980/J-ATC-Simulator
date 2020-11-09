@@ -24,7 +24,8 @@ import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.messaging.xml.ParticipantSerializer;
+import eng.jAtcSim.newLib.messaging.xml.ParticipantFormatter;
+import eng.jAtcSim.newLib.messaging.xml.ParticipantParser;
 import eng.jAtcSim.newLib.shared.DelayedList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -40,6 +41,8 @@ import eng.jAtcSimLib.xmlUtils.Deserializer;
 import eng.jAtcSimLib.xmlUtils.Serializer;
 import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.jAtcSimLib.xmlUtils.deserializers.ItemsDeserializer;
+import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
@@ -60,39 +63,12 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
           AirplaneState.departingHigh,
           AirplaneState.departingLow,
   };
-
-  public  RoutingModule load(XElement element, IMap<String, Object> context) {
-    Area area =(Area) context.get("area");
-    Airport airport = (Airport) context.get("airport");
-
-    XmlLoadUtils.Field.restoreField(element, this, "assignedDARouteName");
-
-    String eepName = XmlLoadUtils.Field.loadFieldValue(element, "entryExitPoint", String.class);
-    this.entryExitPoint = area.getNavaids().get(eepName);
-
-    String rtName = XmlLoadUtils.Field.loadFieldValue(element, "runwaythreshold", String.class);
-    this.runwayThreshold = airport.getRunwayThreshold(rtName);
-
-tady jsem skončil
-    IMap<Class<?>, Serializer<?>> customDelayListSerializers = EMap.of(
-            Participant.class, new ParticipantSerializer(),
-            SpeechList.class, new ItemsSerializer<>(ObjectSerializer.createDeepSerializer())
-    );
-
-    XmlLoadUtils.Field.restoreField(element, this, "queue",
-            (Deserializer)(e -> this.queue.load(e, customDelayListDeserializers)));
-
-    XmlLoadUtils.Field.restoreField(element, this, "afterCommands",
-            (Deserializer)(e -> this.afterCommands.load(e)));
-  }
-
   private final AfterCommandList afterCommands = new AfterCommandList();
   private String assignedDARouteName = null;
   private Navaid entryExitPoint;
   private final DelayedList<ICommand> queue = new DelayedList<>(2, 7); //Min/max item delay
   private ActiveRunwayThreshold runwayThreshold;
   private CommandQueueRecorder cqr;
-
   public RoutingModule(Airplane plane, Navaid entryExitPoint) {
     super(plane);
     this.entryExitPoint = entryExitPoint;
@@ -126,10 +102,6 @@ tady jsem skončil
     return entryExitPoint;
   }
 
-  public void setCqr(CommandQueueRecorder commandQueueRecorder) {
-    this.cqr = commandQueueRecorder;
-  }
-
   public void setEntryExitPoint(Navaid entryExitNavaid) {
     EAssert.Argument.isNotNull(entryExitNavaid, "entryExitNavaid");
     this.entryExitPoint = entryExitNavaid;
@@ -153,6 +125,32 @@ tady jsem skončil
     return afterCommands.hasProceedDirectToNavaidAsConseqent(navaid);
   }
 
+  public RoutingModule load(XElement element, IMap<String, Object> context) {
+    Area area = (Area) context.get("area");
+    Airport airport = (Airport) context.get("airport");
+
+    XmlLoadUtils.Field.restoreField(element, this, "assignedDARouteName");
+
+    String eepName = XmlLoadUtils.Field.loadFieldValue(element, "entryExitPoint", String.class);
+    this.entryExitPoint = area.getNavaids().get(eepName);
+
+    String rtName = XmlLoadUtils.Field.loadFieldValue(element, "runwaythreshold", String.class);
+    this.runwayThreshold = airport.getRunwayThreshold(rtName);
+
+    IMap<Class<?>, Deserializer> customDelayListDeserializers = EMap.of(
+            Participant.class, new ParticipantParser().toDeserializer(),
+            SpeechList.class, new ItemsDeserializer(ObjectDeserializer.createDeepDeserializer(), new SpeechList())
+    );
+
+    XmlLoadUtils.Field.restoreField(element, this, "queue",
+            (Deserializer) (e -> this.queue.load(e, customDelayListDeserializers, ICommand.class)));
+
+    XmlLoadUtils.Field.restoreField(element, this, "afterCommands",
+            (Deserializer) (e -> this.afterCommands.load(e)));
+
+    return this;
+  }
+
   public void save(XElement target) {
     XmlSaveUtils.Field.storeFields(target, this, "assignedDARouteName");
 
@@ -160,7 +158,7 @@ tady jsem skončil
     XmlSaveUtils.saveIntoElementChild(target, "runwayThreshold", this.runwayThreshold.getFullName());
 
     IMap<Class<?>, Serializer<?>> customDelayListSerializers = EMap.of(
-            Participant.class, new ParticipantSerializer(),
+            Participant.class, new ParticipantFormatter().toSerializer(),
             SpeechList.class, new ItemsSerializer<>(ObjectSerializer.createDeepSerializer())
     );
 
@@ -169,6 +167,10 @@ tady jsem skončil
 
     XmlSaveUtils.Field.storeField(target, this, "afterCommands",
             (XElement e, AfterCommandList q) -> q.save(e));
+  }
+
+  public void setCqr(CommandQueueRecorder commandQueueRecorder) {
+    this.cqr = commandQueueRecorder;
   }
 
   public void setRouting(IReadOnlyList<ICommand> routeCommands) {

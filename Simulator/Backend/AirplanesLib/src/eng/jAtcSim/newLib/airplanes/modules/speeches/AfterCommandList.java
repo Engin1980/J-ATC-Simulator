@@ -335,11 +335,11 @@ public class AfterCommandList {
     Deserializer deserializer = e -> {
 
       Object antecedent = XmlLoadUtils.Field.loadFieldValue(element, "antecedent",
-              ObjectDeserializer.createEmpty()
+              ObjectDeserializer.createFor(AfterCommand.class)
                       .useDefaultDeserializer(ObjectDeserializer.createDeepDeserializer()));
 
       Object consequent = XmlLoadUtils.Field.loadFieldValue(element, "consequent",
-              ObjectDeserializer.createEmpty()
+              ObjectDeserializer.createFor(ICommand.class)
                       .useDefaultDeserializer(ObjectDeserializer.createDeepDeserializer()));
 
       AFItem ret = new AFItem((AfterCommand) antecedent, (ICommand) consequent);
@@ -369,11 +369,6 @@ public class AfterCommandList {
               .useDefaultSerializer(ObjectSerializer.createDeepSerializer()));
 
     };
-//    XmlSaveUtils.Items.saveIntoElementChild(target, "rt", this.rt,
-//            new ItemsSerializer<>(consumer));
-//
-//    XmlSaveUtils.Items.saveIntoElementChild(target, "ex", this.ex,
-//            new ItemsSerializer<>(consumer));
 
     XmlSaveUtils.Field.storeField(target, this, "rt",
             new ItemsSerializer<>(consumer));

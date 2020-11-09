@@ -18,6 +18,10 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public abstract class Pilot {
 
+  public static Pilot load(XElement element) {
+    tady jsem skončil
+  }
+
   protected final IAirplane rdr;
   protected final IAirplaneWriter wrt;
   private boolean isFirstElapseSecond = true;

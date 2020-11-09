@@ -28,6 +28,11 @@ public class Participant {
     return new Participant(eType.atc, atcId.getName());
   }
 
+  public static Participant createAtc(String atcName) {
+    EAssert.Argument.isNotNull(atcName, "atcName");
+    return new Participant(eType.atc, atcName);
+  }
+
   public static Participant createSystem() {
     return systemParticipant;
   }

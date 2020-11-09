@@ -70,6 +70,10 @@ public class XmlLoadUtils {
       restoreFields(element, target, new ESet<>(fieldNames), null, null, null);
     }
 
+    public static <T> void restoreFields(XElement element, T target, IReadOnlySet<String> fieldNames) {
+      restoreFields(element, target, fieldNames, null, null, null);
+    }
+
     public static <T> void restoreFields(XElement element, T target, String[] fieldNames, IMap<java.lang.Class<?>, Deserializer> customDeserializers) {
       restoreFields(element, target, new ESet<>(fieldNames), customDeserializers, null, null);
     }
@@ -99,7 +103,7 @@ public class XmlLoadUtils {
       return ret;
     }
 
-    public static IList<Object> loadFieldValues(XElement source, java.lang.Class<?> type, String ... fieldNames) {
+    public static IList<Object> loadFieldValues(XElement source, java.lang.Class<?> type, String... fieldNames) {
       IList<Object> ret = new EList<>();
       for (String fieldName : fieldNames) {
         java.lang.reflect.Field field = getFieldByName(type, fieldName);

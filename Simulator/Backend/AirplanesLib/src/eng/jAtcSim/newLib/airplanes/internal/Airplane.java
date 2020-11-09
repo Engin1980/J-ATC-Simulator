@@ -569,10 +569,10 @@ public class Airplane {
                     .excludeFields("plane", "rdr", "wrt")
                     .useInstanceProvider(AirplaneFlightModule.class, () -> ret.flightModule));
 
-    XmlLoadUtils.Field.restoreField(element, ret, "routingModule", (Deserializer) e -> ret.routingModule.load(e));
+    XmlLoadUtils.Field.restoreField(element, ret, "routingModule", (Deserializer) e -> ret.routingModule.load(e, context));
 
 
-    XmlLoadUtils.Field.restoreField(element, ret, "shaModule", (Deserializer) e -> ShaModule.load(ret, e));
+    XmlLoadUtils.Field.restoreField(element, ret, "shaModule", (Deserializer) e -> ret.sha.load(ret, e));
 
     XmlLoadUtils.Field.restoreField(element, ret, "atcModule",
             ObjectDeserializer.createFor(AtcModule.class)
