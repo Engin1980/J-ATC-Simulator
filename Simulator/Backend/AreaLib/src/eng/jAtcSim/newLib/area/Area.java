@@ -6,12 +6,15 @@ import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.newXmlUtils.XmlContext;
 import eng.newXmlUtils.implementations.ItemsSerializer;
+import eng.newXmlUtils.implementations.ObjectSerializer;
 
 public class Area {
   public static void prepareXmlContext(XmlContext ctx) {
     ctx.sdfManager.setFormatter(ActiveRunwayThreshold.class, q -> q.getFullName());
     ctx.sdfManager.setFormatter(Navaid.class, q -> q.getName());
     ctx.sdfManager.setSerializer(NavaidList.class, new ItemsSerializer());
+    ctx.sdfManager.setSerializer(RunwayConfiguration.class, new ObjectSerializer());
+    ctx.sdfManager.setSerializer(RunwayThresholdConfiguration.class, new ObjectSerializer());
   }
 
 //  public static class XmlLoader {

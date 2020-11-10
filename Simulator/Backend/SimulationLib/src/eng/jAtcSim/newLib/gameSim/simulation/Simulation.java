@@ -24,7 +24,6 @@ import eng.jAtcSim.newLib.gameSim.simulation.controllers.MrvaController;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.*;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Messenger;
-import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.mood.MoodManager;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -178,7 +177,6 @@ public class Simulation {
     ctx.sdfManager.setSerializer(Simulation.class, new ObjectSerializer()
             .withValueClassCheck(Simulation.class, false)
             .withIgnoredFields(
-                    "atcModule",
                     "ioModule",
                     "isElapseSecondCalculationRunning",
                     "isim",
@@ -204,6 +202,12 @@ public class Simulation {
     MoodManager.prepareXmlContext(ctx);
     AirplanesController.prepareXmlContext(ctx);
     // endregion
+
+    // region AtcModule
+    ctx.sdfManager.setSerializer(AtcModule.class, new ObjectSerializer()
+            .withIgnoredField("userAtcsCache")
+            .withIgnoredFields("parent"));
+    AtcProvider.prepareXmlContext(ctx);
 
 //TODEL
 //    XElement tmp;

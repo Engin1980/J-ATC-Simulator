@@ -14,12 +14,17 @@ import eng.jAtcSimLib.xmlUtils.deserializers.ItemsDeserializer;
 import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
+import eng.newXmlUtils.XmlContext;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.function.Predicate;
 
 public class DelayedList<T> {
+
+  public static void prepareXmlContext(XmlContext ctx){
+    ctx.sdfManager.setSerializer(DelayedItem.class, new eng.newXmlUtils.implementations.ObjectSerializer());
+  }
 
   private static class DelayedItem<T> {
     public final T item;

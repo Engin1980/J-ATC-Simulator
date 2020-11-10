@@ -53,6 +53,11 @@ public class AirplanesController {
     ctx.sdfManager.setSerializer(AirplaneList.class,
             new ItemsSerializer());
 
+    ctx.sdfManager.setSerializer(Airplane.AirplaneImpl.class, (e, v, c) -> {
+      e.setContent(((Airplane.AirplaneImpl) v).getCallsign().toString());
+      e.setAttribute("__type", Airplane.AirplaneImpl.class.getName());
+    });
+
     ctx.sdfManager.setSerializer(Airplane.class,
             new ObjectSerializer()
                     .withValueClassCheck(Airplane.class)
@@ -71,6 +76,7 @@ public class AirplanesController {
       ctx.sdfManager.setSerializer(RoutingModule.class, new ObjectSerializer().withIgnoredFields("plane", "rdr", "wrt", "cqr"));
       {
         ctx.sdfManager.setSerializer(DelayedList.class, new ObjectSerializer());
+        DelayedList.prepareXmlContext(ctx);
         ctx.sdfManager.setSerializer(AfterCommandList.class, new ObjectSerializer());
         ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.airplanes.modules.speeches");
 

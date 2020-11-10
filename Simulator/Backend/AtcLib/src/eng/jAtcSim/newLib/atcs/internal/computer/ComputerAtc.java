@@ -27,10 +27,17 @@ import eng.jAtcSimLib.xmlUtils.Serializer;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
+import eng.newXmlUtils.XmlContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public abstract class ComputerAtc extends Atc {
+
+  public static void prepareXmlContext(XmlContext ctx) {
+    ctx.sdfManager.setSerializer(SwitchManager.class, new eng.newXmlUtils.implementations.ObjectSerializer()
+            .withIgnoredFields("delayedMessagesProducer", "parent"));
+    ctx.sdfManager.setSerializer(SwitchInfo.class, new eng.newXmlUtils.implementations.ObjectSerializer());
+  }
 
   private final DelayedList<Message> speechDelayer = new DelayedList<>(
           Global.MINIMUM_ATC_SPEECH_DELAY_SECONDS, Global.MAXIMUM_ATC_SPEECH_DELAY_SECONDS);

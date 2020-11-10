@@ -25,7 +25,6 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
@@ -37,12 +36,24 @@ import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.EntriesSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
+import eng.newXmlUtils.XmlContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class TowerAtc extends ComputerAtc {
+
+  public static void prepareXmlContext(XmlContext ctx) {
+    ctx.sdfManager.setSerializer(DepartureManager.class,
+            new eng.newXmlUtils.implementations.ObjectSerializer()
+                    .withIgnoredFields("parent", "messageSenderConsumer"));
+    ctx.sdfManager.setSerializer(ArrivalManager.class,
+            new eng.newXmlUtils.implementations.ObjectSerializer()
+                    .withIgnoredFields("parent", "messageSenderConsumer"));
+    ctx.sdfManager.setSerializer(RunwayCheckInfo.class, new eng.newXmlUtils.implementations.ObjectSerializer());
+    ctx.sdfManager.setSerializer(SchedulerForAdvice.class, new eng.newXmlUtils.implementations.ObjectSerializer());
+    ctx.sdfManager.setSerializer(RunwaysInUseInfo.class, new eng.newXmlUtils.implementations.ObjectSerializer());
+  }
 
   public enum eDirection {
     departures,

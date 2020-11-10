@@ -13,6 +13,7 @@ import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.SimulationSettings;
 import eng.jAtcSim.newLib.gameSim.xml.WeatherSourceDeserializer;
+import eng.jAtcSim.newLib.shared.GID;
 import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSimLib.xmlUtils.Parser;
@@ -128,7 +129,9 @@ public class Game implements IGame {
     XElement root = new XElement("game");
 
     XmlContext ctx = new XmlContext();
+    ctx.sdfManager.setSerializer(GID.class, new ObjectSerializer());
     ctx.sdfManager.setSerializers(SDFFactory.getSimpleSerializers());
+    ctx.sdfManager.setSerializers(SDFFactory.getSimpleArraySerializers());
     ctx.sdfManager.setSerializers(SDFFactory.getESystemSerializers());
     ctx.sdfManager.setSerializers(SharedXmlUtils.Serializers.serializers);
     Area.prepareXmlContext(ctx);
