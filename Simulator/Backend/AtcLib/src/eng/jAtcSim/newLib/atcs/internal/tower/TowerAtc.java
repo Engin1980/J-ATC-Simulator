@@ -325,7 +325,7 @@ public class TowerAtc extends ComputerAtc {
                     ObjectSerializer.createFor(RunwayCheckInfo.class)
                             .useDefaultSerializer(
                                     ObjectSerializer.createDeepSerializer()
-                                            .useSerializers(SharedXmlUtils.serializersMap))));
+                                            .useSerializers(SharedXmlUtils.Serializers.serializersMap))));
   }
 
   @Override

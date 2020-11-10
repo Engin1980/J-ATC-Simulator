@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
@@ -12,14 +13,35 @@ import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.IAirplaneWriter;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.Restriction;
+import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public abstract class Pilot {
 
-  public static Pilot load(XElement element) {
-    tady jsem skončil
+  public static Pilot load(XElement element, IMap<String, Object> context) {
+    Class<?> type = XmlLoadUtils.Class.loadType(element);
+    Pilot ret;
+
+    if (TakeOffPilot.class.equals(type)) {
+      ret = TakeOffPilot.load(element, context);
+    } else if (ApproachPilot.class.equals(type)) {
+      ret = ApproachPilot.load(element, context);
+    } else if (HoldingPointPilot.class.equals(type)) {
+      ret = HoldingPointPilot.load(element, context);
+    } else if (HoldPilot.class.equals(type)) {
+      ret = HoldPilot.load(element, context);
+    } else if (ArrivalPilot.class.equals(type)) {
+      ret = ArrivalPilot.load(element, context);
+    } else if (DeparturePilot.class.equals(type)) {
+      ret = DeparturePilot.load(element, context);
+    } else
+      throw new EApplicationException("Unable to load pilot of type " + type.getName());
+
+    XmlLoadUtils.Field.restoreFields(element, ret, "isFirstSecondElapsed");
+
+    return ret;
   }
 
   protected final IAirplane rdr;
@@ -32,7 +54,7 @@ public abstract class Pilot {
     this.wrt = plane.getWriter();
   }
 
-  public final void save(XElement target){
+  public final void save(XElement target) {
     XmlSaveUtils.Class.storeType(target, this);
     XmlSaveUtils.Field.storeField(target, this, "isFirstElapseSecond");
     _save(target);

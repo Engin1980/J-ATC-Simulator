@@ -63,7 +63,7 @@ public abstract class AirplaneTemplate {
   public void save(XElement target) {
     XmlSaveUtils.Field.storeFields(target, this,
             new String[]{"callsign", "airplaneType", "expectedExitTime", "entryTime", "entryDelay"},
-            SharedXmlUtils.serializersMap);
+            SharedXmlUtils.Serializers.serializersMap);
     XmlSaveUtils.Field.storeField(target, this, "entryExitPoint",
             ObjectSerializer.createFor(entryExitPoint.getClass())
                     .useFormatter(Navaid.class, q -> q.getName()));

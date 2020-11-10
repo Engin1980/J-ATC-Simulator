@@ -49,6 +49,6 @@ public class ArrivalAirplaneTemplate extends AirplaneTemplate {
   @Override
   protected void _save(XElement target) {
     XmlSaveUtils.Field.storeFields(target, this, "heading", "altitude", "speed");
-    XmlSaveUtils.Field.storeField(target, this, "coordinate", SharedXmlUtils.coordinateFormatter);
+    XmlSaveUtils.Field.storeField(target, this, "coordinate", SharedXmlUtils.Formatters.coordinateFormatter);
   }
 }

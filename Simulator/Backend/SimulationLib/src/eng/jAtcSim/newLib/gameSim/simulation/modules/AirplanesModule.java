@@ -4,6 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
@@ -52,24 +53,25 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class AirplanesModule extends SimulationModule {
   public static AirplanesModule load(Simulation parent, XElement element, IReadOnlyList<AtcId> atcs) {
 
-    AirplanesController aic = XmlLoadUtils.Field.loadFieldValue(element, "airplanesController",
-            e -> AirplanesController.load(atcs, e));
-
-    AirproxController apc = XmlLoadUtils.Field.loadFieldValue(element, "airproxController",
-            e -> AirproxController.load(e));
-
-    EmergencyAppearanceController eac = XmlLoadUtils.Field.loadFieldValue(element, "emergencyAppearanceController",
-            ObjectDeserializer.createFor(EmergencyAppearanceController.class)
-            .useParser(SharedXmlUtils.parsersMap));
-
-    MoodManager mm = XmlLoadUtils.Field.loadFieldValue(element, "moodManager",
-            e -> MoodManager.load(e));
-
-    AirplanesController ac = XmlLoadUtils.Field.loadFieldValue(element, "airplanesController",
-            e -> AirplanesController.load(e));
-
-    IList<AirplaneTemplate> pp = XmlLoadUtils.Field.loadFieldValue(element, "planesPrepared",
-            new ItemsDeserializer(e -> AirplaneTemplate.load(e)));
+    throw new ToDoException("continue implementation");
+//    AirplanesController aic = XmlLoadUtils.Field.loadFieldValue(element, "airplanesController",
+//            e -> AirplanesController.load(atcs, e));
+//
+//    AirproxController apc = XmlLoadUtils.Field.loadFieldValue(element, "airproxController",
+//            e -> AirproxController.load(e));
+//
+//    EmergencyAppearanceController eac = XmlLoadUtils.Field.loadFieldValue(element, "emergencyAppearanceController",
+//            ObjectDeserializer.createFor(EmergencyAppearanceController.class)
+//            .useParser(SharedXmlUtils.parsersMap));
+//
+//    MoodManager mm = XmlLoadUtils.Field.loadFieldValue(element, "moodManager",
+//            e -> MoodManager.load(e));
+//
+//    AirplanesController ac = XmlLoadUtils.Field.loadFieldValue(element, "airplanesController",
+//            e -> AirplanesController.load(e));
+//
+//    IList<AirplaneTemplate> pp = XmlLoadUtils.Field.loadFieldValue(element, "planesPrepared",
+//            new ItemsDeserializer(e -> AirplaneTemplate.load(e)));
 
     // init planes for public
 
@@ -81,7 +83,7 @@ public class AirplanesModule extends SimulationModule {
             new ItemsSerializer<>((e, q) -> q.save(e)));
      */
 
-    return ret;
+//    return ret;
   }
 
   private final AirplanesController airplanesController;
@@ -205,7 +207,7 @@ public class AirplanesModule extends SimulationModule {
 
     XmlSaveUtils.Field.storeField(target, this, "emergencyAppearanceController",
             ObjectSerializer.createFor(EmergencyAppearanceController.class)
-                    .useFormatters(SharedXmlUtils.formattersMap));
+                    .useFormatters(SharedXmlUtils.Formatters.formattersMap));
 
     XmlSaveUtils.Field.storeField(target, this, "moodManager",
             (XElement e, MoodManager q) -> q.save(e));

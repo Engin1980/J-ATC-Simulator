@@ -89,13 +89,13 @@ class SwitchManager {
   public void save(XElement target) {
 
     XmlSaveUtils.Field.storeField(target, this, "incomingPlanes",
-            new ItemsViaStringSerializer<>(SharedXmlUtils.squawkFormatter));
+            new ItemsViaStringSerializer<>(SharedXmlUtils.Formatters.squawkFormatter));
     XmlSaveUtils.Field.storeField(target, this, "outgoingPlanes",
             new EntriesSerializer<Squawk, SwitchInfo>(
-                    SharedXmlUtils.squawkSerializer,
+                    SharedXmlUtils.Serializers.squawkSerializer,
                     ObjectSerializer
                             .createFor(SwitchInfo.class)
-                            .useFormatters(SharedXmlUtils.formattersMap)));
+                            .useFormatters(SharedXmlUtils.Formatters.formattersMap)));
   }
 
   private void elapCheckAndProcessPlanesReadyToSwitch() {

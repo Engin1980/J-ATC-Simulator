@@ -12,6 +12,7 @@ import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.atcs.internal.IAtcSwitchManagerInterface;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.messaging.xml.ParticipantFormatter;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.DelayedList;
@@ -84,7 +85,7 @@ public abstract class ComputerAtc extends Atc {
   protected final void _save(XElement target) {
 
     IMap<Class<?>, Serializer<?>> customDelayListSerializers = EMap.of(
-            Participant.class, new ParticipantSerializer(),
+            Participant.class, new ParticipantFormatter().toSerializer(),
             SpeechList.class, new ItemsSerializer<>(ObjectSerializer.createDeepSerializer())
     );
 

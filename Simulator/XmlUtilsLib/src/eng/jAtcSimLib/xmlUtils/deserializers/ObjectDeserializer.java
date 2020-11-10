@@ -103,24 +103,7 @@ public class ObjectDeserializer implements Deserializer {
   }
 
   private Class<?> getExpectedType(XElement element) {
-    Class<?> typeByAttribute = tryLoadTypeFromElement(element);
-    Class<?> ret = coalesce(typeByAttribute, type);
-    return ret;
-  }
-
-  private Class<?> tryLoadTypeFromElement(XElement element) {
-    String attName = element.tryGetAttribute(DefaultXmlNames.CLASS_NAME);
-    Class<?> ret;
-    if (attName == null)
-      ret = null;
-    else {
-      try {
-        ret = Class.forName(attName);
-      } catch (ClassNotFoundException e) {
-        throw new XmlUtilsException(sf("Unable to load type '%s'.", attName), e);
-      }
-    }
-
+    Class<?> ret = XmlLoadUtils.Class.loadType(element, this.type);
     return ret;
   }
 }

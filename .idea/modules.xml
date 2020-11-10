@@ -21,6 +21,7 @@
       <module fileurl="file://$PROJECT_DIR$/Postponed/JavaFXRadar/JavaFXRadar.iml" filepath="$PROJECT_DIR$/Postponed/JavaFXRadar/JavaFXRadar.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/MessagingLib/MessagingLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/MessagingLib/MessagingLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/MoodLib/MoodLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/MoodLib/MoodLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Simulator/NewXmlUtils/NewXmlUtils.iml" filepath="$PROJECT_DIR$/Simulator/NewXmlUtils/NewXmlUtils.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/SharedLib/SharedLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/SharedLib/SharedLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/SimulationLib/SimulationLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/SimulationLib/SimulationLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/SpeechesLib/SpeechesLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/SpeechesLib/SpeechesLib.iml" />

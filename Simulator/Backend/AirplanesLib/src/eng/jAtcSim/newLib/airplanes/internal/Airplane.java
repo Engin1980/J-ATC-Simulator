@@ -539,6 +539,8 @@ public class Airplane {
     Callsign callsign = new Callsign(callsignString);
     Airplane ret = new Airplane(callsign);
 
+    context.set("airplane", ret);
+
     XmlLoadUtils.Field.restoreField(element, ret, "state");
     XmlLoadUtils.Field.restoreField(element, ret, "lastGoAroundReasonIfAny");
     XmlLoadUtils.Field.restoreField(element, ret, "coordinate", SharedXmlUtils.Deserializers.coordinateDeserializer);
@@ -571,17 +573,11 @@ public class Airplane {
 
     XmlLoadUtils.Field.restoreField(element, ret, "routingModule", (Deserializer) e -> ret.routingModule.load(e, context));
 
-
     XmlLoadUtils.Field.restoreField(element, ret, "shaModule", (Deserializer) e -> ret.sha.load(ret, e));
 
-    XmlLoadUtils.Field.restoreField(element, ret, "atcModule",
-            ObjectDeserializer.createFor(AtcModule.class)
-                    .useDeserializer(AtcId.class, SharedXmlUtils.DeserializersDynamic.getAtcIdDeserializer(atcs)));
+    XmlLoadUtils.Field.restoreField(element, ret, "pilot", (Deserializer) e -> Pilot.load(e, context));
 
-
-    XmlLoadUtils.Field.restoreField(element, ret, "coordinate", SharedXmlUtils.Deserializers.coordinateDeserializer);
-
-    XmlLoadUtils.Field.restoreField(element, ret, "pilot", (Deserializer) e -> Pilot.load(e));
+    context.remove("airplane");
 
     return ret;
   }

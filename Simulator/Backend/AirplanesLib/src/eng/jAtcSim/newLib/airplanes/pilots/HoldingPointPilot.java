@@ -1,13 +1,21 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class HoldingPointPilot extends Pilot {
   public HoldingPointPilot(Airplane plane) {
     super(plane);
+  }
+
+  public static HoldingPointPilot load(XElement element, IMap<String, Object> context) {
+    Airplane airplane = (Airplane) context.get("airplane");
+
+    HoldingPointPilot ret = new HoldingPointPilot(airplane);
+
+    return ret;
   }
 
   @Override

@@ -4,6 +4,7 @@ import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSimLib.xmlUtils.serializers.DefaultXmlNames;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -13,6 +14,29 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class XmlLoadUtils {
 
   public static class Class {
+
+    public static java.lang.Class<?> loadType(XElement element) {
+      java.lang.Class<?> ret = loadType(element, null);
+      if (ret == null)
+        throw new XmlUtilsException(sf("Failed to load type definition from element '%s'.", element.getName()));
+
+      return ret;
+    }
+
+    public static java.lang.Class<?> loadType(XElement element, java.lang.Class<?> defaultType) {
+      String attName = element.tryGetAttribute(DefaultXmlNames.CLASS_NAME);
+      java.lang.Class<?> ret;
+      if (attName == null)
+        ret = defaultType;
+      else {
+        try {
+          ret = java.lang.Class.forName(attName);
+        } catch (ClassNotFoundException e) {
+          throw new XmlUtilsException(sf("Unable to load type '%s'.", attName), e);
+        }
+      }
+      return ret;
+    }
 
     public static <T> T provideInstance(java.lang.Class<T> type) {
       T ret = provideInstance(type, null);

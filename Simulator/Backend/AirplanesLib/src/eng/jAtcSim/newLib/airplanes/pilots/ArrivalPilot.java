@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
@@ -11,6 +12,14 @@ public class ArrivalPilot extends BasicPilot {
 
   private final static double LOW_SPEED_DOWN_ALTITUDE = 11000;
   private final static double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
+
+  public static ArrivalPilot load(XElement element, IMap<String, Object> context) {
+    Airplane airplane = (Airplane) context.get("airplane");
+
+    ArrivalPilot ret = new ArrivalPilot(airplane);
+
+    return ret;
+  }
 
   public ArrivalPilot(Airplane plane) {
     super(plane);

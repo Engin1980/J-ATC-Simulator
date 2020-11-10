@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes;
 
 import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
@@ -22,15 +23,17 @@ import eng.jAtcSimLib.xmlUtils.deserializers.ItemsDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 
 public class AirplanesController {
-  public static AirplanesController load(IReadOnlyList<AtcId> atcs, XElement element) {
+  public static AirplanesController load(XElement element, IMap<String, Object> context) {
     AirplanesController ret = new AirplanesController();
 
+    IReadOnlyList<AtcId> atcs = (IReadOnlyList<AtcId>) context.get("atcs");
+
     EMap<Class<?>, Deserializer> dess = new EMap<>();
-    dess.set(AtcId.class, SharedXmlUtils.getAtcIdDeseralizer(atcs));
+    dess.set(AtcId.class, SharedXmlUtils.DeserializersDynamic.getAtcIdDeserializer(atcs));
 
     XmlLoadUtils.Field.restoreFields(element, ret, new String[]{"departureInitialAtcId", "arrivalInitialAtId"}, dess);
     XmlLoadUtils.Field.restoreField(element, ret, "planes",
-            new ItemsDeserializer(e -> Airplane.load(e, atcs), ret.planes));
+            new ItemsDeserializer(e -> Airplane.load(e, context), ret.planes));
     return ret;
   }
 
@@ -74,7 +77,7 @@ public class AirplanesController {
 
   public void save(XElement target) {
     XmlSaveUtils.Field.storeFields(target, this,
-            new String[]{"departureInitialAtcId", "arrivalInitialAtId"}, SharedXmlUtils.serializersMap);
+            new String[]{"departureInitialAtcId", "arrivalInitialAtId"}, SharedXmlUtils.Serializers.serializersMap);
     XmlSaveUtils.Field.storeField(target, this, "planes",
             new ItemsSerializer<Airplane>((e, q) -> q.save(e)));
   }

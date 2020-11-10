@@ -1,13 +1,21 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class DeparturePilot extends BasicPilot {
   public DeparturePilot(Airplane plane) {
     super(plane);
+  }
+
+  public static DeparturePilot load(XElement element, IMap<String, Object> context) {
+    Airplane airplane = (Airplane) context.get("airplane");
+
+    DeparturePilot ret = new DeparturePilot(airplane);
+
+    return ret;
   }
 
   @Override

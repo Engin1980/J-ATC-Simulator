@@ -33,7 +33,7 @@ public class MoodManager {
   public void save(XElement target) {
     XmlSaveUtils.Entries.saveIntoElementContent(target, inner,
             new EntriesSerializer<>(
-                    (e, q) -> SharedXmlUtils.callsignSerializer.invoke(e, q),
+                    SharedXmlUtils.Serializers.callsignSerializer,
                     (e, q) -> q.save(e)));
   }
 

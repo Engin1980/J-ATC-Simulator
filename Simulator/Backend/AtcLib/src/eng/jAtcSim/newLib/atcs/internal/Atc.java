@@ -58,7 +58,7 @@ public abstract class Atc {
   }
 
   public final void save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "atcId", SharedXmlUtils.atcIdFormatter);
+    XmlSaveUtils.Field.storeField(target, this, "atcId", SharedXmlUtils.Formatters.atcIdFormatter);
 
     // altitudes are not saved as they are loaded from Area file
 

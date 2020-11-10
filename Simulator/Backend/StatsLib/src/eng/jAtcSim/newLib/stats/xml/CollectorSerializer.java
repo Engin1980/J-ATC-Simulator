@@ -31,8 +31,8 @@ public class CollectorSerializer implements Serializer<Collector> {
 
   void initSerializers() {
     serializers.set(StatisticProperty.class, ObjectSerializer.createFor(StatisticProperty.class));
-    serializers.set(EDayTimeStamp.class, SharedXmlUtils.iTimeSerializer);
-    serializers.set(Callsign.class, SharedXmlUtils.callsignSerializer);
+    serializers.set(EDayTimeStamp.class, SharedXmlUtils.Serializers.iTimeSerializer);
+    serializers.set(Callsign.class, SharedXmlUtils.Serializers.callsignSerializer);
     serializers.set(EList.class, new ItemsSerializer<>(sos));
   }
 }

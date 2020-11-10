@@ -190,7 +190,7 @@ public class Simulation {
     EAssert.Argument.isNotNull(source, "source");
 
     now = new EDayTimeRun(0);
-    XmlLoadUtils.Field.restoreField(source, this, "now", SharedXmlUtils.dayTimeRunParser);
+    XmlLoadUtils.Field.restoreField(source, this, "now", SharedXmlUtils.Parsers.dayTimeRunParser);
 
     SharedAcc sharedContext = new SharedAcc(
             simulationContext.activeAirport.getIcao(),
@@ -217,19 +217,18 @@ public class Simulation {
     this.weatherModule = XmlLoadUtils.Field.loadFieldValue(source, "weatherModule",
             e -> WeatherModule.load(this, simulationContext.weatherProvider, source));
     //this.weatherModule.init(); - i guess not necessary
-    //TODEL
-    this.airplanesModule = XmlLoadUtils.Field.loadFieldValue(source, "airplanesModule",
-            e -> AirplanesModule.load(this, e));
-
-    XmlLoadUtils.Field.restoreField(source, this, "trafficModule",
-            (Deserializer) e -> TrafficModule.load(this, simulationContext.traffic, e));
-
-    // tady odsud nové přepisování
-    // this should be the last in the queue as it may start the timer
-    this.timerModule = XmlLoadUtils.Field.loadFieldValue(source, "timerModule", e -> TimerModule.load(this, e));
-    this.timerModule.registerOnTickListener(this::timerTicked);
-
-    throw new ToDoException();
+    //TODO
+    throw new ToDoException("Continue here");
+//    this.airplanesModule = XmlLoadUtils.Field.loadFieldValue(source, "airplanesModule",
+//            e -> AirplanesModule.load(this, e, null));
+//
+//    XmlLoadUtils.Field.restoreField(source, this, "trafficModule",
+//            (Deserializer) e -> TrafficModule.load(this, simulationContext.traffic, e));
+//
+//    // tady odsud nové přepisování
+//    // this should be the last in the queue as it may start the timer
+//    this.timerModule = XmlLoadUtils.Field.loadFieldValue(source, "timerModule", e -> TimerModule.load(this, e));
+//    this.timerModule.registerOnTickListener(this::timerTicked);
 
     /*
     must be loaded:
@@ -360,7 +359,7 @@ public class Simulation {
   private final StatsModule statsModule;
      */
 
-    XmlSaveUtils.Field.storeField(target, this, "now", SharedXmlUtils.iTimeFormatter);
+    XmlSaveUtils.Field.storeField(target, this, "now", SharedXmlUtils.Formatters.iTimeFormatter);
 
     XElement tmp;
 

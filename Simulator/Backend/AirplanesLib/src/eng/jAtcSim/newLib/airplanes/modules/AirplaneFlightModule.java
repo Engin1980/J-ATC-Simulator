@@ -61,6 +61,6 @@ public class AirplaneFlightModule {
   public void save(XElement target) {
     XmlSaveUtils.Field.storeFields(target,
             this, ObjectUtils.getFieldNames(AirplaneFlightModule.class).toArray(String.class),
-            SharedXmlUtils.serializersMap);
+            SharedXmlUtils.Serializers.serializersMap);
   }
 }
