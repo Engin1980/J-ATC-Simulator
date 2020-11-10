@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.atcs.internal;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
@@ -58,11 +59,13 @@ public abstract class Atc {
   }
 
   public final void save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "atcId", SharedXmlUtils.Formatters.atcIdFormatter);
-
-    // altitudes are not saved as they are loaded from Area file
-
-    _save(target);
+    //TODEL
+    throw new ToDoException();
+//    XmlSaveUtils.Field.storeField(target, this, "atcId", SharedXmlUtils.Formatters.atcIdFormatter);
+//
+//    // altitudes are not saved as they are loaded from Area file
+//
+//    _save(target);
   }
 
   protected abstract void _save(XElement target);

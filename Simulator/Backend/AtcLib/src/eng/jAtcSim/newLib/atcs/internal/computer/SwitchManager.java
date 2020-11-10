@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.atcs.internal.computer;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
@@ -87,15 +88,16 @@ class SwitchManager {
   }
 
   public void save(XElement target) {
-
-    XmlSaveUtils.Field.storeField(target, this, "incomingPlanes",
-            new ItemsViaStringSerializer<>(SharedXmlUtils.Formatters.squawkFormatter));
-    XmlSaveUtils.Field.storeField(target, this, "outgoingPlanes",
-            new EntriesSerializer<Squawk, SwitchInfo>(
-                    SharedXmlUtils.Serializers.squawkSerializer,
-                    ObjectSerializer
-                            .createFor(SwitchInfo.class)
-                            .useFormatters(SharedXmlUtils.Formatters.formattersMap)));
+    //TODEL
+    throw new ToDoException();
+//    XmlSaveUtils.Field.storeField(target, this, "incomingPlanes",
+//            new ItemsViaStringSerializer<>(SharedXmlUtils.Formatters.squawkFormatter));
+//    XmlSaveUtils.Field.storeField(target, this, "outgoingPlanes",
+//            new EntriesSerializer<Squawk, SwitchInfo>(
+//                    SharedXmlUtils.Serializers.squawkSerializer,
+//                    ObjectSerializer
+//                            .createFor(SwitchInfo.class)
+//                            .useFormatters(SharedXmlUtils.Formatters.formatters)));
   }
 
   private void elapCheckAndProcessPlanesReadyToSwitch() {

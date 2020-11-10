@@ -312,20 +312,22 @@ public class TowerAtc extends ComputerAtc {
 
   @Override
   protected void __save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "isUpdatedWeather");
-    XmlSaveUtils.Field.storeField(target, this, "departureManager",
-            (XElement e, DepartureManager q) -> q.save(e));
-    XmlSaveUtils.Field.storeField(target, this, "arrivalManager",
-            (XElement e, ArrivalManager q) -> q.save(e));
-    XmlSaveUtils.Field.storeField(target, this, "inUseInfo",
-            (XElement e, RunwaysInUseInfo q) -> q.save(e));
-    XmlSaveUtils.Field.storeField(target, this, "runwayChecks",
-            new EntriesSerializer<String, RunwayCheckInfo>(
-                    (e, q) -> e.setContent(q),
-                    ObjectSerializer.createFor(RunwayCheckInfo.class)
-                            .useDefaultSerializer(
-                                    ObjectSerializer.createDeepSerializer()
-                                            .useSerializers(SharedXmlUtils.Serializers.serializersMap))));
+    //TODEL
+    throw new ToDoException();
+//    XmlSaveUtils.Field.storeField(target, this, "isUpdatedWeather");
+//    XmlSaveUtils.Field.storeField(target, this, "departureManager",
+//            (XElement e, DepartureManager q) -> q.save(e));
+//    XmlSaveUtils.Field.storeField(target, this, "arrivalManager",
+//            (XElement e, ArrivalManager q) -> q.save(e));
+//    XmlSaveUtils.Field.storeField(target, this, "inUseInfo",
+//            (XElement e, RunwaysInUseInfo q) -> q.save(e));
+//    XmlSaveUtils.Field.storeField(target, this, "runwayChecks",
+//            new EntriesSerializer<String, RunwayCheckInfo>(
+//                    (e, q) -> e.setContent(q),
+//                    ObjectSerializer.createFor(RunwayCheckInfo.class)
+//                            .useDefaultSerializer(
+//                                    ObjectSerializer.createDeepSerializer()
+//                                            .useSerializers(SharedXmlUtils.Serializers.serializers))));
   }
 
   @Override

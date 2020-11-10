@@ -69,6 +69,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private final DelayedList<ICommand> queue = new DelayedList<>(2, 7); //Min/max item delay
   private ActiveRunwayThreshold runwayThreshold;
   private CommandQueueRecorder cqr;
+
   public RoutingModule(Airplane plane, Navaid entryExitPoint) {
     super(plane);
     this.entryExitPoint = entryExitPoint;

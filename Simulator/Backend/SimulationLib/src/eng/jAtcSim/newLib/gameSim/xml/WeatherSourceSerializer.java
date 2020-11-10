@@ -11,7 +11,7 @@ import eng.jAtcSimLib.xmlUtils.Serializer;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.DefaultXmlNames;
 import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
-
+//TODEL unused in future, I guess
 public class WeatherSourceSerializer implements Serializer<WeatherSource> {
   @Override
   public void invoke(XElement target, WeatherSource value) {

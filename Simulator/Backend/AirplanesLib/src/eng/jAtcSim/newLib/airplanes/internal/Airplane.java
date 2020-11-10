@@ -11,7 +11,6 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
-import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.airplanes.*;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.modules.AirplaneFlightModule;
@@ -43,7 +42,6 @@ import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
@@ -51,12 +49,6 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertingNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.weather.Weather;
-import eng.jAtcSimLib.xmlUtils.Deserializer;
-import eng.jAtcSimLib.xmlUtils.Parser;
-import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -532,54 +524,56 @@ public class Airplane {
   }
 
   public static Airplane load(XElement element, IMap<String, Object> context) {
-    IReadOnlyList<AtcId> atcs = (IReadOnlyList<AtcId>) context.get("atcs");
-    AirplaneTypes airplaneTypes = (AirplaneTypes) context.get("airplaneTypes");
-
-    String callsignString = element.getChild("flightModule").getChild("callsign").getContent();
-    Callsign callsign = new Callsign(callsignString);
-    Airplane ret = new Airplane(callsign);
-
-    context.set("airplane", ret);
-
-    XmlLoadUtils.Field.restoreField(element, ret, "state");
-    XmlLoadUtils.Field.restoreField(element, ret, "lastGoAroundReasonIfAny");
-    XmlLoadUtils.Field.restoreField(element, ret, "coordinate", SharedXmlUtils.Deserializers.coordinateDeserializer);
-    XmlLoadUtils.Field.restoreField(element, ret, "squawk", SharedXmlUtils.Deserializers.squawkDeserializer);
-    XmlLoadUtils.Field.restoreField(element, ret, "airplaneType", (Parser) e -> airplaneTypes.getByName(e));
-
-    XmlLoadUtils.Field.restoreField(element, ret, "atcModule",
-            ObjectDeserializer.createFor(AtcModule.class)
-                    .useDeserializer(AtcId.class, SharedXmlUtils.DeserializersDynamic.getAtcIdDeserializer(atcs))
-                    .excludeFields("plane", "rdr", "wrt")
-                    .useInstanceProvider(AtcModule.class, () -> ret.atcModule));
-
-    XmlLoadUtils.Field.restoreField(element, ret, "mood", (Deserializer) e -> Mood.load(e));
-
-    if (ret.divertModule != null)
-      XmlLoadUtils.Field.restoreField(element, ret, "divertModule",
-              ObjectDeserializer.createFor(DivertModule.class)
-                      .useDeserializers(SharedXmlUtils.Deserializers.deserializersMap)
-                      .excludeFields("plane", "rdr", "wrt"));
-
-    XmlLoadUtils.Field.restoreField(element, ret, "emergencyModule",
-            ObjectDeserializer.createFor(EmergencyModule.class)
-                    .useDeserializers(SharedXmlUtils.Deserializers.deserializersMap));
-
-    XmlLoadUtils.Field.restoreField(element, ret, "flightModule",
-            ObjectDeserializer.createFor(AirplaneFlightModule.class)
-                    .useDeserializers(SharedXmlUtils.Deserializers.deserializersMap)
-                    .excludeFields("plane", "rdr", "wrt")
-                    .useInstanceProvider(AirplaneFlightModule.class, () -> ret.flightModule));
-
-    XmlLoadUtils.Field.restoreField(element, ret, "routingModule", (Deserializer) e -> ret.routingModule.load(e, context));
-
-    XmlLoadUtils.Field.restoreField(element, ret, "shaModule", (Deserializer) e -> ret.sha.load(ret, e));
-
-    XmlLoadUtils.Field.restoreField(element, ret, "pilot", (Deserializer) e -> Pilot.load(e, context));
-
-    context.remove("airplane");
-
-    return ret;
+    //TODEL
+    throw new ToDoException();
+//    IReadOnlyList<AtcId> atcs = (IReadOnlyList<AtcId>) context.get("atcs");
+//    AirplaneTypes airplaneTypes = (AirplaneTypes) context.get("airplaneTypes");
+//
+//    String callsignString = element.getChild("flightModule").getChild("callsign").getContent();
+//    Callsign callsign = new Callsign(callsignString);
+//    Airplane ret = new Airplane(callsign);
+//
+//    context.set("airplane", ret);
+//
+//    XmlLoadUtils.Field.restoreField(element, ret, "state");
+//    XmlLoadUtils.Field.restoreField(element, ret, "lastGoAroundReasonIfAny");
+//    XmlLoadUtils.Field.restoreField(element, ret, "coordinate", SharedXmlUtils.Deserializers.coordinateDeserializer);
+//    XmlLoadUtils.Field.restoreField(element, ret, "squawk", SharedXmlUtils.Deserializers.squawkDeserializer);
+//    XmlLoadUtils.Field.restoreField(element, ret, "airplaneType", (Parser) e -> airplaneTypes.getByName(e));
+//
+//    XmlLoadUtils.Field.restoreField(element, ret, "atcModule",
+//            ObjectDeserializer.createFor(AtcModule.class)
+//                    .useDeserializer(AtcId.class, SharedXmlUtils.DeserializersDynamic.getAtcIdDeserializer(atcs))
+//                    .excludeFields("plane", "rdr", "wrt")
+//                    .useInstanceProvider(AtcModule.class, () -> ret.atcModule));
+//
+//    XmlLoadUtils.Field.restoreField(element, ret, "mood", (Deserializer) e -> Mood.load(e));
+//
+//    if (ret.divertModule != null)
+//      XmlLoadUtils.Field.restoreField(element, ret, "divertModule",
+//              ObjectDeserializer.createFor(DivertModule.class)
+//                      .useDeserializers(SharedXmlUtils.Deserializers.deserializers)
+//                      .excludeFields("plane", "rdr", "wrt"));
+//
+//    XmlLoadUtils.Field.restoreField(element, ret, "emergencyModule",
+//            ObjectDeserializer.createFor(EmergencyModule.class)
+//                    .useDeserializers(SharedXmlUtils.Deserializers.deserializers));
+//
+//    XmlLoadUtils.Field.restoreField(element, ret, "flightModule",
+//            ObjectDeserializer.createFor(AirplaneFlightModule.class)
+//                    .useDeserializers(SharedXmlUtils.Deserializers.deserializers)
+//                    .excludeFields("plane", "rdr", "wrt")
+//                    .useInstanceProvider(AirplaneFlightModule.class, () -> ret.flightModule));
+//
+//    XmlLoadUtils.Field.restoreField(element, ret, "routingModule", (Deserializer) e -> ret.routingModule.load(e, context));
+//
+//    XmlLoadUtils.Field.restoreField(element, ret, "shaModule", (Deserializer) e -> ret.sha.load(ret, e));
+//
+//    XmlLoadUtils.Field.restoreField(element, ret, "pilot", (Deserializer) e -> Pilot.load(e, context));
+//
+//    context.remove("airplane");
+//
+//    return ret;
   }
 
   private final AirplaneType airplaneType;
@@ -716,41 +710,42 @@ public class Airplane {
   }
 
   public void save(XElement target) {
-
-    XmlSaveUtils.Field.storeFields(target, this,
-            "state", "lastGoAroundReasonIfAny");
-    XmlSaveUtils.Field.storeField(target, this, "coordinate", SharedXmlUtils.Formatters.coordinateFormatter);
-    XmlSaveUtils.Field.storeField(target, this, "squawk", SharedXmlUtils.Formatters.squawkFormatter);
-    XmlSaveUtils.Field.storeField(target, this, "airplaneType", (AirplaneType q) -> q.name);
-
-    XmlSaveUtils.Field.storeField(target, this, "atcModule",
-            ObjectSerializer.createFor(AtcModule.class)
-                    .useSerializer(AtcId.class, SharedXmlUtils.Serializers.atcIdSerializer)
-                    .excludeFields("plane", "rdr", "wrt"));
-
-    XmlSaveUtils.Field.storeField(target, this, "mood",
-            (XElement e, Mood q) -> q.save(e));
-
-    XmlSaveUtils.Field.storeField(target, this, "divertModule",
-            ObjectSerializer.createFor(DivertModule.class)
-                    .useSerializers(SharedXmlUtils.Serializers.serializersMap)
-                    .excludeFields("plane", "rdr", "wrt"));
-
-    XmlSaveUtils.Field.storeField(target, this, "emergencyModule",
-            ObjectSerializer.createFor(DivertModule.class)
-                    .useSerializers(SharedXmlUtils.Serializers.serializersMap));
-
-    XmlSaveUtils.Field.storeField(target, this, "flightModule",
-            ObjectSerializer.createFor(AirplaneFlightModule.class)
-                    .useSerializers(SharedXmlUtils.Serializers.serializersMap)
-                    .excludeFields("plane", "rdr", "wrt"));
-
-    XmlSaveUtils.Field.storeField(target, this, "routingModule",
-            (XElement e, RoutingModule q) -> q.save(e));
-    XmlSaveUtils.Field.storeField(target, this, "sha",
-            (XElement e, ShaModule q) -> q.save(e));
-    XmlSaveUtils.Field.storeField(target, this, "pilot",
-            (XElement e, Pilot q) -> q.save(e));
+    //TODEL
+    throw new ToDoException();
+//    XmlSaveUtils.Field.storeFields(target, this,
+//            "state", "lastGoAroundReasonIfAny");
+//    XmlSaveUtils.Field.storeField(target, this, "coordinate", SharedXmlUtils.Formatters.coordinateFormatter);
+//    XmlSaveUtils.Field.storeField(target, this, "squawk", SharedXmlUtils.Formatters.squawkFormatter);
+//    XmlSaveUtils.Field.storeField(target, this, "airplaneType", (AirplaneType q) -> q.name);
+//
+//    XmlSaveUtils.Field.storeField(target, this, "atcModule",
+//            ObjectSerializer.createFor(AtcModule.class)
+//                    .useSerializer(AtcId.class, SharedXmlUtils.Serializers.atcIdSerializer)
+//                    .excludeFields("plane", "rdr", "wrt"));
+//
+//    XmlSaveUtils.Field.storeField(target, this, "mood",
+//            (XElement e, Mood q) -> q.save(e));
+//
+//    XmlSaveUtils.Field.storeField(target, this, "divertModule",
+//            ObjectSerializer.createFor(DivertModule.class)
+//                    .useSerializers(SharedXmlUtils.Serializers.serializers)
+//                    .excludeFields("plane", "rdr", "wrt"));
+//
+//    XmlSaveUtils.Field.storeField(target, this, "emergencyModule",
+//            ObjectSerializer.createFor(DivertModule.class)
+//                    .useSerializers(SharedXmlUtils.Serializers.serializers));
+//
+//    XmlSaveUtils.Field.storeField(target, this, "flightModule",
+//            ObjectSerializer.createFor(AirplaneFlightModule.class)
+//                    .useSerializers(SharedXmlUtils.Serializers.serializers)
+//                    .excludeFields("plane", "rdr", "wrt"));
+//
+//    XmlSaveUtils.Field.storeField(target, this, "routingModule",
+//            (XElement e, RoutingModule q) -> q.save(e));
+//    XmlSaveUtils.Field.storeField(target, this, "sha",
+//            (XElement e, ShaModule q) -> q.save(e));
+//    XmlSaveUtils.Field.storeField(target, this, "pilot",
+//            (XElement e, Pilot q) -> q.save(e));
   }
 
   private void flushSpeeches() {

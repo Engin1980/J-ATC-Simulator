@@ -22,6 +22,7 @@ import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
 import eng.jAtcSim.recording.Recording;
 import eng.jAtcSim.recording.Settings;
 import eng.jAtcSim.shared.MessageBox;
+import eng.newXmlUtils.XmlContext;
 
 import javax.swing.*;
 import java.awt.*;

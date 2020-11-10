@@ -4,8 +4,15 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
+import eng.newXmlUtils.XmlContext;
+import eng.newXmlUtils.implementations.ItemsSerializer;
 
 public class Area {
+  public static void prepareXmlContext(XmlContext ctx) {
+    ctx.sdfManager.setFormatter(ActiveRunwayThreshold.class, q -> q.getFullName());
+    ctx.sdfManager.setFormatter(Navaid.class, q -> q.getName());
+    ctx.sdfManager.setSerializer(NavaidList.class, new ItemsSerializer());
+  }
 
 //  public static class XmlLoader {
 //    public static Area load(XElement source) {

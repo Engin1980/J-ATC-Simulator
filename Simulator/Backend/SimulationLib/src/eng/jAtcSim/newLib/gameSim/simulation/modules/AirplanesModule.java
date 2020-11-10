@@ -41,10 +41,7 @@ import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
-import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.deserializers.ItemsDeserializer;
-import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
@@ -198,24 +195,25 @@ public class AirplanesModule extends SimulationModule {
   }
 
   public void save(XElement target) {
-
-    XmlSaveUtils.Field.storeField(target, this, "airplanesController",
-            (XElement e, AirplanesController q) -> q.save(e));
-
-    XmlSaveUtils.Field.storeField(target, this, "airproxController",
-            (XElement e, AirproxController q) -> q.save(e));
-
-    XmlSaveUtils.Field.storeField(target, this, "emergencyAppearanceController",
-            ObjectSerializer.createFor(EmergencyAppearanceController.class)
-                    .useFormatters(SharedXmlUtils.Formatters.formattersMap));
-
-    XmlSaveUtils.Field.storeField(target, this, "moodManager",
-            (XElement e, MoodManager q) -> q.save(e));
-
-    // mrvaController not saved, everything can be restored on load
-
-    XmlSaveUtils.Items.saveIntoElementChild(target, "planesPrepared", planesPrepared,
-            new ItemsSerializer<>((e, q) -> q.save(e)));
+    //TODEL
+    throw new ToDoException();
+//    XmlSaveUtils.Field.storeField(target, this, "airplanesController",
+//            (XElement e, AirplanesController q) -> q.save(e));
+//
+//    XmlSaveUtils.Field.storeField(target, this, "airproxController",
+//            (XElement e, AirproxController q) -> q.save(e));
+//
+//    XmlSaveUtils.Field.storeField(target, this, "emergencyAppearanceController",
+//            ObjectSerializer.createFor(EmergencyAppearanceController.class)
+//                    .useFormatters(SharedXmlUtils.Formatters.formatters));
+//
+//    XmlSaveUtils.Field.storeField(target, this, "moodManager",
+//            (XElement e, MoodManager q) -> q.save(e));
+//
+//    // mrvaController not saved, everything can be restored on load
+//
+//    XmlSaveUtils.Items.saveIntoElementChild(target, "planesPrepared", planesPrepared,
+//            new ItemsSerializer<>((e, q) -> q.save(e)));
   }
 
   private void addAirplaneInfo(IAirplane tmp) {

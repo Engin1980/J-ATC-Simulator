@@ -1,29 +1,34 @@
 package eng.newXmlUtils.implementations;
 
-import eng.newXmlUtils.EXmlException;
-import eng.newXmlUtils.base.Serializer;
-import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.utils.XmlUtils;
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IMap;
-import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.ReflectionUtils;
+import eng.newXmlUtils.EXmlException;
+import eng.newXmlUtils.XmlContext;
+import eng.newXmlUtils.base.Formatter;
+import eng.newXmlUtils.base.Serializer;
+import eng.newXmlUtils.utils.XmlUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class ObjectSerializer implements Serializer {
 
-  private final static boolean MANAGE_ENUMS = true;
+  private static final String OBJECT_SERIALIZER_VALUE_SET = "__OBJECT_SERIALIZER_VALUE_SET";
 
   private final IMap<String, Serializer> customFieldSerializers = new EMap<>();
   private Class<?> expectedClass;
   private boolean expectedTypeIncludingSubclasses;
 
-  public ObjectSerializer withCustomFieldSerialization(String fieldName, Serializer serializer) {
+  public ObjectSerializer withCustomFieldSerializer(String fieldName, Serializer serializer) {
     customFieldSerializers.set(fieldName, serializer);
+    return this;
+  }
+
+  public <T> ObjectSerializer withCustomFieldFormatter(String fieldName, Formatter<T> formatter) {
+    customFieldSerializers.set(fieldName, formatter.toSerializer());
     return this;
   }
 
@@ -46,23 +51,43 @@ public class ObjectSerializer implements Serializer {
     return this;
   }
 
-  public ObjectSerializer withValueTypValidation(Class<?> expectedValueClass, boolean includeSubclasses) {
+  public ObjectSerializer withValueClassCheck(Class<?> expectedValueClass, boolean includeSubclasses) {
     this.expectedClass = expectedValueClass;
     this.expectedTypeIncludingSubclasses = includeSubclasses;
     return this;
   }
 
+  public ObjectSerializer withValueClassCheck(Class<?> expectedValueClass) {
+    return this.withValueClassCheck(expectedValueClass, false);
+  }
+
   @Override
   public void invoke(XElement element, Object value, XmlContext xmlContext) {
     validateExpectedTypeIfRequired(value);
+    preCyclicSerializationCheck(value, xmlContext);
 
-    IReadOnlyList<Field> fields = ReflectionUtils.ClassUtils.getFields(value.getClass());
+    IReadOnlyList<Field> fields = ReflectionUtils.ClassUtils.getFields(value.getClass()).where(q -> !Modifier.isStatic(q.getModifiers()));
 
     for (Field field : fields) {
       storeField(element, value, field, xmlContext);
     }
 
     XmlUtils.saveType(element, value);
+
+    postCyclicSerializationCheck(value, xmlContext);
+  }
+
+  private void postCyclicSerializationCheck(Object value, XmlContext xmlContext) {
+    ISet<Object> objectSerializerSet = (ISet<Object>) xmlContext.values.get(OBJECT_SERIALIZER_VALUE_SET);
+    objectSerializerSet.remove(value);
+  }
+
+  private void preCyclicSerializationCheck(Object value, XmlContext xmlContext) {
+    ISet<Object> objectSerializerSet = (ISet<Object>) xmlContext.values.getOrSet(OBJECT_SERIALIZER_VALUE_SET, () -> new ESet<>());
+    if (objectSerializerSet.contains(value))
+      throw new EXmlException(sf("Object-serializer in cyclic serialization of '%s' ('%s').", value, value.getClass()));
+    else
+      objectSerializerSet.add(value);
   }
 
   private void validateExpectedTypeIfRequired(Object value) {
@@ -84,16 +109,20 @@ public class ObjectSerializer implements Serializer {
     if (serializer != null) {
       XElement fieldElement = new XElement(field.getName());
       serializer.invoke(fieldElement, fieldValue, c);
+      deleteTypeAttributeIfNotRequired(field.getType(), fieldElement);
       e.addElement(fieldElement);
     }
+  }
+
+  private void deleteTypeAttributeIfNotRequired(Class<?> type, XElement fieldElement) {
+    if (fieldElement.hasAttribute(XmlUtils.TYPE_NAME) && type.getName().equals(fieldElement.getAttribute(XmlUtils.TYPE_NAME)))
+      fieldElement.removeAttribute(XmlUtils.TYPE_NAME);
   }
 
   private Serializer getSerializer(Field field, Object fieldValue, XmlContext c) {
     Serializer ret;
     if (customFieldSerializers.containsKey(field.getName()))
       ret = customFieldSerializers.get(field.getName());
-    else if (MANAGE_ENUMS && fieldValue.getClass().isEnum())
-      ret = (e, v, ctx) -> e.setContent(v.toString());
     else
       ret = c.sdfManager.getSerializer(fieldValue);
     return ret;

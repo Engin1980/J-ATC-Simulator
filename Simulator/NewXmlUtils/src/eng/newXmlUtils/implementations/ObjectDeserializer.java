@@ -13,12 +13,11 @@ import eng.newXmlUtils.utils.XmlUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class ObjectDeserializer implements Deserializer {
-
-  private final static boolean MANAGE_ENUMS = true;
 
   private final IMap<String, Deserializer> customFieldDeserializers = new EMap<>();
   private Class<?> expectedClass;
@@ -63,7 +62,7 @@ public class ObjectDeserializer implements Deserializer {
 
     ret = getInstance(type, c);
 
-    IReadOnlyList<Field> fields = ReflectionUtils.ClassUtils.getFields(type);
+    IReadOnlyList<Field> fields = ReflectionUtils.ClassUtils.getFields(type).where(q-> !Modifier.isStatic(q.getModifiers()));
     for (Field field : fields) {
       restoreField(e, ret, field, c);
     }
@@ -122,8 +121,6 @@ public class ObjectDeserializer implements Deserializer {
     Deserializer ret;
     if (this.customFieldDeserializers.containsKey(field.getName()))
       ret = this.customFieldDeserializers.get(field.getName());
-    else if (MANAGE_ENUMS && fieldType.isEnum())
-      ret = (e, ctx) -> Enum.valueOf((Class<Enum>) fieldType, e.getContent());
     else
       ret = c.sdfManager.getDeserializer(fieldType);
     return ret;

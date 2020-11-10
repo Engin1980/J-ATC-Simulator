@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.templates;
 
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.area.EntryExitPoint;
@@ -48,7 +49,9 @@ public class ArrivalAirplaneTemplate extends AirplaneTemplate {
 
   @Override
   protected void _save(XElement target) {
-    XmlSaveUtils.Field.storeFields(target, this, "heading", "altitude", "speed");
-    XmlSaveUtils.Field.storeField(target, this, "coordinate", SharedXmlUtils.Formatters.coordinateFormatter);
+    //TODEL
+    throw new ToDoException();
+//    XmlSaveUtils.Field.storeFields(target, this, "heading", "altitude", "speed");
+//    XmlSaveUtils.Field.storeField(target, this, "coordinate", SharedXmlUtils.Formatters.coordinateFormatter);
   }
 }

@@ -167,6 +167,10 @@ public abstract class Route extends Parentable<Airport> implements WithGID {
     this.routeCommands = new EList<>(routeCommands);
   }
 
+  public GID getValue() {
+    return gid;
+  }
+
   @Override
   public GID getGID() {
     return this.gid;

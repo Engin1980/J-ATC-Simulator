@@ -6,22 +6,27 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.exceptions.ToDoException;
+import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.SimulationSettings;
 import eng.jAtcSim.newLib.gameSim.xml.WeatherSourceDeserializer;
-import eng.jAtcSim.newLib.gameSim.xml.WeatherSourceSerializer;
+import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
+import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSimLib.xmlUtils.Parser;
 import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
+import eng.newXmlUtils.XmlContext;
+import eng.newXmlUtils.SDFFactory;
+import eng.newXmlUtils.implementations.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class Game implements IGame {
 
-  private Game(){}
+  private Game() {
+  }
 
   static Game load(String fileName, IMap<String, Object> customData) {
     Game game = new Game(); //TODEL can public ctor be used?
@@ -122,21 +127,36 @@ public class Game implements IGame {
   public void save(String fileName, IMap<String, String> customData) {
     XElement root = new XElement("game");
 
-    XmlSaveUtils.saveIntoElementChild(root, "areaSource", this.areaSource,
-            q -> sf("%s;%s", q.getFileName(), q.getIcao()));
-    XmlSaveUtils.saveIntoElementChild(root, "airplaneTypesSource", this.airplaneTypesSource,
-            q -> q.getFileName());
-    XmlSaveUtils.saveIntoElementChild(root, "fleetsSource", this.fleetsSource,
-            q -> sf("%s;%s", q.getCompanyFileName(), q.getGeneralAviationFileName()));
-    XmlSaveUtils.saveIntoElementChild(root, "trafficSource", this.trafficSource,
-            q -> ((TrafficXmlSource) q).getFileName());
-    XmlSaveUtils.saveIntoElementChild(root, "weatherSource", this.weatherSource, new WeatherSourceSerializer());
+    XmlContext ctx = new XmlContext();
+    ctx.sdfManager.setSerializers(SDFFactory.getSimpleSerializers());
+    ctx.sdfManager.setSerializers(SDFFactory.getESystemSerializers());
+    ctx.sdfManager.setSerializers(SharedXmlUtils.Serializers.serializers);
+    Area.prepareXmlContext(ctx);
+    Simulation.prepareXmlContext(ctx);
+    Game.prepareXmlContext(ctx);
 
-    {
-      XElement tmp = new XElement("simulation");
-      this.simulation.save(tmp);
-      root.addElement(tmp);
+    try {
+      XmlContext.serialize(root, this, ctx);
+    } catch (Exception ex) {
+      System.out.println("Failed to save the whole save file");
+      ex.printStackTrace(System.out);
     }
+
+//    XmlSaveUtils.saveIntoElementChild(root, "areaSource", this.areaSource,
+//            q -> sf("%s;%s", q.getFileName(), q.getIcao()));
+//    XmlSaveUtils.saveIntoElementChild(root, "airplaneTypesSource", this.airplaneTypesSource,
+//            q -> q.getFileName());
+//    XmlSaveUtils.saveIntoElementChild(root, "fleetsSource", this.fleetsSource,
+//            q -> sf("%s;%s", q.getCompanyFileName(), q.getGeneralAviationFileName()));
+//    XmlSaveUtils.saveIntoElementChild(root, "trafficSource", this.trafficSource,
+//            q -> ((TrafficXmlSource) q).getFileName());
+//    XmlSaveUtils.saveIntoElementChild(root, "weatherSource", this.weatherSource, new WeatherSourceSerializer());
+//
+//    {
+//      XElement tmp = new XElement("simulation");
+//      this.simulation.save(tmp);
+//      root.addElement(tmp);
+//    }
 //
 //    XmlSaveUtils.saveIntoElementChild(root, "customData", customData,
 //            new EntriesViaStringSerializer<>(q -> q, q -> q));
@@ -148,6 +168,30 @@ public class Game implements IGame {
     } catch (EXmlException e) {
       throw new EApplicationException("Failed to save simulation.", e);
     }
+  }
+
+  private static void prepareXmlContext(XmlContext ctx) {
+
+    // game
+    ctx.sdfManager.setSerializer(Game.class, new ObjectSerializer().withValueClassCheck(Game.class, false));
+
+    // sources
+    ctx.sdfManager.setSerializer(AreaSource.class, q -> sf("%s;%s", q.getFileName(), q.getIcao()));
+    ctx.sdfManager.setSerializer(AirplaneTypesSource.class, q -> q.getFileName());
+    ctx.sdfManager.setSerializer(FleetsSource.class, q -> sf("%s;%s", q.getCompanyFileName(), q.getGeneralAviationFileName()));
+    ctx.sdfManager.setSerializer(TrafficXmlSource.class, q -> q.getFileName());
+
+    // sources - weather
+    ctx.sdfManager.setSerializer(Weather.class, new ObjectSerializer().withValueClassCheck(Weather.class, false));
+    ctx.sdfManager.setSerializer(WeatherXmlSource.class, new ObjectSerializer()
+            .withValueClassCheck(WeatherXmlSource.class, false)
+            .withIgnoredField("content"));
+    ctx.sdfManager.setSerializer(WeatherUserSource.class, new ObjectSerializer()
+            .withValueClassCheck(WeatherUserSource.class, false)
+            .withIgnoredField("content"));
+    ctx.sdfManager.setSerializer(WeatherOnlineSource.class, new ObjectSerializer()
+            .withValueClassCheck(WeatherOnlineSource.class, false)
+            .withIgnoredField("content"));
   }
 
 }

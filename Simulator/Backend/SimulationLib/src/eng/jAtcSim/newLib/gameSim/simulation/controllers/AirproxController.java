@@ -124,10 +124,11 @@ public class AirproxController {
   }
 
   public void save(XElement target) {
-    XmlSaveUtils.Entries.saveIntoElementChild(target, "airproxViolatingPlanes", this.airproxViolatingPlanes,
-            new EntriesViaStringSerializer<>(
-                    SharedXmlUtils.Formatters.callsignFormatter,
-                    q -> q.toString()));
+    //TODEL
+//    XmlSaveUtils.Entries.saveIntoElementChild(target, "airproxViolatingPlanes", this.airproxViolatingPlanes,
+//            new EntriesViaStringSerializer<>(
+//                    SharedXmlUtils.Formatters.callsignFormatter,
+//                    q -> q.toString()));
   }
 
   private void storeAirprox(Callsign callsign, AirproxType airproxType) {

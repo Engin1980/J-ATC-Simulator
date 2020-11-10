@@ -6,12 +6,9 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.mood.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSimLib.xmlUtils.Deserializer;
-import eng.jAtcSimLib.xmlUtils.Parser;
 import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.deserializers.ItemsViaStringDeserializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
+import eng.newXmlUtils.implementations.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -80,10 +77,14 @@ public class Mood {
             new ItemsViaStringDeserializer(q -> DepartureExperience.valueOf(q), new EList<>(), DepartureExperience.class));
 
     IList<Experience<SharedExperience>> sharedExperiences = XmlLoadUtils.Field.loadFieldValue(element, "sharedExperiences",
-            new ItemsViaStringDeserializer(q->SharedExperience.valueOf(q), new EList<>(), SharedExperience.class));
+            new ItemsViaStringDeserializer(q -> SharedExperience.valueOf(q), new EList<>(), SharedExperience.class));
 
     Mood ret = new Mood(arrivalExperiences, departureExperiences, sharedExperiences);
     return ret;
+  }
+
+  public static void prepareXmlContext(eng.newXmlUtils.XmlContext ctx) {
+    ctx.sdfManager.setSerializer(Experience.class, new ObjectSerializer());
   }
 
   private static EDayTimeStamp getNowStamp() {
@@ -151,19 +152,20 @@ public class Mood {
     this.arrivalExperiences.add(new Experience<>(getNowStamp(), kindOfExperience));
   }
 
-  public void save(XElement target) {
-    target.addElement(
-            XmlSaveUtils.Items.saveAsElement("arrivalExperiences", this.arrivalExperiences,
-                    new ItemsViaStringSerializer<>(q -> q.type.toString() + ";" + q.time.toString())));
-
-    target.addElement(
-            XmlSaveUtils.Items.saveAsElement("departureExperiences", this.departureExperiences,
-                    new ItemsViaStringSerializer<>(q -> q.type.toString() + ";" + q.time.toString())));
-
-    target.addElement(
-            XmlSaveUtils.Items.saveAsElement("sharedExperiences", this.sharedExperiences,
-                    new ItemsViaStringSerializer<>(q -> q.type.toString() + ";" + q.time.toString())));
-  }
+  //TODEL
+//  public void save(XElement target) {
+//    target.addElement(
+//            XmlSaveUtils.Items.saveAsElement("arrivalExperiences", this.arrivalExperiences,
+//                    new ItemsViaStringSerializer<>(q -> q.type.toString() + ";" + q.time.toString())));
+//
+//    target.addElement(
+//            XmlSaveUtils.Items.saveAsElement("departureExperiences", this.departureExperiences,
+//                    new ItemsViaStringSerializer<>(q -> q.type.toString() + ";" + q.time.toString())));
+//
+//    target.addElement(
+//            XmlSaveUtils.Items.saveAsElement("sharedExperiences", this.sharedExperiences,
+//                    new ItemsViaStringSerializer<>(q -> q.type.toString() + ";" + q.time.toString())));
+//  }
 
   private IList<MoodExperienceResult> evaluateArrivals(int delayInMinutes) {
     IList<MoodExperienceResult> ret = new EList<>();

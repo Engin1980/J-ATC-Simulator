@@ -1,16 +1,33 @@
 package eng.newXmlUtils;
 
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.*;
 import eng.eSystem.functionalInterfaces.Selector;
 import eng.newXmlUtils.base.Deserializer;
 import eng.newXmlUtils.base.Serializer;
 import eng.newXmlUtils.implementations.ArrayDeserializer;
 import eng.newXmlUtils.implementations.ArraySerializer;
+import eng.newXmlUtils.implementations.EntriesSerializer;
+import eng.newXmlUtils.implementations.ItemsSerializer;
+import eng.newXmlUtils.utils.XmlUtils;
 
-public class XmlFactory {
+public class SDFFactory {
 
-  public IMap<Class<?>, Deserializer> getSimpleDeserializers() {
+  public static IMap<Class<?>, Serializer> getESystemSerializers() {
+    IMap<Class<?>, Serializer> ret = new EMap<>();
+
+    ret.set(EList.class, new ItemsSerializer());
+    ret.set(ESet.class, new ItemsSerializer());
+    ret.set(EDistinctList.class, new ItemsSerializer());
+    ret.set(EMap.class, new EntriesSerializer());
+
+    return ret;
+  }
+
+  public static Serializer getNullSerializer(){
+    return (e,v,c) -> e.setContent(XmlUtils.NULL_CONTENT);
+  }
+
+  public static IMap<Class<?>, Deserializer> getSimpleDeserializers() {
     IMap<Class<?>, Selector<String, Object>> forms = new EMap<>();
 
     forms.set(short.class, q -> Short.valueOf(q));
@@ -38,7 +55,7 @@ public class XmlFactory {
     return ret;
   }
 
-  public IMap<Class<?>, Deserializer> getSimpleArrayDeserializers(){
+  public static IMap<Class<?>, Deserializer> getSimpleArrayDeserializers(){
     IMap<Class<?>, Deserializer> ret = new EMap<>();
 
     ret.set(short[].class, new ArrayDeserializer());
@@ -62,7 +79,7 @@ public class XmlFactory {
     return ret;
   }
 
-  public IMap<Class<?>, Serializer> getSimpleArraySerializers(){
+  public static IMap<Class<?>, Serializer> getSimpleArraySerializers(){
     IMap<Class<?>, Serializer> ret = new EMap<>();
 
     ret.set(short[].class, new ArraySerializer());
@@ -86,7 +103,7 @@ public class XmlFactory {
     return ret;
   }
 
-  public IMap<Class<?>, Serializer> getSimpleTypesSerializers() {
+  public static IMap<Class<?>, Serializer> getSimpleSerializers() {
     IMap<Class<?>, Selector<Object, String>> parsers = new EMap<>();
 
     parsers.set(short.class, q -> q.toString());

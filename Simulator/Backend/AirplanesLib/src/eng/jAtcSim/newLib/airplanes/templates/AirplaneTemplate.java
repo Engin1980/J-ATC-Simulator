@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.templates;
 
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.area.EntryExitPoint;
@@ -61,13 +62,15 @@ public abstract class AirplaneTemplate {
   }
 
   public void save(XElement target) {
-    XmlSaveUtils.Field.storeFields(target, this,
-            new String[]{"callsign", "airplaneType", "expectedExitTime", "entryTime", "entryDelay"},
-            SharedXmlUtils.Serializers.serializersMap);
-    XmlSaveUtils.Field.storeField(target, this, "entryExitPoint",
-            ObjectSerializer.createFor(entryExitPoint.getClass())
-                    .useFormatter(Navaid.class, q -> q.getName()));
-
-    this._save(target);
+    //TODEL
+    throw new ToDoException();
+//    XmlSaveUtils.Field.storeFields(target, this,
+//            new String[]{"callsign", "airplaneType", "expectedExitTime", "entryTime", "entryDelay"},
+//            SharedXmlUtils.Serializers.serializers);
+//    XmlSaveUtils.Field.storeField(target, this, "entryExitPoint",
+//            ObjectSerializer.createFor(entryExitPoint.getClass())
+//                    .useFormatter(Navaid.class, q -> q.getName()));
+//
+//    this._save(target);
   }
 }

@@ -3,15 +3,23 @@ package eng.jAtcSim.newLib.mood;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 import eng.jAtcSimLib.xmlUtils.serializers.EntriesSerializer;
+import eng.newXmlUtils.XmlContext;
+import eng.newXmlUtils.implementations.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class MoodManager {
+  public static void prepareXmlContext(XmlContext ctx) {
+    ctx.sdfManager.setSerializer(MoodManager.class, new ObjectSerializer());
+    Mood.prepareXmlContext(ctx);
+  }
+
   private final IMap<Callsign, Mood> inner = new EMap<>();
 
   public Mood get(Callsign callsign) {
@@ -31,10 +39,12 @@ public class MoodManager {
   }
 
   public void save(XElement target) {
-    XmlSaveUtils.Entries.saveIntoElementContent(target, inner,
-            new EntriesSerializer<>(
-                    SharedXmlUtils.Serializers.callsignSerializer,
-                    (e, q) -> q.save(e)));
+    //TODEL
+    throw new ToDoException();
+//    XmlSaveUtils.Entries.saveIntoElementContent(target, inner,
+//            new EntriesSerializer<>(
+//                    SharedXmlUtils.Serializers.callsignSerializer,
+//                    (e, q) -> q.save(e)));
   }
 
   public void unregister(Callsign callsign) {

@@ -33,4 +33,5 @@ public class XmlContext {
     T ret = (T) d.invoke(e, c);
     return ret;
   }
+
 }

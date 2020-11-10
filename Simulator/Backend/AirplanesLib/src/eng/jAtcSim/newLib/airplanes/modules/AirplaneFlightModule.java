@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes.modules;
 
 
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
@@ -59,8 +60,10 @@ public class AirplaneFlightModule {
   }
 
   public void save(XElement target) {
-    XmlSaveUtils.Field.storeFields(target,
-            this, ObjectUtils.getFieldNames(AirplaneFlightModule.class).toArray(String.class),
-            SharedXmlUtils.Serializers.serializersMap);
+    //TODEL
+    throw new ToDoException();
+//    XmlSaveUtils.Field.storeFields(target,
+//            this, ObjectUtils.getFieldNames(AirplaneFlightModule.class).toArray(String.class),
+//            SharedXmlUtils.Serializers.serializers);
   }
 }

@@ -29,5 +29,6 @@
     <orderEntry type="module" module-name="TrafficXmlLoaderLib" />
     <orderEntry type="module" module-name="SpeechesLib" />
     <orderEntry type="module" module-name="XmlUtilsLib" />
+    <orderEntry type="module" module-name="NewXmlUtils" />
   </component>
 </module>

@@ -1,40 +1,105 @@
 package eng.jAtcSim.newLib.airplanes;
 
-import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
-import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ToDoException;
+import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
+import eng.jAtcSim.newLib.airplanes.modules.AirplaneFlightModule;
+import eng.jAtcSim.newLib.airplanes.modules.AtcModule;
+import eng.jAtcSim.newLib.airplanes.modules.DivertModule;
+import eng.jAtcSim.newLib.airplanes.modules.EmergencyModule;
+import eng.jAtcSim.newLib.airplanes.modules.sha.ShaModule;
+import eng.jAtcSim.newLib.airplanes.modules.speeches.AfterCommandList;
+import eng.jAtcSim.newLib.airplanes.modules.speeches.RoutingModule;
+import eng.jAtcSim.newLib.airplanes.pilots.*;
 import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.DepartureAirplaneTemplate;
+import eng.jAtcSim.newLib.area.routes.GaRoute;
+import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.Squawk;
+import eng.jAtcSim.newLib.mood.Mood;
+import eng.jAtcSim.newLib.shared.*;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
-import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
-import eng.jAtcSimLib.xmlUtils.Deserializer;
-import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.deserializers.ItemsDeserializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
+import eng.newXmlUtils.implementations.ItemsSerializer;
+import eng.newXmlUtils.implementations.ObjectSerializer;
 
 public class AirplanesController {
   public static AirplanesController load(XElement element, IMap<String, Object> context) {
-    AirplanesController ret = new AirplanesController();
+    //TODEL
+    throw new ToDoException();
+//    AirplanesController ret = new AirplanesController();
+//
+//    IReadOnlyList<AtcId> atcs = (IReadOnlyList<AtcId>) context.get("atcs");
+//
+//    EMap<Class<?>, Deserializer> dess = new EMap<>();
+//    dess.set(AtcId.class, SharedXmlUtils.DeserializersDynamic.getAtcIdDeserializer(atcs));
+//
+//    XmlLoadUtils.Field.restoreFields(element, ret, new String[]{"departureInitialAtcId", "arrivalInitialAtId"}, dess);
+//    XmlLoadUtils.Field.restoreField(element, ret, "planes",
+//            new ItemsDeserializer(e -> Airplane.load(e, context), ret.planes));
+//    return ret;
+  }
 
-    IReadOnlyList<AtcId> atcs = (IReadOnlyList<AtcId>) context.get("atcs");
+  public static void prepareXmlContext(eng.newXmlUtils.XmlContext ctx) {
+    ctx.sdfManager.setSerializer(AirplanesController.class,
+            new ObjectSerializer()
+                    .withValueClassCheck(AirplanesController.class)
+                    .withIgnoredField("publicPlanes"));
 
-    EMap<Class<?>, Deserializer> dess = new EMap<>();
-    dess.set(AtcId.class, SharedXmlUtils.DeserializersDynamic.getAtcIdDeserializer(atcs));
+    ctx.sdfManager.setSerializer(AirplaneList.class,
+            new ItemsSerializer());
 
-    XmlLoadUtils.Field.restoreFields(element, ret, new String[]{"departureInitialAtcId", "arrivalInitialAtId"}, dess);
-    XmlLoadUtils.Field.restoreField(element, ret, "planes",
-            new ItemsDeserializer(e -> Airplane.load(e, context), ret.planes));
-    return ret;
+    ctx.sdfManager.setSerializer(Airplane.class,
+            new ObjectSerializer()
+                    .withValueClassCheck(Airplane.class)
+                    .withIgnoredFields("cvr", "fdr", "cqr", "rdr", "wrt", "speechCache")
+                    .withCustomFieldFormatter("airplaneType", (AirplaneType q) -> q.name));
+    {
+      ctx.sdfManager.setSerializer(ShaModule.class, new ObjectSerializer().withIgnoredFields("plane", "rdr", "wrt"));
+      {
+        ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.airplanes.modules.sha");
+        ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.airplanes.modules.sha.navigators");
+      }
+      ctx.sdfManager.setSerializer(AtcModule.class, new ObjectSerializer().withIgnoredFields("plane", "rdr", "wrt"));
+      ctx.sdfManager.setSerializer(DivertModule.class, new ObjectSerializer().withIgnoredFields("plane", "rdr", "wrt"));
+      ctx.sdfManager.setSerializer(EmergencyModule.class, new ObjectSerializer().withIgnoredFields("plane", "rdr", "wrt"));
+      ctx.sdfManager.setSerializer(AirplaneFlightModule.class, new ObjectSerializer().withIgnoredFields("plane", "rdr", "wrt"));
+      ctx.sdfManager.setSerializer(RoutingModule.class, new ObjectSerializer().withIgnoredFields("plane", "rdr", "wrt", "cqr"));
+      {
+        ctx.sdfManager.setSerializer(DelayedList.class, new ObjectSerializer());
+        ctx.sdfManager.setSerializer(AfterCommandList.class, new ObjectSerializer());
+        ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.airplanes.modules.speeches");
+
+        ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.speeches.base");
+        ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.speeches.airplane.airplane2atc");
+        ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses");
+        ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.speeches.airplane.atc2airplane");
+        ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands");
+        ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.speeches.atc.atc2user");
+        ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.speeches.atc.planeSwitching");
+        ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.speeches.atc.user2atc");
+        ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.speeches.system.system2user");
+        ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.speeches.system.user2system");
+      }
+      ctx.sdfManager.setSerializer(Mood.class, new ObjectSerializer());
+      ctx.sdfManager.setSerializer(TakeOffPilot.class, new ObjectSerializer().withIgnoredFields("rdr", "wrt"));
+      ctx.sdfManager.setSerializer(ApproachPilot.class, new ObjectSerializer().withIgnoredFields("rdr", "wrt"));
+      {
+        ctx.sdfManager.setSerializer(IafRoute.class, new ObjectSerializer());
+        ctx.sdfManager.setSerializer(GaRoute.class, new ObjectSerializer());
+        ctx.sdfManager.setSerializer(PlaneCategoryDefinitions.class, new ObjectSerializer());
+      }
+      ctx.sdfManager.setSerializer(ArrivalPilot.class, new ObjectSerializer().withIgnoredFields("rdr", "wrt"));
+      ctx.sdfManager.setSerializer(HoldingPointPilot.class, new ObjectSerializer().withIgnoredFields("rdr", "wrt"));
+      ctx.sdfManager.setSerializer(HoldPilot.class, new ObjectSerializer().withIgnoredFields("rdr", "wrt"));
+      ctx.sdfManager.setSerializer(DeparturePilot.class, new ObjectSerializer().withIgnoredFields("rdr", "wrt"));
+
+
+    }
   }
 
 
@@ -73,13 +138,6 @@ public class AirplanesController {
             Participant.createAirplane(airplane.getReader().getCallsign()));
 
     return airplane.getReader();
-  }
-
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeFields(target, this,
-            new String[]{"departureInitialAtcId", "arrivalInitialAtId"}, SharedXmlUtils.Serializers.serializersMap);
-    XmlSaveUtils.Field.storeField(target, this, "planes",
-            new ItemsSerializer<Airplane>((e, q) -> q.save(e)));
   }
 
   public void throwEmergency() {

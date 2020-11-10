@@ -13,5 +13,6 @@
     <orderEntry type="library" name="eng.eSystem (jAtcSim)" level="project" />
     <orderEntry type="module" module-name="SharedLib" />
     <orderEntry type="module" module-name="SpeechesLib" />
+    <orderEntry type="module" module-name="NewXmlUtils" />
   </component>
 </module>

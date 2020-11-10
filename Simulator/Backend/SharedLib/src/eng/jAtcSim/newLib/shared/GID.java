@@ -17,7 +17,7 @@ public class GID {
     return new GID(value);
   }
 
-  private final int value;
+  public final int value;
 
   private GID(int value) {
     this.value = value;

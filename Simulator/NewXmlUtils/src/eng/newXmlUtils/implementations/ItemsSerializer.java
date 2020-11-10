@@ -16,7 +16,7 @@ public class ItemsSerializer implements Serializer {
       Serializer serializer = xmlContext.sdfManager.getSerializer(item);
 
       serializer.invoke(itemElement, item, xmlContext);
-      XmlUtils.saveType(element, item);
+      XmlUtils.saveType(itemElement, item);
 
       element.addElement(itemElement);
     }
