@@ -69,6 +69,7 @@ public class ObjectSerializer implements Serializer {
     IReadOnlyList<Field> fields = ReflectionUtils.ClassUtils.getFields(value.getClass()).where(q -> !Modifier.isStatic(q.getModifiers()));
 
     for (Field field : fields) {
+      if (field.getName().equals("this$0")) continue; // ignores internal field of inner class
       storeField(element, value, field, xmlContext);
     }
 
@@ -85,7 +86,7 @@ public class ObjectSerializer implements Serializer {
   private void preCyclicSerializationCheck(Object value, XmlContext xmlContext) {
     ISet<Object> objectSerializerSet = (ISet<Object>) xmlContext.values.getOrSet(OBJECT_SERIALIZER_VALUE_SET, () -> new ESet<>());
     if (objectSerializerSet.contains(value))
-      throw new EXmlException(sf("Object-serializer in cyclic serialization of '%s' ('%s').", value, value.getClass()));
+      throw  new EXmlException(sf("Object-serializer in cyclic serialization of '%s' ('%s').", value, value.getClass()));
     else
       objectSerializerSet.add(value);
   }

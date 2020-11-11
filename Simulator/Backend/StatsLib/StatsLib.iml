@@ -11,5 +11,6 @@
     <orderEntry type="module" module-name="SharedLib" />
     <orderEntry type="module" module-name="MoodLib" />
     <orderEntry type="module" module-name="XmlUtilsLib" />
+    <orderEntry type="module" module-name="NewXmlUtils" />
   </component>
 </module>

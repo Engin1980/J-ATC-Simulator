@@ -3,20 +3,16 @@ package eng.jAtcSim.newLib.stats;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.newLib.mood.MoodResult;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.stats.contextLocal.Context;
 import eng.jAtcSim.newLib.stats.properties.CounterProperty;
 import eng.jAtcSim.newLib.stats.recent.RecentStats;
-import eng.jAtcSim.newLib.stats.xml.CollectorSerializer;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
 
 public class StatsProvider {
 
-  public class MyStatsProvider implements IStatsProvider{
+  public class MyStatsProvider implements IStatsProvider {
 
     @Override
     public int getElapsedSeconds() {
@@ -38,6 +34,14 @@ public class StatsProvider {
       //TODO Implement this: how?
       throw new ToDoException("how?");
     }
+  }
+
+  public static void prepareXmlContext(eng.newXmlUtils.XmlContext ctx) {
+    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.stats");
+    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.stats.model");
+    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.stats.properties");
+    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.stats.recent");
+    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.stats.xml");
   }
 
   private final IList<Collector> collectors = new EList<>();
@@ -118,21 +122,6 @@ public class StatsProvider {
       }
     }
     recentStats.registerFinishedPlane(finishedPlaneStats);
-  }
-
-  public void save(XElement target) {
-
-    XmlSaveUtils.Field.storeField(target, this, "collectors",
-            new ItemsSerializer<Collector>(new CollectorSerializer()));
-
-//    private final IList<Collector> collectors = new EList<>();
-//    private final CounterProperty elapsedSecondsCounter = new CounterProperty();
-//    private final IList<MoodResult> moodResults = new EList<>();
-//    private EDayTimeStamp nextCollectorStartTime = null;
-//    private final RecentStats recentStats = new RecentStats();
-//    private final IList<Snapshot> snapshots = new EList<>();
-//    private final int statsSnapshotDistanceInMinutes;
-//    private final MyStatsProvider myStatsProvider = this.new MyStatsProvider();
   }
 
   private void snapshotizeCollectors() {

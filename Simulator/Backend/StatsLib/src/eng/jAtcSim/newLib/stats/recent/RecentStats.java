@@ -139,7 +139,7 @@ public class RecentStats {
   private CurrentPlanesCount clsCurrent = new CurrentPlanesCount();
   private FinishedPlanes clsFinished = new FinishedPlanes();
   private IList<TimedValue<Integer>> airproxErrors = new EList<>();
-  private IList<TimedValue<Integer>> mrvaErrors = new EList();
+  private IList<TimedValue<Integer>> mrvaErrors = new EList<>();
   private IList<TimedValue<Integer>> planeDelays = new EList<>();
   private IList<TimedValue<Integer>> holdingPointMaximalCount = new EList<>();
   private int holdingPointCurrentCount;
@@ -223,11 +223,7 @@ public class RecentStats {
     this.numberOfLandings.remove(q -> q.isBefore(lastTime));
   }
 
-  public void registerElapsedSecondDuration(int ms) {
-    elapsedSecondDuration.add(ms);
-  }
-
-    public CurrentPlanesCount getCurrentPlanesCount() {
+  public CurrentPlanesCount getCurrentPlanesCount() {
     return clsCurrent;
   }
 
@@ -253,6 +249,10 @@ public class RecentStats {
 
   public MovementsPerHour getMovementsPerHour() {
     return clsMovements;
+  }
+
+  public void registerElapsedSecondDuration(int ms) {
+    elapsedSecondDuration.add(ms);
   }
 
   public void registerFinishedPlane(FinishedPlaneStats finishedPlaneStats) {

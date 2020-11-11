@@ -45,6 +45,7 @@ import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
 import eng.newXmlUtils.XmlContext;
+import eng.newXmlUtils.base.Formatter;
 import eng.newXmlUtils.implementations.ObjectSerializer;
 
 public class Simulation {
@@ -179,9 +180,6 @@ public class Simulation {
             .withIgnoredFields(
                     "ioModule", // nothing to save
                     "isim", // accessor, not to save
-                    "statsModule",
-                    "timerModule",
-                    "trafficModule",
                     "weatherModule",
                     "worldModule"
             ));
@@ -213,6 +211,20 @@ public class Simulation {
     ctx.sdfManager.setSerializer(StatsModule.class, new ObjectSerializer()
             .withIgnoredField("parent"));
     StatsProvider.prepareXmlContext(ctx);
+    // endregion
+
+    // region TimerModule
+
+    ctx.sdfManager.setSerializer(TimerModule.class, new ObjectSerializer()
+      .withCustomFieldFormatter("tmr", q -> q == null ? "false" : "true")
+            .withIgnoredFields("tickEvent"));
+
+    // endregion
+
+    // region TrafficModule
+
+
+
     // endregion
 
 //TODEL

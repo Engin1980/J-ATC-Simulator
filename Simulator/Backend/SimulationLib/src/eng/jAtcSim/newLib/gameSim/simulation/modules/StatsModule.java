@@ -44,7 +44,8 @@ public class StatsModule extends SimulationModule {
   }
 
   public void save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "statsProvider",
-            (XElement e, StatsProvider q) -> q.save(e));
+    //TODEL
+//    XmlSaveUtils.Field.storeField(target, this, "statsProvider",
+//            (XElement e, StatsProvider q) -> q.save(e));
   }
 }
