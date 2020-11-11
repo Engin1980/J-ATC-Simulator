@@ -1,9 +1,7 @@
 package eng.newXmlUtils;
 
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.ESet;
-import eng.eSystem.collections.IMap;
-import eng.eSystem.collections.ISet;
+import eng.eSystem.collections.*;
+import eng.eSystem.utilites.ReflectionUtils;
 import eng.eSystem.validation.EAssert;
 import eng.newXmlUtils.base.Deserializer;
 import eng.newXmlUtils.base.Formatter;
@@ -31,7 +29,7 @@ public class SDFManager {
   private Serializer defaultSerializer = null;
   private Deserializer defaultDeserializer = null;
 
-  public <T> void setFormatter(Class<T> cls, Formatter<T> formatter){
+  public <T> void setFormatter(Class<T> cls, Formatter<T> formatter) {
     this.serializers.set(cls, formatter.toSerializer());
   }
 
@@ -92,6 +90,16 @@ public class SDFManager {
   }
 
   public void setSerializer(Class<?> type, Serializer serializer) {
+    this.serializers.set(type, serializer);
+  }
+
+  public void setSerializer(String className, Serializer serializer) {
+    Class<?> type;
+    try {
+      type = Class.forName(className);
+    } catch (ClassNotFoundException e) {
+      throw new EXmlException(sf("Failed to load type by name '%s'.", className), e);
+    }
     this.serializers.set(type, serializer);
   }
 

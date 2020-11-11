@@ -177,9 +177,8 @@ public class Simulation {
     ctx.sdfManager.setSerializer(Simulation.class, new ObjectSerializer()
             .withValueClassCheck(Simulation.class, false)
             .withIgnoredFields(
-                    "ioModule",
-                    "isElapseSecondCalculationRunning",
-                    "isim",
+                    "ioModule", // nothing to save
+                    "isim", // accessor, not to save
                     "statsModule",
                     "timerModule",
                     "trafficModule",
@@ -208,6 +207,13 @@ public class Simulation {
             .withIgnoredField("userAtcsCache")
             .withIgnoredFields("parent"));
     AtcProvider.prepareXmlContext(ctx);
+    // endregion
+
+    // region StatsModule
+    ctx.sdfManager.setSerializer(StatsModule.class, new ObjectSerializer()
+            .withIgnoredField("parent"));
+    StatsProvider.prepareXmlContext(ctx);
+    // endregion
 
 //TODEL
 //    XElement tmp;

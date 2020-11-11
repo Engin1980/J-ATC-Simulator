@@ -22,10 +22,6 @@ import java.util.function.Predicate;
 
 public class DelayedList<T> {
 
-  public static void prepareXmlContext(XmlContext ctx){
-    ctx.sdfManager.setSerializer(DelayedItem.class, new eng.newXmlUtils.implementations.ObjectSerializer());
-  }
-
   private static class DelayedItem<T> {
     public final T item;
     public int delayLeft;
