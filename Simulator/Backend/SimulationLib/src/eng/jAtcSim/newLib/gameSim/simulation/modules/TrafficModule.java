@@ -98,15 +98,6 @@ public class TrafficModule extends SimulationModule {
 
     XmlSaveUtils.Field.storeField(target, this, "trafficProvider",
             (XElement e, TrafficProvider q) -> q.save(e));
-
-    //TODEL
-//    tmp = new XElement("callsignFactory");
-//    callsignFactory.save(tmp);
-//    target.addElement(tmp);
-//
-//    tmp = new XElement("trafficProvider");
-//    trafficProvider.save(tmp);
-//    target.addElement(tmp);
   }
 
   private FlightMovementTemplate convertGenericMovementTemplateToFlightMovementTemplate(MovementTemplate m) {

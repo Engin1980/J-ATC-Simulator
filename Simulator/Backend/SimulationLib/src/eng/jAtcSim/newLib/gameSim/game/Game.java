@@ -185,7 +185,6 @@ public class Game implements IGame {
     ctx.sdfManager.setSerializer(TrafficXmlSource.class, q -> q.getFileName());
 
     // sources - weather
-    ctx.sdfManager.setSerializer(Weather.class, new ObjectSerializer().withValueClassCheck(Weather.class, false));
     ctx.sdfManager.setSerializer(WeatherXmlSource.class, new ObjectSerializer()
             .withValueClassCheck(WeatherXmlSource.class, false)
             .withIgnoredField("content"));

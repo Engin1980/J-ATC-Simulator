@@ -27,6 +27,7 @@ import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.mood.MoodManager;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.CallsignFactory;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.context.ISharedAcc;
@@ -44,8 +45,8 @@ import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
+import eng.jAtcSim.newLib.weather.XmlWeatherContextInit;
 import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.base.Formatter;
 import eng.newXmlUtils.implementations.ObjectSerializer;
 
 public class Simulation {
@@ -180,8 +181,7 @@ public class Simulation {
             .withIgnoredFields(
                     "ioModule", // nothing to save
                     "isim", // accessor, not to save
-                    "weatherModule",
-                    "worldModule"
+                    "worldModule" // not saved
             ));
 
     // region AirplanesModule
@@ -214,18 +214,27 @@ public class Simulation {
     // endregion
 
     // region TimerModule
-
     ctx.sdfManager.setSerializer(TimerModule.class, new ObjectSerializer()
-      .withCustomFieldFormatter("tmr", q -> q == null ? "false" : "true")
-            .withIgnoredFields("tickEvent"));
-
+            .withCustomFieldFormatter("tmr", q -> q == null ? "false" : "true")
+            .withIgnoredFields("tickEvent", "parent"));
     // endregion
 
     // region TrafficModule
-
-
-
+    ctx.sdfManager.setSerializer(TrafficModule.class, new ObjectSerializer()
+            .withIgnoredField("parent"));
+    ctx.sdfManager.setSerializer(CallsignFactory.class, new ObjectSerializer());
+    ctx.sdfManager.setSerializer(TrafficProvider.class, new ObjectSerializer()
+            .withIgnoredField("trafficModel"));
+    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.traffic.movementTemplating");
     // endregion
+
+    // region WeatherModule
+    ctx.sdfManager.setSerializer(WeatherModule.class, new ObjectSerializer()
+            .withIgnoredField("parent"));
+    XmlWeatherContextInit.prepareXmlContext(ctx);
+    // endregion
+
+    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.messaging");
 
 //TODEL
 //    XElement tmp;

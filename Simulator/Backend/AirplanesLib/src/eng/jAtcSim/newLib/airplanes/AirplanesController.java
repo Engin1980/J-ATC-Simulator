@@ -24,6 +24,7 @@ import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.*;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
+import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.newXmlUtils.implementations.ItemsSerializer;
 import eng.newXmlUtils.implementations.ObjectSerializer;
 
@@ -81,6 +82,7 @@ public class AirplanesController {
         ctx.sdfManager.setSerializer(AfterCommandList.class, new ObjectSerializer());
         ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.airplanes.modules.speeches");
 
+        ctx.sdfManager.setSerializer(SpeechList.class, new ItemsSerializer());
         ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.speeches.base");
         ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.speeches.airplane.airplane2atc");
         ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses");
