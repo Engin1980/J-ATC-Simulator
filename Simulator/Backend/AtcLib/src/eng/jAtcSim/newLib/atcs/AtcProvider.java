@@ -25,19 +25,6 @@ import eng.newXmlUtils.implementations.ObjectSerializer;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class AtcProvider {
-  public static void prepareXmlContext(eng.newXmlUtils.XmlContext ctx) {
-    ctx.sdfManager.setSerializer(AtcProvider.class, new ObjectSerializer()
-            .withIgnoredFields("atcIdsCache", "userAtcIdsCache"));
-    ctx.sdfManager.setSerializer(AtcList.class, new ItemsSerializer());
-    ctx.sdfManager.setSerializer(UserAtc.class, new ObjectSerializer()
-            .withIgnoredField("recorder"));
-    ComputerAtc.prepareXmlContext(ctx);
-    ctx.sdfManager.setSerializer(CenterAtc.class, new ObjectSerializer()
-            .withIgnoredFields("recorder", "switchManagerInterface"));
-    ctx.sdfManager.setSerializer(TowerAtc.class, new ObjectSerializer()
-            .withIgnoredFields("recorder", "switchManagerInterface", "onRunwayChanged"));
-    TowerAtc.prepareXmlContext(ctx);
-  }
 
   private final AtcList<Atc> atcs = new AtcList<>(
           q -> q.getAtcId(), EDistinctList.Behavior.exception);

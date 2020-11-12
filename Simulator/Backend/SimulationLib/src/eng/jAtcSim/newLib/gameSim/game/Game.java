@@ -6,15 +6,20 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.exceptions.ToDoException;
+import eng.jAtcSim.newLib.airplanes.AirplaneXmlContextInit;
 import eng.jAtcSim.newLib.area.Area;
+import eng.jAtcSim.newLib.area.AreaXmlContextInit;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.SimulationSettings;
 import eng.jAtcSim.newLib.gameSim.xml.WeatherSourceDeserializer;
+import eng.jAtcSim.newLib.messaging.MessagingXmlContextInit;
+import eng.jAtcSim.newLib.mood.MoodXmlContextInit;
 import eng.jAtcSim.newLib.shared.GID;
 import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
+import eng.jAtcSim.newLib.traffic.TrafficXmlContextInit;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSimLib.xmlUtils.Parser;
 import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
@@ -134,7 +139,13 @@ public class Game implements IGame {
     ctx.sdfManager.setSerializers(SDFFactory.getSimpleArraySerializers());
     ctx.sdfManager.setSerializers(SDFFactory.getESystemSerializers());
     ctx.sdfManager.setSerializers(SharedXmlUtils.Serializers.serializers);
-    Area.prepareXmlContext(ctx);
+
+    AreaXmlContextInit.prepareXmlContext(ctx);
+    TrafficXmlContextInit.prepareXmlContext(ctx);
+    MessagingXmlContextInit.prepareXmlContext(ctx);
+    MoodXmlContextInit.prepareXmlContext(ctx);
+    AirplaneXmlContextInit.prepareXmlContext(ctx);
+
     Simulation.prepareXmlContext(ctx);
     Game.prepareXmlContext(ctx);
 

@@ -83,10 +83,6 @@ public class Mood {
     return ret;
   }
 
-  public static void prepareXmlContext(eng.newXmlUtils.XmlContext ctx) {
-    ctx.sdfManager.setSerializer(Experience.class, new ObjectSerializer());
-  }
-
   private static EDayTimeStamp getNowStamp() {
     return Context.getShared().getNow().toStamp();
   }

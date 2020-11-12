@@ -36,14 +36,6 @@ public class StatsProvider {
     }
   }
 
-  public static void prepareXmlContext(eng.newXmlUtils.XmlContext ctx) {
-    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.stats");
-    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.stats.model");
-    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.stats.properties");
-    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.stats.recent");
-    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.stats.xml");
-  }
-
   private final IList<Collector> collectors = new EList<>();
   private final CounterProperty elapsedSecondsCounter = new CounterProperty();
   private final IList<MoodResult> moodResults = new EList<>();

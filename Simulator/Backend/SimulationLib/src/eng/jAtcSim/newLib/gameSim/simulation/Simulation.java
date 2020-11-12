@@ -14,6 +14,7 @@ import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
+import eng.jAtcSim.newLib.atcs.AtcXmlContextInit;
 import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
@@ -45,9 +46,10 @@ import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.StatsProvider;
+import eng.jAtcSim.newLib.stats.StatsXmlContextInit;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
-import eng.jAtcSim.newLib.weather.XmlWeatherContextInit;
+import eng.jAtcSim.newLib.weather.WeatherXmlContextInit;
 import eng.newXmlUtils.XmlContext;
 import eng.newXmlUtils.implementations.ObjectSerializer;
 
@@ -197,22 +199,19 @@ public class Simulation {
     ctx.sdfManager.setSerializer(MrvaController.class,
             new ObjectSerializer()
                     .withIgnoredFields("mrvas", "mrvaMaps"));
-
-    MoodXmlContextInit.prepareXmlContext(ctx);
-    AirplaneXmlContextInit.prepareXmlContext(ctx);
     // endregion
 
     // region AtcModule
     ctx.sdfManager.setSerializer(AtcModule.class, new ObjectSerializer()
             .withIgnoredField("userAtcsCache")
             .withIgnoredFields("parent"));
-    AtcProvider.prepareXmlContext(ctx);
+    AtcXmlContextInit.prepareXmlContext(ctx);
     // endregion
 
     // region StatsModule
     ctx.sdfManager.setSerializer(StatsModule.class, new ObjectSerializer()
             .withIgnoredField("parent"));
-    StatsProvider.prepareXmlContext(ctx);
+    StatsXmlContextInit.prepareXmlContext(ctx);
     // endregion
 
     // region TimerModule
@@ -224,42 +223,13 @@ public class Simulation {
     // region TrafficModule
     ctx.sdfManager.setSerializer(TrafficModule.class, new ObjectSerializer()
             .withIgnoredField("parent"));
-    ctx.sdfManager.setSerializer(CallsignFactory.class, new ObjectSerializer());
-    ctx.sdfManager.setSerializer(TrafficProvider.class, new ObjectSerializer()
-            .withIgnoredField("trafficModel"));
-    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.traffic.movementTemplating");
     // endregion
 
     // region WeatherModule
     ctx.sdfManager.setSerializer(WeatherModule.class, new ObjectSerializer()
             .withIgnoredField("parent"));
-    XmlWeatherContextInit.prepareXmlContext(ctx);
+    WeatherXmlContextInit.prepareXmlContext(ctx);
     // endregion
-
-    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.messaging");
-
-//TODEL
-//    XElement tmp;
-//
-//    XmlSaveUtils.Field.storeField(target, this, "airplanesModule",
-//            (XElement e, AirplanesModule q) -> q.save(e));
-//
-//    XmlSaveUtils.Field.storeField(target, this, "atcModule",
-//            (XElement e, AtcModule q) -> q.save(e));
-//
-//    XmlSaveUtils.Field.storeField(target, this, "timerModule",
-//            (XElement e, TimerModule q) -> q.save(e));
-//
-//    XmlSaveUtils.Field.storeField(target, this, "trafficModule",
-//            (XElement e, TrafficModule q) -> q.save(e));
-//
-//    XmlSaveUtils.Field.storeField(target, this, "weatherModule",
-//            (XElement e, WeatherModule q) -> q.save(e));
-//
-//    // ioModule not saved, no need
-//
-//    XmlSaveUtils.Field.storeField(target, this, "statsModule",
-//            (XElement e, StatsModule q) -> q.save(e));
 
     // worldModule not saved, no need
   }

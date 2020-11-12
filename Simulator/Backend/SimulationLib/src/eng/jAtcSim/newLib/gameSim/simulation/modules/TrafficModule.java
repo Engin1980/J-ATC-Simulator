@@ -46,8 +46,6 @@ public class TrafficModule extends SimulationModule {
     Object[] params = XmlLoadUtils.Field.loadFieldValues(source, TrafficModule.class,
             "delayStepProbability", "delayStep").toArray(Object.class);
 
-//    int dsp = XmlLoadUtils.Field.loadFieldValue(source, "delayStepProbability", int.class);
-//    int ds = XmlLoadUtils.Field.loadFieldValue(source, "delayStep", int.class);
     TrafficProvider tp = XmlLoadUtils.Field.loadFieldValue(source, "trafficProvider",
             e -> TrafficProvider.load(e, trafficModel));
     CallsignFactory cf = XmlLoadUtils.Field.loadFieldValue(source, "callsignFactory",

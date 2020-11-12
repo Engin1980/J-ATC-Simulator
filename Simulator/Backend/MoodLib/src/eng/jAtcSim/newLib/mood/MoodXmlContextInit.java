@@ -11,7 +11,7 @@ public class MoodXmlContextInit {
     if (XmlContextInit.checkCanBeInitialized(ctx, "mood") == false) return;
 
     ctx.sdfManager.setSerializer(MoodManager.class, new ObjectSerializer());
-    Mood.prepareXmlContext(ctx);
+    ctx.sdfManager.setSerializer("eng.jAtcSim.newLib.mood.Mood$Experience", new ObjectSerializer());
   }
 
 
