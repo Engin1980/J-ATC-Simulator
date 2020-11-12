@@ -416,10 +416,6 @@ public class Simulation {
     return worldModule;
   }
 
-  public void save(XElement target) {
-
-  }
-
   private void elapseSecond() {
     long elapseStartMs = System.currentTimeMillis();
 

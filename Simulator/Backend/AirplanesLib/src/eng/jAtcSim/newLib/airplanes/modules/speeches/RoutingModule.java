@@ -152,24 +152,6 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     return this;
   }
 
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeFields(target, this, "assignedDARouteName");
-
-    XmlSaveUtils.saveIntoElementChild(target, "entryExitPoint", this.entryExitPoint.getName());
-    XmlSaveUtils.saveIntoElementChild(target, "runwayThreshold", this.runwayThreshold.getFullName());
-
-    IMap<Class<?>, Serializer<?>> customDelayListSerializers = EMap.of(
-            Participant.class, new ParticipantFormatter().toSerializer(),
-            SpeechList.class, new ItemsSerializer<>(ObjectSerializer.createDeepSerializer())
-    );
-
-    XmlSaveUtils.Field.storeField(target, this, "queue",
-            (XElement e, DelayedList<ICommand> q) -> q.save(e, customDelayListSerializers));
-
-    XmlSaveUtils.Field.storeField(target, this, "afterCommands",
-            (XElement e, AfterCommandList q) -> q.save(e));
-  }
-
   public void setCqr(CommandQueueRecorder commandQueueRecorder) {
     this.cqr = commandQueueRecorder;
   }

@@ -130,18 +130,6 @@ public class DelayedList<T> {
     inner.removeAt(index);
   }
 
-  public void save(XElement target, IMap<Class<?>, Serializer<?>> customSerializers) {
-    XmlSaveUtils.Field.storeFields(target, this, "minimalDelay", "maximalDelay", "currentDelay");
-
-    XmlSaveUtils.Field.storeField(target, this, "inner",
-            new ItemsSerializer<DelayedItem>((e, q) -> {
-              XmlSaveUtils.saveIntoElementChild(e, "delayLeft", q.delayLeft);
-              XmlSaveUtils.saveIntoElementChild(e, "item", q.item,
-                      ObjectSerializer.createDeepSerializer()
-                              .useSerializers(customSerializers));
-            }));
-  }
-
   public int size() {
     return inner.size();
   }

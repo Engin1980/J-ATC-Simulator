@@ -54,17 +54,9 @@ public abstract class Pilot {
     this.wrt = plane.getWriter();
   }
 
-  public final void save(XElement target) {
-    XmlSaveUtils.Class.storeType(target, this);
-    XmlSaveUtils.Field.storeField(target, this, "isFirstElapseSecond");
-    _save(target);
-  }
-
   public abstract boolean isDivertable();
 
   protected abstract void elapseSecondInternal();
-
-  protected abstract void _save(XElement target);
 
   protected abstract AirplaneState[] getInitialStates();
 

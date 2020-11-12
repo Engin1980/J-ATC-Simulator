@@ -42,10 +42,4 @@ public class WeatherModule extends SimulationModule {
     ContextManager.setContext(IWeatherAcc.class, weatherContext);
     weatherManager.init();
   }
-
-  public void save(XElement target) {
-    XElement elm = new XElement("weatherManager");
-    weatherManager.save(elm);
-    target.addElement(elm);
-  }
 }

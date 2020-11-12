@@ -97,14 +97,6 @@ class ArrivalManager {
       this.goAroundedPlanesToSwitchList.add(plane);
   }
 
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeField(target,this, "goAroundedPlanesToSwitchList",
-      new ItemsViaStringSerializer<IAirplane>(q->q.getSqwk().toString()));
-
-    XmlSaveUtils.Field.storeField(target,this, "landingPlanesList",
-            new ItemsViaStringSerializer<IAirplane>(q->q.getSqwk().toString()));
-  }
-
   public void unregisterFinishedArrival(IAirplane plane) {
     this.landingPlanesList.remove(plane);
   }

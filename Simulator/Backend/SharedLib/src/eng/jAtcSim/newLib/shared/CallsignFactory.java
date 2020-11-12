@@ -142,10 +142,4 @@ public class CallsignFactory {
     Callsign ret = generate(countryAircraftPrefix, false);
     return ret;
   }
-
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "useExtendedCallsigns");
-    XmlSaveUtils.Field.storeField(target, this, "previouslyGeneratedCallsigns",
-            new ItemsViaStringSerializer<String>(q -> q));
-  }
 }

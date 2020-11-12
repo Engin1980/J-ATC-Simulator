@@ -145,10 +145,6 @@
 //    recentStats.registerFinishedPlane(plane);
 //  }
 //
-//  public void save(XElement root) {
-//    LoadSave.saveField(root, this, "statsManager");
-//  }
-//
 //  /**
 //   * Analyses current number of planes in the simulation
 //   *

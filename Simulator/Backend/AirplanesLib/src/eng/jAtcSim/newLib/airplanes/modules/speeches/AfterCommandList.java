@@ -355,28 +355,6 @@ public class AfterCommandList {
     return this;
   }
 
-  public void save(XElement target) {
-    Consumer2<XElement, AFItem> consumer = (e, q) -> {
-      XmlSaveUtils.Field.storeField(e, q, "antecedent",
-              ObjectSerializer.createFor(AfterCommand.class)
-                      .useForSubclass()
-                      .withStoredType()
-                      .useDefaultSerializer(ObjectSerializer.createDeepSerializer()));
-      XmlSaveUtils.Field.storeField(e, q, "consequent", ObjectSerializer
-              .createFor(ICommand.class)
-              .useForSubclass()
-              .withStoredType()
-              .useDefaultSerializer(ObjectSerializer.createDeepSerializer()));
-
-    };
-
-    XmlSaveUtils.Field.storeField(target, this, "rt",
-            new ItemsSerializer<>(consumer));
-
-    XmlSaveUtils.Field.storeField(target, this, "ex",
-            new ItemsSerializer<>(consumer));
-  }
-
   public String toLogString() {
     EStringBuilder sb = new EStringBuilder();
 

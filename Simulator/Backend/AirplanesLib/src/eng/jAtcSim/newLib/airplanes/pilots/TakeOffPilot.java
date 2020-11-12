@@ -74,12 +74,6 @@ public class TakeOffPilot extends Pilot {
   }
 
   @Override
-  protected void _save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "takeOffThreshold",
-            (ActiveRunwayThreshold q) -> q.getFullName());
-  }
-
-  @Override
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
             AirplaneState.holdingPoint

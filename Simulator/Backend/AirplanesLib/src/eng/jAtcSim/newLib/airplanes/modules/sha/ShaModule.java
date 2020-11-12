@@ -276,37 +276,6 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     this.heading.reset(heading);
   }
 
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeFields(target, this,
-            "lastVerticalSpeed", "targetHeading", "targetHeadingTurn");
-
-    XmlSaveUtils.Field.storeField(target, this, "altitude",
-            ObjectSerializer.createFor(InertialValue.class));
-
-    XmlSaveUtils.Field.storeField(target, this, "heading",
-            (XElement e, HeadingInertialValue q) -> {
-              XmlSaveUtils.Field.storeFields(e,
-                      q, ObjectUtils.getFieldNamesExcept(HeadingInertialValue.class, "thresholds"));
-              XmlSaveUtils.Field.storeField(e,
-                      q, "thresholds", new ItemsViaStringSerializer<Double>(p -> Double.toString(p)));
-            });
-
-    XmlSaveUtils.Field.storeField(target, this, "speed",
-            ObjectSerializer.createFor(InertialValue.class));
-
-    XmlSaveUtils.Field.storeField(target, this, "targetAltitude",
-            ObjectSerializer.createFor(RestrictableItem.class));
-
-    XmlSaveUtils.Field.storeField(target, this, "targetSpeed",
-            ObjectSerializer.createFor(RestrictableItem.class));
-
-    XmlSaveUtils.Field.storeField(target, this, "navigator",
-            ObjectSerializer.createFor(Navigator.class)
-                    .useForSubclass()
-                    .withStoredType()
-                    .useDefaultSerializer(ObjectSerializer.createDeepSerializer()));
-  }
-
   public void setAltitudeRestriction(Restriction altitudeRestriction) {
     this.targetAltitude.setRestriction(altitudeRestriction);
   }

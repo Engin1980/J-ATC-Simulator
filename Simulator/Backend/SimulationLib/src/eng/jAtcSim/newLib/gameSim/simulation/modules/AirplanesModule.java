@@ -194,28 +194,6 @@ public class AirplanesModule extends SimulationModule {
 
   }
 
-  public void save(XElement target) {
-    //TODEL
-    throw new ToDoException();
-//    XmlSaveUtils.Field.storeField(target, this, "airplanesController",
-//            (XElement e, AirplanesController q) -> q.save(e));
-//
-//    XmlSaveUtils.Field.storeField(target, this, "airproxController",
-//            (XElement e, AirproxController q) -> q.save(e));
-//
-//    XmlSaveUtils.Field.storeField(target, this, "emergencyAppearanceController",
-//            ObjectSerializer.createFor(EmergencyAppearanceController.class)
-//                    .useFormatters(SharedXmlUtils.Formatters.formatters));
-//
-//    XmlSaveUtils.Field.storeField(target, this, "moodManager",
-//            (XElement e, MoodManager q) -> q.save(e));
-//
-//    // mrvaController not saved, everything can be restored on load
-//
-//    XmlSaveUtils.Items.saveIntoElementChild(target, "planesPrepared", planesPrepared,
-//            new ItemsSerializer<>((e, q) -> q.save(e)));
-  }
-
   private void addAirplaneInfo(IAirplane tmp) {
     IAirplaneInfo airplaneInfo = new AirplaneInfo(tmp, this.parent);
     this.planes4public.add(airplaneInfo);

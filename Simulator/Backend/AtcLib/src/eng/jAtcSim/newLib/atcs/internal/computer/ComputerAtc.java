@@ -88,22 +88,6 @@ public abstract class ComputerAtc extends Atc {
     return this.switchManager.isResponsibleFor(callsign);
   }
 
-  @Override
-  protected final void _save(XElement target) {
-
-    IMap<Class<?>, Serializer<?>> customDelayListSerializers = EMap.of(
-            Participant.class, new ParticipantFormatter().toSerializer(),
-            SpeechList.class, new ItemsSerializer<>(ObjectSerializer.createDeepSerializer())
-    );
-
-    XmlSaveUtils.Field.storeField(target, this, "speechDelayer",
-            (XElement e, DelayedList<Message> q) -> q.save(e, customDelayListSerializers));
-    XmlSaveUtils.Field.storeField(target, this, "switchManager",
-            (XElement e, SwitchManager q) -> q.save(e));
-
-    this.__save(target);
-  }
-
   private void elapseSecondProcessMessageFromAtc(Message m) {
     EAssert.Argument.isTrue(m.getSource().getType() == Participant.eType.atc);
     EAssert.Argument.isFalse(

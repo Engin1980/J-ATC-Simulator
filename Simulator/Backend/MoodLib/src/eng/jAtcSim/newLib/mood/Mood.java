@@ -148,21 +148,6 @@ public class Mood {
     this.arrivalExperiences.add(new Experience<>(getNowStamp(), kindOfExperience));
   }
 
-  //TODEL
-//  public void save(XElement target) {
-//    target.addElement(
-//            XmlSaveUtils.Items.saveAsElement("arrivalExperiences", this.arrivalExperiences,
-//                    new ItemsViaStringSerializer<>(q -> q.type.toString() + ";" + q.time.toString())));
-//
-//    target.addElement(
-//            XmlSaveUtils.Items.saveAsElement("departureExperiences", this.departureExperiences,
-//                    new ItemsViaStringSerializer<>(q -> q.type.toString() + ";" + q.time.toString())));
-//
-//    target.addElement(
-//            XmlSaveUtils.Items.saveAsElement("sharedExperiences", this.sharedExperiences,
-//                    new ItemsViaStringSerializer<>(q -> q.type.toString() + ";" + q.time.toString())));
-//  }
-
   private IList<MoodExperienceResult> evaluateArrivals(int delayInMinutes) {
     IList<MoodExperienceResult> ret = new EList<>();
 

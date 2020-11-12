@@ -87,19 +87,6 @@ class SwitchManager {
       this.processOutgoingPlaneSwitchMessage(si, planeSwitchRequest, sender);
   }
 
-  public void save(XElement target) {
-    //TODEL
-    throw new ToDoException();
-//    XmlSaveUtils.Field.storeField(target, this, "incomingPlanes",
-//            new ItemsViaStringSerializer<>(SharedXmlUtils.Formatters.squawkFormatter));
-//    XmlSaveUtils.Field.storeField(target, this, "outgoingPlanes",
-//            new EntriesSerializer<Squawk, SwitchInfo>(
-//                    SharedXmlUtils.Serializers.squawkSerializer,
-//                    ObjectSerializer
-//                            .createFor(SwitchInfo.class)
-//                            .useFormatters(SharedXmlUtils.Formatters.formatters)));
-  }
-
   private void elapCheckAndProcessPlanesReadyToSwitch() {
     IReadOnlyList<IAirplane> planes = parent.getPlanesUnderControl();
     for (IAirplane airplane : planes) {

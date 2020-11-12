@@ -42,12 +42,6 @@ public class TimerModule extends SimulationModule {
     return this.tickInterval;
   }
 
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "tickInterval");
-    target.addElement(
-            XmlSaveUtils.saveAsElement("running", tmr != null));
-  }
-
   public final void setTickInterval(int tickInterval) {
     EAssert.Argument.isTrue(tickInterval > 0);
     this.tickInterval = tickInterval;

@@ -172,16 +172,6 @@ public class TowerAtc extends ComputerAtc {
     public RunwayConfiguration getScheduled() {
       return scheduled;
     }
-
-    public void save(XElement target) {
-      XmlSaveUtils.Field.storeField(target, this, "scheduler",
-              ObjectSerializer.createFor(SchedulerForAdvice.class));
-      XmlSaveUtils.Field.storeField(target, this, "current",
-              (RunwayConfiguration q) -> q.getGID().toString());
-      if (scheduled != null)
-        XmlSaveUtils.Field.storeField(target, this, "scheduled",
-                (RunwayConfiguration q) -> q.getGID().toString());
-    }
   }
 
   private static final int[] RWY_CHANGE_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5, 4, 3, 2, 1};

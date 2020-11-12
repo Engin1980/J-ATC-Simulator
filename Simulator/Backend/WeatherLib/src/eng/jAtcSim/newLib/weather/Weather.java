@@ -125,10 +125,6 @@ public class Weather {
     return windSpeetInKts;
   }
 
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeFields(target, this, ObjectUtils.getFieldNames(Weather.class));
-  }
-
   public String toInfoString(boolean fullText) {
     EStringBuilder sb = new EStringBuilder();
     if (fullText) {

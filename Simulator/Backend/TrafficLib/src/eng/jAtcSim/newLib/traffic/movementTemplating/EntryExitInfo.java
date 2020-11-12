@@ -51,9 +51,4 @@ public class EntryExitInfo {
   public Integer getRadial() {
     return radial;
   }
-
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeFields(target, this, "navaid", "radial");
-    XmlSaveUtils.Field.storeField(target, this, "otherAirportCoordinate", new CoordinateFormatter());
-  }
 }

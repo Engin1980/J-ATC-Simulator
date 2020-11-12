@@ -59,14 +59,6 @@ public class WeatherManager {
     return newWeatherFlag;
   }
 
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "newWeatherFlag");
-    XmlSaveUtils.Field.storeField(target, this, "weather",
-            ObjectSerializer.createFor(Weather.class));
-
-    //provider is obtained from settings
-  }
-
   public void setWeather(String metarString) {
     try {
       Weather tmp = MetarDecoder.decode(metarString);

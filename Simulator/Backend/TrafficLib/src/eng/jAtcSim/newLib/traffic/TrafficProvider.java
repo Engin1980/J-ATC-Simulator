@@ -75,17 +75,6 @@ public class TrafficProvider {
     // intentionally blank
   }
 
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "movementsForDay",
-            new EntriesWithListValuesSerializer<Integer, MovementTemplate>(
-                    (e, q) -> e.setContent(Integer.toString(q)),
-                    ObjectSerializer.createDeepSerializer()));
-
-    //Todel
-    System.out.println("### trafficModel not saved");
-    // traffic model should be loaded from startup info?
-  }
-
   private void prepareMovementsForDay(int dayIndex) {
     IReadOnlyList<MovementTemplate> tmp = trafficModel.generateMovementsForOneDay();
     IList<MovementTemplate> oth = new EList<>(tmp);

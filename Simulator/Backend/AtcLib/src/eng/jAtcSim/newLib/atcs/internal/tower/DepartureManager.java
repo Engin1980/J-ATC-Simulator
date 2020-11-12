@@ -153,33 +153,6 @@ class DepartureManager {
     this.messageSenderConsumer.accept(m);
   }
 
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "holdingPointNotAssigned",
-            new ItemsViaStringSerializer<IAirplane>(q -> q.getSqwk().toString()));
-    XmlSaveUtils.Field.storeField(target, this, "holdingPointWaitingForAppSwitchConfirmation",
-            new ItemsViaStringSerializer<IAirplane>(q -> q.getSqwk().toString()));
-    XmlSaveUtils.Field.storeField(target, this, "holdingPointReady",
-            new ItemsViaStringSerializer<IAirplane>(q -> q.getSqwk().toString()));
-    XmlSaveUtils.Field.storeField(target, this, "departing",
-            new ItemsViaStringSerializer<IAirplane>(q -> q.getSqwk().toString()));
-
-    XmlSaveUtils.Field.storeField(target, this, "departureSwitchAltitude",
-            new EntriesViaStringSerializer<IAirplane, Double>(
-                    q -> q.getSqwk().toString(), q -> Double.toString(q)));
-
-    XmlSaveUtils.Field.storeField(target, this, "holdingPointWaitingTimeMap",
-            new EntriesViaStringSerializer<IAirplane, EDayTimeStamp>(
-                    q -> q.getSqwk().toString(), q -> q.toString()));
-
-    XmlSaveUtils.Field.storeField(target,this,"lastDepartingPlane",
-            new EntriesViaStringSerializer<ActiveRunwayThreshold, IAirplane>(
-                    q -> q.getFullName(), q->q.getSqwk().toString()));
-
-    XmlSaveUtils.Field.storeField(target,this,"lastDeparturesTime",
-            new EntriesViaStringSerializer<ActiveRunwayThreshold, EDayTimeStamp>(
-                    q -> q.getFullName(), q->q.toString()));
-  }
-
   public IAirplane tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {
     IAirplane ret;
     ret = this.lastDepartingPlane.tryGet(rt);

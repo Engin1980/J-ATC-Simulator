@@ -74,18 +74,6 @@
 //    return ret;
 //  }
 //
-////  public void save(XElement root) {
-////    XElement trafficElement = new XElement("trafficManager");
-////
-////    LoadSave.saveField(trafficElement, this, "scheduledMovements");
-////    LoadSave.saveField(trafficElement, this, "lastRelativeInfo");
-////    LoadSave.saveField(trafficElement, this, "nextGenerateTime");
-////    LoadSave.saveField(trafficElement, this, "settings");
-////    LoadSave.saveField(trafficElement, this, "offeredMovements");
-////    LoadSave.saveField(trafficElement, this, "createdMovements");
-////
-////    root.addElement(trafficElement);
-////  }
 ////
 ////  public void load(XElement root) {
 ////      XElement trafficElement = root.getChild("trafficManager");

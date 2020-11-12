@@ -68,8 +68,6 @@ public abstract class Atc {
 //    _save(target);
   }
 
-  protected abstract void _save(XElement target);
-
   @Override
   public String toString() {
     return this.atcId.getName();

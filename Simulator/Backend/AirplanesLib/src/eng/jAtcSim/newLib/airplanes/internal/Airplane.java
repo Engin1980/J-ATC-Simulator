@@ -709,45 +709,6 @@ public class Airplane {
     return this.wrt;
   }
 
-  public void save(XElement target) {
-    //TODEL
-    throw new ToDoException();
-//    XmlSaveUtils.Field.storeFields(target, this,
-//            "state", "lastGoAroundReasonIfAny");
-//    XmlSaveUtils.Field.storeField(target, this, "coordinate", SharedXmlUtils.Formatters.coordinateFormatter);
-//    XmlSaveUtils.Field.storeField(target, this, "squawk", SharedXmlUtils.Formatters.squawkFormatter);
-//    XmlSaveUtils.Field.storeField(target, this, "airplaneType", (AirplaneType q) -> q.name);
-//
-//    XmlSaveUtils.Field.storeField(target, this, "atcModule",
-//            ObjectSerializer.createFor(AtcModule.class)
-//                    .useSerializer(AtcId.class, SharedXmlUtils.Serializers.atcIdSerializer)
-//                    .excludeFields("plane", "rdr", "wrt"));
-//
-//    XmlSaveUtils.Field.storeField(target, this, "mood",
-//            (XElement e, Mood q) -> q.save(e));
-//
-//    XmlSaveUtils.Field.storeField(target, this, "divertModule",
-//            ObjectSerializer.createFor(DivertModule.class)
-//                    .useSerializers(SharedXmlUtils.Serializers.serializers)
-//                    .excludeFields("plane", "rdr", "wrt"));
-//
-//    XmlSaveUtils.Field.storeField(target, this, "emergencyModule",
-//            ObjectSerializer.createFor(DivertModule.class)
-//                    .useSerializers(SharedXmlUtils.Serializers.serializers));
-//
-//    XmlSaveUtils.Field.storeField(target, this, "flightModule",
-//            ObjectSerializer.createFor(AirplaneFlightModule.class)
-//                    .useSerializers(SharedXmlUtils.Serializers.serializers)
-//                    .excludeFields("plane", "rdr", "wrt"));
-//
-//    XmlSaveUtils.Field.storeField(target, this, "routingModule",
-//            (XElement e, RoutingModule q) -> q.save(e));
-//    XmlSaveUtils.Field.storeField(target, this, "sha",
-//            (XElement e, ShaModule q) -> q.save(e));
-//    XmlSaveUtils.Field.storeField(target, this, "pilot",
-//            (XElement e, Pilot q) -> q.save(e));
-  }
-
   private void flushSpeeches() {
     for (AtcId atcId : speechCache.getKeys()) {
       SpeechList<IFromPlaneSpeech> msgs = speechCache.get(atcId);

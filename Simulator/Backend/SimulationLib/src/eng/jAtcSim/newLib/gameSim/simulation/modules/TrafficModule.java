@@ -86,18 +86,6 @@ public class TrafficModule extends SimulationModule {
     this.trafficProvider.prepareTrafficForDay(Context.getShared().getNow().getDays());
   }
 
-  public void save(XElement target) {
-    XmlSaveUtils.Field.storeFields(target, this, "delayStep", "delayStepProbability");
-
-    XElement tmp;
-
-    XmlSaveUtils.Field.storeField(target, this, "callsignFactory",
-            (XElement e, CallsignFactory q) -> q.save(e));
-
-    XmlSaveUtils.Field.storeField(target, this, "trafficProvider",
-            (XElement e, TrafficProvider q) -> q.save(e));
-  }
-
   private FlightMovementTemplate convertGenericMovementTemplateToFlightMovementTemplate(MovementTemplate m) {
     FlightMovementTemplate ret;
     EAssert.Argument.isTrue(m instanceof GenericCommercialMovementTemplate || m instanceof GenericGeneralAviationMovementTemplate);

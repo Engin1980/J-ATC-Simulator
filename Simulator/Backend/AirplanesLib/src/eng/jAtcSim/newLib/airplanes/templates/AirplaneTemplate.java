@@ -60,17 +60,4 @@ public abstract class AirplaneTemplate {
   public EDayTimeStamp getExpectedExitTime() {
     return expectedExitTime;
   }
-
-  public void save(XElement target) {
-    //TODEL
-    throw new ToDoException();
-//    XmlSaveUtils.Field.storeFields(target, this,
-//            new String[]{"callsign", "airplaneType", "expectedExitTime", "entryTime", "entryDelay"},
-//            SharedXmlUtils.Serializers.serializers);
-//    XmlSaveUtils.Field.storeField(target, this, "entryExitPoint",
-//            ObjectSerializer.createFor(entryExitPoint.getClass())
-//                    .useFormatter(Navaid.class, q -> q.getName()));
-//
-//    this._save(target);
-  }
 }

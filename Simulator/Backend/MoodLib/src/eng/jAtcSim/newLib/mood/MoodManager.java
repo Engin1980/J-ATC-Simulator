@@ -34,15 +34,6 @@ public class MoodManager {
     inner.set(callsign, new Mood());
   }
 
-  public void save(XElement target) {
-    //TODEL
-    throw new ToDoException();
-//    XmlSaveUtils.Entries.saveIntoElementContent(target, inner,
-//            new EntriesSerializer<>(
-//                    SharedXmlUtils.Serializers.callsignSerializer,
-//                    (e, q) -> q.save(e)));
-  }
-
   public void unregister(Callsign callsign) {
     EAssert.isTrue(inner.containsKey(callsign));
     inner.remove(callsign);

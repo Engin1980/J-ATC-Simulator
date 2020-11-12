@@ -42,10 +42,4 @@ public class StatsModule extends SimulationModule {
   public void registerElapseSecondDuration(int simulationRecalculationLength) {
     statsProvider.registerElapseSecondDuration(simulationRecalculationLength);
   }
-
-  public void save(XElement target) {
-    //TODEL
-//    XmlSaveUtils.Field.storeField(target, this, "statsProvider",
-//            (XElement e, StatsProvider q) -> q.save(e));
-  }
 }

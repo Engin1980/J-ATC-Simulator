@@ -123,14 +123,6 @@ public class AirproxController {
     return airproxViolatingPlanes;
   }
 
-  public void save(XElement target) {
-    //TODEL
-//    XmlSaveUtils.Entries.saveIntoElementChild(target, "airproxViolatingPlanes", this.airproxViolatingPlanes,
-//            new EntriesViaStringSerializer<>(
-//                    SharedXmlUtils.Formatters.callsignFormatter,
-//                    q -> q.toString()));
-  }
-
   private void storeAirprox(Callsign callsign, AirproxType airproxType) {
     if (airproxType == AirproxType.none) return;
     AirproxType current = this.airproxViolatingPlanes.tryGet(callsign, AirproxType.none);

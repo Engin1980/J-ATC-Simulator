@@ -74,12 +74,6 @@ public class AtcModule {
     this.atcProvider.registerNewPlane(tmp.getAtc().getTunedAtc(), tmp.getCallsign());
   }
 
-  public void save(XElement target) {
-    //TODEL
-//    XmlSaveUtils.Field.storeField(target, this, "atcProvider",
-//            (XElement e, AtcProvider q)->q.save(e));
-  }
-
   public RunwayConfiguration tryGetSchedulerRunwayConfiguration() {
     return this.atcProvider.tryGetSchedulerRunwayConfiguration();
   }

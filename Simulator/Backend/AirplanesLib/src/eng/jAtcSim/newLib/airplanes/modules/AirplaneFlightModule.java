@@ -58,12 +58,4 @@ public class AirplaneFlightModule {
   public void raiseEmergency() {
     this.departure = false;
   }
-
-  public void save(XElement target) {
-    //TODEL
-    throw new ToDoException();
-//    XmlSaveUtils.Field.storeFields(target,
-//            this, ObjectUtils.getFieldNames(AirplaneFlightModule.class).toArray(String.class),
-//            SharedXmlUtils.Serializers.serializers);
-  }
 }
