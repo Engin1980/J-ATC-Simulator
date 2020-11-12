@@ -6,6 +6,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplanes.AirplaneXmlContextInit;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
@@ -25,6 +26,7 @@ import eng.jAtcSim.newLib.gameSim.simulation.modules.*;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.mood.MoodManager;
+import eng.jAtcSim.newLib.mood.MoodXmlContextInit;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.CallsignFactory;
@@ -196,8 +198,8 @@ public class Simulation {
             new ObjectSerializer()
                     .withIgnoredFields("mrvas", "mrvaMaps"));
 
-    MoodManager.prepareXmlContext(ctx);
-    AirplanesController.prepareXmlContext(ctx);
+    MoodXmlContextInit.prepareXmlContext(ctx);
+    AirplaneXmlContextInit.prepareXmlContext(ctx);
     // endregion
 
     // region AtcModule

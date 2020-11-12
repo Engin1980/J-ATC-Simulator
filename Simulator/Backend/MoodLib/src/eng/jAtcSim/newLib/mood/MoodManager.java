@@ -15,10 +15,6 @@ import eng.newXmlUtils.implementations.ObjectSerializer;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class MoodManager {
-  public static void prepareXmlContext(XmlContext ctx) {
-    ctx.sdfManager.setSerializer(MoodManager.class, new ObjectSerializer());
-    Mood.prepareXmlContext(ctx);
-  }
 
   private final IMap<Callsign, Mood> inner = new EMap<>();
 
