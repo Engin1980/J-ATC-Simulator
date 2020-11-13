@@ -15,7 +15,9 @@ public class XmlUtils {
   private static final String COMPONENT_TYPE_NAME = "__item_type";
 
   public static Class<?> loadType(XElement element) {
-    String s = element.getAttribute(TYPE_NAME);
+    String s = element.tryGetAttribute(TYPE_NAME);
+    if (s == null)
+      throw new EXmlException(sf("Failed to load type attribute from xml element '%s'.", element.toFullString()));
     if (s.equals(NULL_CONTENT))
       return null;
     else {
@@ -45,8 +47,21 @@ public class XmlUtils {
     element.setAttribute(COMPONENT_TYPE_NAME, componentType.getName());
   }
 
+  public static Class<?> tryLoadType(XElement element) {
+    String s = element.tryGetAttribute(TYPE_NAME);
+    if (s != null)
+      if (s.equals(NULL_CONTENT))
+        return null;
+      else {
+        Class<?> cls = loadClassFromString(s);
+        return cls;
+      }
+    else
+      return null;
+  }
+
   private static Class<?> loadClassFromString(String className) {
-    Class ret;
+    Class<?> ret;
     try {
       ret = Class.forName(className);
     } catch (ClassNotFoundException e) {

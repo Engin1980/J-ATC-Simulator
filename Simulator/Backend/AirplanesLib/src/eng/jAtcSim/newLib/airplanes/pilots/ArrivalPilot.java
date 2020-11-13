@@ -26,11 +26,6 @@ public class ArrivalPilot extends BasicPilot {
   }
 
   @Override
-  protected void _save(XElement target) {
-    // nothing to save
-  }
-
-  @Override
   protected void elapseSecondInternalBasic() {
     switch (rdr.getState()) {
       case arrivingHigh:

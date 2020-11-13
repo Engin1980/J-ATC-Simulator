@@ -194,14 +194,6 @@ public class HoldPilot extends Pilot {
     return true;
   }
 
-  @Override
-  protected void _save(XElement target) {
-    XmlSaveUtils.Field.storeFields(target, this,
-            ObjectUtils.getFieldNamesExcept(this.getClass(), "navaid"));
-
-    XmlSaveUtils.Field.storeField(target, this, "navaid", (Navaid q) -> q.getName());
-  }
-
   private int getAfterSecondTurnHeading() {
     int ret;
     if (turn == LeftRight.left)

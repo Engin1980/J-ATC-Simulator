@@ -156,17 +156,6 @@ public class ApproachPilot extends Pilot {
     }
   }
 
-  @Override
-  protected void _save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "currentStageIndex");
-    XmlSaveUtils.Field.storeField(target, this, "iafRoute",
-            (IafRoute q) -> q.getGID().toString());
-    XmlSaveUtils.Field.storeField(target, this, "approach",
-            (XElement e, Approach a) ->
-                    ObjectSerializer.createDeepSerializer()
-                            .useFormatter(Navaid.class, n -> n.getName()));
-  }
-
   private void flyRadialBehavior(FlyRadialBehavior behavior) {
     if (behavior instanceof FlyRadialWithDescentBehavior) {
       flyRadialWithDescentBehavior((FlyRadialWithDescentBehavior) behavior);

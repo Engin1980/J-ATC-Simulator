@@ -119,7 +119,7 @@ public class SDFManager {
     }
   }
 
-  private void setDeserializer(Class<?> key, Deserializer deserializer) {
+  public void setDeserializer(Class key, Deserializer deserializer) {
     this.deserializers.set(key, deserializer);
   }
 

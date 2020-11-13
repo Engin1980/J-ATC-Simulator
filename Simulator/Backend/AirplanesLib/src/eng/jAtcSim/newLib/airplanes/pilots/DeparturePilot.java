@@ -19,11 +19,6 @@ public class DeparturePilot extends BasicPilot {
   }
 
   @Override
-  protected void _save(XElement target) {
-    // nothing to save
-  }
-
-  @Override
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
             AirplaneState.takeOffGoAround,

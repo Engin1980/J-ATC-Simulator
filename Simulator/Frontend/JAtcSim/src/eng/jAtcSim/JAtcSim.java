@@ -17,7 +17,7 @@ import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.frmPacks.shared.FrmLog;
 import eng.jAtcSim.newLib.gameSim.IGame;
-import eng.jAtcSim.newLib.gameSim.game.GameFactory;
+import eng.jAtcSim.newLib.gameSim.game.GameFactoryAndRepository;
 import eng.jAtcSim.newLib.gameSim.game.sources.SourceFactory;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.*;
 import eng.jAtcSim.newLib.shared.ContextManager;
@@ -64,7 +64,7 @@ public class JAtcSim {
 
   public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
 
-    new GameFactory().load(xmlFileName);
+    new GameFactoryAndRepository().load(xmlFileName);
 
     //TODO Implement this: loading of the simulation
     throw new ToDoException("loading of the simulation");
@@ -262,7 +262,7 @@ public class JAtcSim {
 
 
       IGame g;
-      g = new GameFactory().create(gsi);
+      g = new GameFactoryAndRepository().create(gsi);
 
       // enable duplicates
       //TODO fix the following

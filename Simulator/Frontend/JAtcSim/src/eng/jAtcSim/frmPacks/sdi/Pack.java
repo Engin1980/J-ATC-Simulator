@@ -14,6 +14,7 @@ import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.gameSim.game.GameFactoryAndRepository;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
@@ -147,8 +148,8 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
       Path p = Paths.get(appSettings.autosave.path.toAbsolutePath().toString(), fileName);
 
       IMap<String, Object> tmp = this.getDataToStore();
-      IMap<String, String> todo = new EMap<>();
-      this.getGame().save(p.toAbsolutePath().toString(), todo);
+      IMap<String, Object> todo = new EMap<>();
+      new GameFactoryAndRepository().save(this.getGame(), todo, p.toAbsolutePath().toString());
     }
   }
 }

@@ -19,10 +19,6 @@ public class HoldingPointPilot extends Pilot {
   }
 
   @Override
-  protected void _save(XElement target) {
-  }
-
-  @Override
   public void elapseSecondInternal() {
 
   }

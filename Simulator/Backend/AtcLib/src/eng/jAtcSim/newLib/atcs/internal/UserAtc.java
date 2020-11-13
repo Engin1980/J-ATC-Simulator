@@ -152,14 +152,6 @@ public class UserAtc extends Atc implements IUserAtcInterface {
     this.planes.tryRemove(plane);
   }
 
-  @Override
-  protected void _save(XElement target) {
-    XmlSaveUtils.Field.storeField(target,this, "planes",
-            new ItemsViaStringSerializer<IAirplane>(q->q.getSqwk().toString()));
-
-    // thisSecondMessages ignored as they should be deleted after "elapseSecond"
-  }
-
   //TODEL
   private void processIncomingGoodDayFromPlane(IAirplane plane) {
     // intentionally blank

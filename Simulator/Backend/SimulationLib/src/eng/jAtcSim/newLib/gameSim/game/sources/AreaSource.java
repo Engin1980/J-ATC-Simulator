@@ -4,14 +4,19 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.xml.area.AreaXmlLoader;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class AreaSource extends Source<Area> {
 
-  private Area area;
+  private Area content;
   private String fileName;
   private String icao;
+
+  @XmlConstructor
+  private AreaSource() {
+  }
 
   AreaSource(String fileName, String icao) {
     this.fileName = fileName;
@@ -19,7 +24,7 @@ public class AreaSource extends Source<Area> {
   }
 
   public Area getArea() {
-    return area;
+    return content;
   }
 
   public String getFileName() {
@@ -35,7 +40,7 @@ public class AreaSource extends Source<Area> {
   }
 
   public Airport getActiveAirport() {
-    Airport ret = area.getAirports().tryGetFirst(q -> q.getIcao().equals(icao));
+    Airport ret = content.getAirports().tryGetFirst(q -> q.getIcao().equals(icao));
     if (ret == null)
       throw new EApplicationException("Unable to load airport {" + icao + "} from selected area file.");
     return ret;
@@ -43,7 +48,7 @@ public class AreaSource extends Source<Area> {
 
   public void init() {
     try {
-      this.area = AreaXmlLoader.load(this.fileName);
+      this.content = AreaXmlLoader.load(this.fileName);
     } catch (Exception e) {
       throw new EApplicationException(sf("Failed to load xml-area-file from '%s'", this.fileName), e);
     }
@@ -53,6 +58,6 @@ public class AreaSource extends Source<Area> {
 
   @Override
   protected Area _getContent() {
-    return area;
+    return content;
   }
 }

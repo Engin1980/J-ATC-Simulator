@@ -16,6 +16,7 @@ import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.frmPacks.shared.*;
 import eng.jAtcSim.newLib.area.InitialPosition;
+import eng.jAtcSim.newLib.gameSim.game.GameFactoryAndRepository;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
@@ -309,7 +310,7 @@ public class FrmMain extends JFrame {
 
       IMap<String, Object> tmp = this.parent.getDataToStore();
 
-      this.parent.getGame().save(fileName, new EMap<>());
+      new GameFactoryAndRepository().save(this.parent.getGame(), new EMap<>(), fileName);
       lastFileName = fileName;
       //TODO do somehow:
 //      this.parent.getSim().sendTextMessageForUser("Game saved.");
