@@ -29,7 +29,7 @@ public class Game implements IGame {
               c.values.set("airport", q.getActiveAirport());
             }));
 
-    ctx.sdfManager.setSerializer(AirplaneTypesSource.class, q -> q.getFileName());
+    ctx.sdfManager.setFormatter(AirplaneTypesSource.class, q -> q.getFileName());
     ctx.sdfManager.setDeserializer(AirplaneTypesSource.class, (e, c) -> {
       AirplaneTypesSource ret = SourceFactory.createAirplaneTypesSource(e.getContent());
       ret.init();
@@ -37,7 +37,7 @@ public class Game implements IGame {
       return ret;
     });
 
-    ctx.sdfManager.setSerializer(FleetsSource.class, q -> sf("%s;%s", q.getCompanyFileName(), q.getGeneralAviationFileName()));
+    ctx.sdfManager.setFormatter(FleetsSource.class, q -> sf("%s;%s", q.getCompanyFileName(), q.getGeneralAviationFileName()));
     ctx.sdfManager.setDeserializer(FleetsSource.class, (e, c) -> {
       String[] pts = e.getContent().split(";");
       FleetsSource ret = SourceFactory.createFleetsSource(pts[1], pts[0]);
@@ -47,7 +47,7 @@ public class Game implements IGame {
       return ret;
     });
 
-    ctx.sdfManager.setSerializer(TrafficXmlSource.class, q -> q.getFileName());
+    ctx.sdfManager.setFormatter(TrafficXmlSource.class, q -> q.getFileName());
     ctx.sdfManager.setDeserializer(TrafficSource.class, (e, c) -> {
       TrafficSource ret = SourceFactory.createTrafficXmlSource(e.getContent());
       ret.init();

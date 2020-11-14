@@ -58,6 +58,7 @@ public class XmlContext {
   }
 
   public static <T> T deserialize(XElement element, XmlContext context, Class<T> type) {
+    InternalXmlUtils.saveType(element, type);
     Deserializer deserializer = context.sdfManager.getDeserializer(type);
     T ret = _deserialize(element, deserializer, context);
     return ret;
@@ -65,6 +66,7 @@ public class XmlContext {
 
   public static Object deserialize(XElement element, XmlContext context) {
     Class<?> type = InternalXmlUtils.loadType(element);
+
     Deserializer deserializer = context.sdfManager.getDeserializer(type);
     Object ret = _deserialize(element, deserializer, context);
     return ret;

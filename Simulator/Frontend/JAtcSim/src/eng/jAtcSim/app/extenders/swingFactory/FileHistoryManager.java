@@ -10,9 +10,11 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.swing.other.HistoryForJFileChooser;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.EntriesWithListValuesSerializer;
+import eng.newXmlUtils.XmlContext;
+import eng.newXmlUtils.implementations.EntriesDeserializer;
+import eng.newXmlUtils.implementations.EntriesSerializer;
+import eng.newXmlUtils.implementations.ItemsDeserializer;
+import eng.newXmlUtils.implementations.ItemsSerializer;
 
 import java.awt.*;
 import java.io.IOException;
@@ -62,17 +64,17 @@ public class FileHistoryManager {
 
 
     XDocument doc;
-    IMap<String, IList<String>> tmp = new EMap<>();
     try {
       doc = XDocument.load(userHomeHistoryFile.toAbsolutePath().toString());
     } catch (Exception ex) {
       throw new EApplicationException("Failed to load history of loaded files.", ex);
     }
 
-    XmlLoaderUtils.loadMap(doc.getRoot(), tmp,
-            e -> e.getAttribute("key"),
-            e -> XmlLoaderUtils.loadList(e, new EList<String>(),
-                    f -> f.getContent()));
+    XmlContext ctx = new XmlContext();
+    ctx.sdfManager.setDeserializer(IMap.class, new EntriesDeserializer());
+    ctx.sdfManager.setDeserializer(IList.class, new ItemsDeserializer());
+    ctx.sdfManager.setDeserializer(String.class, (e, c) -> e.getContent());
+    IMap<String, IList<String>> tmp = (IMap<String, IList<String>>) XmlContext.deserialize(doc.getRoot(), ctx, IMap.class);
 
     FileHistoryManager.histories = tmp;
   }
@@ -80,12 +82,12 @@ public class FileHistoryManager {
   private static void saveHistories() {
     Path userHomeHistoryFile = getHistoryFilePath();
 
-    XElement root = XmlSaveUtils.Entries.IListValues.saveAsElement(
-            "root",
-            histories,
-            new EntriesWithListValuesSerializer<>(
-                    (e, q) -> e.setContent(q),
-                    (e, q) -> e.setContent(q)));
+    XElement root = new XElement("root");
+    XmlContext ctx = new XmlContext();
+    ctx.sdfManager.setSerializer(IMap.class, new EntriesSerializer());
+    ctx.sdfManager.setSerializer(IList.class, new ItemsSerializer());
+    ctx.sdfManager.setSerializer(String.class, (e, v, c) -> e.setContent((String) v));
+    XmlContext.serialize(root, histories, ctx);
 
     XDocument doc = new XDocument(root);
 

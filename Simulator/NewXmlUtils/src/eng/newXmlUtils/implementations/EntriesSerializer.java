@@ -1,11 +1,11 @@
 package eng.newXmlUtils.implementations;
 
-import eng.newXmlUtils.EXmlException;
-import eng.newXmlUtils.base.Serializer;
-import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.utils.InternalXmlUtils;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
+import eng.newXmlUtils.EXmlException;
+import eng.newXmlUtils.XmlContext;
+import eng.newXmlUtils.base.Serializer;
+import eng.newXmlUtils.utils.InternalXmlUtils;
 
 import java.util.Map;
 
@@ -19,11 +19,9 @@ public class EntriesSerializer implements Serializer {
     for (Map.Entry entry : entries) {
       XElement itemElement = new XElement(InternalXmlUtils.ITEM);
 
-      XElement keyElement = storeToElement(InternalXmlUtils.KEY, entry.getKey(), xmlContext);
-      XElement valueElement = storeToElement(InternalXmlUtils.VALUE, entry.getValue(), xmlContext);
+      storeToElement(itemElement, InternalXmlUtils.KEY, entry.getKey(), xmlContext);
+      storeToElement(itemElement, InternalXmlUtils.VALUE, entry.getValue(), xmlContext);
 
-      itemElement.addElement(keyElement);
-      itemElement.addElement(valueElement);
       element.addElement(itemElement);
     }
   }
@@ -38,14 +36,15 @@ public class EntriesSerializer implements Serializer {
     return ret;
   }
 
-  private XElement storeToElement(String elementName, Object object, XmlContext xmlContext) {
-    XElement ret = new XElement(elementName);
+  private void storeToElement(XElement parentElement, String elementName, Object object, XmlContext xmlContext) {
 
     Serializer serializer = xmlContext.sdfManager.getSerializer(object);
 
-    serializer.invoke(ret, object, xmlContext);
-    InternalXmlUtils.saveType(ret, object);
-
-    return ret;
+    if (serializer != null) {
+      XElement itemElement = new XElement(elementName);
+      serializer.invoke(itemElement, object, xmlContext);
+      InternalXmlUtils.saveType(itemElement, object);
+      parentElement.addElement(itemElement);
+    }
   }
 }

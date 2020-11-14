@@ -150,7 +150,15 @@ public class ObjectDeserializer<T> implements Deserializer {
   }
 
   private void restoreField(XElement e, Object v, Field field, XmlContext c) {
-    XElement fieldElement = e.getChild(field.getName());
+    if (customFieldDeserializers.containsKey(field.getName()) && customFieldDeserializers.get(field.getName()) == null)
+      return; // skipped as ignored
+
+    XElement fieldElement;
+    try {
+      fieldElement = e.getChild(field.getName());
+    } catch (Exception exception) {
+      throw new EXmlException(sf("Failed to find element for '%s.%s'.", field.getDeclaringClass(), field.getName()));
+    }
     Class<?> fieldType = InternalXmlUtils.tryLoadType(fieldElement);
     if (fieldType == null) {
       fieldType = field.getType();

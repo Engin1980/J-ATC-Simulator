@@ -15,10 +15,12 @@ public class ItemsSerializer implements Serializer {
 
       Serializer serializer = xmlContext.sdfManager.getSerializer(item);
 
-      serializer.invoke(itemElement, item, xmlContext);
-      InternalXmlUtils.saveType(itemElement, item);
+      if (serializer != null) {
+        serializer.invoke(itemElement, item, xmlContext);
+        InternalXmlUtils.saveType(itemElement, item);
 
-      element.addElement(itemElement);
+        element.addElement(itemElement);
+      }
     }
   }
 }

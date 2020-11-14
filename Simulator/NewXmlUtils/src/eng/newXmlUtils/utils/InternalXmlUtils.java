@@ -17,7 +17,7 @@ public class InternalXmlUtils {
   public static Class<?> loadType(XElement element) {
     String s = element.tryGetAttribute(TYPE_NAME);
     if (s == null)
-      throw new EXmlException(sf("Failed to load type attribute from xml element '%s'.", element.toFullString()));
+      throw new EXmlException(sf("Failed to load type attribute from xml element '%s'.", element.toXPath()));
     if (s.equals(NULL_CONTENT))
       return null;
     else {

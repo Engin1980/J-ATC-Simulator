@@ -6,12 +6,12 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.validation.EAssert;
 import eng.newXmlUtils.base.*;
+import eng.newXmlUtils.implementations.ObjectDeserializer;
 import eng.newXmlUtils.implementations.ObjectSerializer;
 import eng.newXmlUtils.utils.InternalXmlUtils;
 
 import java.util.Map;
 
-import static eng.eSystem.utilites.FunctionShortcuts.coalesce;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class SDFManager {
@@ -40,10 +40,16 @@ public class SDFManager {
     if (type.isEnum())
       return createEnumDeserializer((Class<Enum>) type);
 
-    Deserializer ret = coalesce(deserializers.tryGet(type), defaultDeserializer);
-    if (ret == null)
-      throw new EXmlException(sf("Failed to find ret for type '%s'.", type));
-    return ret;
+    if (deserializers.containsKey(type))
+      return deserializers.get(type);
+
+    if (isAutoserializedyByPackageName(type))
+      return new ObjectDeserializer<>();
+
+    if (defaultDeserializer != null)
+      return defaultDeserializer;
+
+    throw new EXmlException(sf("Failed to find ret for type '%s'.", type));
   }
 
   public <T> InstanceFactory<T> getFactory(Class<T> type) {
@@ -61,12 +67,16 @@ public class SDFManager {
     if (type.isEnum())
       return createEnumSerializer((Class<Enum>) type);
 
-    Serializer ret = coalesce(serializers.tryGet(type), defaultSerializer);
-    if (ret == null)
-      ret = tryGetAutoserializerRegex(type);
-    if (ret == null)
-      throw new EXmlException(sf("Failed to find serializer for type '%s'.", type));
-    return ret;
+    if (serializers.containsKey(type))
+      return serializers.get(type);
+
+    if (isAutoserializedyByPackageName(type))
+      return new ObjectSerializer();
+
+    if (defaultSerializer != null)
+      return defaultSerializer;
+
+    throw new EXmlException(sf("Failed to find serializer for type '%s'.", type));
   }
 
   public void setDeserializer(Class<?> key, Deserializer deserializer) {
@@ -111,10 +121,6 @@ public class SDFManager {
     this.serializers.set(type, serializer);
   }
 
-  public <T> void setSerializer(Class<? extends T> type, Formatter<T> formatter) {
-    this.serializers.set(type, (e, v, c) -> e.setContent(formatter.invoke((T) v)));
-  }
-
   public void setSerializers(IMap<Class<?>, Serializer> serializers) {
     for (Map.Entry<Class<?>, Serializer> entry : serializers) {
       this.setSerializer(entry.getKey(), entry.getValue());
@@ -130,11 +136,8 @@ public class SDFManager {
     return p.toDeserializer();
   }
 
-  private Serializer tryGetAutoserializerRegex(Class<?> type) {
-    if (this.autoSerializedPackages.isAny(q -> type.getPackageName().equals(q)))
-      return new ObjectSerializer();
-    else
-      return null;
+  private boolean isAutoserializedyByPackageName(Class<?> type) {
+    return this.autoSerializedPackages.isAny(q -> type.getPackageName().equals(q));
   }
 
   private Serializer createEnumSerializer(Class<Enum> type) {

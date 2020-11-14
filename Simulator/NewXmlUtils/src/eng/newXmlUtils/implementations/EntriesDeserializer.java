@@ -11,6 +11,9 @@ import eng.eSystem.eXml.XElement;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class EntriesDeserializer implements Deserializer {
+
+
+
   @Override
   public Object invoke(XElement e, XmlContext c) {
     Class<?> type = InternalXmlUtils.loadType(e);

@@ -43,8 +43,8 @@ public class AirplaneXmlContextInit {
             new ItemsSerializer());
     ctx.sdfManager.setDeserializer(AirplaneList.class, new ItemsDeserializer());
 
-    ctx.sdfManager.setSerializer(Airplane.AirplaneImpl.class, (Serializer) null);
-    ctx.sdfManager.setDeserializer(Airplane.AirplaneAtcImpl.class, null);
+    ctx.sdfManager.setSerializer(Airplane.AirplaneImpl.class, null);
+    ctx.sdfManager.setDeserializer(Airplane.AirplaneImpl.class, null);
 
     ctx.sdfManager.setSerializer(Airplane.class,
             new ObjectSerializer()
