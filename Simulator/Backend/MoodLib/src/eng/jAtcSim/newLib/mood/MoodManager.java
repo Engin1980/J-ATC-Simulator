@@ -2,15 +2,8 @@ package eng.jAtcSim.newLib.mood;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
-import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.EntriesSerializer;
-import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.implementations.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 

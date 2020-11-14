@@ -29,23 +29,6 @@ import eng.newXmlUtils.implementations.ItemsSerializer;
 import eng.newXmlUtils.implementations.ObjectSerializer;
 
 public class AirplanesController {
-  public static AirplanesController load(XElement element, IMap<String, Object> context) {
-    //TODEL
-    throw new ToDoException();
-//    AirplanesController ret = new AirplanesController();
-//
-//    IReadOnlyList<AtcId> atcs = (IReadOnlyList<AtcId>) context.get("atcs");
-//
-//    EMap<Class<?>, Deserializer> dess = new EMap<>();
-//    dess.set(AtcId.class, SharedXmlUtils.DeserializersDynamic.getAtcIdDeserializer(atcs));
-//
-//    XmlLoadUtils.Field.restoreFields(element, ret, new String[]{"departureInitialAtcId", "arrivalInitialAtId"}, dess);
-//    XmlLoadUtils.Field.restoreField(element, ret, "planes",
-//            new ItemsDeserializer(e -> Airplane.load(e, context), ret.planes));
-//    return ret;
-  }
-
-
 
   private final AirplaneList<Airplane> planes = new AirplaneList<>(
           q -> q.getReader().getCallsign(),
@@ -63,6 +46,10 @@ public class AirplanesController {
   public void init() {
     this.arrivalInitialAtId = Context.getShared().getAtcs().getFirst(q -> q.getType() == AtcType.ctr);
     this.departureInitialAtcId = Context.getShared().getAtcs().getFirst(q -> q.getType() == AtcType.twr);
+
+    for (Airplane plane : planes) {
+      this.publicPlanes.add(plane.getReader());
+    }
   }
 
   public IAirplane registerPlane(AirplaneTemplate at, Squawk sqwk) {

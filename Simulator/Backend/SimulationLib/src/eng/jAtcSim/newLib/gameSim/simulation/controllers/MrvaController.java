@@ -1,15 +1,12 @@
 package eng.jAtcSim.newLib.gameSim.simulation.controllers;
 
 import eng.eSystem.collections.*;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class MrvaController {
   private final IReadOnlyList<Border> mrvas;
@@ -22,23 +19,6 @@ public class MrvaController {
     this.mrvas = mrvas;
   }
 
-  public IReadOnlyList<Callsign> getMrvaViolatingPlanes() {
-    return mrvaViolatingPlanes;
-  }
-
-  public boolean isMrvaErrorForPlane(IAirplane airplane) {
-    return this.mrvaViolatingPlanes.isAny(q->q.equals(airplane.getCallsign()));
-  }
-
-  public void registerPlane(IAirplane plane) {
-    mrvaMaps.set(plane, null);
-  }
-
-  public void unregisterPlane(Callsign callsign) {
-    IAirplane airplane = mrvaMaps.getKeys().getFirst(q->q.getCallsign().equals(callsign));
-    mrvaMaps.remove(airplane);
-  }
-
   public void evaluateMrvaFails() {
     this.mrvaViolatingPlanes.clear();
     for (IAirplane airplane : mrvaMaps.getKeys()) {
@@ -46,17 +26,34 @@ public class MrvaController {
     }
   }
 
+  public IReadOnlyList<Callsign> getMrvaViolatingPlanes() {
+    return mrvaViolatingPlanes;
+  }
+
+  public boolean isMrvaErrorForPlane(IAirplane airplane) {
+    return this.mrvaViolatingPlanes.isAny(q -> q.equals(airplane.getCallsign()));
+  }
+
+  public void registerPlane(IAirplane plane) {
+    mrvaMaps.set(plane, null);
+  }
+
+  public void unregisterPlane(Callsign callsign) {
+    IAirplane airplane = mrvaMaps.getKeys().getFirst(q -> q.getCallsign().equals(callsign));
+    mrvaMaps.remove(airplane);
+  }
+
   private void evaluateMrvaFail(IAirplane airplane) {
     if (airplane.getState().is(
-        AirplaneState.holdingPoint,
-        AirplaneState.takeOffRoll,
-        AirplaneState.takeOffGoAround,
-        AirplaneState.flyingIaf2Faf,
-        AirplaneState.approachEnter,
-        AirplaneState.approachDescend,
-        AirplaneState.longFinal,
-        AirplaneState.shortFinal,
-        AirplaneState.landed
+            AirplaneState.holdingPoint,
+            AirplaneState.takeOffRoll,
+            AirplaneState.takeOffGoAround,
+            AirplaneState.flyingIaf2Faf,
+            AirplaneState.approachEnter,
+            AirplaneState.approachDescend,
+            AirplaneState.longFinal,
+            AirplaneState.shortFinal,
+            AirplaneState.landed
     )) {
       if (mrvaMaps.get(airplane) != null) mrvaMaps.set(airplane, null);
     } else {

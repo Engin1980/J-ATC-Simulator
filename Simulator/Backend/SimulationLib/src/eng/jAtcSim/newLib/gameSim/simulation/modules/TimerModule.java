@@ -5,7 +5,6 @@
  */
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.exceptions.EApplicationException;
@@ -13,22 +12,10 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
-import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 import java.util.TimerTask;
 
 public class TimerModule extends SimulationModule {
-
-  public static TimerModule load(Simulation parent, XElement source) {
-    int ti = XmlLoadUtils.Field.loadFieldValue(source, "tickInterval", int.class);
-    TimerModule ret = new TimerModule(parent, ti);
-
-    boolean running = XmlLoadUtils.Field.loadFieldValue(source, "running", boolean.class);
-    if (running)
-      ret.start();
-    return ret;
-  }
 
   private java.util.Timer tmr = null;
   private final EventSimple<TimerModule> tickEvent = new EventSimple<>(this);
@@ -46,6 +33,15 @@ public class TimerModule extends SimulationModule {
   public final void setTickInterval(int tickInterval) {
     EAssert.Argument.isTrue(tickInterval > 0);
     this.tickInterval = tickInterval;
+  }
+
+  public synchronized boolean isRunning() {
+    return tmr != null;
+  }
+
+  public int registerOnTickListener(IEventListenerSimple<ISimulation> action) {
+    EAssert.Argument.isNotNull(action, "action");
+    return this.tickEvent.add(e -> action.raise(parent.isim));
   }
 
   public synchronized void start() {
@@ -70,16 +66,7 @@ public class TimerModule extends SimulationModule {
     }
   }
 
-  public synchronized boolean isRunning() {
-    return tmr != null;
-  }
-
-  public int registerOnTickListener(IEventListenerSimple<ISimulation> action){
-    EAssert.Argument.isNotNull(action, "action");
-    return this.tickEvent.add(e -> action.raise(parent.isim));
-  }
-
-  public void unregisterOnTickListener(int listenerId){
+  public void unregisterOnTickListener(int listenerId) {
     this.tickEvent.remove(listenerId);
   }
 }

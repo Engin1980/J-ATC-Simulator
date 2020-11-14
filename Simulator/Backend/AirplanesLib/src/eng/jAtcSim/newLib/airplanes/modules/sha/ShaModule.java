@@ -1,7 +1,5 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
@@ -16,49 +14,10 @@ import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.NavigatorResult;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
-import eng.jAtcSimLib.xmlUtils.*;
-import eng.jAtcSimLib.xmlUtils.deserializers.ItemsDeserializer;
-import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
   private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
-
-  public ShaModule load(Airplane parent, XElement element) {
-
-    XmlLoadUtils.Field.restoreFields(element, this,
-            "lastVerticalSpeed", "targetHeading", "targetHeadingTurn");
-
-    XmlLoadUtils.Field.restoreField(element, this, "altitude",
-            ObjectDeserializer.createFor(InertialValue.class));
-
-    Parser doubleParser = e -> Double.parseDouble(e);
-    XmlLoadUtils.Field.restoreField(element, this, "heading",
-            (XElement e) ->{
-                    HeadingInertialValue hiv = new HeadingInertialValue(0, 0, 0);
-                    XmlLoadUtils.Field.restoreFields(e, hiv, ObjectUtils.getFieldNamesExcept(HeadingInertialValue.class, "thresholds"));
-                    XmlLoadUtils.Field.restoreField(e, hiv, "thresholds",
-                            new ItemsDeserializer(doubleParser.toDeserializer(), new EList<>()));
-                    return hiv;
-            });
-
-    XmlLoadUtils.Field.restoreField(element, this, "speed",
-            ObjectDeserializer.createFor(InertialValue.class));
-
-    XmlLoadUtils.Field.restoreField(element, this, "targetAltitude",
-            ObjectDeserializer.createFor(RestrictableItem.class));
-
-    XmlLoadUtils.Field.restoreField(element, this, "targetSpeed",
-            ObjectDeserializer.createFor(RestrictableItem.class));
-
-    XmlLoadUtils.Field.restoreField(element, this, "navigator",
-            ObjectDeserializer.createFor(Navigator.class)
-                    .useDefaultDeserializer(ObjectDeserializer.createDeepDeserializer()));
-
-    return this;
-  }
 
   private static double getHeadingChangeDenominator(AirplaneType planeType) {
     double ret;
@@ -131,6 +90,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private int targetHeading;
   private LeftRight targetHeadingTurn;
   private final RestrictableItem targetSpeed;
+
 
   public ShaModule(Airplane plane, int heading, int altitude, int speed, AirplaneType planeType) {
     super(plane);

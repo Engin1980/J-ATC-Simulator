@@ -1,6 +1,9 @@
 package eng.newXmlUtils;
 
-import eng.eSystem.collections.*;
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.ESet;
+import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.ISet;
 import eng.eSystem.validation.EAssert;
 import eng.newXmlUtils.base.*;
 import eng.newXmlUtils.implementations.ObjectSerializer;
@@ -25,14 +28,6 @@ public class SDFManager {
   private Serializer defaultSerializer = null;
   private Deserializer defaultDeserializer = null;
 
-  public <T> void setFormatter(Class<T> cls, Formatter<T> formatter) {
-    this.serializers.set(cls, formatter.toSerializer());
-  }
-
-  public <T> void setParser(Class<T> cls, Parser<T> parser){
-    this.deserializers.set(cls, parser.toDeserializer());
-  }
-
   public void addAutomaticallySerializedPackage(String packageName) {
     EAssert.Argument.isNonemptyString(packageName);
     this.autoSerializedPackages.add(packageName);
@@ -49,10 +44,6 @@ public class SDFManager {
     if (ret == null)
       throw new EXmlException(sf("Failed to find ret for type '%s'.", type));
     return ret;
-  }
-
-  private Deserializer createEnumDeserializer(Class<Enum> type) {
-    return ((eng.newXmlUtils.base.Parser) (q,c) -> Enum.valueOf(type, q)).toDeserializer();
   }
 
   public <T> InstanceFactory<T> getFactory(Class<T> type) {
@@ -78,15 +69,32 @@ public class SDFManager {
     return ret;
   }
 
-  private Serializer tryGetAutoserializerRegex(Class<?> type) {
-    if (this.autoSerializedPackages.isAny(q -> type.getPackageName().equals(q)))
-      return new ObjectSerializer();
-    else
-      return null;
+  public void setDeserializer(Class<?> key, Deserializer deserializer) {
+    this.deserializers.set(key, deserializer);
   }
 
-  private Serializer createEnumSerializer(Class<Enum> type) {
-    return ((Formatter<Enum>) q -> q.toString()).toSerializer();
+  public void setDeserializer(String className, Deserializer deserializer) {
+    Class<?> type;
+    try {
+      type = Class.forName(className);
+    } catch (ClassNotFoundException e) {
+      throw new EXmlException(sf("Failed to load type by name '%s'.", className), e);
+    }
+    this.deserializers.set(type, deserializer);
+  }
+
+  public void setDeserializers(IMap<Class<?>, Deserializer> deserializers) {
+    for (Map.Entry<Class<?>, Deserializer> entry : deserializers) {
+      this.setDeserializer(entry.getKey(), entry.getValue());
+    }
+  }
+
+  public <T> void setFormatter(Class<T> cls, Formatter<T> formatter) {
+    this.serializers.set(cls, formatter.toSerializer());
+  }
+
+  public <T> void setParser(Class<T> cls, Parser<T> parser) {
+    this.deserializers.set(cls, parser.toDeserializer());
   }
 
   public void setSerializer(Class<?> type, Serializer serializer) {
@@ -113,17 +121,23 @@ public class SDFManager {
     }
   }
 
-  public void setDeserializers(IMap<Class<?>, Deserializer> deserializers) {
-    for (Map.Entry<Class<?>, Deserializer> entry : deserializers) {
-      this.setDeserializer(entry.getKey(), entry.getValue());
-    }
-  }
-
-  public void setDeserializer(Class key, Deserializer deserializer) {
-    this.deserializers.set(key, deserializer);
-  }
-
   public <T> InstanceFactory<T> tryGetFactory(Class<T> type) {
     return (InstanceFactory<T>) factories.tryGet(type);
+  }
+
+  private <T> Deserializer createEnumDeserializer(Class<Enum> type) {
+    Parser<T> p = (q, c) -> (T) Enum.valueOf(type, q);
+    return p.toDeserializer();
+  }
+
+  private Serializer tryGetAutoserializerRegex(Class<?> type) {
+    if (this.autoSerializedPackages.isAny(q -> type.getPackageName().equals(q)))
+      return new ObjectSerializer();
+    else
+      return null;
+  }
+
+  private Serializer createEnumSerializer(Class<Enum> type) {
+    return ((Formatter<Enum>) q -> q.toString()).toSerializer();
   }
 }

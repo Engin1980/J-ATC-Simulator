@@ -17,7 +17,7 @@ public class AtcXmlContextInit {
             .withIgnoredFields("atcIdsCache", "userAtcIdsCache"));
     ctx.sdfManager.setSerializer(AtcList.class, new ItemsSerializer());
     ctx.sdfManager.setSerializer(UserAtc.class, new ObjectSerializer()
-            .withIgnoredField("recorder"));
+            .withIgnoredFields("recorder"));
     ComputerAtc.prepareXmlContext(ctx);
     ctx.sdfManager.setSerializer(CenterAtc.class, new ObjectSerializer()
             .withIgnoredFields("recorder", "switchManagerInterface"));

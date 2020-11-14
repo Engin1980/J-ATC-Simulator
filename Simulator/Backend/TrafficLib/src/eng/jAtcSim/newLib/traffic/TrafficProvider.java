@@ -1,36 +1,14 @@
 package eng.jAtcSim.newLib.traffic;
 
 import eng.eSystem.collections.*;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.time.EDayTime;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
-import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.deserializers.EntriesWithListValuesDeserializer;
-import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
-import eng.jAtcSimLib.xmlUtils.serializers.EntriesWithListValuesSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class TrafficProvider {
-  public static TrafficProvider load(XElement element, ITrafficModel trafficModel) {
-
-    System.out.println("Traffic-model not loaded");
-
-    TrafficProvider ret = new TrafficProvider(trafficModel);
-
-    XmlLoadUtils.Field.restoreField(element, ret, "movementsForDay",
-            new EntriesWithListValuesDeserializer(
-                    e -> Integer.parseInt(e.getContent()),
-                    ObjectDeserializer.createEmpty(),
-                    () -> new EList<>(),
-                    ret.movementsForDay));
-
-    return ret;
-  }
 
   private final ITrafficModel trafficModel;
   private final IMap<Integer, IList<MovementTemplate>> movementsForDay = new EMap<>();
@@ -64,15 +42,15 @@ public class TrafficProvider {
     return ret;
   }
 
+  public void init() {
+    // intentionally blank
+  }
+
   public void prepareTrafficForDay(int dayIndex) {
     EAssert.isTrue(
             movementsForDay.containsKey(dayIndex) == false,
             sf("Cannot generate movements for day %d, as it has been already generated.", dayIndex));
     prepareMovementsForDay(dayIndex);
-  }
-
-  public void init() {
-    // intentionally blank
   }
 
   private void prepareMovementsForDay(int dayIndex) {

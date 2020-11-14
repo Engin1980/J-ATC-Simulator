@@ -1,9 +1,6 @@
 package eng.jAtcSim.newLib.atcs.internal.computer;
 
-import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IMap;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
@@ -12,7 +9,6 @@ import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.atcs.internal.IAtcSwitchManagerInterface;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.messaging.xml.ParticipantFormatter;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.DelayedList;
@@ -23,10 +19,6 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneConfirmation;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
-import eng.jAtcSimLib.xmlUtils.Serializer;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 import eng.newXmlUtils.XmlContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -54,8 +46,6 @@ public abstract class ComputerAtc extends Atc {
   protected abstract void processNonPlaneSwitchMessageFromAtc(Message m);
 
   protected abstract void _elapseSecond();
-
-  protected abstract void __save(XElement target);
 
   @Override
   public final void elapseSecond() {

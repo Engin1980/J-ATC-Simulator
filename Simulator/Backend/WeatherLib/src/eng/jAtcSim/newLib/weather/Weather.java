@@ -1,21 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.EStringBuilder;
-import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.UnitProvider;
 import eng.jAtcSim.newLib.weather.contextLocal.Context;
-import eng.jAtcSimLib.xmlUtils.ObjectUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
-/**
- * @author Marek
- */
 public class Weather {
 
   public enum eSnowState {

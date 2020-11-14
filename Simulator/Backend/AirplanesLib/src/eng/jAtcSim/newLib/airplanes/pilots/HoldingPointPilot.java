@@ -10,14 +10,6 @@ public class HoldingPointPilot extends Pilot {
     super(plane);
   }
 
-  public static HoldingPointPilot load(XElement element, IMap<String, Object> context) {
-    Airplane airplane = (Airplane) context.get("airplane");
-
-    HoldingPointPilot ret = new HoldingPointPilot(airplane);
-
-    return ret;
-  }
-
   @Override
   public void elapseSecondInternal() {
 

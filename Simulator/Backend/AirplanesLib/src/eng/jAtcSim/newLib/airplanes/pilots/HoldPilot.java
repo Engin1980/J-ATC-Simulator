@@ -1,7 +1,5 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
-import eng.eSystem.collections.IMap;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinates;
@@ -10,32 +8,14 @@ import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
-import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSimLib.xmlUtils.ObjectUtils;
-import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class HoldPilot extends Pilot {
-
-  public static HoldPilot load(XElement element, IMap<String, Object> context){
-    Airplane airplane = (Airplane) context.get("airplane");
-    Area area = (Area) context.get("area");
-    HoldPilot ret = new HoldPilot(airplane);
-
-    XmlLoadUtils.Field.restoreFields(element, ret,
-            ObjectUtils.getFieldNamesExcept(ret.getClass(),"navaid"));
-
-    XmlLoadUtils.Field.restoreField(element, ret, "navaid",
-            (String e) -> area.getNavaids().get(e));
-
-    return ret;
-  }
 
   public enum eHoldPhase {
     directEntry,
@@ -51,6 +31,10 @@ public class HoldPilot extends Pilot {
   }
 
   private static final double NEAR_FIX_DISTANCE = 0.5;
+
+  public static HoldPilot createForLoad(Airplane plane) {
+    return new HoldPilot(plane);
+  }
   //TODO Make all fields private
   public Navaid navaid;
   public int inboundRadial;
@@ -58,7 +42,7 @@ public class HoldPilot extends Pilot {
   public EDayTimeStamp secondTurnTime;
   public LeftRight turn;
 
-  private HoldPilot(Airplane plane){
+  private HoldPilot(Airplane plane) {
     super(plane);
   }
 

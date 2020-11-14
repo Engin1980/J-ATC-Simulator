@@ -4,15 +4,12 @@ import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
 
 class ArrivalManager {
   private final IList<IAirplane> goAroundedPlanesToSwitchList = new EDistinctList<>(EDistinctList.Behavior.exception);
@@ -45,16 +42,16 @@ class ArrivalManager {
 
   public double getClosestLandingPlaneDistanceForThreshold(ActiveRunwayThreshold threshold) {
     IList<IAirplane> tmp = Context.getAirplane().getAirplanes()
-        .where(q -> threshold.equals(q.getRouting().getAssignedRunwayThreshold()));
+            .where(q -> threshold.equals(q.getRouting().getAssignedRunwayThreshold()));
     double ret = Double.MAX_VALUE;
     for (IAirplane plane : tmp) {
       if (plane.getState() == AirplaneState.landed) {
         ret = 0;
         break;
       } else if (plane.getState().is(
-          AirplaneState.shortFinal,
-          AirplaneState.longFinal,
-          AirplaneState.approachDescend
+              AirplaneState.shortFinal,
+              AirplaneState.longFinal,
+              AirplaneState.approachDescend
       )) {
         double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), threshold.getCoordinate());
         if (dist < ret)
@@ -79,8 +76,8 @@ class ArrivalManager {
 
   public boolean isSomeArrivalOnRunway(ActiveRunway rwy) {
     boolean ret = this.landingPlanesList
-        .where(q -> rwy.getThresholds().contains(q.getRouting().getAssignedRunwayThreshold()))
-        .isAny(q -> q.getState() == AirplaneState.landed);
+            .where(q -> rwy.getThresholds().contains(q.getRouting().getAssignedRunwayThreshold()))
+            .isAny(q -> q.getState() == AirplaneState.landed);
     return ret;
   }
 

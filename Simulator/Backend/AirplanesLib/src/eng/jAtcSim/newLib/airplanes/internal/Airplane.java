@@ -4,7 +4,6 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
@@ -49,6 +48,7 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertingNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.weather.Weather;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -523,67 +523,13 @@ public class Airplane {
     return ret;
   }
 
-  public static Airplane load(XElement element, IMap<String, Object> context) {
-    //TODEL
-    throw new ToDoException();
-//    IReadOnlyList<AtcId> atcs = (IReadOnlyList<AtcId>) context.get("atcs");
-//    AirplaneTypes airplaneTypes = (AirplaneTypes) context.get("airplaneTypes");
-//
-//    String callsignString = element.getChild("flightModule").getChild("callsign").getContent();
-//    Callsign callsign = new Callsign(callsignString);
-//    Airplane ret = new Airplane(callsign);
-//
-//    context.set("airplane", ret);
-//
-//    XmlLoadUtils.Field.restoreField(element, ret, "state");
-//    XmlLoadUtils.Field.restoreField(element, ret, "lastGoAroundReasonIfAny");
-//    XmlLoadUtils.Field.restoreField(element, ret, "coordinate", SharedXmlUtils.Deserializers.coordinateDeserializer);
-//    XmlLoadUtils.Field.restoreField(element, ret, "squawk", SharedXmlUtils.Deserializers.squawkDeserializer);
-//    XmlLoadUtils.Field.restoreField(element, ret, "airplaneType", (Parser) e -> airplaneTypes.getByName(e));
-//
-//    XmlLoadUtils.Field.restoreField(element, ret, "atcModule",
-//            ObjectDeserializer.createFor(AtcModule.class)
-//                    .useDeserializer(AtcId.class, SharedXmlUtils.DeserializersDynamic.getAtcIdDeserializer(atcs))
-//                    .excludeFields("plane", "rdr", "wrt")
-//                    .useInstanceProvider(AtcModule.class, () -> ret.atcModule));
-//
-//    XmlLoadUtils.Field.restoreField(element, ret, "mood", (Deserializer) e -> Mood.load(e));
-//
-//    if (ret.divertModule != null)
-//      XmlLoadUtils.Field.restoreField(element, ret, "divertModule",
-//              ObjectDeserializer.createFor(DivertModule.class)
-//                      .useDeserializers(SharedXmlUtils.Deserializers.deserializers)
-//                      .excludeFields("plane", "rdr", "wrt"));
-//
-//    XmlLoadUtils.Field.restoreField(element, ret, "emergencyModule",
-//            ObjectDeserializer.createFor(EmergencyModule.class)
-//                    .useDeserializers(SharedXmlUtils.Deserializers.deserializers));
-//
-//    XmlLoadUtils.Field.restoreField(element, ret, "flightModule",
-//            ObjectDeserializer.createFor(AirplaneFlightModule.class)
-//                    .useDeserializers(SharedXmlUtils.Deserializers.deserializers)
-//                    .excludeFields("plane", "rdr", "wrt")
-//                    .useInstanceProvider(AirplaneFlightModule.class, () -> ret.flightModule));
-//
-//    XmlLoadUtils.Field.restoreField(element, ret, "routingModule", (Deserializer) e -> ret.routingModule.load(e, context));
-//
-//    XmlLoadUtils.Field.restoreField(element, ret, "shaModule", (Deserializer) e -> ret.sha.load(ret, e));
-//
-//    XmlLoadUtils.Field.restoreField(element, ret, "pilot", (Deserializer) e -> Pilot.load(e, context));
-//
-//    context.remove("airplane");
-//
-//    return ret;
-  }
-
   private final AirplaneType airplaneType;
   private final AtcModule atcModule;
   private Coordinate coordinate;
-  private final CockpitVoiceRecorder cvr;
+  private CockpitVoiceRecorder cvr;
   private final DivertModule divertModule;
   private final EmergencyModule emergencyModule;
-  private final FlightDataRecorder fdr;
-  private final CommandQueueRecorder cqr;
+  private FlightDataRecorder fdr;
   private final AirplaneFlightModule flightModule;
   private final Mood mood;
   private Pilot pilot;
@@ -596,54 +542,44 @@ public class Airplane {
   private GoingAroundNotification.GoAroundReason lastGoAroundReasonIfAny = null;
   private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> speechCache = new EMap<>();
 
-  private Airplane(Callsign callsign) {
-    this.squawk = Squawk.create("0000");
-    this.flightModule = new AirplaneFlightModule(
-            callsign,
-            0, new EDayTimeStamp(0), true);
-
-    this.airplaneType = new AirplaneType(
-            "NOTYP", "only-for-loading", 'A', 0, 0, 0, 0, 0, 0
-            , 0, 0, 0, 0, 0, 0, 0, 0
-            , 0, 0);
-
-    this.atcModule = new AtcModule(this, new AtcId("LOADING", 0, AtcType.app));
-
-    this.divertModule = new DivertModule(this);
-    this.emergencyModule = new EmergencyModule();
-    this.mood = new Mood();
-    this.routingModule = new RoutingModule(this, Navaid.create(
-            "LOADN", Navaid.eType.auxiliary, new Coordinate(0, 0)));
-    this.sha = new ShaModule(this, 0, 0, 0, this.airplaneType);
-
-    this.fdr = new FlightDataRecorder(this.flightModule.getCallsign());
-    this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
-    this.cqr = new CommandQueueRecorder(this.flightModule.getCallsign());
-    this.routingModule.setCqr(this.cqr);
+  @XmlConstructor
+  private Airplane(){
+    this.airplaneType = null;
+    this.atcModule = null;
+    this.divertModule = null;
+    this.emergencyModule = null;
+    this.flightModule = null;
+    this.mood = null;
+    this.routingModule = null;
+    this.sha = null;
+    this.squawk = null;
   }
 
-  private Airplane(Squawk squawk, AirplaneType airplaneType,
-                   AirplaneFlightModule flightModule,
-                   ShaModule shaModule, AtcModule atcModule, RoutingModule routingModule,
-                   DivertModule divertModule, Mood mood, EmergencyModule emergencyModule,
-                   Coordinate coordinate, Pilot pilot, AirplaneState state) {
-    this.squawk = squawk;
-    this.flightModule = flightModule;
-    this.fdr = new FlightDataRecorder(this.flightModule.getCallsign());
-    this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
-    this.cqr = new CommandQueueRecorder(this.flightModule.getCallsign());
-    this.sha = shaModule;
-    this.emergencyModule = emergencyModule;
-    this.atcModule = atcModule;
-    this.routingModule = routingModule;
-    this.routingModule.setCqr(this.cqr);
-    this.divertModule = divertModule;
-    this.mood = mood;
-    this.state = state;
-    this.coordinate = coordinate;
-    this.airplaneType = airplaneType;
-    this.pilot = pilot;
-  }
+//  private Airplane(Callsign callsign) {
+//    this.squawk = Squawk.create("0000");
+//    this.flightModule = new AirplaneFlightModule(
+//            callsign,
+//            0, new EDayTimeStamp(0), true);
+//
+//    this.airplaneType = new AirplaneType(
+//            "NOTYP", "only-for-loading", 'A', 0, 0, 0, 0, 0, 0
+//            , 0, 0, 0, 0, 0, 0, 0, 0
+//            , 0, 0);
+//
+//    this.atcModule = new AtcModule(this, new AtcId("LOADING", 0, AtcType.app));
+//
+//    this.divertModule = new DivertModule(this);
+//    this.emergencyModule = new EmergencyModule();
+//    this.mood = new Mood();
+//    this.routingModule = new RoutingModule(this, Navaid.create(
+//            "LOADN", Navaid.eType.auxiliary, new Coordinate(0, 0)));
+//    this.sha = new ShaModule(this, 0, 0, 0, this.airplaneType);
+//
+//    this.fdr = new FlightDataRecorder(this.flightModule.getCallsign());
+//    this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
+//    this.cqr = new CommandQueueRecorder(this.flightModule.getCallsign());
+//    this.routingModule.setCqr(this.cqr);
+//  }
 
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk squawk, AirplaneType airplaneType,
                    int heading, int altitude, int speed, boolean isDeparture,
@@ -655,15 +591,11 @@ public class Airplane {
     this.flightModule = new AirplaneFlightModule(
             callsign, entryDelay, expectedExitTime, isDeparture);
 
-    this.fdr = new FlightDataRecorder(this.flightModule.getCallsign());
-    this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
-    this.cqr = new CommandQueueRecorder(this.flightModule.getCallsign());
 
     this.sha = new ShaModule(this, heading, altitude, speed, airplaneType);
     this.emergencyModule = new EmergencyModule();
     this.atcModule = new AtcModule(this, initialAtcId);
     this.routingModule = new RoutingModule(this, entryExitPoint);
-    this.routingModule.setCqr(this.cqr);
     if (isDeparture)
       this.divertModule = null;
     else
@@ -679,6 +611,8 @@ public class Airplane {
     } else {
       this.pilot = new ArrivalPilot(this);
     }
+
+    initRecorders();
   }
 
   public void elapseSecond() {
@@ -707,6 +641,13 @@ public class Airplane {
 
   public IAirplaneWriter getWriter() {
     return this.wrt;
+  }
+
+  public void initRecorders() {
+    this.fdr = new FlightDataRecorder(this.flightModule.getCallsign());
+    this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
+    CommandQueueRecorder cqr = new CommandQueueRecorder(this.flightModule.getCallsign());
+    this.routingModule.setCqr(cqr);
   }
 
   private void flushSpeeches() {

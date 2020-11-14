@@ -1,16 +1,11 @@
 package eng.jAtcSim.newLib.airplanes.templates;
 
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.area.EntryExitPoint;
-import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 public abstract class AirplaneTemplate {
   private final Callsign callsign;
@@ -38,8 +33,6 @@ public abstract class AirplaneTemplate {
     this.entryTime = entryTime;
     this.entryDelay = entryDelay;
   }
-
-  protected abstract void _save(XElement target);
 
   public AirplaneType getAirplaneType() {
     return airplaneType;

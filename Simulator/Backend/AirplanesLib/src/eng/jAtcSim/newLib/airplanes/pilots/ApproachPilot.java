@@ -1,7 +1,5 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
-import eng.eSystem.collections.IMap;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
@@ -12,8 +10,6 @@ import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
-import eng.jAtcSim.newLib.area.Airport;
-import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
@@ -24,7 +20,6 @@ import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRouteBehavior;
 import eng.jAtcSim.newLib.area.approaches.behaviors.IApproachBehavior;
 import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
-import eng.jAtcSim.newLib.shared.GID;
 import eng.jAtcSim.newLib.shared.RadialCalculator;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -34,41 +29,17 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ThenCommand;
-import eng.jAtcSimLib.xmlUtils.Parser;
-import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 public class ApproachPilot extends Pilot {
 
   private static final int MAX_HEADING_DIFFERENCE = 40;
+
+  public static ApproachPilot createEmptyToLoad(Airplane airplane) {
+    return new ApproachPilot(airplane);
+  }
   private final Approach approach;
   private final IafRoute iafRoute;
   private Integer currentStageIndex = null;
-
-  public static ApproachPilot load(XElement element, IMap<String, Object> context) {
-    Airplane airplane = (Airplane) context.get("airplane");
-    Area area = (Area) context.get("area");
-    Airport airport = (Airport) context.get("airport");
-    ApproachPilot ret = new ApproachPilot(airplane);
-
-    XmlLoadUtils.Field.restoreField(element, ret, "currentStageIndex");
-
-    XmlLoadUtils.Field.restoreField(element, ret, "approach",
-            ObjectDeserializer.createDeepDeserializer()
-                    .useDeserializer(Navaid.class, ((Parser) (String e) -> area.getNavaids().get(e)).toDeserializer()));
-
-    XmlLoadUtils.Field.restoreField(element, ret, "iafRoute",
-            (Parser) (e -> {
-              int id = Integer.parseInt(e);
-              GID gid = GID.create(id);
-              IafRoute lret = airport.getIafRoutes().getFirst(q -> q.getGID().equals(gid));
-              return lret;
-            }));
-
-    return ret;
-  }
 
   private ApproachPilot(Airplane airplane) {
     super(airplane);

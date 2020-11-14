@@ -1,14 +1,9 @@
 package eng.jAtcSim.newLib.airplanes.modules;
 
 
-import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
-import eng.jAtcSimLib.xmlUtils.ObjectUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
 
 public class AirplaneFlightModule {
   private final Callsign callsign;

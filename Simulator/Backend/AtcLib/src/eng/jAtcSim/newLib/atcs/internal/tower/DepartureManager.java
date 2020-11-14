@@ -1,7 +1,6 @@
 package eng.jAtcSim.newLib.atcs.internal.tower;
 
 import eng.eSystem.collections.*;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
@@ -18,9 +17,6 @@ import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToRouteCommand;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.EntriesViaStringSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
 
 import java.util.function.Consumer;
 

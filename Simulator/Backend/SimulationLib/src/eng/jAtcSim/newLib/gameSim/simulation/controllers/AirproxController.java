@@ -4,7 +4,6 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.IReadOnlyMap;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.AirproxType;
@@ -13,10 +12,6 @@ import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
-import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
-import eng.jAtcSimLib.xmlUtils.Formatter;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.EntriesViaStringSerializer;
 
 public class AirproxController {
   private static final double AIRPROX_STANDARD_DISTANCE = 5;

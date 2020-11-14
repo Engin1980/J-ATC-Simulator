@@ -8,7 +8,6 @@ package eng.jAtcSim.newLib.atcs.internal;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.atcs.IUserAtcInterface;
@@ -28,8 +27,6 @@ import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 

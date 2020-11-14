@@ -1,6 +1,5 @@
 package eng.jAtcSim.newLib.airplanes.templates;
 
-import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.area.EntryExitPoint;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -12,12 +11,8 @@ public final class DepartureAirplaneTemplate extends AirplaneTemplate {
     super(callsign, airplaneType, entryExitPoint, expectedExitTime, entryTime, entryDelay);
   }
 
-  public EntryExitPoint getExitPoint(){
+  public EntryExitPoint getExitPoint() {
     return super.entryExitPoint;
   }
 
-  @Override
-  protected void _save(XElement target) {
-    // nothing to save here
-  }
 }

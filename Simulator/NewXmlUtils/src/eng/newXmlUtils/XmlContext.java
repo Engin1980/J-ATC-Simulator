@@ -3,13 +3,54 @@ package eng.newXmlUtils;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.functionalInterfaces.Producer;
+import eng.eSystem.validation.EAssert;
 import eng.newXmlUtils.base.Deserializer;
 import eng.newXmlUtils.base.Serializer;
 import eng.newXmlUtils.utils.InternalXmlUtils;
 
 public class XmlContext {
-  public final SDFManager sdfManager = new SDFManager();
-  public final IMap<String, Object> values = new EMap<>();
+
+  public static class XmlContextValues {
+    private final IMap<String, Object> inner = new EMap<>();
+
+    public boolean containsKey(String key) {
+      return inner.containsKey(key);
+    }
+
+    public Object get(String key) {
+      EAssert.Argument.isTrue(inner.containsKey(key));
+      return inner.get(key);
+    }
+
+    public <T> T get(Class<T> clz) {
+      return (T) this.get(clz.getName());
+    }
+
+    public Object getOrSet(String key, Producer<Object> defaultInstanceProducer) {
+      if (inner.containsKey(key) == false)
+        inner.set(key, defaultInstanceProducer.invoke());
+      return get(key);
+    }
+
+    public void remove(String key) {
+      EAssert.Argument.isTrue(inner.containsKey(key));
+      inner.remove(key);
+    }
+
+    public <T> void remove(Class<T> clz) {
+      this.remove(clz.getName());
+    }
+
+    public <T> void set(Class<T> clz, T value) {
+      this.set(clz.getName(), value);
+    }
+
+    public void set(String key, Object value) {
+      EAssert.Argument.isFalse(inner.containsKey(key));
+      inner.set(key, value);
+    }
+  }
 
   public static void serialize(XElement element, Object value, XmlContext context) {
     Serializer serializer = context.sdfManager.getSerializer(value);
@@ -33,5 +74,8 @@ public class XmlContext {
     T ret = (T) d.invoke(e, c);
     return ret;
   }
+
+  public final SDFManager sdfManager = new SDFManager();
+  public final XmlContextValues values = new XmlContextValues();
 
 }

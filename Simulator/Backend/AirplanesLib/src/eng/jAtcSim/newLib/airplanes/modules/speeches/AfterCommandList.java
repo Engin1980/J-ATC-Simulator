@@ -5,9 +5,7 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.functionalInterfaces.Consumer2;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -20,13 +18,6 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
-import eng.jAtcSimLib.xmlUtils.Deserializer;
-import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.deserializers.ItemsDeserializer;
-import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 import java.util.function.Predicate;
 
@@ -329,30 +320,6 @@ public class AfterCommandList {
 
   public boolean isRouteEmpty() {
     return this.rt.isEmpty();
-  }
-
-  public AfterCommandList load(XElement element) {
-    Deserializer deserializer = e -> {
-
-      Object antecedent = XmlLoadUtils.Field.loadFieldValue(element, "antecedent",
-              ObjectDeserializer.createFor(AfterCommand.class)
-                      .useDefaultDeserializer(ObjectDeserializer.createDeepDeserializer()));
-
-      Object consequent = XmlLoadUtils.Field.loadFieldValue(element, "consequent",
-              ObjectDeserializer.createFor(ICommand.class)
-                      .useDefaultDeserializer(ObjectDeserializer.createDeepDeserializer()));
-
-      AFItem ret = new AFItem((AfterCommand) antecedent, (ICommand) consequent);
-      return ret;
-    };
-
-    XmlLoadUtils.Field.restoreField(element, this, "rt",
-            new ItemsDeserializer(deserializer, this.rt, AFItem.class));
-
-    XmlLoadUtils.Field.restoreField(element, this, "ex",
-            new ItemsDeserializer(deserializer, this.ex, AFItem.class));
-
-    return this;
   }
 
   public String toLogString() {

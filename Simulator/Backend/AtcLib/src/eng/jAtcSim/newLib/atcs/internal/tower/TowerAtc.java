@@ -35,25 +35,11 @@ import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.weather.Weather;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 import eng.newXmlUtils.XmlContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class TowerAtc extends ComputerAtc {
-
-  public static void prepareXmlContext(XmlContext ctx) {
-    ctx.sdfManager.setSerializer(DepartureManager.class,
-            new eng.newXmlUtils.implementations.ObjectSerializer()
-                    .withIgnoredFields("parent", "messageSenderConsumer"));
-    ctx.sdfManager.setSerializer(ArrivalManager.class,
-            new eng.newXmlUtils.implementations.ObjectSerializer()
-                    .withIgnoredFields("parent", "messageSenderConsumer"));
-    ctx.sdfManager.setSerializer(RunwayCheckInfo.class, new eng.newXmlUtils.implementations.ObjectSerializer());
-    ctx.sdfManager.setSerializer(SchedulerForAdvice.class, new eng.newXmlUtils.implementations.ObjectSerializer());
-    ctx.sdfManager.setSerializer(RunwaysInUseInfo.class, new eng.newXmlUtils.implementations.ObjectSerializer());
-  }
 
   public enum eDirection {
     departures,
@@ -173,10 +159,21 @@ public class TowerAtc extends ComputerAtc {
       return scheduled;
     }
   }
-
   private static final int[] RWY_CHANGE_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5, 4, 3, 2, 1};
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
+
+  public static void prepareXmlContext(XmlContext ctx) {
+    ctx.sdfManager.setSerializer(DepartureManager.class,
+            new eng.newXmlUtils.implementations.ObjectSerializer()
+                    .withIgnoredFields("parent", "messageSenderConsumer"));
+    ctx.sdfManager.setSerializer(ArrivalManager.class,
+            new eng.newXmlUtils.implementations.ObjectSerializer()
+                    .withIgnoredFields("parent", "messageSenderConsumer"));
+    ctx.sdfManager.setSerializer(RunwayCheckInfo.class, new eng.newXmlUtils.implementations.ObjectSerializer());
+    ctx.sdfManager.setSerializer(SchedulerForAdvice.class, new eng.newXmlUtils.implementations.ObjectSerializer());
+    ctx.sdfManager.setSerializer(RunwaysInUseInfo.class, new eng.newXmlUtils.implementations.ObjectSerializer());
+  }
 
   private static RunwayConfiguration getSuggestedThresholds() {
     RunwayConfiguration ret = null;
@@ -309,26 +306,6 @@ public class TowerAtc extends ComputerAtc {
       RunwayCheckInfo rwyCheck = RunwayCheckInfo.createImmediateAfterEmergency();
       runwayChecks.set(rwy.getName(), rwyCheck);
     }
-  }
-
-  @Override
-  protected void __save(XElement target) {
-    //TODEL
-    throw new ToDoException();
-//    XmlSaveUtils.Field.storeField(target, this, "isUpdatedWeather");
-//    XmlSaveUtils.Field.storeField(target, this, "departureManager",
-//            (XElement e, DepartureManager q) -> q.save(e));
-//    XmlSaveUtils.Field.storeField(target, this, "arrivalManager",
-//            (XElement e, ArrivalManager q) -> q.save(e));
-//    XmlSaveUtils.Field.storeField(target, this, "inUseInfo",
-//            (XElement e, RunwaysInUseInfo q) -> q.save(e));
-//    XmlSaveUtils.Field.storeField(target, this, "runwayChecks",
-//            new EntriesSerializer<String, RunwayCheckInfo>(
-//                    (e, q) -> e.setContent(q),
-//                    ObjectSerializer.createFor(RunwayCheckInfo.class)
-//                            .useDefaultSerializer(
-//                                    ObjectSerializer.createDeepSerializer()
-//                                            .useSerializers(SharedXmlUtils.Serializers.serializers))));
   }
 
   @Override

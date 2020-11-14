@@ -2,7 +2,6 @@ package eng.jAtcSim.newLib.atcs.internal.center;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
@@ -31,8 +30,6 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterNava
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.serializers.ItemsViaStringSerializer;
 
 public class CenterAtc extends ComputerAtc {
 
@@ -217,21 +214,6 @@ public class CenterAtc extends ComputerAtc {
       closeArrivals.tryRemove(plane);
       //TODO here somewhere should be stats after finished departer, don't they?
     }
-  }
-
-  @Override
-  protected void __save(XElement target) {
-    XmlSaveUtils.Field.storeField(target, this, "closeArrivals",
-            new ItemsViaStringSerializer<IAirplane>(q -> q.getSqwk().toString()));
-    XmlSaveUtils.Field.storeField(target, this, "farArrivals",
-            new ItemsViaStringSerializer<IAirplane>(q -> q.getSqwk().toString()));
-    XmlSaveUtils.Field.storeField(target, this, "middleArrivals",
-            new ItemsViaStringSerializer<IAirplane>(q -> q.getSqwk().toString()));
-    XmlSaveUtils.Field.storeField(target, this, "departures",
-            new ItemsViaStringSerializer<IAirplane>(q -> q.getSqwk().toString()));
-
-    // ctrAcceptDistance from template
-    // ctrNavaidAcceptDistance from template
   }
 
   @Override

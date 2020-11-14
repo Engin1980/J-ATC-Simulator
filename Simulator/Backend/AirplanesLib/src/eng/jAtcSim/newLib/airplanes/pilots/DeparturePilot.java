@@ -10,14 +10,6 @@ public class DeparturePilot extends BasicPilot {
     super(plane);
   }
 
-  public static DeparturePilot load(XElement element, IMap<String, Object> context) {
-    Airplane airplane = (Airplane) context.get("airplane");
-
-    DeparturePilot ret = new DeparturePilot(airplane);
-
-    return ret;
-  }
-
   @Override
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{

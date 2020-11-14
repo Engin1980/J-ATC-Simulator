@@ -1,10 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.modules.speeches;
 
-import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.utilites.ArrayUtils;
@@ -18,14 +15,10 @@ import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.other.CommandQueueRecorder;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
-import eng.jAtcSim.newLib.area.Airport;
-import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.messaging.xml.ParticipantFormatter;
-import eng.jAtcSim.newLib.messaging.xml.ParticipantParser;
 import eng.jAtcSim.newLib.shared.DelayedList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -37,14 +30,6 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.RequestRadarContactNoti
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
-import eng.jAtcSimLib.xmlUtils.Deserializer;
-import eng.jAtcSimLib.xmlUtils.Serializer;
-import eng.jAtcSimLib.xmlUtils.XmlLoadUtils;
-import eng.jAtcSimLib.xmlUtils.XmlSaveUtils;
-import eng.jAtcSimLib.xmlUtils.deserializers.ItemsDeserializer;
-import eng.jAtcSimLib.xmlUtils.deserializers.ObjectDeserializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ItemsSerializer;
-import eng.jAtcSimLib.xmlUtils.serializers.ObjectSerializer;
 
 public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
@@ -73,7 +58,6 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   public RoutingModule(Airplane plane, Navaid entryExitPoint) {
     super(plane);
     this.entryExitPoint = entryExitPoint;
-    this.cqr = cqr;
   }
 
   public void applyShortcut(Navaid navaid) {
@@ -124,32 +108,6 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
   public boolean isGoingToFlightOverNavaid(Navaid navaid) {
     return afterCommands.hasProceedDirectToNavaidAsConseqent(navaid);
-  }
-
-  public RoutingModule load(XElement element, IMap<String, Object> context) {
-    Area area = (Area) context.get("area");
-    Airport airport = (Airport) context.get("airport");
-
-    XmlLoadUtils.Field.restoreField(element, this, "assignedDARouteName");
-
-    String eepName = XmlLoadUtils.Field.loadFieldValue(element, "entryExitPoint", String.class);
-    this.entryExitPoint = area.getNavaids().get(eepName);
-
-    String rtName = XmlLoadUtils.Field.loadFieldValue(element, "runwaythreshold", String.class);
-    this.runwayThreshold = airport.getRunwayThreshold(rtName);
-
-    IMap<Class<?>, Deserializer> customDelayListDeserializers = EMap.of(
-            Participant.class, new ParticipantParser().toDeserializer(),
-            SpeechList.class, new ItemsDeserializer(ObjectDeserializer.createDeepDeserializer(), new SpeechList())
-    );
-
-    XmlLoadUtils.Field.restoreField(element, this, "queue",
-            (Deserializer) (e -> this.queue.load(e, customDelayListDeserializers, ICommand.class)));
-
-    XmlLoadUtils.Field.restoreField(element, this, "afterCommands",
-            (Deserializer) (e -> this.afterCommands.load(e)));
-
-    return this;
   }
 
   public void setCqr(CommandQueueRecorder commandQueueRecorder) {
