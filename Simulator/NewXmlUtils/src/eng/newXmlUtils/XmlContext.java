@@ -5,7 +5,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
 import eng.newXmlUtils.base.Deserializer;
 import eng.newXmlUtils.base.Serializer;
-import eng.newXmlUtils.utils.XmlUtils;
+import eng.newXmlUtils.utils.InternalXmlUtils;
 
 public class XmlContext {
   public final SDFManager sdfManager = new SDFManager();
@@ -23,7 +23,7 @@ public class XmlContext {
   }
 
   public static Object deserialize(XElement element, XmlContext context) {
-    Class<?> type = XmlUtils.loadType(element);
+    Class<?> type = InternalXmlUtils.loadType(element);
     Deserializer deserializer = context.sdfManager.getDeserializer(type);
     Object ret = _deserialize(element, deserializer, context);
     return ret;

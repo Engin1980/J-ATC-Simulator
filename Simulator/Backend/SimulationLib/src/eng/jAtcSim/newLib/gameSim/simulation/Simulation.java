@@ -4,9 +4,9 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.IEventListenerSimple;
-import eng.eSystem.exceptions.ToDoException;
+import eng.eSystem.utilites.ReflectionUtils;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplanes.AirplaneXmlContextInit;
+import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
@@ -15,6 +15,8 @@ import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
 import eng.jAtcSim.newLib.atcs.AtcXmlContextInit;
+import eng.jAtcSim.newLib.fleet.airliners.AirlinesFleets;
+import eng.jAtcSim.newLib.fleet.generalAviation.GeneralAviationFleets;
 import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
@@ -27,10 +29,8 @@ import eng.jAtcSim.newLib.gameSim.simulation.modules.*;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.mood.MoodManager;
-import eng.jAtcSim.newLib.mood.MoodXmlContextInit;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.CallsignFactory;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.context.ISharedAcc;
@@ -51,6 +51,8 @@ import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
 import eng.jAtcSim.newLib.weather.WeatherXmlContextInit;
 import eng.newXmlUtils.XmlContext;
+import eng.newXmlUtils.annotations.XmlConstructor;
+import eng.newXmlUtils.implementations.ObjectDeserializer;
 import eng.newXmlUtils.implementations.ObjectSerializer;
 
 public class Simulation {
@@ -179,7 +181,7 @@ public class Simulation {
   private static final boolean DEBUG_STYLE_TIMER = false;
 
   public static void prepareXmlContext(XmlContext ctx) {
-
+    // region Simulation
     ctx.sdfManager.setSerializer(Simulation.class, new ObjectSerializer()
             .withValueClassCheck(Simulation.class, false)
             .withIgnoredFields(
@@ -187,51 +189,104 @@ public class Simulation {
                     "isim", // accessor, not to save
                     "worldModule" // not saved
             ));
+    ctx.sdfManager.setDeserializer(Simulation.class, new ObjectDeserializer<Simulation>()
+            .withIgnoredFields("ioModule", "isim", "worldModule")
+            .withAfterLoadAction((q, c) -> {
+              WorldModule worldModule = new WorldModule(
+                      q,
+                      (Area) c.values.get("area"),
+                      (Airport) c.values.get("airport"),
+                      (AirplaneTypes) c.values.get("airplaneTypes"),
+                      (AirlinesFleets) c.values.get("companyFleets"),
+                      (GeneralAviationFleets) c.values.get("gaFleets"));
+              ReflectionUtils.FieldUtils.set(q, "worldModule", worldModule);
+              c.values.set("simulation", q);
+            }));
+
+    // endregion
 
     // region AirplanesModule
     ctx.sdfManager.setSerializer(AirplanesModule.class, new ObjectSerializer()
             .withValueClassCheck(AirplanesModule.class)
-            .withIgnoredFields("planes4public", "planesPrepared")
-            .withIgnoredField("parent"));
+            .withIgnoredFields("planes4public")
+            .withIgnoredFields("parent"));
+
+    ctx.sdfManager.setDeserializer(AirplanesModule.class, new ObjectDeserializer<AirplanesModule>()
+            .withIgnoredFields("planes4public")
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get("simulation"))
+            .withAfterLoadAction((q, c) -> q.init()));
 
     ctx.sdfManager.setSerializer(AirproxController.class, new ObjectSerializer());
+    ctx.sdfManager.setDeserializer(AirproxController.class, new ObjectDeserializer<AirproxController>());
+
     ctx.sdfManager.setSerializer(EmergencyAppearanceController.class, new ObjectSerializer());
+    ctx.sdfManager.setDeserializer(EmergencyAppearanceController.class, new ObjectDeserializer<EmergencyAppearanceController>());
+
     ctx.sdfManager.setSerializer(MrvaController.class,
             new ObjectSerializer()
                     .withIgnoredFields("mrvas", "mrvaMaps"));
+    ctx.sdfManager.setDeserializer(MrvaController.class, new ObjectDeserializer<MrvaController>()
+            .withInstanceFactory(c -> new MrvaController(((Area) c.values.get("area")).getBorders().where(q -> q.getType() == Border.eType.mrva)))
+            .withIgnoredFields("mrvas", "mrvaMaps"));
+
+    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.airplanes.templates");
     // endregion
 
     // region AtcModule
     ctx.sdfManager.setSerializer(AtcModule.class, new ObjectSerializer()
-            .withIgnoredField("userAtcsCache")
+            .withIgnoredFields("userAtcsCache")
             .withIgnoredFields("parent"));
+    ctx.sdfManager.setDeserializer(AtcModule.class, new ObjectDeserializer<AtcModule>()
+            .withIgnoredFields("userAtcsCache")
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get("simulation")));
+
     AtcXmlContextInit.prepareXmlContext(ctx);
+
     // endregion
 
     // region StatsModule
     ctx.sdfManager.setSerializer(StatsModule.class, new ObjectSerializer()
-            .withIgnoredField("parent"));
+            .withIgnoredFields("parent"));
+    ctx.sdfManager.setDeserializer(StatsModule.class, new ObjectDeserializer<StatsModule>()
+            .withIgnoredFields("parent")
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get("simulation")));
+
     StatsXmlContextInit.prepareXmlContext(ctx);
     // endregion
 
     // region TimerModule
-    ctx.sdfManager.setSerializer(TimerModule.class, new ObjectSerializer()
-            .withCustomFieldFormatter("tmr", q -> q == null ? "false" : "true")
-            .withIgnoredFields("tickEvent", "parent"));
+    ctx.sdfManager.setSerializer(TimerModule.class, (XElement e, Object v, XmlContext c) -> {
+      TimerModule t = (TimerModule) v;
+      if (t.isRunning())
+        e.setContent("y" + t.getTickInterval());
+      else
+        e.setContent("n" + t.getTickInterval());
+    });
+    ctx.sdfManager.setDeserializer(TimerModule.class, (e, c) -> {
+      Simulation sim = (Simulation) c.values.get("simulation");
+      int tickInterval = Integer.parseInt(e.getContent().substring(1));
+      TimerModule ret = new TimerModule(sim, tickInterval);
+      if (e.getContent().charAt(0) == 'y')
+        ret.start();
+      return ret;
+    });
     // endregion
 
     // region TrafficModule
     ctx.sdfManager.setSerializer(TrafficModule.class, new ObjectSerializer()
-            .withIgnoredField("parent"));
+            .withIgnoredFields("parent"));
+    ctx.sdfManager.setDeserializer(TrafficModule.class, new ObjectDeserializer<TrafficModule>()
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get("simulation")));
     // endregion
 
     // region WeatherModule
     ctx.sdfManager.setSerializer(WeatherModule.class, new ObjectSerializer()
-            .withIgnoredField("parent"));
+            .withIgnoredFields("parent"));
+    ctx.sdfManager.setDeserializer(WeatherModule.class, new ObjectDeserializer<WeatherModule>()
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get("simulation")));
+
     WeatherXmlContextInit.prepareXmlContext(ctx);
     // endregion
-
-    // worldModule not saved, no need
   }
 
   private final AirplanesModule airplanesModule;
@@ -246,83 +301,22 @@ public class Simulation {
   private final WeatherModule weatherModule;
   private final WorldModule worldModule;
 
-  public Simulation(SimulationStartupContext simulationContext, XElement source) {
-    //TODEL
-    throw new ToDoException();
-//    EAssert.Argument.isNotNull(simulationContext, "simulationContext");
-//    EAssert.Argument.isNotNull(source, "source");
-//
-//    now = new EDayTimeRun(0);
-//    XmlLoadUtils.Field.restoreField(source, this, "now", SharedXmlUtils.Parsers.dayTimeRunParser);
-//
-//    SharedAcc sharedContext = new SharedAcc(
-//            simulationContext.activeAirport.getIcao(),
-//            simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()),
-//            this.now,
-//            new SimulationLog()
-//    );
-//    ContextManager.setContext(ISharedAcc.class, sharedContext);
-//
-//    // world module not saved, so not loaded
-//    this.worldModule = new WorldModule(this, simulationContext);
-//    this.worldModule.init();
-//
-//    // io module not saved, not loaded
-//    this.ioModule = new IOModule(
-//            this,
-//            new KeyShortcutManager(),
-//            new SystemMessagesModule(this)
-//    );
-//    this.ioModule.init();
-//
-//    // here the loading starts:
-//
-//    this.weatherModule = XmlLoadUtils.Field.loadFieldValue(source, "weatherModule",
-//            e -> WeatherModule.load(this, simulationContext.weatherProvider, source));
-//    //this.weatherModule.init(); - i guess not necessary
-//    //TODO
-//    throw new ToDoException("Continue here");
-////    this.airplanesModule = XmlLoadUtils.Field.loadFieldValue(source, "airplanesModule",
-////            e -> AirplanesModule.load(this, e, null));
-////
-////    XmlLoadUtils.Field.restoreField(source, this, "trafficModule",
-////            (Deserializer) e -> TrafficModule.load(this, simulationContext.traffic, e));
-////
-////    // tady odsud nové přepisování
-////    // this should be the last in the queue as it may start the timer
-////    this.timerModule = XmlLoadUtils.Field.loadFieldValue(source, "timerModule", e -> TimerModule.load(this, e));
-////    this.timerModule.registerOnTickListener(this::timerTicked);
-//
-//    /*
-//    must be loaded:
-//    airplanesModule
-//    atcModule
-//    trafficModule (done)
-//    weatherModule (done)
-//    statsModule
-//     */
-//
-////    this.statsModule = new StatsModule(this, new StatsProvider(simulationSettings.simulationSettings.statsSnapshotDistanceInMinutes));
-////    this.statsModule.init();
-////
-////    this.atcModule = new AtcModule(
-////            new AtcProvider(worldModule.getActiveAirport()));
-////    this.atcModule.init();
-////
-////
-////
-////    this.airplanesModule = new AirplanesModule(
-////            this,
-////            new AirplanesController(),
-////            new AirproxController(),
-////            new MrvaController(worldModule.getArea().getBorders().where(q -> q.getType() == Border.eType.mrva)),
-////            new EmergencyAppearanceController(simulationSettings.trafficSettings.emergencyPerDayProbability),
-////            new MoodManager()
-////    );
-////    this.airplanesModule.init();
-////
-////
-
+  @XmlConstructor
+  private Simulation() {
+    this.airplanesModule = null;
+    this.atcModule = null;
+    this.ioModule = new IOModule(
+            this,
+            new KeyShortcutManager(),
+            new SystemMessagesModule(this)
+    );
+    this.ioModule.init();
+    this.now = null;
+    this.statsModule = null;
+    this.timerModule = null;
+    this.trafficModule = null;
+    this.weatherModule = null;
+    this.worldModule = null;
   }
 
   public Simulation(

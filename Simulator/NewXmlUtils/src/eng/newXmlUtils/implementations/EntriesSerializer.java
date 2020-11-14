@@ -3,7 +3,7 @@ package eng.newXmlUtils.implementations;
 import eng.newXmlUtils.EXmlException;
 import eng.newXmlUtils.base.Serializer;
 import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.utils.XmlUtils;
+import eng.newXmlUtils.utils.InternalXmlUtils;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
 
@@ -14,13 +14,13 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class EntriesSerializer implements Serializer {
   @Override
   public void invoke(XElement element, Object value, XmlContext xmlContext) {
-    XmlUtils.saveType(element, value.getClass());
+    InternalXmlUtils.saveType(element, value.getClass());
     Iterable<Map.Entry> entries = getEntries(value);
     for (Map.Entry entry : entries) {
-      XElement itemElement = new XElement(XmlUtils.ITEM);
+      XElement itemElement = new XElement(InternalXmlUtils.ITEM);
 
-      XElement keyElement = storeToElement(XmlUtils.KEY, entry.getKey(), xmlContext);
-      XElement valueElement = storeToElement(XmlUtils.VALUE, entry.getValue(), xmlContext);
+      XElement keyElement = storeToElement(InternalXmlUtils.KEY, entry.getKey(), xmlContext);
+      XElement valueElement = storeToElement(InternalXmlUtils.VALUE, entry.getValue(), xmlContext);
 
       itemElement.addElement(keyElement);
       itemElement.addElement(valueElement);
@@ -44,7 +44,7 @@ public class EntriesSerializer implements Serializer {
     Serializer serializer = xmlContext.sdfManager.getSerializer(object);
 
     serializer.invoke(ret, object, xmlContext);
-    XmlUtils.saveType(ret, object);
+    InternalXmlUtils.saveType(ret, object);
 
     return ret;
   }

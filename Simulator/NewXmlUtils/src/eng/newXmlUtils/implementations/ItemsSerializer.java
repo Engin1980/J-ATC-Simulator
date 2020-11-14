@@ -2,21 +2,21 @@ package eng.newXmlUtils.implementations;
 
 import eng.newXmlUtils.base.Serializer;
 import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.utils.XmlUtils;
+import eng.newXmlUtils.utils.InternalXmlUtils;
 import eng.eSystem.eXml.XElement;
 
 public class ItemsSerializer implements Serializer {
   @Override
   public void invoke(XElement element, Object value, XmlContext xmlContext) {
-    XmlUtils.saveType(element, value.getClass());
+    InternalXmlUtils.saveType(element, value.getClass());
     Iterable<?> items = (Iterable<?>) value;
     for (Object item : items) {
-      XElement itemElement = new XElement(XmlUtils.ITEM);
+      XElement itemElement = new XElement(InternalXmlUtils.ITEM);
 
       Serializer serializer = xmlContext.sdfManager.getSerializer(item);
 
       serializer.invoke(itemElement, item, xmlContext);
-      XmlUtils.saveType(itemElement, item);
+      InternalXmlUtils.saveType(itemElement, item);
 
       element.addElement(itemElement);
     }

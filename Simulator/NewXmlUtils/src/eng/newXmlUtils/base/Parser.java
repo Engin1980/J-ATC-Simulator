@@ -1,9 +1,10 @@
 package eng.newXmlUtils.base;
 
-public interface Parser {
-  Object parse(String value);
+import eng.eSystem.functionalInterfaces.Selector2;
+import eng.newXmlUtils.XmlContext;
 
+public interface Parser<T> extends Selector2<String, XmlContext, T> {
   default Deserializer toDeserializer() {
-    return (e, c) -> this.parse(e.getContent());
+    return (e, c) -> this.invoke(e.getContent(), c);
   }
 }

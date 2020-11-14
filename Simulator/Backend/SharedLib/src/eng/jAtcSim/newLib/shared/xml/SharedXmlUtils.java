@@ -47,17 +47,16 @@ public class SharedXmlUtils {
   }
 
   public static class Parsers {
-    public static Parser dayTimeStampParser = q -> EDayTimeStamp.parse(q);
-    public static Parser dayTimeRunParser = q -> EDayTimeRun.parse(q);
-    public static Parser squawkParser = q -> Squawk.create(q.toCharArray());
-    public static Parser coordinateParser = q -> {
+    public static final IMap<Class<?>, Parser> parsers;
+    public static Parser dayTimeStampParser = (q, c) -> EDayTimeStamp.parse(q);
+    public static Parser dayTimeRunParser = (q, c) -> EDayTimeRun.parse(q);
+    public static Parser squawkParser = (q, c) -> Squawk.create(q.toCharArray());
+    public static Parser coordinateParser = (q, c) -> {
       String[] pts = q.split(";");
       Coordinate ret = new Coordinate(
               Double.parseDouble(pts[0]), Double.parseDouble(pts[1]));
       return ret;
     };
-
-    public static final IMap<Class<?>, Parser> parsers;
 
     static {
       parsers = new EMap<>();

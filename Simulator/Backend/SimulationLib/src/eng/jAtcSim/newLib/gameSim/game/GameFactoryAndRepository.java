@@ -23,6 +23,7 @@ import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.traffic.TrafficXmlContextInit;
 import eng.newXmlUtils.SDFFactory;
 import eng.newXmlUtils.XmlContext;
+import eng.newXmlUtils.implementations.ObjectDeserializer;
 import eng.newXmlUtils.implementations.ObjectSerializer;
 
 public class GameFactoryAndRepository {
@@ -30,11 +31,6 @@ public class GameFactoryAndRepository {
     Game game;
     ApplicationLog appLog = Context.getApp().getAppLog();
 
-    AreaSource areaSource;
-    AirplaneTypesSource airplaneTypesSource;
-    FleetsSource fleetsSource;
-    TrafficSource trafficSource;
-    WeatherSource weatherSource;
     Simulation simulation;
 
     try {
@@ -151,10 +147,19 @@ public class GameFactoryAndRepository {
 
   private static void prepareXmlContext(XmlContext ctx) {
     ctx.sdfManager.setSerializer(GID.class, new ObjectSerializer());
+    ctx.sdfManager.setDeserializer(GID.class, new ObjectDeserializer<>());
+
     ctx.sdfManager.setSerializers(SDFFactory.getSimpleSerializers());
+    ctx.sdfManager.setDeserializers(SDFFactory.getSimpleDeserializers());
+
     ctx.sdfManager.setSerializers(SDFFactory.getSimpleArraySerializers());
+    ctx.sdfManager.setDeserializers(SDFFactory.getSimpleArrayDeserializers());
+
     ctx.sdfManager.setSerializers(SDFFactory.getESystemSerializers());
+    ctx.sdfManager.setDeserializers(SDFFactory.getESystemDeserializers());
+
     ctx.sdfManager.setSerializers(SharedXmlUtils.Serializers.serializers);
+    ctx.sdfManager.setDeserializers(SharedXmlUtils.Deserializers.deserializers);
 
     AreaXmlContextInit.prepareXmlContext(ctx);
     TrafficXmlContextInit.prepareXmlContext(ctx);

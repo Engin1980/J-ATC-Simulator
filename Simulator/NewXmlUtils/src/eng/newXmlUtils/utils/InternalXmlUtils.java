@@ -5,7 +5,7 @@ import eng.newXmlUtils.EXmlException;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class XmlUtils {
+public class InternalXmlUtils {
   public static final String KEY = "key";
   public static final String VALUE = "value";
   public static final String ITEM = "item";

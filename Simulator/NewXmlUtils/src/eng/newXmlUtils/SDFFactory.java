@@ -4,11 +4,8 @@ import eng.eSystem.collections.*;
 import eng.eSystem.functionalInterfaces.Selector;
 import eng.newXmlUtils.base.Deserializer;
 import eng.newXmlUtils.base.Serializer;
-import eng.newXmlUtils.implementations.ArrayDeserializer;
-import eng.newXmlUtils.implementations.ArraySerializer;
-import eng.newXmlUtils.implementations.EntriesSerializer;
-import eng.newXmlUtils.implementations.ItemsSerializer;
-import eng.newXmlUtils.utils.XmlUtils;
+import eng.newXmlUtils.implementations.*;
+import eng.newXmlUtils.utils.InternalXmlUtils;
 
 public class SDFFactory {
 
@@ -24,7 +21,7 @@ public class SDFFactory {
   }
 
   public static Serializer getNullSerializer(){
-    return (e,v,c) -> e.setContent(XmlUtils.NULL_CONTENT);
+    return (e,v,c) -> e.setContent(InternalXmlUtils.NULL_CONTENT);
   }
 
   public static IMap<Class<?>, Deserializer> getSimpleDeserializers() {
@@ -131,4 +128,14 @@ public class SDFFactory {
     return ret;
   }
 
+  public static IMap<Class<?>, Deserializer> getESystemDeserializers() {
+    IMap<Class<?>, Deserializer> ret = new EMap<>();
+
+    ret.set(EList.class, new ItemsDeserializer());
+    ret.set(ESet.class, new ItemsDeserializer());
+    ret.set(EDistinctList.class, new ItemsDeserializer());
+    ret.set(EMap.class, new EntriesDeserializer());
+
+    return ret;
+  }
 }

@@ -14,5 +14,6 @@
     <orderEntry type="module" module-name="SharedLib" />
     <orderEntry type="module" module-name="SpeechesLib" />
     <orderEntry type="module" module-name="NewXmlUtils" />
+    <orderEntry type="module" module-name="XmlUtilsLib" />
   </component>
 </module>

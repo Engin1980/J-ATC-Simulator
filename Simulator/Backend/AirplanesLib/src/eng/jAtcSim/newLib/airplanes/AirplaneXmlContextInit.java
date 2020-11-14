@@ -28,7 +28,7 @@ public class AirplaneXmlContextInit {
     ctx.sdfManager.setSerializer(AirplanesController.class,
             new ObjectSerializer()
                     .withValueClassCheck(AirplanesController.class)
-                    .withIgnoredField("publicPlanes"));
+                    .withIgnoredFields("publicPlanes"));
 
     ctx.sdfManager.setSerializer(AirplaneList.class,
             new ItemsSerializer());

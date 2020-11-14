@@ -8,7 +8,7 @@ import eng.newXmlUtils.EXmlException;
 import eng.newXmlUtils.XmlContext;
 import eng.newXmlUtils.base.Deserializer;
 import eng.newXmlUtils.base.InstanceFactory;
-import eng.newXmlUtils.utils.XmlUtils;
+import eng.newXmlUtils.utils.InternalXmlUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -25,51 +25,11 @@ public class ObjectDeserializer<T> implements Deserializer {
   private InstanceFactory<T> instanceFactory = null;
   private Consumer2<T, XmlContext> afterLoadAction = null;
 
-  public ObjectDeserializer<T> withInstanceFactory(InstanceFactory<T> instanceFactory) {
-    this.instanceFactory = instanceFactory;
-    return this;
-  }
-
-  public ObjectDeserializer<T> withAfterLoadAction(Consumer2<T, XmlContext> afterLoadAction) {
-    this.afterLoadAction = afterLoadAction;
-    return this;
-  }
-
-  public ObjectDeserializer<T> withCustomFieldDeserialization(String fieldName, Deserializer deserializer) {
-    customFieldDeserializers.set(fieldName, deserializer);
-    return this;
-  }
-
-  public ObjectDeserializer<T> withIgnoredField(String fieldName) {
-    this.customFieldDeserializers.set(fieldName, (e, v) -> null);
-    return this;
-  }
-
-  public ObjectDeserializer<T> withIgnoredFields(String... fieldNames) {
-    for (String fieldName : fieldNames) {
-      this.withIgnoredField(fieldName);
-    }
-    return this;
-  }
-
-  public ObjectDeserializer<T> withIgnoredFields(Iterable<String> fieldNames) {
-    for (String fieldName : fieldNames) {
-      this.withIgnoredField(fieldName);
-    }
-    return this;
-  }
-
-  public ObjectDeserializer<T> withValueTypValidation(Class<?> expectedValueClass, boolean includeSubclasses) {
-    this.expectedClass = expectedValueClass;
-    this.expectedTypeIncludingSubclasses = includeSubclasses;
-    return this;
-  }
-
   @Override
   public Object invoke(XElement e, XmlContext c) {
     Object ret;
 
-    Class<?> type = XmlUtils.loadType(e);
+    Class<?> type = InternalXmlUtils.loadType(e);
     validateValueTypeIfRequired(type);
 
     ret = getInstance(type, c);
@@ -83,6 +43,41 @@ public class ObjectDeserializer<T> implements Deserializer {
       this.afterLoadAction.invoke((T) ret, c);
 
     return ret;
+  }
+
+  public ObjectDeserializer<T> withAfterLoadAction(Consumer2<T, XmlContext> afterLoadAction) {
+    this.afterLoadAction = afterLoadAction;
+    return this;
+  }
+
+  public ObjectDeserializer<T> withCustomFieldDeserialization(String fieldName, Deserializer deserializer) {
+    customFieldDeserializers.set(fieldName, deserializer);
+    return this;
+  }
+
+  public ObjectDeserializer<T> withIgnoredFields(Iterable<String> fieldNames) {
+    for (String fieldName : fieldNames) {
+      this.customFieldDeserializers.set(fieldName, null);
+    }
+    return this;
+  }
+
+  public ObjectDeserializer<T> withIgnoredFields(String... fieldNames) {
+    for (String fieldName : fieldNames) {
+      this.customFieldDeserializers.set(fieldName, null);
+    }
+    return this;
+  }
+
+  public ObjectDeserializer<T> withInstanceFactory(InstanceFactory<T> instanceFactory) {
+    this.instanceFactory = instanceFactory;
+    return this;
+  }
+
+  public ObjectDeserializer<T> withValueTypValidation(Class<?> expectedValueClass, boolean includeSubclasses) {
+    this.expectedClass = expectedValueClass;
+    this.expectedTypeIncludingSubclasses = includeSubclasses;
+    return this;
   }
 
   private void validateValueTypeIfRequired(Class<?> type) {
@@ -156,10 +151,10 @@ public class ObjectDeserializer<T> implements Deserializer {
 
   private void restoreField(XElement e, Object v, Field field, XmlContext c) {
     XElement fieldElement = e.getChild(field.getName());
-    Class<?> fieldType = XmlUtils.tryLoadType(fieldElement);
+    Class<?> fieldType = InternalXmlUtils.tryLoadType(fieldElement);
     if (fieldType == null) {
       fieldType = field.getType();
-      XmlUtils.saveType(fieldElement, field.getType());
+      InternalXmlUtils.saveType(fieldElement, field.getType());
     }
     Deserializer deserializer = getDeserializer(field, fieldType, c);
     if (deserializer != null) {

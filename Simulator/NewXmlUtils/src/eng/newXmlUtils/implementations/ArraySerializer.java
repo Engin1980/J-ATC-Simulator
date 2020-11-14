@@ -1,7 +1,7 @@
 package eng.newXmlUtils.implementations;
 
 import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.utils.XmlUtils;
+import eng.newXmlUtils.utils.InternalXmlUtils;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
@@ -18,6 +18,6 @@ public class ArraySerializer extends ItemsSerializer {
     }
 
     super.invoke(element, items, xmlContext);
-    XmlUtils.saveComponentType(element, value.getClass().getComponentType());
+    InternalXmlUtils.saveComponentType(element, value.getClass().getComponentType());
   }
 }

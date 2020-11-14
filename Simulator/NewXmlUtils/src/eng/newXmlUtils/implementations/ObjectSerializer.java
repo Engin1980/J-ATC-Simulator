@@ -7,7 +7,7 @@ import eng.newXmlUtils.EXmlException;
 import eng.newXmlUtils.XmlContext;
 import eng.newXmlUtils.base.Formatter;
 import eng.newXmlUtils.base.Serializer;
-import eng.newXmlUtils.utils.XmlUtils;
+import eng.newXmlUtils.utils.InternalXmlUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -32,21 +32,16 @@ public class ObjectSerializer implements Serializer {
     return this;
   }
 
-  public ObjectSerializer withIgnoredField(String fieldName) {
-    this.customFieldSerializers.set(fieldName, null);
-    return this;
-  }
-
   public ObjectSerializer withIgnoredFields(String... fieldNames) {
     for (String fieldName : fieldNames) {
-      this.withIgnoredField(fieldName);
+      this.customFieldSerializers.set(fieldName, null);
     }
     return this;
   }
 
   public ObjectSerializer withIgnoredFields(Iterable<String> fieldNames) {
     for (String fieldName : fieldNames) {
-      this.withIgnoredField(fieldName);
+      this.customFieldSerializers.set(fieldName, null);
     }
     return this;
   }
@@ -73,7 +68,7 @@ public class ObjectSerializer implements Serializer {
       storeField(element, value, field, xmlContext);
     }
 
-    XmlUtils.saveType(element, value);
+    InternalXmlUtils.saveType(element, value);
 
     postCyclicSerializationCheck(value, xmlContext);
   }
@@ -116,8 +111,8 @@ public class ObjectSerializer implements Serializer {
   }
 
   private void deleteTypeAttributeIfNotRequired(Class<?> type, XElement fieldElement) {
-    if (fieldElement.hasAttribute(XmlUtils.TYPE_NAME) && type.getName().equals(fieldElement.getAttribute(XmlUtils.TYPE_NAME)))
-      fieldElement.removeAttribute(XmlUtils.TYPE_NAME);
+    if (fieldElement.hasAttribute(InternalXmlUtils.TYPE_NAME) && type.getName().equals(fieldElement.getAttribute(InternalXmlUtils.TYPE_NAME)))
+      fieldElement.removeAttribute(InternalXmlUtils.TYPE_NAME);
   }
 
   private Serializer getSerializer(Field field, Object fieldValue, XmlContext c) {

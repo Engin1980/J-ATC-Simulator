@@ -2,7 +2,7 @@ package eng.newXmlUtils.implementations;
 
 import eng.newXmlUtils.base.Deserializer;
 import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.utils.XmlUtils;
+import eng.newXmlUtils.utils.InternalXmlUtils;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.IList;
@@ -12,10 +12,10 @@ public class ItemsDeserializer implements Deserializer {
 
   @Override
   public Object invoke(XElement e, XmlContext c) {
-    Class<?> type = XmlUtils.loadType(e);
+    Class<?> type = InternalXmlUtils.loadType(e);
     IList<Object> items = new EList<>();
-    for (XElement child : e.getChildren(XmlUtils.ITEM)) {
-      Class<?> itemType = XmlUtils.loadType(child);
+    for (XElement child : e.getChildren(InternalXmlUtils.ITEM)) {
+      Class<?> itemType = InternalXmlUtils.loadType(child);
       Deserializer deserializer = c.sdfManager.getDeserializer(itemType);
       Object item = deserializer.invoke(child, c);
       items.add(item);

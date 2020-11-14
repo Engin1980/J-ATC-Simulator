@@ -1,7 +1,7 @@
 package eng.newXmlUtils.implementations;
 
 import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.utils.XmlUtils;
+import eng.newXmlUtils.utils.InternalXmlUtils;
 import eng.eSystem.collections.EList;
 import eng.eSystem.eXml.XElement;
 
@@ -11,7 +11,7 @@ public class ArrayDeserializer extends ItemsDeserializer {
   @Override
   public Object invoke(XElement e, XmlContext c) {
     EList lst = (EList) super.invoke(e, c);
-    Class<?> componentType = XmlUtils.loadComponentType(e);
+    Class<?> componentType = InternalXmlUtils.loadComponentType(e);
     Object ret = Array.newInstance(componentType, lst.size());
     for (int i = 0; i < lst.size(); i++) {
       Object item = lst.get(i);

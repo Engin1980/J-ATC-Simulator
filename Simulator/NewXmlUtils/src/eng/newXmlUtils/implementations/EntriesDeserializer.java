@@ -3,7 +3,7 @@ package eng.newXmlUtils.implementations;
 import eng.newXmlUtils.base.Deserializer;
 import eng.newXmlUtils.EXmlException;
 import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.utils.XmlUtils;
+import eng.newXmlUtils.utils.InternalXmlUtils;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
@@ -13,12 +13,12 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class EntriesDeserializer implements Deserializer {
   @Override
   public Object invoke(XElement e, XmlContext c) {
-    Class<?> type = XmlUtils.loadType(e);
+    Class<?> type = InternalXmlUtils.loadType(e);
     IMap map = new EMap();
-    for (XElement child : e.getChildren(XmlUtils.ENTRY)) {
+    for (XElement child : e.getChildren(InternalXmlUtils.ENTRY)) {
 
-      Object key = loadFromElement(child.getChild(XmlUtils.KEY), c);
-      Object value = loadFromElement(child.getChild(XmlUtils.VALUE), c);
+      Object key = loadFromElement(child.getChild(InternalXmlUtils.KEY), c);
+      Object value = loadFromElement(child.getChild(InternalXmlUtils.VALUE), c);
 
       map.set(key, value);
     }
@@ -37,7 +37,7 @@ public class EntriesDeserializer implements Deserializer {
   }
 
   private Object loadFromElement(XElement child, XmlContext c) {
-    Class<?> itemType = XmlUtils.loadType(child);
+    Class<?> itemType = InternalXmlUtils.loadType(child);
     Deserializer deserializer = c.sdfManager.getDeserializer(itemType);
     Object ret = deserializer.invoke(child, c);
     return ret;

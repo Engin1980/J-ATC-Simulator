@@ -35,7 +35,8 @@ public class TimerModule extends SimulationModule {
   private int tickInterval;
 
   public TimerModule(Simulation parent, int tickInterval) {
-    super(parent);setTickInterval(tickInterval);
+    super(parent);
+    setTickInterval(tickInterval);
   }
 
   public int getTickInterval() {

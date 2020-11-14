@@ -14,8 +14,6 @@ import eng.jAtcSim.newLib.gameSim.game.SimulationStartupContext;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 import eng.jAtcSim.newLib.shared.ContextManager;
-import eng.jAtcSim.newLib.traffic.ITrafficModel;
-import eng.jAtcSim.newLib.weather.WeatherProvider;
 
 public class WorldModule extends SimulationModule {
   private final Area area;
@@ -25,10 +23,10 @@ public class WorldModule extends SimulationModule {
   private final Airport activeAirport;
 
   public WorldModule(
-      Simulation parent,
-      Area area, Airport activeAirport,
-                     AirplaneTypes airplaneTypes,
-                     AirlinesFleets airlinesFleets, GeneralAviationFleets gaFleets) {
+          Simulation parent,
+          Area area, Airport activeAirport,
+          AirplaneTypes airplaneTypes,
+          AirlinesFleets airlinesFleets, GeneralAviationFleets gaFleets) {
     super(parent);
     EAssert.Argument.isTrue(area.getAirports().contains(activeAirport));
     this.area = area;
@@ -40,36 +38,36 @@ public class WorldModule extends SimulationModule {
 
   public WorldModule(Simulation parent, SimulationStartupContext simulationContext) {
     this(parent,
-        simulationContext.area, simulationContext.activeAirport,
-        simulationContext.airplaneTypes, simulationContext.airlinesFleets, simulationContext.gaFleets);
-  }
-
-  public Area getArea() {
-    return area;
-  }
-
-  public AirplaneTypes getAirplaneTypes() {
-    return airplaneTypes;
-  }
-
-  public AirlinesFleets getAirlinesFleets() {
-    return airlinesFleets;
-  }
-
-  public GeneralAviationFleets getGaFleets() {
-    return gaFleets;
+            simulationContext.area, simulationContext.activeAirport,
+            simulationContext.airplaneTypes, simulationContext.airlinesFleets, simulationContext.gaFleets);
   }
 
   public Airport getActiveAirport() {
     return activeAirport;
   }
 
+  public AirlinesFleets getAirlinesFleets() {
+    return airlinesFleets;
+  }
+
+  public AirplaneTypes getAirplaneTypes() {
+    return airplaneTypes;
+  }
+
+  public Area getArea() {
+    return area;
+  }
+
+  public GeneralAviationFleets getGaFleets() {
+    return gaFleets;
+  }
+
   public void init() {
     IAreaAcc areaAcc = new AreaAcc(
-        this.area,
-        this.activeAirport,
-        () -> parent.getAtcModule().getRunwayConfiguration(),
-        () -> parent.getAtcModule().tryGetSchedulerRunwayConfiguration()
+            this.area,
+            this.activeAirport,
+            () -> parent.getAtcModule().getRunwayConfiguration(),
+            () -> parent.getAtcModule().tryGetSchedulerRunwayConfiguration()
     );
     ContextManager.setContext(IAreaAcc.class, areaAcc);
 

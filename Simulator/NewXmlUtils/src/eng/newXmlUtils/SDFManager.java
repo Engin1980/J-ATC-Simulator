@@ -1,14 +1,10 @@
 package eng.newXmlUtils;
 
 import eng.eSystem.collections.*;
-import eng.eSystem.utilites.ReflectionUtils;
 import eng.eSystem.validation.EAssert;
-import eng.newXmlUtils.base.Deserializer;
-import eng.newXmlUtils.base.Formatter;
-import eng.newXmlUtils.base.InstanceFactory;
-import eng.newXmlUtils.base.Serializer;
+import eng.newXmlUtils.base.*;
 import eng.newXmlUtils.implementations.ObjectSerializer;
-import eng.newXmlUtils.utils.XmlUtils;
+import eng.newXmlUtils.utils.InternalXmlUtils;
 
 import java.util.Map;
 
@@ -17,9 +13,9 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class SDFManager {
 
-  private Serializer nullSerializer = (e, v, c) -> e.setContent(XmlUtils.NULL_CONTENT);
+  private Serializer nullSerializer = (e, v, c) -> e.setContent(InternalXmlUtils.NULL_CONTENT);
   private Deserializer nullDeserializer = (e, v) -> {
-    EAssert.isTrue(e.getContent().equals(XmlUtils.NULL_CONTENT), sf("XmlElement '%s' is supposed to have null-value-string content.", e.toFullString()));
+    EAssert.isTrue(e.getContent().equals(InternalXmlUtils.NULL_CONTENT), sf("XmlElement '%s' is supposed to have null-value-string content.", e.toFullString()));
     return null;
   };
   private final IMap<Class, Serializer> serializers = new EMap<>();
@@ -31,6 +27,10 @@ public class SDFManager {
 
   public <T> void setFormatter(Class<T> cls, Formatter<T> formatter) {
     this.serializers.set(cls, formatter.toSerializer());
+  }
+
+  public <T> void setParser(Class<T> cls, Parser<T> parser){
+    this.deserializers.set(cls, parser.toDeserializer());
   }
 
   public void addAutomaticallySerializedPackage(String packageName) {
@@ -52,7 +52,7 @@ public class SDFManager {
   }
 
   private Deserializer createEnumDeserializer(Class<Enum> type) {
-    return ((eng.newXmlUtils.base.Parser) q -> Enum.valueOf(type, q)).toDeserializer();
+    return ((eng.newXmlUtils.base.Parser) (q,c) -> Enum.valueOf(type, q)).toDeserializer();
   }
 
   public <T> InstanceFactory<T> getFactory(Class<T> type) {
