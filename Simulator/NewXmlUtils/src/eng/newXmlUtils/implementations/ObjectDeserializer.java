@@ -157,7 +157,7 @@ public class ObjectDeserializer<T> implements Deserializer {
     try {
       fieldElement = e.getChild(field.getName());
     } catch (Exception exception) {
-      throw new EXmlException(sf("Failed to find element for '%s.%s'.", field.getDeclaringClass(), field.getName()));
+      throw new EXmlException(sf("Failed to find element for '%s.%s'.", v.getClass().getName(), field.getName()));
     }
     Class<?> fieldType = InternalXmlUtils.tryLoadType(fieldElement);
     if (fieldType == null) {

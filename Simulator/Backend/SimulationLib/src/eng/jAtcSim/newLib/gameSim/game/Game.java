@@ -20,9 +20,10 @@ public class Game implements IGame {
     // endregion
 
     // region Sources
-    ctx.sdfManager.setSerializer(AreaSource.class, new ObjectSerializer().withIgnoredFields("content", "initialized"));
+    ctx.sdfManager.setSerializer(AreaSource.class, new ObjectSerializer()
+            .withIgnoredFields("content", "initialized"));
     ctx.sdfManager.setDeserializer(AreaSource.class, new ObjectDeserializer<AreaSource>()
-            .withIgnoredFields("content")
+            .withIgnoredFields("content", "initialized")
             .withAfterLoadAction((q, c) -> {
               q.init();
               c.values.set("area", q.getArea());

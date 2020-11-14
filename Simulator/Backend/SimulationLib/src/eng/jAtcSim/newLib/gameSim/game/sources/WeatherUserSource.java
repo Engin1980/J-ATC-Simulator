@@ -4,10 +4,16 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.weather.StaticWeatherProvider;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.weather.WeatherProvider;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class WeatherUserSource extends WeatherSource {
   private WeatherProvider content;
   private final Weather initialWeather;
+
+  @XmlConstructor
+  public WeatherUserSource() {
+    this.initialWeather = null;
+  }
 
   WeatherUserSource(Weather weather) {
     EAssert.Argument.isNotNull(weather, "weather");
