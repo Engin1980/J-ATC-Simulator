@@ -19,7 +19,7 @@ import eng.newXmlUtils.XmlContext;
 import eng.newXmlUtils.implementations.ObjectDeserializer;
 import eng.newXmlUtils.implementations.ObjectSerializer;
 
-public class SimulationXmlContextIniti {
+public class SimulationXmlContextInit {
   public static void prepareXmlContext(XmlContext ctx) {
     // region Simulation
     ctx.sdfManager.setSerializer(Simulation.class, new ObjectSerializer()

@@ -220,13 +220,6 @@ public class Simulation {
 
     ETimeStamp simulationStartTime = simulationSettings.simulationSettings.startTime;
     this.now = new EDayTimeRun(simulationStartTime.getValue());
-    SharedAcc sharedContext = new SharedAcc(
-            simulationContext.activeAirport.getIcao(),
-            simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()),
-            this.now,
-            new SimulationLog()
-    );
-    ContextManager.setContext(ISharedAcc.class, sharedContext);
 
     this.worldModule = new WorldModule(this, simulationContext);
     this.worldModule.init();

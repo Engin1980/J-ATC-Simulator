@@ -11,14 +11,18 @@ import eng.jAtcSim.newLib.airplanes.AirplaneXmlContextInit;
 import eng.jAtcSim.newLib.area.AreaXmlContextInit;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
-import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.GameStartupInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.SimulationSettings;
+import eng.jAtcSim.newLib.gameSim.simulation.SimulationXmlContextInit;
 import eng.jAtcSim.newLib.messaging.MessagingXmlContextInit;
 import eng.jAtcSim.newLib.mood.MoodXmlContextInit;
+import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.GID;
+import eng.jAtcSim.newLib.shared.context.ISharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.logging.SimulationLog;
 import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.traffic.TrafficXmlContextInit;
 import eng.newXmlUtils.SDFFactory;
@@ -104,10 +108,19 @@ public class GameFactoryAndRepository {
               gsi.trafficSource.getContent(),
               gsi.weatherSource.getContent()
       );
+
       SimulationSettings simulationSettings = new SimulationSettings(
               gsi.trafficSettings,
               gsi.simulationSettings
       );
+
+      SharedAcc sharedContext = new SharedAcc(
+              simulationContext.activeAirport.getIcao(),
+              simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()),
+              gsi.simulationSettings.startTime,
+              new SimulationLog()
+      );
+      ContextManager.setContext(ISharedAcc.class, sharedContext);
 
       simulation = new Simulation(simulationContext, simulationSettings);
       game = new Game(
@@ -167,7 +180,7 @@ public class GameFactoryAndRepository {
     MoodXmlContextInit.prepareXmlContext(ctx);
     AirplaneXmlContextInit.prepareXmlContext(ctx);
 
-    Simulation.prepareXmlContext(ctx);
+    SimulationXmlContextInit.prepareXmlContext(ctx);
     Game.prepareXmlContext(ctx);
   }
 
