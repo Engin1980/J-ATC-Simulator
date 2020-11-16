@@ -4,6 +4,8 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.ISet;
+import eng.eSystem.functionalInterfaces.Predicate;
+import eng.eSystem.functionalInterfaces.Selector2;
 import eng.eSystem.validation.EAssert;
 import eng.newXmlUtils.base.*;
 import eng.newXmlUtils.implementations.ObjectDeserializer;
@@ -16,21 +18,31 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class SDFManager {
 
-  private Serializer nullSerializer = (e, v, c) -> e.setContent(InternalXmlUtils.NULL_CONTENT);
-  private Deserializer nullDeserializer = (e, v) -> {
+  private static class DynamicItem<T> {
+    public final Predicate<Class<?>> predicate;
+    public final Selector2<Class<?>, XmlContext, T> result;
+
+    public DynamicItem(Predicate<Class<?>> predicate, Selector2<Class<?>, XmlContext, T> result) {
+      this.predicate = predicate;
+      this.result = result;
+    }
+  }
+
+  private final Serializer nullSerializer = (e, v, c) -> e.setContent(InternalXmlUtils.NULL_CONTENT);
+  private final Deserializer nullDeserializer = (e, v) -> {
     EAssert.isTrue(e.getContent().equals(InternalXmlUtils.NULL_CONTENT), sf("XmlElement '%s' is supposed to have null-value-string content.", e.toFullString()));
     return null;
   };
   private final IMap<Class, Serializer> serializers = new EMap<>();
   private final IMap<Class, Deserializer> deserializers = new EMap<>();
   private final IMap<Class, InstanceFactory<?>> factories = new EMap<>();
-  private final ISet<String> autoSerializedPackages = new ESet<>();
   private Serializer defaultSerializer = null;
   private Deserializer defaultDeserializer = null;
+  private final ISet<DynamicItem<Serializer>> dynamicSerializers = new ESet<>();
+  private final ISet<DynamicItem<Deserializer>> dynamicDeserializers = new ESet<>();
 
-  public void addAutomaticallySerializedPackage(String packageName) {
-    EAssert.Argument.isNonemptyString(packageName);
-    this.autoSerializedPackages.add(packageName);
+  public void withAutoPackageDeserializer(String packageName, Selector2<Class<?>, XmlContext, Deserializer> serializerProducer) {
+    this.dynamicSerializers.add(new DynamicItem<>(q ->q.getPackageName().equals(packageName), serializerProducer));
   }
 
   public Deserializer getDeserializer(Class<?> type) {
@@ -49,7 +61,7 @@ public class SDFManager {
     if (defaultDeserializer != null)
       return defaultDeserializer;
 
-    throw new EXmlException(sf("Failed to find ret for type '%s'.", type));
+    throw new EXmlException(sf("Failed to find deserializer for type '%s'.", type));
   }
 
   public <T> InstanceFactory<T> getFactory(Class<T> type) {

@@ -1,12 +1,10 @@
 package eng.jAtcSim.newLib.gameSim.simulation;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.IEventListenerSimple;
-import eng.eSystem.utilites.ReflectionUtils;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
@@ -14,9 +12,6 @@ import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
-import eng.jAtcSim.newLib.atcs.AtcXmlContextInit;
-import eng.jAtcSim.newLib.fleet.airliners.AirlinesFleets;
-import eng.jAtcSim.newLib.fleet.generalAviation.GeneralAviationFleets;
 import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
@@ -46,14 +41,9 @@ import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.StatsProvider;
-import eng.jAtcSim.newLib.stats.StatsXmlContextInit;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
-import eng.jAtcSim.newLib.weather.WeatherXmlContextInit;
-import eng.newXmlUtils.XmlContext;
 import eng.newXmlUtils.annotations.XmlConstructor;
-import eng.newXmlUtils.implementations.ObjectDeserializer;
-import eng.newXmlUtils.implementations.ObjectSerializer;
 
 public class Simulation {
 
@@ -180,8 +170,6 @@ public class Simulation {
 
   private static final boolean DEBUG_STYLE_TIMER = false;
 
-
-
   private final AirplanesModule airplanesModule;
   private final AtcModule atcModule;
   private final IOModule ioModule;
@@ -196,6 +184,15 @@ public class Simulation {
 
   @XmlConstructor
   private Simulation() {
+    this.now = new EDayTimeRun(0);
+    SharedAcc sharedContext = new SharedAcc(
+            "????",
+            new EList<>(),
+            this.now,
+            new SimulationLog()
+    );
+    ContextManager.setContext(ISharedAcc.class, sharedContext);
+
     this.airplanesModule = null;
     this.atcModule = null;
     this.ioModule = new IOModule(
@@ -203,8 +200,8 @@ public class Simulation {
             new KeyShortcutManager(),
             new SystemMessagesModule(this)
     );
+
     this.ioModule.init();
-    this.now = null;
     this.statsModule = null;
     this.timerModule = null;
     this.trafficModule = null;
@@ -220,6 +217,13 @@ public class Simulation {
 
     ETimeStamp simulationStartTime = simulationSettings.simulationSettings.startTime;
     this.now = new EDayTimeRun(simulationStartTime.getValue());
+    SharedAcc sharedContext = new SharedAcc(
+            simulationContext.activeAirport.getIcao(),
+            simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()),
+            this.now,
+            new SimulationLog()
+    );
+    ContextManager.setContext(ISharedAcc.class, sharedContext);
 
     this.worldModule = new WorldModule(this, simulationContext);
     this.worldModule.init();
@@ -294,6 +298,16 @@ public class Simulation {
 
   public WorldModule getWorldModule() {
     return worldModule;
+  }
+
+  public void reinitAfterLoad() {
+    SharedAcc sharedContext = new SharedAcc(
+            Context.getShared().getAirportIcao(),
+            Context.getShared().getAtcs(),
+            this.now,
+            Context.getShared().getSimLog()
+    );
+    ContextManager.setContext(ISharedAcc.class, sharedContext);
   }
 
   private void elapseSecond() {

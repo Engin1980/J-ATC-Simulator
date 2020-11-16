@@ -7,6 +7,10 @@ import eng.jAtcSim.newLib.shared.enums.AtcType;
 import java.util.Objects;
 
 public class AtcId {
+  public static AtcId getEmpty() {
+    return new AtcId("???_??", 117.0, AtcType.app);
+  }
+
   private final String name;
   private final double frequency;
   private final AtcType type;

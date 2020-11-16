@@ -13,6 +13,7 @@ import eng.jAtcSim.newLib.atcs.context.AtcAcc;
 import eng.jAtcSim.newLib.atcs.context.IAtcAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.ContextManager;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class AtcModule {
   private final AtcProvider atcProvider;
@@ -21,6 +22,11 @@ public class AtcModule {
   public AtcModule(AtcProvider atcProvider) {
     EAssert.Argument.isNotNull(atcProvider, "atcProvider");
     this.atcProvider = atcProvider;
+  }
+
+  @XmlConstructor
+  private AtcModule() {
+    this.atcProvider = null;
   }
 
   public void adviceWeatherUpdated() {

@@ -23,6 +23,7 @@ import eng.jAtcSim.newLib.shared.context.ISharedAcc;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
+import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.traffic.TrafficXmlContextInit;
 import eng.newXmlUtils.SDFFactory;
@@ -113,14 +114,6 @@ public class GameFactoryAndRepository {
               gsi.trafficSettings,
               gsi.simulationSettings
       );
-
-      SharedAcc sharedContext = new SharedAcc(
-              simulationContext.activeAirport.getIcao(),
-              simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()),
-              gsi.simulationSettings.startTime,
-              new SimulationLog()
-      );
-      ContextManager.setContext(ISharedAcc.class, sharedContext);
 
       simulation = new Simulation(simulationContext, simulationSettings);
       game = new Game(

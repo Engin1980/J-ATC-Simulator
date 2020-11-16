@@ -4,6 +4,7 @@ import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
+import eng.jAtcSim.newLib.shared.AtcId;
 import eng.newXmlUtils.XmlContext;
 import eng.newXmlUtils.implementations.ObjectDeserializer;
 import eng.newXmlUtils.implementations.ObjectSerializer;
@@ -26,15 +27,16 @@ public class Game implements IGame {
             .withIgnoredFields("content", "initialized")
             .withAfterLoadAction((q, c) -> {
               q.init();
-              c.values.set("area", q.getArea());
-              c.values.set("airport", q.getActiveAirport());
+              c.values.set(q.getArea());
+              c.values.set(q.getActiveAirport());
+              c.sdfManager.setParser(AtcId.class, (qq, cc) -> q.getActiveAirport().getAtcTemplates().select(qqq -> qqq.toAtcId()).getFirst(qqq -> qqq.getName().equals(qq)));
             }));
 
     ctx.sdfManager.setFormatter(AirplaneTypesSource.class, q -> q.getFileName());
     ctx.sdfManager.setDeserializer(AirplaneTypesSource.class, (e, c) -> {
       AirplaneTypesSource ret = SourceFactory.createAirplaneTypesSource(e.getContent());
       ret.init();
-      c.values.set("airplaneTypes", ret.getContent());
+      c.values.set(ret.getContent());
       return ret;
     });
 
@@ -43,8 +45,8 @@ public class Game implements IGame {
       String[] pts = e.getContent().split(";");
       FleetsSource ret = SourceFactory.createFleetsSource(pts[1], pts[0]);
       ret.init();
-      c.values.set("companyFleets", ret.getContent().companyFleets);
-      c.values.set("gaFleets", ret.getContent().gaFleets);
+      c.values.set(ret.getContent().companyFleets);
+      c.values.set(ret.getContent().gaFleets);
       return ret;
     });
 

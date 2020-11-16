@@ -14,13 +14,14 @@ import eng.jAtcSim.newLib.airplanes.pilots.*;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.mood.Mood;
+import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.DelayedList;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.shared.xml.XmlContextInit;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.base.Serializer;
 import eng.newXmlUtils.implementations.ItemsDeserializer;
 import eng.newXmlUtils.implementations.ItemsSerializer;
 import eng.newXmlUtils.implementations.ObjectDeserializer;
@@ -55,9 +56,10 @@ public class AirplaneXmlContextInit {
             new ObjectDeserializer<Airplane>()
                     .withIgnoredFields("cvr", "fdr", "rdr", "wrt", "speechCache")
                     .withCustomFieldDeserialization("airplaneType", (q, c) -> c.values.get(AirplaneTypes.class).getByName(q.getContent()))
+                    .withBeforeLoadAction((q, c) ->c.values.set(q))
                     .withAfterLoadAction((q, c) -> {
                       q.initRecorders();
-                      c.values.set("airplane", q);
+                      c.values.remove(q);
                     }));
 
     {
@@ -78,7 +80,7 @@ public class AirplaneXmlContextInit {
       ctx.sdfManager.setSerializer(AtcModule.class, new ObjectSerializer().withIgnoredFields("plane", "rdr", "wrt"));
       ctx.sdfManager.setDeserializer(AtcModule.class, new ObjectDeserializer<AtcModule>()
               .withIgnoredFields("plane", "rdr", "wrt")
-              .withInstanceFactory(c -> new AtcModule(c.values.get(Airplane.class), null)));
+              .withInstanceFactory(c -> new AtcModule(c.values.get(Airplane.class), AtcId.getEmpty())));
 
       ctx.sdfManager.setSerializer(DivertModule.class, new ObjectSerializer().withIgnoredFields("plane", "rdr", "wrt"));
       ctx.sdfManager.setDeserializer(DivertModule.class, new ObjectDeserializer<DivertModule>()
@@ -92,7 +94,7 @@ public class AirplaneXmlContextInit {
       ctx.sdfManager.setSerializer(AirplaneFlightModule.class, new ObjectSerializer().withIgnoredFields("plane", "rdr", "wrt"));
       ctx.sdfManager.setDeserializer(AirplaneFlightModule.class, new ObjectDeserializer<AirplaneFlightModule>()
               .withIgnoredFields("plane", "rdr", "wrt")
-              .withInstanceFactory(c -> new AirplaneFlightModule(c.values.get(Airplane.class).getReader().getCallsign(),
+              .withInstanceFactory(c -> new AirplaneFlightModule(new Callsign("???? ???"),
                       0, new EDayTimeStamp(0), true)));
 
       ctx.sdfManager.setSerializer(RoutingModule.class, new ObjectSerializer().withIgnoredFields("plane", "rdr", "wrt", "cqr"));

@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.shared.xml;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -14,6 +15,12 @@ import eng.newXmlUtils.base.Deserializer;
 import eng.newXmlUtils.base.Formatter;
 import eng.newXmlUtils.base.Parser;
 import eng.newXmlUtils.base.Serializer;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class SharedXmlUtils {
 
@@ -53,10 +60,18 @@ public class SharedXmlUtils {
     public static Parser<Squawk> squawkParser = (q, c) -> Squawk.create(q.toCharArray());
     public static Parser<Coordinate> coordinateParser = (q, c) -> {
       String[] pts = q.split(";");
-      Coordinate ret = new Coordinate(
-              Double.parseDouble(pts[0]), Double.parseDouble(pts[1]));
+      NumberFormat nf = new DecimalFormat("00.00000");
+      double lat, lng;
+      try {
+        lat = (double) nf.parse(pts[0]);
+        lng = (double) nf.parse(pts[1]);
+      } catch (ParseException e) {
+        throw new EApplicationException(sf("Failed to parse %s to latitude/longitude coordinate.",q));
+      }
+      Coordinate ret = new Coordinate(lat, lng);
       return ret;
     };
+    public static Parser<Callsign> callsignParser = (q, c) -> new Callsign(q);
 
     static {
       parsers = new EMap<>();
@@ -64,6 +79,7 @@ public class SharedXmlUtils {
       parsers.set(EDayTimeRun.class, dayTimeRunParser);
       parsers.set(Squawk.class, squawkParser);
       parsers.set(Coordinate.class, coordinateParser);
+      parsers.set(Callsign.class, callsignParser);
     }
   }
 
@@ -77,6 +93,7 @@ public class SharedXmlUtils {
   }
 
   public static class DeserializersDynamic {
+
 //    public static Deserializer getAtcIdDeserializer(IReadOnlyList<AtcId> atcs) {
 //      return new ProxyDeserializer<AtcId>(
 //              q -> q.getContent(),

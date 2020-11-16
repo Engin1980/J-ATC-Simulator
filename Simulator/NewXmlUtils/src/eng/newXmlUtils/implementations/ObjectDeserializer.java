@@ -14,6 +14,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.util.Optional;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -24,6 +25,7 @@ public class ObjectDeserializer<T> implements Deserializer {
   private boolean expectedTypeIncludingSubclasses;
   private InstanceFactory<T> instanceFactory = null;
   private Consumer2<T, XmlContext> afterLoadAction = null;
+  private Consumer2<T, XmlContext> beforeLoadAction = null;
 
   @Override
   public Object invoke(XElement e, XmlContext c) {
@@ -35,6 +37,10 @@ public class ObjectDeserializer<T> implements Deserializer {
     ret = getInstance(type, c);
 
     IReadOnlyList<Field> fields = ReflectionUtils.ClassUtils.getFields(type).where(q -> !Modifier.isStatic(q.getModifiers()));
+
+    if (this.beforeLoadAction != null)
+      this.beforeLoadAction.invoke((T) ret, c);
+
     for (Field field : fields) {
       restoreField(e, ret, field, c);
     }
@@ -52,6 +58,11 @@ public class ObjectDeserializer<T> implements Deserializer {
 
   public ObjectDeserializer<T> withCustomFieldDeserialization(String fieldName, Deserializer deserializer) {
     customFieldDeserializers.set(fieldName, deserializer);
+    return this;
+  }
+
+  public ObjectDeserializer<T> withBeforeLoadAction(Consumer2<T, XmlContext> beforeLoadAction) {
+    this.beforeLoadAction = beforeLoadAction;
     return this;
   }
 
@@ -159,15 +170,22 @@ public class ObjectDeserializer<T> implements Deserializer {
     } catch (Exception exception) {
       throw new EXmlException(sf("Failed to find element for '%s.%s'.", v.getClass().getName(), field.getName()));
     }
-    Class<?> fieldType = InternalXmlUtils.tryLoadType(fieldElement);
-    if (fieldType == null) {
-      fieldType = field.getType();
-      InternalXmlUtils.saveType(fieldElement, field.getType());
-    }
-    Deserializer deserializer = getDeserializer(field, fieldType, c);
-    if (deserializer != null) {
-      Object val = deserializer.invoke(fieldElement, c);
-      setFieldValue(v, field, val);
+
+
+    if (fieldElement.getContent().equals(InternalXmlUtils.NULL_CONTENT))
+      setFieldValue(v, field, null);
+    else {
+      Class<?> fieldType = InternalXmlUtils.tryLoadType(fieldElement);
+      if (fieldType == null) {
+        fieldType = field.getType();
+        InternalXmlUtils.saveType(fieldElement, field.getType());
+      }
+      Deserializer deserializer = getDeserializer(field, fieldType, c);
+
+      if (deserializer != null) {
+        Object fieldValue = deserializer.invoke(fieldElement, c);
+        setFieldValue(v, field, fieldValue);
+      }
     }
   }
 

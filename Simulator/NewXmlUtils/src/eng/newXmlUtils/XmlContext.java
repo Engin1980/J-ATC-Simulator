@@ -9,6 +9,8 @@ import eng.newXmlUtils.base.Deserializer;
 import eng.newXmlUtils.base.Serializer;
 import eng.newXmlUtils.utils.InternalXmlUtils;
 
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
 public class XmlContext {
 
   public static class XmlContextValues {
@@ -19,7 +21,7 @@ public class XmlContext {
     }
 
     public Object get(String key) {
-      EAssert.Argument.isTrue(inner.containsKey(key));
+      EAssert.Argument.isTrue(inner.containsKey(key), sf("Failed to find xml-context value for key '%s'.", key));
       return inner.get(key);
     }
 
@@ -38,6 +40,10 @@ public class XmlContext {
       inner.remove(key);
     }
 
+    public void remove(Object object){
+      this.remove(object.getClass().getName());
+    }
+
     public <T> void remove(Class<T> clz) {
       this.remove(clz.getName());
     }
@@ -49,6 +55,11 @@ public class XmlContext {
     public void set(String key, Object value) {
       EAssert.Argument.isFalse(inner.containsKey(key));
       inner.set(key, value);
+    }
+
+    public <T> void set(T value) {
+      EAssert.Argument.isNotNull(value);
+      this.set((Class<T>) value.getClass(), value);
     }
   }
 

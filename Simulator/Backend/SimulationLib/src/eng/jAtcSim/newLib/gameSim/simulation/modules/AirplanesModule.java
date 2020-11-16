@@ -38,6 +38,7 @@ import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -50,6 +51,16 @@ public class AirplanesModule extends SimulationModule {
   private final MrvaController mrvaController;
   private final IList<IAirplaneInfo> planes4public = new EList<>();
   private final IList<AirplaneTemplate> planesPrepared = new EList<>();
+
+  @XmlConstructor
+  private AirplanesModule() {
+    super(null);
+    this.airplanesController = null;
+    this.airproxController = null;
+    this.emergencyAppearanceController = null;
+    this.moodManager = null;
+    this.mrvaController = null;
+  }
 
   public AirplanesModule(Simulation parent, AirplanesController airplanesController, AirproxController airproxController, MrvaController mrvaController, EmergencyAppearanceController emergencyAppearanceController, MoodManager moodManager) {
     super(parent);

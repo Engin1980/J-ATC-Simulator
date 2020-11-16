@@ -18,6 +18,7 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import java.util.function.Predicate;
 
@@ -354,6 +355,12 @@ public class AfterCommandList {
 class AFItem {
   public final AfterCommand antecedent;
   public final ICommand consequent;
+
+  @XmlConstructor
+  private AFItem() {
+    antecedent = null;
+    consequent = null;
+  }
 
   public AFItem(AfterCommand antecedent, ICommand consequent) {
     this.antecedent = antecedent;
