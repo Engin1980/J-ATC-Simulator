@@ -1,10 +1,10 @@
 package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
-import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class AltitudeRestrictionCommand implements ICommand {
   public static AltitudeRestrictionCommand create(AboveBelowExactly direction, int value) {
@@ -19,8 +19,12 @@ public class AltitudeRestrictionCommand implements ICommand {
     return ret;
   }
 
-
   private final Restriction restriction;
+
+  @XmlConstructor
+  private AltitudeRestrictionCommand() {
+    this.restriction = null;
+  }
 
   private AltitudeRestrictionCommand(Restriction restriction) {
     this.restriction = restriction;

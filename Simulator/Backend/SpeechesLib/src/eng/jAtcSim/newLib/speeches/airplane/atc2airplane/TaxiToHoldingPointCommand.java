@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class TaxiToHoldingPointCommand implements ICommand {
   public static TaxiToHoldingPointCommand create(String runwayThresholdName) {
@@ -13,6 +14,11 @@ public class TaxiToHoldingPointCommand implements ICommand {
     EAssert.Argument.isNotNull(runwayThresholdName, "runwayThresholdName");
     EAssert.Argument.isNonemptyString(runwayThresholdName, "runwayThresholdName");
     this.runwayThresholdName = runwayThresholdName;
+  }
+
+  @XmlConstructor
+  private TaxiToHoldingPointCommand() {
+    runwayThresholdName = null;
   }
 
   public String getRunwayThresholdName() {

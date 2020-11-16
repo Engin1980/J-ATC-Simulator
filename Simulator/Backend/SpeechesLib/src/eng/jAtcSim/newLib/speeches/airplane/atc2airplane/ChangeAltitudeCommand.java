@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -31,6 +32,12 @@ public class ChangeAltitudeCommand implements ICommand {
   public static ChangeAltitudeCommand createDescend(int altitudeInFt) {
     ChangeAltitudeCommand ret = new ChangeAltitudeCommand(eDirection.descend, altitudeInFt);
     return ret;
+  }
+
+  @XmlConstructor
+  private ChangeAltitudeCommand(){
+    this.direction = eDirection.any;
+    this.altitudeInFt = 0;
   }
 
   private final eDirection direction;

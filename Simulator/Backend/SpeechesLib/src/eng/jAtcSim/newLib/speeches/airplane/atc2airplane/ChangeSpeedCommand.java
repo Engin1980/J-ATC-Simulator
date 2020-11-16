@@ -5,7 +5,9 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
+import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class ChangeSpeedCommand implements ICommand {
 
@@ -18,6 +20,11 @@ public class ChangeSpeedCommand implements ICommand {
   public static ChangeSpeedCommand createResumeOwnSpeed() {
     ChangeSpeedCommand ret = new ChangeSpeedCommand(AboveBelowExactly.exactly, null);
     return ret;
+  }
+
+  @XmlConstructor
+  private ChangeSpeedCommand(){
+    this.restriction = null;
   }
 
   private final Restriction restriction;

@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands;
 
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class AfterRadialCommand extends AfterCommandWithNavaid {
 
@@ -15,6 +16,13 @@ public class AfterRadialCommand extends AfterCommandWithNavaid {
   }
 
   private final int radial;
+
+  @XmlConstructor
+  private AfterRadialCommand() {
+    super("?", AboveBelowExactly.exactly);
+    this.radial = 0;
+  }
+
 
   private AfterRadialCommand(String navaidName, int radial, AboveBelowExactly position) {
     super(navaidName, position);

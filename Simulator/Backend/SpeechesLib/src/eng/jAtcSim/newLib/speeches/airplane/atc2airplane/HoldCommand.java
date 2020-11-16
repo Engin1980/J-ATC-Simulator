@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class HoldCommand extends ToNavaidCommand {
 
@@ -21,6 +22,14 @@ public class HoldCommand extends ToNavaidCommand {
   private final boolean published;
   private final int inboundRadial;
   private final LeftRight turn;
+
+  @XmlConstructor
+  private HoldCommand() {
+    super("?");
+    this.published = false;
+    this.inboundRadial = 0;
+    this.turn = LeftRight.left;
+  }
 
   private HoldCommand(String navaidName, boolean published, int inboundRadial, LeftRight turn) {
     super(navaidName);

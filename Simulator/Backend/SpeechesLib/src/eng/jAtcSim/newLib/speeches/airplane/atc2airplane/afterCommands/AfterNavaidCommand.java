@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands;
 
 
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 /**
  * Similar to AfterDistance, but this represents situation when plane is orderet to fly directly to navaid.
@@ -11,6 +12,11 @@ public class AfterNavaidCommand extends AfterDistanceCommand {
   public static AfterNavaidCommand create(String navaidName) {
     AfterNavaidCommand ret = new AfterNavaidCommand(navaidName);
     return ret;
+  }
+
+  @XmlConstructor
+  private AfterNavaidCommand() {
+    super("?", 0, AboveBelowExactly.exactly);
   }
 
   public AfterNavaidCommand(String navaidName) {

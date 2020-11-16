@@ -4,7 +4,6 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.ISet;
-import eng.eSystem.functionalInterfaces.Predicate;
 import eng.eSystem.functionalInterfaces.Selector2;
 import eng.eSystem.validation.EAssert;
 import eng.newXmlUtils.base.*;
@@ -18,16 +17,6 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class SDFManager {
 
-  private static class DynamicItem<T> {
-    public final Predicate<Class<?>> predicate;
-    public final Selector2<Class<?>, XmlContext, T> result;
-
-    public DynamicItem(Predicate<Class<?>> predicate, Selector2<Class<?>, XmlContext, T> result) {
-      this.predicate = predicate;
-      this.result = result;
-    }
-  }
-
   private final Serializer nullSerializer = (e, v, c) -> e.setContent(InternalXmlUtils.NULL_CONTENT);
   private final Deserializer nullDeserializer = (e, v) -> {
     EAssert.isTrue(e.getContent().equals(InternalXmlUtils.NULL_CONTENT), sf("XmlElement '%s' is supposed to have null-value-string content.", e.toFullString()));
@@ -38,11 +27,10 @@ public class SDFManager {
   private final IMap<Class, InstanceFactory<?>> factories = new EMap<>();
   private Serializer defaultSerializer = null;
   private Deserializer defaultDeserializer = null;
-  private final ISet<DynamicItem<Serializer>> dynamicSerializers = new ESet<>();
-  private final ISet<DynamicItem<Deserializer>> dynamicDeserializers = new ESet<>();
+  private final ISet<String> autoPackages = new ESet<>();
 
-  public void withAutoPackageDeserializer(String packageName, Selector2<Class<?>, XmlContext, Deserializer> serializerProducer) {
-    this.dynamicSerializers.add(new DynamicItem<>(q ->q.getPackageName().equals(packageName), serializerProducer));
+  public void withAutoPackageDeserializer(String packageName) {
+    this.autoPackages.add(packageName);
   }
 
   public Deserializer getDeserializer(Class<?> type) {
@@ -149,7 +137,7 @@ public class SDFManager {
   }
 
   private boolean isAutoserializedyByPackageName(Class<?> type) {
-    return this.autoSerializedPackages.isAny(q -> type.getPackageName().equals(q));
+    return this.autoPackages.isAny(q -> type.getPackageName().equals(q));
   }
 
   private Serializer createEnumSerializer(Class<Enum> type) {

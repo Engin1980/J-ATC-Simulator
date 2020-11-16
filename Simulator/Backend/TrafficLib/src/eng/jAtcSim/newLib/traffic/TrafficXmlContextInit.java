@@ -18,6 +18,8 @@ public class TrafficXmlContextInit {
     ctx.sdfManager.setSerializer(CallsignFactory.class, new ObjectSerializer());
     ctx.sdfManager.setDeserializer(CallsignFactory.class, new ObjectDeserializer<>());
 
-    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.traffic.movementTemplating");
+    ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.traffic.movementTemplating", ObjectSerializer::new);
+    ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.traffic.movementTemplating", ObjectDeserializer::new);
+
   }
 }

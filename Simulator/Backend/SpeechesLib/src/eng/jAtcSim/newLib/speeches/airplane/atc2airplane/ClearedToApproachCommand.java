@@ -8,11 +8,11 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 ;
 
 /**
- *
  * @author Marek
  */
 public class ClearedToApproachCommand implements ICommand {
@@ -24,9 +24,10 @@ public class ClearedToApproachCommand implements ICommand {
     this.type = type;
   }
 
-  @Override
-  public String toString() {
-    return "Cleared for approach " + type + " at " + thresholdName + " {command}";
+  @XmlConstructor
+  private ClearedToApproachCommand() {
+    thresholdName = null;
+    type = ApproachType.visual;
   }
 
   public String getThresholdName() {
@@ -35,5 +36,10 @@ public class ClearedToApproachCommand implements ICommand {
 
   public ApproachType getType() {
     return type;
+  }
+
+  @Override
+  public String toString() {
+    return "Cleared for approach " + type + " at " + thresholdName + " {command}";
   }
 }

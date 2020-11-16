@@ -140,7 +140,7 @@ public class ObjectDeserializer<T> implements Deserializer {
   }
 
   private InstanceFactory<?> tryGetPrivateAnnotatedConstructorFactory(Class<?> type) {
-    InstanceFactory<?> ret = null;
+    InstanceFactory<?> ret;
 
     IList<Constructor<?>> ctors = new EList<>(type.getDeclaredConstructors());
     Constructor<?> ctor = ctors.tryGetFirst(q -> q.getParameterCount() == 0 && q.getDeclaredAnnotation(eng.newXmlUtils.annotations.XmlConstructor.class) != null);

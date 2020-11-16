@@ -3,12 +3,14 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class ClearedToRouteCommand implements ICommand {
 
   public static ClearedToRouteCommand create(String routeName, DARouteType routeType, String expectedRunwayThresholdName) {
     return new ClearedToRouteCommand(routeName, routeType, expectedRunwayThresholdName);
   }
+
   private final String routeName;
   private final DARouteType routeType;
   private final String expectedRunwayThresholdName;
@@ -19,6 +21,13 @@ public class ClearedToRouteCommand implements ICommand {
     this.routeName = routeName;
     this.expectedRunwayThresholdName = expectedRunwayThresholdName;
     this.routeType = routeType;
+  }
+
+  @XmlConstructor
+  private ClearedToRouteCommand() {
+    routeName = null;
+    routeType = null;
+    expectedRunwayThresholdName = null;
   }
 
   public String getExpectedRunwayThresholdName() {

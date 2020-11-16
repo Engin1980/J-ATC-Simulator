@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -16,6 +17,12 @@ public class ChangeHeadingCommand implements ICommand {
   public static ChangeHeadingCommand createContinueCurrentHeading() {
     ChangeHeadingCommand ret = new ChangeHeadingCommand(null, LeftRightAny.any);
     return ret;
+  }
+
+  @XmlConstructor
+  private ChangeHeadingCommand(){
+    this.heading = 0;
+    this.direction = LeftRightAny.any;
   }
 
   private final Integer heading;

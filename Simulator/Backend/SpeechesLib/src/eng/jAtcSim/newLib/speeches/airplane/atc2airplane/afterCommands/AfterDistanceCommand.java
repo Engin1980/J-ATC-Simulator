@@ -2,6 +2,8 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
+import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class AfterDistanceCommand extends AfterCommandWithNavaid {
   public static AfterDistanceCommand create(String navaidName, double distance, AboveBelowExactly position) {
@@ -10,6 +12,12 @@ public class AfterDistanceCommand extends AfterCommandWithNavaid {
   }
 
   private final double distance;
+
+  @XmlConstructor
+  private AfterDistanceCommand() {
+    super("?", AboveBelowExactly.exactly);
+    distance = 0;
+  }
 
   protected AfterDistanceCommand(String navaidName, double distance, AboveBelowExactly position) {
     super(navaidName, position);

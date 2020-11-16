@@ -69,7 +69,8 @@ public class SimulationXmlContextInit {
             .withInstanceFactory(c -> new MrvaController(((Area) c.values.get("area")).getBorders().where(q -> q.getType() == Border.eType.mrva)))
             .withIgnoredFields("mrvas", "mrvaMaps"));
 
-    ctx.sdfManager.addAutomaticallySerializedPackage("eng.jAtcSim.newLib.airplanes.templates");
+    ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.airplanes.templates", ObjectSerializer::new);
+    ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.airplanes.templates", ObjectDeserializer::new);
     // endregion
 
     // region AtcModule
