@@ -11,17 +11,11 @@ public class AreaXmlContextInit {
   public static void prepareXmlContext(XmlContext ctx) {
     if (XmlContextInit.checkCanBeInitialized(ctx,"area") == false) return;
 
-    ctx.sdfManager.setFormatter(ActiveRunwayThreshold.class, q -> q.getFullName());
-    ctx.sdfManager.setParser(ActiveRunwayThreshold.class, (q, c) -> {
-      Airport airport = (Airport) c.values.get("airport");
-      return airport.getRunwayThreshold(q);
-    });
+    ctx.sdfManager.setFormatter(ActiveRunwayThreshold.class, q -> q.getName());
+    ctx.sdfManager.setParser(ActiveRunwayThreshold.class, (q, c) -> c.values.get(Airport.class).getRunwayThreshold(q));
 
     ctx.sdfManager.setFormatter(Navaid.class, q -> q.getName());
-    ctx.sdfManager.setParser(Navaid.class, (q, c) -> {
-      Area area = (Area) c.values.get("area");
-      return area.getNavaids().get(q);
-    });
+    ctx.sdfManager.setParser(Navaid.class, (q, c) -> c.values.get(Area.class).getNavaids().get(q));
 
     ctx.sdfManager.setSerializer(NavaidList.class, new ItemsSerializer());
     ctx.sdfManager.setDeserializer(NavaidList.class, new ItemsDeserializer());

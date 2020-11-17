@@ -27,8 +27,14 @@ public abstract class ComputerAtc extends Atc {
 
   public static void prepareXmlContext(XmlContext ctx) {
     ctx.sdfManager.setSerializer(SwitchManager.class, new eng.newXmlUtils.implementations.ObjectSerializer()
-            .withIgnoredFields("delayedMessagesProducer", "parent"));
+            .withIgnoredFields("delayedMessagesProducer")
+            .withCustomFieldFormatter("parent", q -> "-"));
+    ctx.sdfManager.setDeserializer(SwitchManager.class, new eng.newXmlUtils.implementations.ObjectDeserializer<>()
+            .withIgnoredFields("delayedMessagesProducer")
+    .withCustomFieldDeserialization("parent", todle nevím jak udělat, nějaké složité ));
+
     ctx.sdfManager.setSerializer(SwitchInfo.class, new eng.newXmlUtils.implementations.ObjectSerializer());
+    ctx.sdfManager.setDeserializer(SwitchInfo.class, new eng.newXmlUtils.implementations.ObjectDeserializer<>());
   }
 
   private final DelayedList<Message> speechDelayer = new DelayedList<>(

@@ -186,8 +186,8 @@ public class Simulation {
   private Simulation() {
     this.now = new EDayTimeRun(0);
     SharedAcc sharedContext = new SharedAcc(
-            "????",
-            new EList<>(),
+            Context.getShared().getAirportIcao(),
+            Context.getShared().getAtcs(),
             this.now,
             new SimulationLog()
     );

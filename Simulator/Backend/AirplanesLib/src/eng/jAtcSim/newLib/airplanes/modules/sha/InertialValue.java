@@ -1,5 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha;
 
+import eng.newXmlUtils.annotations.XmlConstructor;
+
 class InertialValue {
   private final double maxPositiveInertiaChange;
   private final double maxNegativeInertiaChange;
@@ -7,6 +9,7 @@ class InertialValue {
   private double inertia;
   private final Double minimum;
 
+  @XmlConstructor
   public InertialValue(double value,
                        double maxPositiveInertiaChange, double maxNegativeInertiaChange,
                        Double minimum) {

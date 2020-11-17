@@ -5,6 +5,11 @@ import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.ContextManager;
+import eng.jAtcSim.newLib.shared.context.ISharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.newLib.shared.logging.SimulationLog;
+import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.newXmlUtils.XmlContext;
 import eng.newXmlUtils.implementations.ObjectDeserializer;
 import eng.newXmlUtils.implementations.ObjectSerializer;
@@ -30,6 +35,14 @@ public class Game implements IGame {
               c.values.set(q.getArea());
               c.values.set(q.getActiveAirport());
               c.sdfManager.setParser(AtcId.class, (qq, cc) -> q.getActiveAirport().getAtcTemplates().select(qqq -> qqq.toAtcId()).getFirst(qqq -> qqq.getName().equals(qq)));
+
+              SharedAcc sharedContext = new SharedAcc(
+                      q.getActiveAirport().getIcao(),
+                      q.getActiveAirport().getAtcTemplates().select(qq -> qq.toAtcId()),
+                      new EDayTimeRun(0),
+                      new SimulationLog()
+              );
+              ContextManager.setContext(ISharedAcc.class, sharedContext);
             }));
 
     ctx.sdfManager.setFormatter(AirplaneTypesSource.class, q -> q.getFileName());

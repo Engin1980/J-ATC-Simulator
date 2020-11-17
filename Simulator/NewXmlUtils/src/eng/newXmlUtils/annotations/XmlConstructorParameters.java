@@ -7,5 +7,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.CONSTRUCTOR)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface XmlConstructor {
+public @interface XmlConstructorParameters {
+  XmlConstructorParameter[] value();
 }

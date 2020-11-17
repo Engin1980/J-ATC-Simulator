@@ -29,7 +29,7 @@ public class SDFManager {
   private Deserializer defaultDeserializer = null;
   private final ISet<String> autoPackages = new ESet<>();
 
-  public void withAutoPackageDeserializer(String packageName) {
+  public void addAutoPackage(String packageName) {
     this.autoPackages.add(packageName);
   }
 

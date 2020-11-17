@@ -38,11 +38,13 @@ public class AirplaneXmlContextInit {
     ctx.sdfManager.setDeserializer(AirplanesController.class,
             new ObjectDeserializer<AirplanesController>()
                     .withIgnoredFields("publicPlanes")
-                    .withAfterLoadAction((q, c) -> q.init()));
+                    .withCustomFieldDeserialization("planes", new ItemsDeserializer().withInstanceFactory(c ->
+                            new AirplaneList<Airplane>(q -> q.getReader().getCallsign(), q -> q.getReader().getSqwk()))));
 
     ctx.sdfManager.setSerializer(AirplaneList.class,
             new ItemsSerializer());
-    ctx.sdfManager.setDeserializer(AirplaneList.class, new ItemsDeserializer());
+//    ctx.sdfManager.setDeserializer(AirplaneList.class,
+//            new ItemsDeserializer().withInstanceFactory(c -> new AirplaneList<>()));
 
     ctx.sdfManager.setSerializer(Airplane.AirplaneImpl.class, null);
     ctx.sdfManager.setDeserializer(Airplane.AirplaneImpl.class, null);
@@ -71,13 +73,11 @@ public class AirplaneXmlContextInit {
                       0,
                       0,
                       0,
-                      c.values.get(Airplane.class).getReader().getType())));
+                      c.values.get(Airplane.class).getReader().getType(),
+                      0)));
       {
-        ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.airplanes.modules.sha", ObjectSerializer::new);
-        ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.airplanes.modules.sha", ObjectDeserializer::new);
-
-        ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.airplanes.modules.sha.navigators", ObjectSerializer::new);
-        ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.airplanes.modules.sha.navigators", ObjectDeserializer::new);
+        ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.airplanes.modules.sha");
+        ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.airplanes.modules.sha.navigators");
       }
 
       ctx.sdfManager.setSerializer(AtcModule.class, new ObjectSerializer().withIgnoredFields("plane", "rdr", "wrt"));
@@ -102,7 +102,7 @@ public class AirplaneXmlContextInit {
 
       ctx.sdfManager.setSerializer(RoutingModule.class, new ObjectSerializer().withIgnoredFields("plane", "rdr", "wrt", "cqr"));
       ctx.sdfManager.setDeserializer(RoutingModule.class, new ObjectDeserializer<RoutingModule>()
-              .withIgnoredFields("plane", "rdr", "wrt")
+              .withIgnoredFields("plane", "rdr", "wrt", "cqr")
               .withInstanceFactory(c -> new RoutingModule(c.values.get(Airplane.class), null)));
       {
         ctx.sdfManager.setSerializer(DelayedList.class, new ObjectSerializer());
@@ -114,32 +114,21 @@ public class AirplaneXmlContextInit {
         ctx.sdfManager.setSerializer(AfterCommandList.class, new ObjectSerializer());
         ctx.sdfManager.setDeserializer(AfterCommandList.class, new ObjectDeserializer<AfterCommandList>());
 
-        ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.airplanes.modules.speeches", ObjectSerializer::new);
-        ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.airplanes.modules.speeches", ObjectDeserializer::new);
+        ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.airplanes.modules.speeches");
 
         ctx.sdfManager.setSerializer(SpeechList.class, new ItemsSerializer());
         ctx.sdfManager.setDeserializer(SpeechList.class, new ItemsDeserializer());
 
-        ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.speeches.base", ObjectSerializer::new);
-        ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.speeches.airplane.airplane2atc", ObjectSerializer::new);
-        ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses", ObjectSerializer::new);
-        ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.speeches.airplane.atc2airplane", ObjectSerializer::new);
-        ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands", ObjectSerializer::new);
-        ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.speeches.atc.atc2user", ObjectSerializer::new);
-        ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.speeches.atc.planeSwitching", ObjectSerializer::new);
-        ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.speeches.atc.user2atc", ObjectSerializer::new);
-        ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.speeches.system.system2user", ObjectSerializer::new);
-        ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.speeches.system.user2system", ObjectSerializer::new);
-        ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.speeches.base", ObjectDeserializer::new);
-        ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.speeches.airplane.airplane2atc", ObjectDeserializer::new);
-        ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses", ObjectDeserializer::new);
-        ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.speeches.airplane.atc2airplane", ObjectDeserializer::new);
-        ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands", ObjectDeserializer::new);
-        ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.speeches.atc.atc2user", ObjectDeserializer::new);
-        ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.speeches.atc.planeSwitching", ObjectDeserializer::new);
-        ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.speeches.atc.user2atc", ObjectDeserializer::new);
-        ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.speeches.system.system2user", ObjectDeserializer::new);
-        ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.speeches.system.user2system", ObjectDeserializer::new);
+        ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.speeches.base");
+        ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.speeches.airplane.airplane2atc");
+        ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses");
+        ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.speeches.airplane.atc2airplane");
+        ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands");
+        ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.speeches.atc.atc2user");
+        ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.speeches.atc.planeSwitching");
+        ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.speeches.atc.user2atc");
+        ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.speeches.system.system2user");
+        ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.speeches.system.user2system");
       }
       ctx.sdfManager.setSerializer(Mood.class, new ObjectSerializer());
       ctx.sdfManager.setDeserializer(Mood.class, new ObjectDeserializer<Mood>());

@@ -4,6 +4,7 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class HeadingNavigator extends Navigator {
 
@@ -15,6 +16,7 @@ public class HeadingNavigator extends Navigator {
   private final int heading;
   private boolean isApplied;
 
+  @XmlConstructor
   public HeadingNavigator(int heading, LeftRightAny turn) {
     this.heading = heading;
     this.turn = turn;

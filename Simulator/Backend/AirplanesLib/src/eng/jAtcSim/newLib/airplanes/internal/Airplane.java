@@ -47,6 +47,7 @@ import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertingNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
+import eng.jAtcSim.newLib.speeches.base.Confirmation;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.newXmlUtils.annotations.XmlConstructor;
 
@@ -592,7 +593,7 @@ public class Airplane {
             callsign, entryDelay, expectedExitTime, isDeparture);
 
 
-    this.sha = new ShaModule(this, heading, altitude, speed, airplaneType);
+    this.sha = new ShaModule(this, heading, altitude, speed, airplaneType, Context.getArea().getAirport().getAltitude());
     this.emergencyModule = new EmergencyModule();
     this.atcModule = new AtcModule(this, initialAtcId);
     this.routingModule = new RoutingModule(this, entryExitPoint);

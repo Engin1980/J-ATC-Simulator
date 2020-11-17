@@ -91,8 +91,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private LeftRight targetHeadingTurn;
   private final RestrictableItem targetSpeed;
 
-
-  public ShaModule(Airplane plane, int heading, int altitude, int speed, AirplaneType planeType) {
+  public ShaModule(Airplane plane, int heading, int altitude, int speed, AirplaneType planeType, int airportAltitude) {
     super(plane);
     this.targetAltitude = new RestrictableItem(altitude);
     this.targetHeading = heading;
@@ -109,7 +108,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
             altitude,
             planeType.lowClimbRate / 7d / 60,
             planeType.highDescendRate / 7d / 60,
-            (double) Context.getArea().getAirport().getAltitude());
+            (double) airportAltitude);
 
     this.speed = new InertialValue(
             speed,

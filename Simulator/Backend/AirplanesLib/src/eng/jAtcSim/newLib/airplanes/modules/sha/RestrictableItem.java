@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes.modules.sha;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.Restriction;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 class RestrictableItem {
   /**
@@ -17,6 +18,7 @@ class RestrictableItem {
    */
   private int targetValue;
 
+  @XmlConstructor
   RestrictableItem(int targetValue) {
     setTargetValue(targetValue);
   }

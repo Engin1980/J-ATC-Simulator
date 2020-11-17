@@ -4,6 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -26,6 +27,7 @@ public class DelayedList<T> {
   private int currentDelay = 0;
   private final IList<DelayedItem<T>> inner = new EList<>(LinkedList.class);
 
+  @XmlConstructor
   public DelayedList(int minimalDelay, int maximalDelay) {
     this.minimalDelay = minimalDelay;
     this.maximalDelay = maximalDelay;

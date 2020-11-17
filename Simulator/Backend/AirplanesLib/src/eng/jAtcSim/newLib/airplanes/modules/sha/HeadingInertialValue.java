@@ -3,6 +3,8 @@ package eng.jAtcSim.newLib.airplanes.modules.sha;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Headings;
+import eng.newXmlUtils.annotations.XmlConstructor;
+import eng.newXmlUtils.annotations.XmlConstructorParameter;
 
 class HeadingInertialValue {
   private final double maxInertia;
@@ -11,8 +13,12 @@ class HeadingInertialValue {
   private IList<Double> thresholds = new EList<>();
   private int inertiaStep = 0;
 
+  @XmlConstructor
+  @XmlConstructorParameter(index = 1, valueString = "10")
+  @XmlConstructorParameter(index = 2, valueString = "2")
   HeadingInertialValue(double value,
-                       double maxInertia, double maxInertiaChange) {
+                       double maxInertia,
+                       double maxInertiaChange) {
     this.value = value;
     this.maxInertia = maxInertia;
     this.maxInertiaChange = maxInertiaChange;

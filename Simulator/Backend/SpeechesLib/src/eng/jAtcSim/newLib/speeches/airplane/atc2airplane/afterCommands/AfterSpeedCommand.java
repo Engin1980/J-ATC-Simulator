@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import eng.newXmlUtils.annotations.XmlConstructorParameter;
 
 public class AfterSpeedCommand extends AfterCommand {
   public static AfterSpeedCommand create(int speed, AboveBelowExactly position) {
@@ -12,12 +13,7 @@ public class AfterSpeedCommand extends AfterCommand {
 
   private final int speed;
 
-  @XmlConstructor
-  private AfterSpeedCommand() {
-    super(AboveBelowExactly.exactly);
-    this.speed = 0;
-  }
-
+  @XmlConstructor()
   private AfterSpeedCommand(int speed, AboveBelowExactly position) {
     super(position);
     EAssert.Argument.isTrue(speed >= 0);

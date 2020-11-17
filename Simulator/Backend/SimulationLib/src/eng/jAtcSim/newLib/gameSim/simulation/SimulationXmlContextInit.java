@@ -31,6 +31,7 @@ public class SimulationXmlContextInit {
             ));
     ctx.sdfManager.setDeserializer(Simulation.class, new ObjectDeserializer<Simulation>()
             .withIgnoredFields("ioModule", "isim", "worldModule")
+            .withBeforeLoadAction((q, c) -> c.values.set(q))
             .withAfterLoadAction((q, c) -> {
               WorldModule worldModule = new WorldModule(
                       q,
@@ -40,7 +41,7 @@ public class SimulationXmlContextInit {
                       c.values.get(AirlinesFleets.class),
                       c.values.get(GeneralAviationFleets.class));
               ReflectionUtils.FieldUtils.set(q, "worldModule", worldModule);
-              c.values.set("simulation", q);
+              c.values.remove(q);
               q.reinitAfterLoad();
             }));
 
@@ -50,10 +51,10 @@ public class SimulationXmlContextInit {
     ctx.sdfManager.setSerializer(AirplanesModule.class, new ObjectSerializer()
             .withValueClassCheck(AirplanesModule.class)
             .withIgnoredFields("planes4public")
-            .withIgnoredFields("parent"));
+            .withCustomFieldFormatter("parent", q -> "-"));
     ctx.sdfManager.setDeserializer(AirplanesModule.class, new ObjectDeserializer<AirplanesModule>()
             .withIgnoredFields("planes4public")
-            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get("simulation"))
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class))
             .withAfterLoadAction((q, c) -> q.init()));
 
     ctx.sdfManager.setSerializer(AirproxController.class, new ObjectSerializer());
@@ -66,20 +67,19 @@ public class SimulationXmlContextInit {
             new ObjectSerializer()
                     .withIgnoredFields("mrvas", "mrvaMaps"));
     ctx.sdfManager.setDeserializer(MrvaController.class, new ObjectDeserializer<MrvaController>()
-            .withInstanceFactory(c -> new MrvaController(((Area) c.values.get("area")).getBorders().where(q -> q.getType() == Border.eType.mrva)))
+            .withInstanceFactory(c -> new MrvaController(c.values.get(Area.class).getBorders().where(q -> q.getType() == Border.eType.mrva)))
             .withIgnoredFields("mrvas", "mrvaMaps"));
 
-    ctx.sdfManager.addAutoPackageSerializer("eng.jAtcSim.newLib.airplanes.templates", ObjectSerializer::new);
-    ctx.sdfManager.addAutoPackageDeserializer("eng.jAtcSim.newLib.airplanes.templates", ObjectDeserializer::new);
+    ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.airplanes.templates");
     // endregion
 
     // region AtcModule
     ctx.sdfManager.setSerializer(AtcModule.class, new ObjectSerializer()
             .withIgnoredFields("userAtcsCache")
-            .withIgnoredFields("parent"));
+            .withCustomFieldFormatter("parent", q -> "-"));
     ctx.sdfManager.setDeserializer(AtcModule.class, new ObjectDeserializer<AtcModule>()
             .withIgnoredFields("userAtcsCache")
-            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get("simulation")));
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class)));
 
     AtcXmlContextInit.prepareXmlContext(ctx);
 
@@ -87,10 +87,9 @@ public class SimulationXmlContextInit {
 
     // region StatsModule
     ctx.sdfManager.setSerializer(StatsModule.class, new ObjectSerializer()
-            .withIgnoredFields("parent"));
+            .withCustomFieldFormatter("parent", q -> "-"));
     ctx.sdfManager.setDeserializer(StatsModule.class, new ObjectDeserializer<StatsModule>()
-            .withIgnoredFields("parent")
-            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get("simulation")));
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class)));
 
     StatsXmlContextInit.prepareXmlContext(ctx);
     // endregion
@@ -104,7 +103,7 @@ public class SimulationXmlContextInit {
         e.setContent("n" + t.getTickInterval());
     });
     ctx.sdfManager.setDeserializer(TimerModule.class, (e, c) -> {
-      Simulation sim = (Simulation) c.values.get("simulation");
+      Simulation sim = c.values.get(Simulation.class);
       int tickInterval = Integer.parseInt(e.getContent().substring(1));
       TimerModule ret = new TimerModule(sim, tickInterval);
       if (e.getContent().charAt(0) == 'y')
@@ -115,16 +114,16 @@ public class SimulationXmlContextInit {
 
     // region TrafficModule
     ctx.sdfManager.setSerializer(TrafficModule.class, new ObjectSerializer()
-            .withIgnoredFields("parent"));
+            .withCustomFieldFormatter("parent", q -> "-"));
     ctx.sdfManager.setDeserializer(TrafficModule.class, new ObjectDeserializer<TrafficModule>()
-            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get("simulation")));
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class)));
     // endregion
 
     // region WeatherModule
     ctx.sdfManager.setSerializer(WeatherModule.class, new ObjectSerializer()
-            .withIgnoredFields("parent"));
+            .withCustomFieldFormatter("parent", q -> "-"));
     ctx.sdfManager.setDeserializer(WeatherModule.class, new ObjectDeserializer<WeatherModule>()
-            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get("simulation")));
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class)));
 
     WeatherXmlContextInit.prepareXmlContext(ctx);
     // endregion
