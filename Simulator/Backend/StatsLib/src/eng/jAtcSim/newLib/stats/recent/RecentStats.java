@@ -132,12 +132,12 @@ public class RecentStats {
 
   private int recentSecondsElapsed;
   private ElapsedSecondDurationModel elapsedSecondDuration = new ElapsedSecondDurationModel();
-  private Errors clsErrors = new Errors();
-  private Delays clsDelays = new Delays();
-  private HoldingPoint clsHP = new HoldingPoint();
-  private MovementsPerHour clsMovements = new MovementsPerHour();
-  private CurrentPlanesCount clsCurrent = new CurrentPlanesCount();
-  private FinishedPlanes clsFinished = new FinishedPlanes();
+  private final Errors clsErrors = new Errors();
+  private final Delays clsDelays = new Delays();
+  private final HoldingPoint clsHP = new HoldingPoint();
+  private final MovementsPerHour clsMovements = new MovementsPerHour();
+  private final CurrentPlanesCount clsCurrent = new CurrentPlanesCount();
+  private final FinishedPlanes clsFinished = new FinishedPlanes();
   private IList<TimedValue<Integer>> airproxErrors = new EList<>();
   private IList<TimedValue<Integer>> mrvaErrors = new EList<>();
   private IList<TimedValue<Integer>> planeDelays = new EList<>();

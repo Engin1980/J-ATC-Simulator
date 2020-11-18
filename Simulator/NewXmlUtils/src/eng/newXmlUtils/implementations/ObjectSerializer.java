@@ -60,12 +60,13 @@ public class ObjectSerializer implements Serializer {
   public void invoke(XElement element, Object value, XmlContext xmlContext) {
     validateExpectedTypeIfRequired(value);
     preCyclicSerializationCheck(value, xmlContext);
+    boolean forceStoreFieldTypes = value.getClass().getTypeParameters().length > 0;
 
     IReadOnlyList<Field> fields = ReflectionUtils.ClassUtils.getFields(value.getClass()).where(q -> !Modifier.isStatic(q.getModifiers()));
 
     for (Field field : fields) {
       if (field.getName().equals("this$0")) continue; // ignores internal field of inner class
-      storeField(element, value, field, xmlContext);
+      storeField(element, value, field, xmlContext, forceStoreFieldTypes);
     }
 
     InternalXmlUtils.saveType(element, value);
@@ -81,7 +82,7 @@ public class ObjectSerializer implements Serializer {
   private void preCyclicSerializationCheck(Object value, XmlContext xmlContext) {
     ISet<Object> objectSerializerSet = (ISet<Object>) xmlContext.values.getOrSet(OBJECT_SERIALIZER_VALUE_SET, () -> new ESet<>());
     if (objectSerializerSet.contains(value))
-      throw  new EXmlException(sf("Object-serializer in cyclic serialization of '%s' ('%s').", value, value.getClass()));
+      throw new EXmlException(sf("Object-serializer in cyclic serialization of '%s' ('%s').", value, value.getClass()));
     else
       objectSerializerSet.add(value);
   }
@@ -99,13 +100,16 @@ public class ObjectSerializer implements Serializer {
     }
   }
 
-  private void storeField(XElement e, Object v, Field field, XmlContext c) {
+  private void storeField(XElement e, Object v, Field field, XmlContext c, boolean forceStoreFieldType) {
     Object fieldValue = getFieldValue(v, field);
     Serializer serializer = getSerializer(field, fieldValue, c);
     if (serializer != null) {
       XElement fieldElement = new XElement(field.getName());
       serializer.invoke(fieldElement, fieldValue, c);
-      deleteTypeAttributeIfNotRequired(field.getType(), fieldElement);
+      if (forceStoreFieldType)
+        InternalXmlUtils.saveType(fieldElement, fieldValue);
+      else
+        deleteTypeAttributeIfNotRequired(field.getType(), fieldElement);
       e.addElement(fieldElement);
     }
   }

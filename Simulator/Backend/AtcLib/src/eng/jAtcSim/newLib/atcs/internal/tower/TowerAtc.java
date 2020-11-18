@@ -2,7 +2,6 @@ package eng.jAtcSim.newLib.atcs.internal.tower;
 
 
 import eng.eSystem.collections.*;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
@@ -35,9 +34,6 @@ import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.weather.Weather;
-import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.implementations.ObjectDeserializer;
-import eng.newXmlUtils.implementations.ObjectSerializer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -148,52 +144,9 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  public static class RunwaysInUseInfo {
-    private SchedulerForAdvice scheduler;
-    private RunwayConfiguration current;
-    private RunwayConfiguration scheduled;
-
-    public RunwayConfiguration getCurrent() {
-      return current;
-    }
-
-    public RunwayConfiguration getScheduled() {
-      return scheduled;
-    }
-  }
   private static final int[] RWY_CHANGE_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5, 4, 3, 2, 1};
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
-
-  public static void prepareXmlContext(XmlContext ctx) {
-    ctx.sdfManager.setSerializer(TowerAtc.class, new ObjectSerializer()
-            .withIgnoredFields("recorder", "switchManagerInterface", "onRunwayChanged"));
-    ctx.sdfManager.setDeserializer(TowerAtc.class, new ObjectDeserializer<>()
-            .withIgnoredFields("recorder", "switchManagerInterface", "onRunwayChanged"));
-
-    ctx.sdfManager.setSerializer(DepartureManager.class,
-            new eng.newXmlUtils.implementations.ObjectSerializer()
-                    .withIgnoredFields("parent", "messageSenderConsumer"));
-    ctx.sdfManager.setDeserializer(DepartureManager.class,
-            new eng.newXmlUtils.implementations.ObjectDeserializer<DepartureManager>()
-                    .withIgnoredFields("parent", "messageSenderConsumer"));
-
-    ctx.sdfManager.setSerializer(ArrivalManager.class,
-            new eng.newXmlUtils.implementations.ObjectSerializer()
-                    .withIgnoredFields("parent", "messageSenderConsumer"));
-    ctx.sdfManager.setDeserializer(ArrivalManager.class,
-            new eng.newXmlUtils.implementations.ObjectDeserializer<ArrivalManager>()
-                    .withIgnoredFields("parent", "messageSenderConsumer"));
-
-    ctx.sdfManager.setSerializer(RunwayCheckInfo.class, new eng.newXmlUtils.implementations.ObjectSerializer());
-    ctx.sdfManager.setDeserializer(RunwayCheckInfo.class, new eng.newXmlUtils.implementations.ObjectDeserializer<RunwayCheckInfo>());
-
-    ctx.sdfManager.setSerializer(SchedulerForAdvice.class, new eng.newXmlUtils.implementations.ObjectSerializer());
-    ctx.sdfManager.setDeserializer(SchedulerForAdvice.class, new eng.newXmlUtils.implementations.ObjectDeserializer<SchedulerForAdvice>());
-
-    ctx.sdfManager.setSerializer(RunwaysInUseInfo.class, new eng.newXmlUtils.implementations.ObjectSerializer());
-    ctx.sdfManager.setDeserializer(RunwaysInUseInfo.class, new eng.newXmlUtils.implementations.ObjectDeserializer<RunwaysInUseInfo>());
-  }
 
   private static RunwayConfiguration getSuggestedThresholds() {
     RunwayConfiguration ret = null;

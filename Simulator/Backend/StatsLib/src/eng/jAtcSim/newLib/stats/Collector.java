@@ -9,6 +9,7 @@ import eng.jAtcSim.newLib.stats.model.ArrivalDepartureTotalModel;
 import eng.jAtcSim.newLib.stats.model.ErrorsModel;
 import eng.jAtcSim.newLib.stats.properties.CounterProperty;
 import eng.jAtcSim.newLib.stats.properties.StatisticProperty;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class Collector {
   private final EDayTimeStamp fromTime;
@@ -23,6 +24,19 @@ public class Collector {
   private final StatisticProperty holdingPointDelayStats;
   private int holdingPointMaximumCount = 0;
 
+  @XmlConstructor
+  private Collector(){
+    fromTime = null;
+    toTime = null;
+    busyCounter = null;
+    planesInSim = null;
+    planesUnderApp = null;
+    runwayMovements = null;
+    finishedPlanesDelays = null;
+    finishedPlanesMoods = null;
+    errors = null;
+    holdingPointDelayStats = null;
+  }
   public Collector(EDayTimeStamp fromTime, EDayTimeStamp toTime) {
     this.fromTime = fromTime;
     this.toTime = toTime;

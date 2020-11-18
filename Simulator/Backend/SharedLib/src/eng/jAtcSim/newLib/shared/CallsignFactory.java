@@ -9,6 +9,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class CallsignFactory {
   public enum Type {
@@ -95,6 +96,7 @@ public class CallsignFactory {
     numericalChars = tmp.toArray(Character.class);
   }
 
+  @XmlConstructor
   public CallsignFactory(boolean useExtendedCallsigns) {
     this.useExtendedCallsigns = useExtendedCallsigns;
   }

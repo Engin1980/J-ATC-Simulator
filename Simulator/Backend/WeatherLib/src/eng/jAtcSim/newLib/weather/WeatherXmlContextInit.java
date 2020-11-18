@@ -13,7 +13,8 @@ public class WeatherXmlContextInit {
     ctx.sdfManager.setSerializer(Weather.class, new ObjectSerializer().withValueClassCheck(Weather.class));
     ctx.sdfManager.setDeserializer(Weather.class, new ObjectDeserializer<>());
 
-    ctx.sdfManager.setSerializer(WeatherManager.class, new ObjectSerializer().withIgnoredFields("provider"));
+    ctx.sdfManager.setSerializer(WeatherManager.class, new ObjectSerializer()
+            .withCustomFieldFormatter("provider", c -> "-"));
     ctx.sdfManager.setDeserializer(WeatherManager.class, new ObjectDeserializer<WeatherManager>()
             .withCustomFieldDeserialization("provider", (e, c) -> c.values.get("weatherProvider")));
   }

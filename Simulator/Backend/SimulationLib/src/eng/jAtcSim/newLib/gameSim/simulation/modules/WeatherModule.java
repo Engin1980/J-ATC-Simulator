@@ -8,9 +8,16 @@ import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
 import eng.jAtcSim.newLib.weather.WeatherManager;
 import eng.jAtcSim.newLib.weather.context.IWeatherAcc;
 import eng.jAtcSim.newLib.weather.context.WeatherAcc;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class WeatherModule extends SimulationModule {
   private final WeatherManager weatherManager;
+
+  @XmlConstructor
+  private WeatherModule(){
+    super(null);
+    weatherManager = null;
+  }
 
   public WeatherModule(Simulation parent, WeatherManager weatherManager) {
     super(parent);

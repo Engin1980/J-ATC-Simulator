@@ -9,6 +9,7 @@ import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.stats.contextLocal.Context;
 import eng.jAtcSim.newLib.stats.properties.CounterProperty;
 import eng.jAtcSim.newLib.stats.recent.RecentStats;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class StatsProvider {
 
@@ -45,6 +46,7 @@ public class StatsProvider {
   private final int statsSnapshotDistanceInMinutes;
   private final MyStatsProvider myStatsProvider = this.new MyStatsProvider();
 
+  @XmlConstructor
   public StatsProvider(int statsSnapshotDistanceInMinutes) {
     this.statsSnapshotDistanceInMinutes = statsSnapshotDistanceInMinutes;
   }

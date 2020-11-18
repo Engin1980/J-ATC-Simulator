@@ -3,12 +3,18 @@ package eng.jAtcSim.newLib.weather;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class WeatherManager {
 
   private Weather currentWeather;
   private boolean newWeatherFlag;
   private final WeatherProvider provider;
+
+  @XmlConstructor
+  private WeatherManager() {
+    provider = null;
+  }
 
   public WeatherManager(WeatherProvider provider) {
     EAssert.Argument.isNotNull(provider);

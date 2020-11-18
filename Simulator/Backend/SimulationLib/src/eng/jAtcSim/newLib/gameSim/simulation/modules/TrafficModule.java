@@ -27,6 +27,7 @@ import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.traffic.movementTemplating.*;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -38,12 +39,13 @@ public class TrafficModule extends SimulationModule {
   private final int delayStep;
   private final double delayStepProbability;
 
-  private TrafficModule(Simulation parent, TrafficProvider trafficProvider, CallsignFactory callsignFactory, int delayStep, double delayStepProbability) {
-    super(parent);
-    this.trafficProvider = trafficProvider;
-    this.callsignFactory = callsignFactory;
-    this.delayStep = delayStep;
-    this.delayStepProbability = delayStepProbability;
+  @XmlConstructor
+  private TrafficModule() {
+    super(null);
+    this.trafficProvider =null;
+    this.callsignFactory = null;
+    this.delayStep = 0;
+    this.delayStepProbability =0;
   }
 
   public TrafficModule(Simulation parent, TrafficProvider trafficProvider,

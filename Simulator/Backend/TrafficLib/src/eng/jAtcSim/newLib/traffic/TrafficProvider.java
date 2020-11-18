@@ -5,6 +5,7 @@ import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.time.EDayTime;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -13,6 +14,10 @@ public class TrafficProvider {
   private final ITrafficModel trafficModel;
   private final IMap<Integer, IList<MovementTemplate>> movementsForDay = new EMap<>();
 
+  @XmlConstructor
+  private TrafficProvider() {
+    this.trafficModel = null;
+  }
 
   public TrafficProvider(ITrafficModel trafficModel) {
     EAssert.isNotNull(trafficModel);

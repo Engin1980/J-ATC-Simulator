@@ -1,8 +1,6 @@
 package eng.jAtcSim.newLib.atcs.internal.computer;
 
 import eng.eSystem.collections.*;
-import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
@@ -15,7 +13,6 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
-import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
@@ -31,13 +28,13 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 class SwitchManager {
 
   private static final int SECONDS_BEFORE_REPEAT_SWITCH_REQUEST = 30;
-  private final IAtcSwitchManagerInterface parent;
+  private IAtcSwitchManagerInterface parent;
   private final ISet<Squawk> incomingPlanes = new ESet<>();
   private final IMap<Squawk, SwitchInfo> outgoingPlanes = new EMap<>();
-  private final Producer<IReadOnlyList<Message>> delayedMessagesProducer;
+  private Producer<IReadOnlyList<Message>> delayedMessagesProducer;
 
-  public SwitchManager(IAtcSwitchManagerInterface parent,
-                       Producer<IReadOnlyList<Message>> delayedMessagesProducer) {
+  public void initParent(IAtcSwitchManagerInterface parent,
+                         Producer<IReadOnlyList<Message>> delayedMessagesProducer) {
     EAssert.Argument.isNotNull(parent, "parent");
     this.parent = parent;
     this.delayedMessagesProducer = delayedMessagesProducer;

@@ -13,6 +13,7 @@ import eng.jAtcSim.newLib.gameSim.simulation.controllers.AirproxController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.MrvaController;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.*;
+import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.stats.StatsXmlContextInit;
 import eng.jAtcSim.newLib.weather.WeatherXmlContextInit;
 import eng.newXmlUtils.XmlContext;
@@ -89,6 +90,7 @@ public class SimulationXmlContextInit {
     ctx.sdfManager.setSerializer(StatsModule.class, new ObjectSerializer()
             .withCustomFieldFormatter("parent", q -> "-"));
     ctx.sdfManager.setDeserializer(StatsModule.class, new ObjectDeserializer<StatsModule>()
+            .withInstanceFactory(c -> new StatsModule(null, new StatsProvider(3)))
             .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class)));
 
     StatsXmlContextInit.prepareXmlContext(ctx);

@@ -1,5 +1,6 @@
 package eng.jAtcSim;
 
+import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
@@ -17,6 +18,7 @@ import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.frmPacks.shared.FrmLog;
 import eng.jAtcSim.newLib.gameSim.IGame;
+import eng.jAtcSim.newLib.gameSim.game.Game;
 import eng.jAtcSim.newLib.gameSim.game.GameFactoryAndRepository;
 import eng.jAtcSim.newLib.gameSim.game.sources.SourceFactory;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.*;
@@ -64,50 +66,45 @@ public class JAtcSim {
 
   public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
 
-    new GameFactoryAndRepository().load(xmlFileName);
+    Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Loading saved simulation game");
 
-    //TODO Implement this: loading of the simulation
-    throw new ToDoException("loading of the simulation");
-//    Context.getShared().getAppLog().write(ApplicationLog.eType.info, "Loading saved simulation game");
-//
-//    IMap<String, Object> map = new EMap<>();
-//
-//    FrmStartupProgress frm = new FrmStartupProgress(16);
-//    frm.setVisible(true);
-//
-//    Game g;
-//
-//    try {
-//
-//      g = Game.load(xmlFileName, map);
-//
-//      // enable duplicates
-//      //TODO do the following
-////      try {
-////        g.getSimulation().getArea().checkForDuplicits();
-////      } catch (Exception ex) {
-////        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
-////      }
-//
-//      Context.getShared().getAppLog().write(ApplicationLog.eType.info, "Initializing sound environment");
-//      // sound
-//      SoundManager.init(appSettings.soundFolder.toString());
-//
-//      Context.getShared().getAppLog().write(ApplicationLog.eType.info, "Starting a GUI");
-//
-//    } catch (Exception ex) {
-//      throw ex;
-//    } finally {
-//      frm.setVisible(false);
-//    }
-//
-//    // starting pack & simulation
-//    String packType = startupSettings.radar.packClass;
-//    Pack simPack = createPackInstance(packType);
-//    simPack.initPack(g, appSettings);
-//    simPack.startPack();
-//
-//    simPack.applyStoredData(map);
+    IMap<String, Object> map = new EMap<>();
+
+    FrmStartupProgress frm = new FrmStartupProgress(16);
+    frm.setVisible(true);
+
+    Game g;
+
+    try {
+      g = new GameFactoryAndRepository().load(xmlFileName);
+
+      // enable duplicates
+      //TODO do the following
+//      try {
+//        g.getSimulation().getArea().checkForDuplicits();
+//      } catch (Exception ex) {
+//        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
+//      }
+
+      Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Initializing sound environment");
+      // sound
+      SoundManager.init(appSettings.soundFolder.toString());
+
+      Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Starting a GUI");
+
+    } catch (Exception ex) {
+      throw ex;
+    } finally {
+      frm.setVisible(false);
+    }
+
+    // starting pack & simulation
+    String packType = startupSettings.radar.packClass;
+    Pack simPack = createPackInstance(packType);
+    simPack.initPack(g, appSettings);
+    simPack.startPack();
+
+    simPack.applyStoredData(map);
 
   }
 

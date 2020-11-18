@@ -19,30 +19,18 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneConfirmation;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
-import eng.newXmlUtils.XmlContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public abstract class ComputerAtc extends Atc {
 
-  public static void prepareXmlContext(XmlContext ctx) {
-    ctx.sdfManager.setSerializer(SwitchManager.class, new eng.newXmlUtils.implementations.ObjectSerializer()
-            .withIgnoredFields("delayedMessagesProducer")
-            .withCustomFieldFormatter("parent", q -> "-"));
-    ctx.sdfManager.setDeserializer(SwitchManager.class, new eng.newXmlUtils.implementations.ObjectDeserializer<>()
-            .withIgnoredFields("delayedMessagesProducer")
-    .withCustomFieldDeserialization("parent", todle nevím jak udělat, nějaké složité ));
-
-    ctx.sdfManager.setSerializer(SwitchInfo.class, new eng.newXmlUtils.implementations.ObjectSerializer());
-    ctx.sdfManager.setDeserializer(SwitchInfo.class, new eng.newXmlUtils.implementations.ObjectDeserializer<>());
-  }
-
   private final DelayedList<Message> speechDelayer = new DelayedList<>(
           Global.MINIMUM_ATC_SPEECH_DELAY_SECONDS, Global.MAXIMUM_ATC_SPEECH_DELAY_SECONDS);
-  protected SwitchManager switchManager;
+  protected final SwitchManager switchManager;
 
   public ComputerAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
+    this.switchManager = new SwitchManager();
   }
 
   protected abstract IAtcSwitchManagerInterface getSwitchManagerInterface();
@@ -70,7 +58,7 @@ public abstract class ComputerAtc extends Atc {
   public void init() {
     Context.getMessaging().getMessenger().registerListener(
             Participant.createAtc(this.getAtcId()));
-    this.switchManager = new SwitchManager(this.getSwitchManagerInterface(),
+    this.switchManager.initParent(this.getSwitchManagerInterface(),
             () -> speechDelayer.getAll());
   }
 
@@ -134,11 +122,4 @@ public abstract class ComputerAtc extends Atc {
     processMessagesFromPlaneExceptGoodDayNotification(plane, spchs);
   }
 
-//  @Override
-//  protected void _save(XElement elm) {
-//  }
-//
-//  @Override
-//  protected void _load(XElement elm) {
-//  }
 }

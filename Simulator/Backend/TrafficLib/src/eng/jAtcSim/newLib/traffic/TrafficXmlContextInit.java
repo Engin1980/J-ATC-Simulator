@@ -11,7 +11,7 @@ public class TrafficXmlContextInit {
     if (XmlContextInit.checkCanBeInitialized(ctx, "traffic") == false) return;
 
     ctx.sdfManager.setSerializer(TrafficProvider.class, new ObjectSerializer()
-            .withIgnoredFields("trafficModel"));
+            .withCustomFieldSerializer("trafficModel", (e, v, c) -> e.setContent("-")));
     ctx.sdfManager.setDeserializer(TrafficProvider.class, new ObjectDeserializer<>()
             .withCustomFieldDeserialization("trafficModel", (e, q) -> q.values.get("trafficModel")));
 
