@@ -324,6 +324,7 @@ public class GameFactoryAndRepository {
     XmlContext ctx = new XmlContext();
     GameFactoryAndRepository.prepareXmlContextForSimulation(ctx);
     GameFactoryAndRepository.prepareXmlContextForSources(ctx);
+    ctx.sdfManager.setSerializer(Game.class, new ObjectSerializer());
 
     try {
       XmlContext.serialize(root, game, ctx);

@@ -1,32 +1,17 @@
 package eng.jAtcSim.newLib.airplanes;
 
-import eng.eSystem.collections.IMap;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.ToDoException;
-import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.airplanes.modules.AirplaneFlightModule;
-import eng.jAtcSim.newLib.airplanes.modules.AtcModule;
-import eng.jAtcSim.newLib.airplanes.modules.DivertModule;
-import eng.jAtcSim.newLib.airplanes.modules.EmergencyModule;
-import eng.jAtcSim.newLib.airplanes.modules.sha.ShaModule;
-import eng.jAtcSim.newLib.airplanes.modules.speeches.AfterCommandList;
-import eng.jAtcSim.newLib.airplanes.modules.speeches.RoutingModule;
-import eng.jAtcSim.newLib.airplanes.pilots.*;
 import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.DepartureAirplaneTemplate;
-import eng.jAtcSim.newLib.area.routes.GaRoute;
-import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.mood.Mood;
-import eng.jAtcSim.newLib.shared.*;
+import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.PostContracts;
+import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
-import eng.jAtcSim.newLib.speeches.SpeechList;
-import eng.newXmlUtils.implementations.ItemsSerializer;
-import eng.newXmlUtils.implementations.ObjectSerializer;
 
 public class AirplanesController {
 
@@ -38,6 +23,10 @@ public class AirplanesController {
           q -> q.getSqwk());
   private AtcId departureInitialAtcId;
   private AtcId arrivalInitialAtId;
+
+  public AirplanesController() {
+    PostContracts.register(this, () -> planes.size() == publicPlanes.size(), "Planes vs. publicPlanes does not match.");
+  }
 
   public AirplaneList<IAirplane> getPlanes() {
     return publicPlanes;

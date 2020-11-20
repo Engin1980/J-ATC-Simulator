@@ -556,32 +556,6 @@ public class Airplane {
     this.squawk = null;
   }
 
-//  private Airplane(Callsign callsign) {
-//    this.squawk = Squawk.create("0000");
-//    this.flightModule = new AirplaneFlightModule(
-//            callsign,
-//            0, new EDayTimeStamp(0), true);
-//
-//    this.airplaneType = new AirplaneType(
-//            "NOTYP", "only-for-loading", 'A', 0, 0, 0, 0, 0, 0
-//            , 0, 0, 0, 0, 0, 0, 0, 0
-//            , 0, 0);
-//
-//    this.atcModule = new AtcModule(this, new AtcId("LOADING", 0, AtcType.app));
-//
-//    this.divertModule = new DivertModule(this);
-//    this.emergencyModule = new EmergencyModule();
-//    this.mood = new Mood();
-//    this.routingModule = new RoutingModule(this, Navaid.create(
-//            "LOADN", Navaid.eType.auxiliary, new Coordinate(0, 0)));
-//    this.sha = new ShaModule(this, 0, 0, 0, this.airplaneType);
-//
-//    this.fdr = new FlightDataRecorder(this.flightModule.getCallsign());
-//    this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
-//    this.cqr = new CommandQueueRecorder(this.flightModule.getCallsign());
-//    this.routingModule.setCqr(this.cqr);
-//  }
-
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk squawk, AirplaneType airplaneType,
                    int heading, int altitude, int speed, boolean isDeparture,
                    Navaid entryExitPoint, EDayTimeStamp expectedExitTime, int entryDelay,

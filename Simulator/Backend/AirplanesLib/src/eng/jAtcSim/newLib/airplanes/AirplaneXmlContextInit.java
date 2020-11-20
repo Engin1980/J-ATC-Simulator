@@ -34,20 +34,28 @@ public class AirplaneXmlContextInit {
     ctx.sdfManager.setSerializer(AirplanesController.class,
             new ObjectSerializer()
                     .withValueClassCheck(AirplanesController.class)
-                    .withIgnoredFields("publicPlanes"));
+                    .withIgnoredFields("publicPlanes")
+                    .withCustomFieldSerializer("planes", new ItemsSerializer()));
     ctx.sdfManager.setDeserializer(AirplanesController.class,
             new ObjectDeserializer<AirplanesController>()
                     .withIgnoredFields("publicPlanes")
-                    .withCustomFieldDeserialization("planes", new ItemsDeserializer().withInstanceFactory(c ->
-                            new AirplaneList<Airplane>(q -> q.getReader().getCallsign(), q -> q.getReader().getSqwk()))));
+                    .withCustomFieldDeserialization(
+                            "planes",
+                            new ItemsDeserializer().withInstanceFactory(c ->
+                                    new AirplaneList<Airplane>(q -> q.getReader().getCallsign(), q -> q.getReader().getSqwk())))
+                    .withAfterLoadAction((q, c) -> {
+                      // q.init(); invoked when AirplanesModule is loaded
+                      c.values.set("planes", q.getPlanes());
+                    }));
 
-    ctx.sdfManager.setSerializer(AirplaneList.class,
-            new ItemsSerializer());
-//    ctx.sdfManager.setDeserializer(AirplaneList.class,
-//            new ItemsDeserializer().withInstanceFactory(c -> new AirplaneList<>()));
-
-    ctx.sdfManager.setSerializer(Airplane.AirplaneImpl.class, null);
-    ctx.sdfManager.setDeserializer(Airplane.AirplaneImpl.class, null);
+    ctx.sdfManager.setFormatter(Airplane.AirplaneImpl.class, q -> q.getCallsign().toString());
+    ctx.sdfManager.setParser(Airplane.AirplaneImpl.class, (q, c) -> {
+      AirplaneList<IAirplane> lst = (AirplaneList<IAirplane>) c.values.get("planes");
+      Callsign clsgn = new Callsign(q);
+      IAirplane plane = lst.get(clsgn);
+      Airplane.AirplaneImpl ret = (Airplane.AirplaneImpl) plane;
+      return ret;
+    });
 
     ctx.sdfManager.setSerializer(Airplane.class,
             new ObjectSerializer()
