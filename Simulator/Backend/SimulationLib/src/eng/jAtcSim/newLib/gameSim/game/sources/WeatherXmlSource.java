@@ -21,7 +21,7 @@ public class WeatherXmlSource extends WeatherSource {
   }
 
   @Override
-  public void init() {
+  protected void _init() {
     content = new PresetWeatherProvider(this.fileName);
     super.setInitialized();
   }

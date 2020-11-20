@@ -23,7 +23,6 @@ public class AtcXmlContextInit {
     ctx.sdfManager.setSerializer(AtcProvider.class, new ObjectSerializer()
             .withIgnoredFields("atcIdsCache", "userAtcIdsCache"));
     ctx.sdfManager.setDeserializer(AtcProvider.class, new ObjectDeserializer<AtcProvider>()
-            .withInstanceFactory(c -> new AtcProvider(c.values.get(Airport.class)))
             .withIgnoredFields("atcIdsCache", "userAtcIdsCache")
             .withCustomFieldDeserialization("atcs", new ItemsDeserializer().withInstanceFactory(c ->
                     new AtcList<Atc>(q -> q.getAtcId(), EDistinctList.Behavior.exception)))

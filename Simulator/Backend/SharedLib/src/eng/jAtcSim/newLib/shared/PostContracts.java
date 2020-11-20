@@ -40,7 +40,11 @@ public class PostContracts {
   }
 
   private static void throwFailedPostContract(PostContract postContract) {
-    throw new EApplicationException(sf("Post-constract check failed for '%s' ('%s')", postContract.sender, postContract.sender.getClass()) +
-            postContract.message != null ? ": " + postContract.message : "");
+    String msg = sf("Post-contract check failed for '%s' ('%s')",
+            postContract.sender,
+            postContract.sender.getClass());
+    if (postContract.message != null)
+      msg += ": " + postContract.message;
+    throw new EApplicationException(msg);
   }
 }

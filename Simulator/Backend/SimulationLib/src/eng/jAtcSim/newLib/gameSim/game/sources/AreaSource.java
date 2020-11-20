@@ -3,6 +3,9 @@ package eng.jAtcSim.newLib.gameSim.game.sources;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
+import eng.jAtcSim.newLib.area.context.AreaAcc;
+import eng.jAtcSim.newLib.area.context.IAreaAcc;
+import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.xml.area.AreaXmlLoader;
 import eng.newXmlUtils.annotations.XmlConstructor;
 
@@ -52,6 +55,9 @@ public class AreaSource extends Source<Area> {
     } catch (Exception e) {
       throw new EApplicationException(sf("Failed to load xml-area-file from '%s'", this.fileName), e);
     }
+
+    IAreaAcc areaAcc = new AreaAcc(this.getArea(), this.getActiveAirport());
+    ContextManager.setContext(IAreaAcc.class, areaAcc);
 
     super.setInitialized();
   }

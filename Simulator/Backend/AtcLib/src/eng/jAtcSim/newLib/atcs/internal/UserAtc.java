@@ -27,6 +27,7 @@ import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
+import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
 import eng.newXmlUtils.annotations.XmlConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -80,8 +81,17 @@ public class UserAtc extends Atc implements IUserAtcInterface {
 
   @Override
   public void init() {
+    super.init();
     Context.getMessaging().getMessenger().registerListener(
             Participant.createAtc(this.getAtcId()));
+    Context.getWeather().onWeatherUpdated().add(() -> {
+      Message msg = new Message(
+              Participant.createSystem(),
+              Participant.createAtc(this.getAtcId()),
+              new MetarNotification(true)
+      );
+      this.sendMessage(msg);
+    });
   }
 
   @Override

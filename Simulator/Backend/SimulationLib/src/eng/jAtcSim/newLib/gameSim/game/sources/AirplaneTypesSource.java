@@ -2,6 +2,9 @@ package eng.jAtcSim.newLib.gameSim.game.sources;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
+import eng.jAtcSim.newLib.airplaneType.context.AirplaneTypeAcc;
+import eng.jAtcSim.newLib.airplaneType.context.IAirplaneTypeAcc;
+import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.xml.airplaneTypes.AirplaneTypesXmlLoader;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -26,16 +29,15 @@ public class AirplaneTypesSource extends Source<AirplaneTypes> {
   }
 
   public void init() {
-//    XmlSettings sett = new XmlSettings();
-//    XmlSerializer ser = new XmlSerializer(sett);
-//    content = ser.deserialize(this.fileName, AirplaneTypes.class);
-//    super.setInitialized();
-
     try {
       this.content = AirplaneTypesXmlLoader.load(this.fileName);
     } catch (Exception e) {
       throw new EApplicationException(sf("Failed to load xml-airplaneTypes-file from '%s'", this.fileName), e);
     }
+
+    IAirplaneTypeAcc airplaneTypeAcc = new AirplaneTypeAcc(this.content);
+    ContextManager.setContext(IAirplaneTypeAcc.class, airplaneTypeAcc);
+
     super.setInitialized();
   }
 }

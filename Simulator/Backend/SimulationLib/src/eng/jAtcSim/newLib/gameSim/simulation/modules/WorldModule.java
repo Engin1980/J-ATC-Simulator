@@ -63,13 +63,5 @@ public class WorldModule extends SimulationModule {
   }
 
   public void init() {
-    IAreaAcc areaAcc = new AreaAcc(
-            this.area,
-            this.activeAirport
-    );
-    ContextManager.setContext(IAreaAcc.class, areaAcc);
-
-    IAirplaneTypeAcc airplaneTypeAcc = new AirplaneTypeAcc(this.airplaneTypes);
-    ContextManager.setContext(IAirplaneTypeAcc.class, airplaneTypeAcc);
   }
 }

@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.gameSim.game.sources;
 
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.weather.StaticWeatherProvider;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.weather.WeatherProvider;
@@ -13,11 +14,13 @@ public class WeatherUserSource extends WeatherSource {
   @XmlConstructor
   public WeatherUserSource() {
     this.initialWeather = null;
+    PostContracts.register(this, () -> initialWeather != null);
+    PostContracts.register(this, () -> content != null);
   }
 
   WeatherUserSource(Weather weather) {
     EAssert.Argument.isNotNull(weather, "weather");
-    this.content = new StaticWeatherProvider(weather);
+
     this.initialWeather = weather;
   }
 
@@ -26,7 +29,8 @@ public class WeatherUserSource extends WeatherSource {
   }
 
   @Override
-  public void init() {
+  protected void _init() {
+    this.content = new StaticWeatherProvider(this.initialWeather);
     super.setInitialized();
   }
 

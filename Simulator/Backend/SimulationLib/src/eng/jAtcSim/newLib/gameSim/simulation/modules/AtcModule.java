@@ -29,10 +29,6 @@ public class AtcModule {
     this.atcProvider = null;
   }
 
-  public void adviceWeatherUpdated() {
-    this.atcProvider.adviceWeatherUpdated();
-  }
-
   public void elapseSecond() {
     atcProvider.elapseSecond();
   }

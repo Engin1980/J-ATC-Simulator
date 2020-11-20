@@ -174,8 +174,6 @@ public class GameFactoryAndRepository {
 
     PostContracts.checkAndClear();
 
-    ContextManager.setContext(IAreaAcc.class, new AreaAcc(gsi.areaSource.getArea(), gsi.areaSource.getActiveAirport()));
-
     Simulation simulation = XmlContext.deserialize(root.getChild("simulation"), ctx, Simulation.class);
 
     PostContracts.checkAndClear();
@@ -208,12 +206,6 @@ public class GameFactoryAndRepository {
     ctx.sdfManager.setSerializers(SharedXmlUtils.Serializers.serializers);
     ctx.sdfManager.setDeserializers(SharedXmlUtils.Deserializers.deserializers);
 
-//    AreaXmlContextInit.prepareXmlContext(ctx);
-//    TrafficXmlContextInit.prepareXmlContext(ctx);
-//    MessagingXmlContextInit.prepareXmlContext(ctx);
-//    MoodXmlContextInit.prepareXmlContext(ctx);
-//    AirplaneXmlContextInit.prepareXmlContext(ctx);
-
     // region Sources
     ctx.sdfManager.setSerializer(AreaSource.class, new ObjectSerializer()
             .withIgnoredFields("content", "initialized"));
@@ -232,9 +224,6 @@ public class GameFactoryAndRepository {
                       new SimulationLog()
               );
               ContextManager.setContext(ISharedAcc.class, sharedContext);
-
-              AreaAcc areaContext = new AreaAcc(q.getArea(), q.getActiveAirport());
-              ContextManager.setContext(IAreaAcc.class, areaContext);
             }));
 
     ctx.sdfManager.setFormatter(AirplaneTypesSource.class, q -> q.getFileName());

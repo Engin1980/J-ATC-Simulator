@@ -26,7 +26,7 @@ public class WeatherOnlineSource extends WeatherSource {
   }
 
   @Override
-  public void init() {
+  protected void _init() {
     content = new DynamicWeatherProvider(new MetarDownloaderNoaaGov(), icao, fallbackWeather, true);
     super.setInitialized();
   }

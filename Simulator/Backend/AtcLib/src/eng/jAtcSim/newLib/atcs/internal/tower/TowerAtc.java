@@ -2,7 +2,6 @@ package eng.jAtcSim.newLib.atcs.internal.tower;
 
 
 import eng.eSystem.collections.*;
-import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinates;
@@ -190,19 +189,22 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private final SwitchManagerInterface switchManagerInterface = new SwitchManagerInterface();
-  private final DepartureManager departureManager = new DepartureManager();
-  private final ArrivalManager arrivalManager = new ArrivalManager();
-  private final EventAnonymousSimple onRunwayChanged = new EventAnonymousSimple();
+  private final DepartureManager departureManager;
+  private final ArrivalManager arrivalManager;
   private RunwaysInUseInfo inUseInfo = null;
   private EMap<String, RunwayCheckInfo> runwayChecks = null;
   private boolean isUpdatedWeather;
 
   public TowerAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
+    this.departureManager = new DepartureManager();
+    this.arrivalManager = new ArrivalManager();
   }
 
   @XmlConstructor
   private TowerAtc() {
+    this.departureManager = null;
+    this.arrivalManager = null;
   }
 
   public int getNumberOfPlanesAtHoldingPoint() {
@@ -228,12 +230,14 @@ public class TowerAtc extends ComputerAtc {
       }
     }
 
-    if (inUseInfo == null){
+    if (inUseInfo == null) {
       // loading otherwise
       inUseInfo = new RunwaysInUseInfo();
       inUseInfo.current = getSuggestedThresholds();
       inUseInfo.scheduler = null;
     }
+
+    Context.getWeather().onWeatherUpdated().add(() -> this.isUpdatedWeather = true);
   }
 
   public boolean isRunwayThresholdUnderMaintenance(ActiveRunwayThreshold threshold) {
@@ -250,10 +254,6 @@ public class TowerAtc extends ComputerAtc {
       ActiveRunwayThreshold runwayThreshold = getRunwayThresholdForDeparture(plane);
       departureManager.registerNewDeparture(plane, runwayThreshold);
     }
-  }
-
-  public void setUpdatedWeatherFlag() {
-    this.isUpdatedWeather = true;
   }
 
   public RunwayConfiguration tryGetRunwayConfigurationScheduled() {

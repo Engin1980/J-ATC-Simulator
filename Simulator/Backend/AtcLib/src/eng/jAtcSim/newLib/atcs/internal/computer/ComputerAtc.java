@@ -24,10 +24,11 @@ public abstract class ComputerAtc extends Atc {
 
   private final DelayedList<Message> speechDelayer = new DelayedList<>(
           Global.MINIMUM_ATC_SPEECH_DELAY_SECONDS, Global.MAXIMUM_ATC_SPEECH_DELAY_SECONDS);
-  protected SwitchManager switchManager = null;
+  protected SwitchManager switchManager;
 
   public ComputerAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
+    this.switchManager = new SwitchManager();
     PostContracts.register(this, () -> switchManager != null);
   }
 

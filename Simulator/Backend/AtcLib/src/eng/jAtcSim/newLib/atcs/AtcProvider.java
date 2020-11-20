@@ -3,7 +3,6 @@ package eng.jAtcSim.newLib.atcs;
 import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.CacheUsingProducer;
 import eng.eSystem.utilites.NumberUtils;
@@ -14,40 +13,39 @@ import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.atcs.internal.UserAtc;
 import eng.jAtcSim.newLib.atcs.internal.center.CenterAtc;
-import eng.jAtcSim.newLib.atcs.internal.computer.ComputerAtc;
 import eng.jAtcSim.newLib.atcs.internal.tower.TowerAtc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
-import eng.newXmlUtils.implementations.ItemsSerializer;
-import eng.newXmlUtils.implementations.ObjectSerializer;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class AtcProvider {
 
-  private final AtcList<Atc> atcs = new AtcList<>(
-          q -> q.getAtcId(), EDistinctList.Behavior.exception);
+  private final AtcList<Atc> atcs;
   private final CacheUsingProducer<AtcList<AtcId>> atcIdsCache = new CacheUsingProducer<>(this::evaluateAtcIdsCache);
   private final CacheUsingProducer<AtcList<AtcId>> userAtcIdsCache = new CacheUsingProducer<>(this::evaluateUserAtcIdsCache);
 
+  @XmlConstructor
+  private AtcProvider() {
+    this.atcs = null;
+    PostContracts.register(this, () -> atcs != null);
+  }
+
   public AtcProvider(Airport activeAirport) {
+    this.atcs = new AtcList<>(q -> q.getAtcId(), EDistinctList.Behavior.exception);
     for (eng.jAtcSim.newLib.area.Atc atcTemplate : activeAirport.getAtcTemplates()) {
       Atc atc = createAtc(atcTemplate);
-      atcs.add(atc);
+      this.atcs.add(atc);
     }
 
     EAssert.isTrue(activeAirport.getIcao().equals(Context.getShared().getAirportIcao()));
   }
 
-  public void adviceWeatherUpdated() {
-    this.atcs
-            .whereItemClassIs(TowerAtc.class, false)
-            .forEach(q -> q.setUpdatedWeatherFlag());
-  }
-
   public void elapseSecond() {
-    for (Atc atc : atcs) {
+    for (Atc atc : this.atcs) {
       atc.elapseSecond();
     }
   }

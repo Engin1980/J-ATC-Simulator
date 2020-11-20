@@ -1,8 +1,6 @@
 package eng.jAtcSim.newLib.atcs.internal;
 
 import eng.eSystem.collections.IList;
-import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
@@ -35,23 +33,17 @@ public abstract class Atc {
 
   public abstract void elapseSecond();
 
-  // region abstract
   public abstract boolean isResponsibleFor(Callsign callsign);
 
   public abstract void unregisterPlaneDeletedFromGame(Callsign plane, boolean isForcedDeletion);
 
   public abstract void registerNewPlaneInGame(Callsign plane, boolean initialRegistration);
 
-  public void init() {
-    this.recorder = AtcRecorder.create(this.getAtcId());
-  }
-
   public abstract boolean isHuman();
 
   public int getAcceptAltitude() {
     return acceptAltitude;
   }
-// endregion abstract
 
   public AtcId getAtcId() {
     return atcId;
@@ -65,14 +57,8 @@ public abstract class Atc {
     return releaseAltitude;
   }
 
-  public final void save(XElement target) {
-    //TODEL
-    throw new ToDoException();
-//    XmlSaveUtils.Field.storeField(target, this, "atcId", SharedXmlUtils.Formatters.atcIdFormatter);
-//
-//    // altitudes are not saved as they are loaded from Area file
-//
-//    _save(target);
+  public void init() {
+    this.recorder = AtcRecorder.create(this.getAtcId());
   }
 
   @Override
@@ -93,28 +79,4 @@ public abstract class Atc {
     Context.getMessaging().getMessenger().send(msg);
     recorder.write(msg);
   }
-
-//  public final void save(XElement elm){
-//    XElement tmp =new XElement("atc");
-//    elm.addElement(tmp);
-//
-//    LoadSave.saveField(tmp, this, "name");
-//    _save(tmp);
-//  }
-//
-//  public void load(XElement elm) {
-//    XElement tmp = null;
-//    for (XElement item : elm.getChildren()) {
-//      if (item.getChild("name").getContent().equals(name)){
-//        tmp = item;
-//        break;
-//      }
-//    }
-//    assert tmp != null;
-//
-//    _load(tmp);
-//  }
-//
-//  protected abstract void _save(XElement elm);
-//  protected abstract void _load(XElement elm);
 }
