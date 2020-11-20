@@ -27,6 +27,7 @@ import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -49,6 +50,10 @@ public class UserAtc extends Atc implements IUserAtcInterface {
 
   private final IList<IAirplane> planes = new EList<>();
   private IReadOnlyList<Message> thisSecondMessages = new EList<>();
+
+  @XmlConstructor
+  private UserAtc() {
+  }
 
   public UserAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);

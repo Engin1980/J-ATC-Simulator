@@ -9,16 +9,14 @@ import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.atcs.internal.IAtcSwitchManagerInterface;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.DelayedList;
-import eng.jAtcSim.newLib.shared.Global;
+import eng.jAtcSim.newLib.shared.*;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneConfirmation;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -26,11 +24,16 @@ public abstract class ComputerAtc extends Atc {
 
   private final DelayedList<Message> speechDelayer = new DelayedList<>(
           Global.MINIMUM_ATC_SPEECH_DELAY_SECONDS, Global.MAXIMUM_ATC_SPEECH_DELAY_SECONDS);
-  protected final SwitchManager switchManager = new SwitchManager(this.getSwitchManagerInterface(),
-          () -> speechDelayer.getAll());
+  protected SwitchManager switchManager = null;
 
   public ComputerAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
+    PostContracts.register(this, () -> switchManager != null);
+  }
+
+  @XmlConstructor
+  protected ComputerAtc() {
+    PostContracts.register(this, () -> switchManager != null);
   }
 
   protected abstract IAtcSwitchManagerInterface getSwitchManagerInterface();
@@ -56,8 +59,9 @@ public abstract class ComputerAtc extends Atc {
 
   @Override
   public void init() {
-    Context.getMessaging().getMessenger().registerListener(
-            Participant.createAtc(this.getAtcId()));
+    super.init();
+    Context.getMessaging().getMessenger().registerListener(Participant.createAtc(this.getAtcId()));
+    this.switchManager.bind(this.getSwitchManagerInterface(), () -> speechDelayer.getAll());
   }
 
   @Override

@@ -12,19 +12,21 @@ import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToRouteCommand;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import java.util.function.Consumer;
 
 // region Inner
 class DepartureManager {
 
-  private final TowerAtc parent;
-  private final Consumer<Message> messageSenderConsumer;
+  private TowerAtc parent;
+  private Consumer<Message> messageSenderConsumer;
   private final IList<IAirplane> holdingPointNotAssigned = new EDistinctList<>(EDistinctList.Behavior.exception);
   private final IList<IAirplane> holdingPointWaitingForAppSwitchConfirmation = new EDistinctList<>(EDistinctList.Behavior.exception);
   private final IList<IAirplane> holdingPointReady = new EDistinctList<>(EDistinctList.Behavior.exception);
@@ -34,7 +36,12 @@ class DepartureManager {
   private final IMap<ActiveRunwayThreshold, IAirplane> lastDepartingPlane = new EMap<>();
   private final IMap<ActiveRunwayThreshold, EDayTimeStamp> lastDeparturesTime = new EMap<>();
 
-  public DepartureManager(TowerAtc parent, Consumer<Message> messageSenderConsumer) {
+  @XmlConstructor
+  DepartureManager() {
+    PostContracts.register(this, () -> parent != null);
+  }
+
+  public void bind(TowerAtc parent, Consumer<Message> messageSenderConsumer) {
     this.parent = parent;
     this.messageSenderConsumer = messageSenderConsumer;
   }

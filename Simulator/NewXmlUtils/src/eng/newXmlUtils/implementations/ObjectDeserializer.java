@@ -18,12 +18,10 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class ObjectDeserializer<T> implements Deserializer {
 
-  private static final String PRESERVED_VALUE = "__PRESERVED_VALUE";
   private final IMap<String, Deserializer> customFieldDeserializers = new EMap<>();
   private Class<?> expectedClass;
   private boolean expectedTypeIncludingSubclasses;
   private InstanceFactory<T> instanceFactory = null;
-  private final ISet<String> preservedFields = new ESet<>();
   private Consumer2<T, XmlContext> afterLoadAction = null;
   private Consumer2<T, XmlContext> beforeLoadAction = null;
 
@@ -42,7 +40,6 @@ public class ObjectDeserializer<T> implements Deserializer {
       this.beforeLoadAction.invoke((T) ret, c);
 
     for (Field field : fields) {
-      preserveKeptFieldIfRequired(field, ret, c);
       restoreField(e, ret, field, c);
     }
 
@@ -86,21 +83,10 @@ public class ObjectDeserializer<T> implements Deserializer {
     return this;
   }
 
-  public Deserializer withPreservedFields(String... fieldName) {
-    this.preservedFields.addMany(fieldName);
-    return this;
-  }
-
   public ObjectDeserializer<T> withValueTypValidation(Class<?> expectedValueClass, boolean includeSubclasses) {
     this.expectedClass = expectedValueClass;
     this.expectedTypeIncludingSubclasses = includeSubclasses;
     return this;
-  }
-
-  private void preserveKeptFieldIfRequired(Field field, Object o, XmlContext c) {
-    if (this.preservedFields.contains(field.getName())) {
-      c.values.set(PRESERVED_VALUE, ReflectionUtils.FieldUtils.get(o, field.getName()));
-    }
   }
 
   private void validateValueTypeIfRequired(Class<?> type) {
@@ -117,11 +103,6 @@ public class ObjectDeserializer<T> implements Deserializer {
 
   private Object getInstance(Class<?> type, XmlContext c) {
     InstanceFactory<?> instanceFactory = this.instanceFactory;
-    if (instanceFactory == null && c.values.containsKey(PRESERVED_VALUE)) {
-      Object tmp = c.values.get(PRESERVED_VALUE);
-      instanceFactory = (cc) -> tmp;
-      c.values.remove(PRESERVED_VALUE);
-    }
     if (instanceFactory == null)
       instanceFactory = c.sdfManager.tryGetFactory(type);
     if (instanceFactory == null)

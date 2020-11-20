@@ -10,6 +10,7 @@ import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
@@ -22,19 +23,25 @@ import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 class SwitchManager {
 
   private static final int SECONDS_BEFORE_REPEAT_SWITCH_REQUEST = 30;
-  private final IAtcSwitchManagerInterface parent;
+  private IAtcSwitchManagerInterface parent;
   private final ISet<Squawk> incomingPlanes = new ESet<>();
   private final IMap<Squawk, SwitchInfo> outgoingPlanes = new EMap<>();
-  private final Producer<IReadOnlyList<Message>> delayedMessagesProducer;
+  private Producer<IReadOnlyList<Message>> delayedMessagesProducer;
 
-  public SwitchManager(IAtcSwitchManagerInterface parent,
-                         Producer<IReadOnlyList<Message>> delayedMessagesProducer) {
+  @XmlConstructor
+  SwitchManager() {
+    PostContracts.register(this, () -> parent != null);
+  }
+
+  void bind(IAtcSwitchManagerInterface parent,
+            Producer<IReadOnlyList<Message>> delayedMessagesProducer) {
     EAssert.Argument.isNotNull(parent, "parent");
     this.parent = parent;
     this.delayedMessagesProducer = delayedMessagesProducer;

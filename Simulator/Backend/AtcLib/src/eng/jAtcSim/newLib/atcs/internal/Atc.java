@@ -8,22 +8,29 @@ import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.PostContracts;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public abstract class Atc {
 
-  private final AtcId atcId;
-  private final int acceptAltitude;
-  private final int releaseAltitude;
-  private final int orderedAltitude;
-  private final AtcRecorder recorder;
+  private AtcId atcId = null;
+  private int acceptAltitude = 0;
+  private int releaseAltitude = 0;
+  private int orderedAltitude = 0;
+  private AtcRecorder recorder = null;
+
+  @XmlConstructor
+  protected Atc() {
+    PostContracts.register(this, () -> atcId != null);
+    PostContracts.register(this, () -> this.recorder != null);
+  }
 
   public Atc(eng.jAtcSim.newLib.area.Atc template) {
+    this();
     this.atcId = template.toAtcId();
     this.acceptAltitude = template.getAcceptAltitude();
     this.releaseAltitude = template.getReleaseAltitude();
     this.orderedAltitude = template.getOrderedAltitude();
-
-    this.recorder = AtcRecorder.create(this.getAtcId());
   }
 
   public abstract void elapseSecond();
@@ -35,7 +42,9 @@ public abstract class Atc {
 
   public abstract void registerNewPlaneInGame(Callsign plane, boolean initialRegistration);
 
-  public abstract void init();
+  public void init() {
+    this.recorder = AtcRecorder.create(this.getAtcId());
+  }
 
   public abstract boolean isHuman();
 

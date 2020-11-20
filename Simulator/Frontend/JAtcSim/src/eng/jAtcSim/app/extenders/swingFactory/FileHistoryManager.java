@@ -71,10 +71,10 @@ public class FileHistoryManager {
     }
 
     XmlContext ctx = new XmlContext();
-    ctx.sdfManager.setDeserializer(IMap.class, new EntriesDeserializer());
-    ctx.sdfManager.setDeserializer(IList.class, new ItemsDeserializer());
+    ctx.sdfManager.setDeserializer(EMap.class, new EntriesDeserializer());
+    ctx.sdfManager.setDeserializer(EList.class, new ItemsDeserializer());
     ctx.sdfManager.setDeserializer(String.class, (e, c) -> e.getContent());
-    IMap<String, IList<String>> tmp = (IMap<String, IList<String>>) XmlContext.deserialize(doc.getRoot(), ctx, IMap.class);
+    IMap<String, IList<String>> tmp = (IMap<String, IList<String>>) XmlContext.deserialize(doc.getRoot(), ctx, EMap.class);
 
     FileHistoryManager.histories = tmp;
   }
@@ -84,8 +84,8 @@ public class FileHistoryManager {
 
     XElement root = new XElement("root");
     XmlContext ctx = new XmlContext();
-    ctx.sdfManager.setSerializer(IMap.class, new EntriesSerializer());
-    ctx.sdfManager.setSerializer(IList.class, new ItemsSerializer());
+    ctx.sdfManager.setSerializer(EMap.class, new EntriesSerializer());
+    ctx.sdfManager.setSerializer(EList.class, new ItemsSerializer());
     ctx.sdfManager.setSerializer(String.class, (e, v, c) -> e.setContent((String) v));
     XmlContext.serialize(root, histories, ctx);
 

@@ -6,6 +6,8 @@ import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.Border;
+import eng.jAtcSim.newLib.area.context.AreaAcc;
+import eng.jAtcSim.newLib.area.context.IAreaAcc;
 import eng.jAtcSim.newLib.atcs.AtcXmlContextInit;
 import eng.jAtcSim.newLib.fleet.airliners.AirlinesFleets;
 import eng.jAtcSim.newLib.fleet.generalAviation.GeneralAviationFleets;
@@ -13,6 +15,7 @@ import eng.jAtcSim.newLib.gameSim.simulation.controllers.AirproxController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.MrvaController;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.*;
+import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.stats.StatsXmlContextInit;
 import eng.jAtcSim.newLib.weather.WeatherXmlContextInit;
@@ -41,7 +44,7 @@ public class SimulationXmlContextInit {
                       c.values.get(AirplaneTypes.class),
                       c.values.get(AirlinesFleets.class),
                       c.values.get(GeneralAviationFleets.class));
-              ReflectionUtils.FieldUtils.set(q, "worldModule", worldModule);
+              ReflectionUtils.FieldUtils.setFieldValue(q, "worldModule", worldModule);
               c.values.remove(q);
               q.reinitAfterLoad();
             }));
@@ -80,7 +83,15 @@ public class SimulationXmlContextInit {
             .withCustomFieldFormatter("parent", q -> "-"));
     ctx.sdfManager.setDeserializer(AtcModule.class, new ObjectDeserializer<AtcModule>()
             .withIgnoredFields("userAtcsCache")
-            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class)));
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class))
+            .withAfterLoadAction((q, c) -> {
+              IAreaAcc areaContext = ContextManager.getContext(IAreaAcc.class);
+              areaContext = new AreaAcc(
+                      areaContext.getArea(), areaContext.getAirport(),
+                      () -> q.getRunwayConfiguration(),
+                      () -> q.tryGetSchedulerRunwayConfiguration());
+              ContextManager.setContext(IAreaAcc.class, areaContext);
+            }));
 
     AtcXmlContextInit.prepareXmlContext(ctx);
 
@@ -125,7 +136,8 @@ public class SimulationXmlContextInit {
     ctx.sdfManager.setSerializer(WeatherModule.class, new ObjectSerializer()
             .withCustomFieldFormatter("parent", q -> "-"));
     ctx.sdfManager.setDeserializer(WeatherModule.class, new ObjectDeserializer<WeatherModule>()
-            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class)));
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class))
+            .withAfterLoadAction((q, c) -> q.init()));
 
     WeatherXmlContextInit.prepareXmlContext(ctx);
     // endregion

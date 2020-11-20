@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.shared;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class PlaneCategoryDefinitions {
   private final static PlaneCategoryDefinitions ALL = new PlaneCategoryDefinitions("ABCD");
@@ -9,6 +10,10 @@ public class PlaneCategoryDefinitions {
 
   public static PlaneCategoryDefinitions getAll() {
     return ALL;
+  }
+
+  @XmlConstructor
+  private PlaneCategoryDefinitions() {
   }
 
   private PlaneCategoryDefinitions(IReadOnlyList<Character> inner) {

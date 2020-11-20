@@ -34,6 +34,7 @@ import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.weather.Weather;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -189,9 +190,8 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private final SwitchManagerInterface switchManagerInterface = new SwitchManagerInterface();
-  private final DepartureManager departureManager = new DepartureManager(this,
-          m -> this.sendMessage(m));
-  private final ArrivalManager arrivalManager = new ArrivalManager(this);
+  private final DepartureManager departureManager = new DepartureManager();
+  private final ArrivalManager arrivalManager = new ArrivalManager();
   private final EventAnonymousSimple onRunwayChanged = new EventAnonymousSimple();
   private RunwaysInUseInfo inUseInfo = null;
   private EMap<String, RunwayCheckInfo> runwayChecks = null;
@@ -199,6 +199,10 @@ public class TowerAtc extends ComputerAtc {
 
   public TowerAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
+  }
+
+  @XmlConstructor
+  private TowerAtc() {
   }
 
   public int getNumberOfPlanesAtHoldingPoint() {
@@ -216,6 +220,9 @@ public class TowerAtc extends ComputerAtc {
   @Override
   public void init() {
     super.init();
+
+    departureManager.bind(this, m -> this.sendMessage(m));
+    arrivalManager.bind(this);
 
     runwayChecks = new EMap<>();
     for (ActiveRunway runway : Context.getArea().getAirport().getRunways()) {

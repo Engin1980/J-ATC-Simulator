@@ -11,6 +11,7 @@ import eng.jAtcSim.newLib.atcs.internal.tower.SchedulerForAdvice;
 import eng.jAtcSim.newLib.atcs.internal.tower.TowerAtc;
 import eng.jAtcSim.newLib.shared.xml.XmlContextInit;
 import eng.newXmlUtils.XmlContext;
+import eng.newXmlUtils.implementations.ItemsDeserializer;
 import eng.newXmlUtils.implementations.ItemsSerializer;
 import eng.newXmlUtils.implementations.ObjectDeserializer;
 import eng.newXmlUtils.implementations.ObjectSerializer;
@@ -21,11 +22,12 @@ public class AtcXmlContextInit {
 
     ctx.sdfManager.setSerializer(AtcProvider.class, new ObjectSerializer()
             .withIgnoredFields("atcIdsCache", "userAtcIdsCache"));
-    ctx.sdfManager.setDeserializer(AtcProvider.class, new ObjectDeserializer<>()
+    ctx.sdfManager.setDeserializer(AtcProvider.class, new ObjectDeserializer<AtcProvider>()
             .withInstanceFactory(c -> new AtcProvider(c.values.get(Airport.class)))
             .withIgnoredFields("atcIdsCache", "userAtcIdsCache")
-            .withCustomFieldDeserialization("atcs", (e, c) -> new AtcList<Atc>(
-                    q -> q.getAtcId(), EDistinctList.Behavior.exception)));
+            .withCustomFieldDeserialization("atcs", new ItemsDeserializer().withInstanceFactory(c ->
+                    new AtcList<Atc>(q -> q.getAtcId(), EDistinctList.Behavior.exception)))
+            .withAfterLoadAction((q, c) -> q.init()));
 
     ctx.sdfManager.setSerializer(AtcList.class, new ItemsSerializer());
     // no des
@@ -41,8 +43,7 @@ public class AtcXmlContextInit {
     ctx.sdfManager.setSerializer(CenterAtc.class, new ObjectSerializer()
             .withIgnoredFields("recorder", "switchManagerInterface"));
     ctx.sdfManager.setDeserializer(CenterAtc.class, new ObjectDeserializer<>()
-            .withIgnoredFields("recorder", "switchManagerInterface")
-            .withPreservedFields("switchManager"));
+            .withIgnoredFields("recorder", "switchManagerInterface"));
     ctx.sdfManager.setSerializer("eng.jAtcSim.newLib.atcs.internal.computer.SwitchManager", new eng.newXmlUtils.implementations.ObjectSerializer()
             .withIgnoredFields("delayedMessagesProducer", "parent"));
     ctx.sdfManager.setDeserializer("eng.jAtcSim.newLib.atcs.internal.computer.SwitchManager", new eng.newXmlUtils.implementations.ObjectDeserializer<>()

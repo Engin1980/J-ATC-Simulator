@@ -8,6 +8,7 @@ import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.newLib.shared.GID;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.WithGID;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class RunwayConfiguration implements WithGID {
 
@@ -60,6 +61,17 @@ public class RunwayConfiguration implements WithGID {
   private final int windSpeedFrom;
   private final int windSpeedTo;
   private final int windTo;
+
+  @XmlConstructor
+  public RunwayConfiguration() {
+    gid = null;
+    arrivals = null;
+    departures = null;
+    windFrom = 0;
+    windSpeedFrom = 0;
+    windSpeedTo = 0;
+    windTo = 0;
+  }
 
   public RunwayConfiguration(int windFrom, int windTo, int windSpeedFrom, int windSpeedTo,
                              IList<RunwayThresholdConfiguration> arrivals,

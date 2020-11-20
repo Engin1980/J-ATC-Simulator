@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.area;
 
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import java.util.Objects;
 
@@ -11,6 +12,16 @@ public class RunwayThresholdConfiguration {
   private final boolean showApproach;
   private final boolean showRoutes;
   private final ActiveRunwayThreshold threshold;
+
+  //TODO really this must be here?
+  @XmlConstructor
+  public RunwayThresholdConfiguration() {
+    categories = null;
+    primary = false;
+    showApproach = false;
+    showRoutes = false;
+    threshold = null;
+  }
 
   public RunwayThresholdConfiguration(PlaneCategoryDefinitions categories,
                                       ActiveRunwayThreshold threshold,

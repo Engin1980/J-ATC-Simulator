@@ -10,13 +10,20 @@ import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
+import eng.jAtcSim.newLib.shared.PostContracts;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 class ArrivalManager {
   private final IList<IAirplane> goAroundedPlanesToSwitchList = new EDistinctList<>(EDistinctList.Behavior.exception);
   private final IList<IAirplane> landingPlanesList = new EDistinctList<>(EDistinctList.Behavior.exception);
-  private final TowerAtc parent;
+  private TowerAtc parent;
 
-  public ArrivalManager(TowerAtc parent) {
+  @XmlConstructor
+  ArrivalManager() {
+    PostContracts.register(this, () -> parent != null);
+  }
+
+  public void bind(TowerAtc parent) {
     this.parent = parent;
   }
 
