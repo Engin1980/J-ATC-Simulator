@@ -65,9 +65,7 @@ public class WorldModule extends SimulationModule {
   public void init() {
     IAreaAcc areaAcc = new AreaAcc(
             this.area,
-            this.activeAirport,
-            () -> parent.getAtcModule().getRunwayConfiguration(),
-            () -> parent.getAtcModule().tryGetSchedulerRunwayConfiguration()
+            this.activeAirport
     );
     ContextManager.setContext(IAreaAcc.class, areaAcc);
 

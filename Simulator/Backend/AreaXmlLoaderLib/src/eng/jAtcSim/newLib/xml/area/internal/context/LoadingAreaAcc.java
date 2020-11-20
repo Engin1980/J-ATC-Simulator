@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.xml.area.internal.context;
 
+import eng.eSystem.events.EventAnonymousSimple;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.NavaidList;
@@ -37,5 +38,25 @@ public class LoadingAreaAcc implements IAreaAcc {
   @Override
   public NavaidList getNavaids() {
     return this.navaids;
+  }
+
+  @Override
+  public EventAnonymousSimple onCurrentRunwayConfigurationChange() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public EventAnonymousSimple onScheduledRunwayConfigurationChange() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void setCurrentRunwayConfiguration(RunwayConfiguration currentRunwayConfiguration) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void setScheduledRunwayConfiguration(RunwayConfiguration scheduledRunwayConfiguration) {
+    throw new UnsupportedOperationException();
   }
 }

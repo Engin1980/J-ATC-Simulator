@@ -41,10 +41,6 @@ public class AtcModule {
     return atcProvider.getAtcIds();
   }
 
-  public EventAnonymousSimple getOnRunwayChanged() {
-    return atcProvider.getOnRunwayChanged();
-  }
-
   public int getPlanesCountAtHoldingPoint() {
     int ret = atcProvider.getPlanesCountAtHoldingPoint();
     return ret;

@@ -209,10 +209,6 @@ public class TowerAtc extends ComputerAtc {
     return departureManager.getNumberOfPlanesAtHoldingPoint();
   }
 
-  public EventAnonymousSimple getOnRunwayChanged() {
-    return onRunwayChanged;
-  }
-
   public RunwayConfiguration getRunwayConfigurationInUse() {
     return inUseInfo.current;
   }
@@ -224,15 +220,20 @@ public class TowerAtc extends ComputerAtc {
     departureManager.bind(this, m -> this.sendMessage(m));
     arrivalManager.bind(this);
 
-    runwayChecks = new EMap<>();
-    for (ActiveRunway runway : Context.getArea().getAirport().getRunways()) {
-      RunwayCheckInfo rc = RunwayCheckInfo.createNormal(true);
-      runwayChecks.set(runway.getName(), rc);
+    if (runwayChecks == null) { // loading if not null
+      runwayChecks = new EMap<>();
+      for (ActiveRunway runway : Context.getArea().getAirport().getRunways()) {
+        RunwayCheckInfo rc = RunwayCheckInfo.createNormal(true);
+        runwayChecks.set(runway.getName(), rc);
+      }
     }
 
-    inUseInfo = new RunwaysInUseInfo();
-    inUseInfo.current = getSuggestedThresholds();
-    inUseInfo.scheduler = null;
+    if (inUseInfo == null){
+      // loading otherwise
+      inUseInfo = new RunwaysInUseInfo();
+      inUseInfo.current = getSuggestedThresholds();
+      inUseInfo.scheduler = null;
+    }
   }
 
   public boolean isRunwayThresholdUnderMaintenance(ActiveRunwayThreshold threshold) {
@@ -395,7 +396,8 @@ public class TowerAtc extends ComputerAtc {
                     .union(this.inUseInfo.current.getArrivals().select(q -> q.getThreshold().getParent()));
     tmp.forEach(q -> announceScheduledRunwayCheck(q.getName(), this.runwayChecks.get(q.getName())));
 
-    onRunwayChanged.raise();
+    Context.getArea().setCurrentRunwayConfiguration(this.inUseInfo.scheduled);
+    Context.getArea().setScheduledRunwayConfiguration(null);
   }
 
   private void checkForRunwayChange() {

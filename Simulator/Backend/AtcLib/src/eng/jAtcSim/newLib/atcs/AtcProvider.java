@@ -56,11 +56,6 @@ public class AtcProvider {
     return atcIdsCache.get();
   }
 
-  public EventAnonymousSimple getOnRunwayChanged() {
-    TowerAtc towerAtc = (TowerAtc) atcs.getFirst(q -> q.getAtcId().getType() == AtcType.twr);
-    return towerAtc.getOnRunwayChanged();
-  }
-
   public int getPlanesCountAtHoldingPoint() {
     TowerAtc towerAtc = (TowerAtc) atcs.getFirst(q -> q.getAtcId().getType() == AtcType.twr);
     int ret = towerAtc.getNumberOfPlanesAtHoldingPoint();

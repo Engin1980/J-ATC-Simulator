@@ -1,6 +1,5 @@
 package eng.jAtcSim.newLib.gameSim.simulation;
 
-import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.events.IEventListenerSimple;
@@ -119,7 +118,7 @@ public class Simulation {
 
     @Override
     public int registerOnRunwayChanged(IEventListenerSimple<ISimulation> action) {
-      return Simulation.this.getAtcModule().getOnRunwayChanged().add(() -> action.raise(Simulation.this.isim));
+      return Context.getArea().onCurrentRunwayConfigurationChange().add(() -> action.raise(Simulation.this.isim));
     }
 
     @Override

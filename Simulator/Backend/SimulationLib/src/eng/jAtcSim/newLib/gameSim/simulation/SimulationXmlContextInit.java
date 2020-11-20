@@ -83,15 +83,7 @@ public class SimulationXmlContextInit {
             .withCustomFieldFormatter("parent", q -> "-"));
     ctx.sdfManager.setDeserializer(AtcModule.class, new ObjectDeserializer<AtcModule>()
             .withIgnoredFields("userAtcsCache")
-            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class))
-            .withAfterLoadAction((q, c) -> {
-              IAreaAcc areaContext = ContextManager.getContext(IAreaAcc.class);
-              areaContext = new AreaAcc(
-                      areaContext.getArea(), areaContext.getAirport(),
-                      () -> q.getRunwayConfiguration(),
-                      () -> q.tryGetSchedulerRunwayConfiguration());
-              ContextManager.setContext(IAreaAcc.class, areaContext);
-            }));
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class)));
 
     AtcXmlContextInit.prepareXmlContext(ctx);
 

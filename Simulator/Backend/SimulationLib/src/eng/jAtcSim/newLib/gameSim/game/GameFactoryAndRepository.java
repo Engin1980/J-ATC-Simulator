@@ -32,6 +32,7 @@ import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.traffic.TrafficXmlContextInit;
 import eng.jAtcSim.newLib.weather.Weather;
+import eng.jAtcSim.newLib.weather.WeatherProvider;
 import eng.newXmlUtils.SDFFactory;
 import eng.newXmlUtils.XmlContext;
 import eng.newXmlUtils.implementations.ObjectDeserializer;
@@ -173,6 +174,8 @@ public class GameFactoryAndRepository {
 
     PostContracts.checkAndClear();
 
+    ContextManager.setContext(IAreaAcc.class, new AreaAcc(gsi.areaSource.getArea(), gsi.areaSource.getActiveAirport()));
+
     Simulation simulation = XmlContext.deserialize(root.getChild("simulation"), ctx, Simulation.class);
 
     PostContracts.checkAndClear();
@@ -230,9 +233,7 @@ public class GameFactoryAndRepository {
               );
               ContextManager.setContext(ISharedAcc.class, sharedContext);
 
-              AreaAcc areaContext = new AreaAcc(
-                      q.getArea(), q.getActiveAirport(),
-                      () -> null, () ->  null);
+              AreaAcc areaContext = new AreaAcc(q.getArea(), q.getActiveAirport());
               ContextManager.setContext(IAreaAcc.class, areaContext);
             }));
 
@@ -270,7 +271,7 @@ public class GameFactoryAndRepository {
             .withIgnoredFields("content")
             .withAfterLoadAction((q, c) -> {
               q.init();
-              c.values.set("weatherProvider", q.getContent());
+              c.values.set(WeatherProvider.class, q.getContent());
             }));
 
     ctx.sdfManager.setSerializer(WeatherUserSource.class, new ObjectSerializer()
@@ -280,7 +281,7 @@ public class GameFactoryAndRepository {
             .withIgnoredFields("content")
             .withAfterLoadAction((q, c) -> {
               q.init();
-              c.values.set("weatherProvider", q.getContent());
+              c.values.set(WeatherProvider.class, q.getContent());
             }));
 
     ctx.sdfManager.setSerializer(WeatherOnlineSource.class, new ObjectSerializer()
@@ -290,7 +291,7 @@ public class GameFactoryAndRepository {
             .withIgnoredFields("content")
             .withAfterLoadAction((q, c) -> {
               q.init();
-              c.values.set("weatherProvider", q.getContent());
+              c.values.set(WeatherProvider.class, q.getContent());
             }));
 
     ctx.sdfManager.setSerializer(Weather.class, new ObjectSerializer());
@@ -318,6 +319,7 @@ public class GameFactoryAndRepository {
     MessagingXmlContextInit.prepareXmlContext(ctx);
     MoodXmlContextInit.prepareXmlContext(ctx);
     AirplaneXmlContextInit.prepareXmlContext(ctx);
+    TrafficXmlContextInit.prepareXmlContext(ctx);
 
     SimulationXmlContextInit.prepareXmlContext(ctx);
   }
