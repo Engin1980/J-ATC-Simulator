@@ -107,6 +107,8 @@ public class GameFactoryAndRepository {
       throw new EApplicationException("Unable to load, download or initialize weather.", ex);
     }
 
+    PostContracts.checkAndClear();
+
     try {
       appLog.write(ApplicationLog.eType.info, "Creating the simulation");
       SimulationStartupContext simulationContext = new SimulationStartupContext(
@@ -137,6 +139,9 @@ public class GameFactoryAndRepository {
     } catch (Exception ex) {
       throw new EApplicationException("Unable to create or initialize the simulation.", ex);
     }
+
+    PostContracts.checkAndClear();
+
     return game;
   }
 

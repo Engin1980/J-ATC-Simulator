@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.weather.contextLocal.Context;
 import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
 import eng.newXmlUtils.annotations.XmlConstructor;
 
@@ -60,7 +61,7 @@ public class WeatherManager {
   }
 
   public void init() {
-    this.currentWeather = provider.tryGetNewWeather();
+    this.currentWeather = Context.getWeather().getWeather();
     assert this.currentWeather != null;
   }
 
