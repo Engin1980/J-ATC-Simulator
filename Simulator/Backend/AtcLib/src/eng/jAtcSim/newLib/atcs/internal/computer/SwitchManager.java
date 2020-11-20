@@ -28,12 +28,12 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 class SwitchManager {
 
   private static final int SECONDS_BEFORE_REPEAT_SWITCH_REQUEST = 30;
-  private IAtcSwitchManagerInterface parent;
+  private final IAtcSwitchManagerInterface parent;
   private final ISet<Squawk> incomingPlanes = new ESet<>();
   private final IMap<Squawk, SwitchInfo> outgoingPlanes = new EMap<>();
-  private Producer<IReadOnlyList<Message>> delayedMessagesProducer;
+  private final Producer<IReadOnlyList<Message>> delayedMessagesProducer;
 
-  public void initParent(IAtcSwitchManagerInterface parent,
+  public SwitchManager(IAtcSwitchManagerInterface parent,
                          Producer<IReadOnlyList<Message>> delayedMessagesProducer) {
     EAssert.Argument.isNotNull(parent, "parent");
     this.parent = parent;
