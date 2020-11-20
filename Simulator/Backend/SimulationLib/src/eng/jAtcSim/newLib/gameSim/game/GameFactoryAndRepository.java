@@ -9,8 +9,6 @@ import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneXmlContextInit;
 import eng.jAtcSim.newLib.area.AreaXmlContextInit;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
-import eng.jAtcSim.newLib.area.context.IAreaAcc;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
@@ -41,6 +39,129 @@ import eng.newXmlUtils.implementations.ObjectSerializer;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class GameFactoryAndRepository {
+  private static void prepareXmlContextForSources(XmlContext ctx) {
+    ctx.sdfManager.setSerializer(GID.class, new ObjectSerializer());
+    ctx.sdfManager.setDeserializer(GID.class, new ObjectDeserializer<>());
+
+    ctx.sdfManager.setSerializers(SDFFactory.getSimpleSerializers());
+    ctx.sdfManager.setDeserializers(SDFFactory.getSimpleDeserializers());
+
+    ctx.sdfManager.setSerializers(SDFFactory.getSimpleArraySerializers());
+    ctx.sdfManager.setDeserializers(SDFFactory.getSimpleArrayDeserializers());
+
+    ctx.sdfManager.setSerializers(SDFFactory.getESystemSerializers());
+    ctx.sdfManager.setDeserializers(SDFFactory.getESystemDeserializers());
+
+    ctx.sdfManager.setSerializers(SharedXmlUtils.Serializers.serializers);
+    ctx.sdfManager.setDeserializers(SharedXmlUtils.Deserializers.deserializers);
+
+    // region Sources
+    ctx.sdfManager.setSerializer(AreaSource.class, new ObjectSerializer()
+            .withIgnoredFields("content", "initialized"));
+    ctx.sdfManager.setDeserializer(AreaSource.class, new ObjectDeserializer<AreaSource>()
+            .withIgnoredFields("content", "initialized")
+            .withAfterLoadAction((q, c) -> {
+              q.init();
+              c.values.set(q.getArea());
+              c.values.set(q.getActiveAirport());
+              c.sdfManager.setParser(AtcId.class, (qq, cc) -> q.getActiveAirport().getAtcTemplates().select(qqq -> qqq.toAtcId()).getFirst(qqq -> qqq.getName().equals(qq)));
+
+              SharedAcc sharedContext = new SharedAcc(
+                      q.getActiveAirport().getIcao(),
+                      q.getActiveAirport().getAtcTemplates().select(qq -> qq.toAtcId()),
+                      new EDayTimeRun(0),
+                      new SimulationLog()
+              );
+              ContextManager.setContext(ISharedAcc.class, sharedContext);
+            }));
+
+    ctx.sdfManager.setFormatter(AirplaneTypesSource.class, q -> q.getFileName());
+    ctx.sdfManager.setDeserializer(AirplaneTypesSource.class, (e, c) -> {
+      AirplaneTypesSource ret = SourceFactory.createAirplaneTypesSource(e.getContent());
+      ret.init();
+      c.values.set(ret.getContent());
+      return ret;
+    });
+
+    ctx.sdfManager.setFormatter(FleetsSource.class, q -> sf("%s;%s", q.getCompanyFileName(), q.getGeneralAviationFileName()));
+    ctx.sdfManager.setDeserializer(FleetsSource.class, (e, c) -> {
+      String[] pts = e.getContent().split(";");
+      FleetsSource ret = SourceFactory.createFleetsSource(pts[1], pts[0]);
+      ret.init();
+      c.values.set(ret.getContent().companyFleets);
+      c.values.set(ret.getContent().gaFleets);
+      return ret;
+    });
+
+    ctx.sdfManager.setFormatter(TrafficXmlSource.class, q -> q.getFileName());
+    ctx.sdfManager.setDeserializer(TrafficSource.class, (e, c) -> {
+      TrafficSource ret = SourceFactory.createTrafficXmlSource(e.getContent());
+      ret.init();
+      c.values.set("trafficModel", ret.getContent());
+      return ret;
+    });
+
+    // sources - weather
+    ctx.sdfManager.setSerializer(WeatherXmlSource.class, new ObjectSerializer()
+            .withValueClassCheck(WeatherXmlSource.class, false)
+            .withIgnoredFields("content"));
+    ctx.sdfManager.setDeserializer(WeatherXmlSource.class, new ObjectDeserializer<WeatherXmlSource>()
+            .withIgnoredFields("content")
+            .withAfterLoadAction((q, c) -> {
+              q.init();
+              c.values.set(WeatherProvider.class, q.getContent());
+            }));
+
+    ctx.sdfManager.setSerializer(WeatherUserSource.class, new ObjectSerializer()
+            .withValueClassCheck(WeatherUserSource.class, false)
+            .withIgnoredFields("content"));
+    ctx.sdfManager.setDeserializer(WeatherUserSource.class, new ObjectDeserializer<WeatherUserSource>()
+            .withIgnoredFields("content")
+            .withAfterLoadAction((q, c) -> {
+              q.init();
+              c.values.set(WeatherProvider.class, q.getContent());
+            }));
+
+    ctx.sdfManager.setSerializer(WeatherOnlineSource.class, new ObjectSerializer()
+            .withValueClassCheck(WeatherOnlineSource.class, false)
+            .withIgnoredFields("content"));
+    ctx.sdfManager.setDeserializer(WeatherOnlineSource.class, new ObjectDeserializer<WeatherOnlineSource>()
+            .withIgnoredFields("content")
+            .withAfterLoadAction((q, c) -> {
+              q.init();
+              c.values.set(WeatherProvider.class, q.getContent());
+            }));
+
+    ctx.sdfManager.setSerializer(Weather.class, new ObjectSerializer());
+    ctx.sdfManager.setDeserializer(Weather.class, new ObjectDeserializer<>());
+    // endregion sources
+  }
+
+  private static void prepareXmlContextForSimulation(XmlContext ctx) {
+    ctx.sdfManager.setSerializer(GID.class, new ObjectSerializer());
+    ctx.sdfManager.setDeserializer(GID.class, new ObjectDeserializer<>());
+
+    ctx.sdfManager.setSerializers(SDFFactory.getSimpleSerializers());
+    ctx.sdfManager.setDeserializers(SDFFactory.getSimpleDeserializers());
+
+    ctx.sdfManager.setSerializers(SDFFactory.getSimpleArraySerializers());
+    ctx.sdfManager.setDeserializers(SDFFactory.getSimpleArrayDeserializers());
+
+    ctx.sdfManager.setSerializers(SDFFactory.getESystemSerializers());
+    ctx.sdfManager.setDeserializers(SDFFactory.getESystemDeserializers());
+
+    ctx.sdfManager.setSerializers(SharedXmlUtils.Serializers.serializers);
+    ctx.sdfManager.setDeserializers(SharedXmlUtils.Deserializers.deserializers);
+
+    AreaXmlContextInit.prepareXmlContext(ctx);
+    MessagingXmlContextInit.prepareXmlContext(ctx);
+    MoodXmlContextInit.prepareXmlContext(ctx);
+    AirplaneXmlContextInit.prepareXmlContext(ctx);
+    TrafficXmlContextInit.prepareXmlContext(ctx);
+
+    SimulationXmlContextInit.prepareXmlContext(ctx);
+  }
+
   public Game create(GameStartupInfo gsi) {
     Game game;
     ApplicationLog appLog = Context.getApp().getAppLog();
@@ -193,129 +314,6 @@ public class GameFactoryAndRepository {
     );
 
     return game;
-  }
-
-  private static void prepareXmlContextForSources(XmlContext ctx) {
-    ctx.sdfManager.setSerializer(GID.class, new ObjectSerializer());
-    ctx.sdfManager.setDeserializer(GID.class, new ObjectDeserializer<>());
-
-    ctx.sdfManager.setSerializers(SDFFactory.getSimpleSerializers());
-    ctx.sdfManager.setDeserializers(SDFFactory.getSimpleDeserializers());
-
-    ctx.sdfManager.setSerializers(SDFFactory.getSimpleArraySerializers());
-    ctx.sdfManager.setDeserializers(SDFFactory.getSimpleArrayDeserializers());
-
-    ctx.sdfManager.setSerializers(SDFFactory.getESystemSerializers());
-    ctx.sdfManager.setDeserializers(SDFFactory.getESystemDeserializers());
-
-    ctx.sdfManager.setSerializers(SharedXmlUtils.Serializers.serializers);
-    ctx.sdfManager.setDeserializers(SharedXmlUtils.Deserializers.deserializers);
-
-    // region Sources
-    ctx.sdfManager.setSerializer(AreaSource.class, new ObjectSerializer()
-            .withIgnoredFields("content", "initialized"));
-    ctx.sdfManager.setDeserializer(AreaSource.class, new ObjectDeserializer<AreaSource>()
-            .withIgnoredFields("content", "initialized")
-            .withAfterLoadAction((q, c) -> {
-              q.init();
-              c.values.set(q.getArea());
-              c.values.set(q.getActiveAirport());
-              c.sdfManager.setParser(AtcId.class, (qq, cc) -> q.getActiveAirport().getAtcTemplates().select(qqq -> qqq.toAtcId()).getFirst(qqq -> qqq.getName().equals(qq)));
-
-              SharedAcc sharedContext = new SharedAcc(
-                      q.getActiveAirport().getIcao(),
-                      q.getActiveAirport().getAtcTemplates().select(qq -> qq.toAtcId()),
-                      new EDayTimeRun(0),
-                      new SimulationLog()
-              );
-              ContextManager.setContext(ISharedAcc.class, sharedContext);
-            }));
-
-    ctx.sdfManager.setFormatter(AirplaneTypesSource.class, q -> q.getFileName());
-    ctx.sdfManager.setDeserializer(AirplaneTypesSource.class, (e, c) -> {
-      AirplaneTypesSource ret = SourceFactory.createAirplaneTypesSource(e.getContent());
-      ret.init();
-      c.values.set(ret.getContent());
-      return ret;
-    });
-
-    ctx.sdfManager.setFormatter(FleetsSource.class, q -> sf("%s;%s", q.getCompanyFileName(), q.getGeneralAviationFileName()));
-    ctx.sdfManager.setDeserializer(FleetsSource.class, (e, c) -> {
-      String[] pts = e.getContent().split(";");
-      FleetsSource ret = SourceFactory.createFleetsSource(pts[1], pts[0]);
-      ret.init();
-      c.values.set(ret.getContent().companyFleets);
-      c.values.set(ret.getContent().gaFleets);
-      return ret;
-    });
-
-    ctx.sdfManager.setFormatter(TrafficXmlSource.class, q -> q.getFileName());
-    ctx.sdfManager.setDeserializer(TrafficSource.class, (e, c) -> {
-      TrafficSource ret = SourceFactory.createTrafficXmlSource(e.getContent());
-      ret.init();
-      c.values.set("trafficModel", ret.getContent());
-      return ret;
-    });
-
-    // sources - weather
-    ctx.sdfManager.setSerializer(WeatherXmlSource.class, new ObjectSerializer()
-            .withValueClassCheck(WeatherXmlSource.class, false)
-            .withIgnoredFields("content"));
-    ctx.sdfManager.setDeserializer(WeatherXmlSource.class, new ObjectDeserializer<WeatherXmlSource>()
-            .withIgnoredFields("content")
-            .withAfterLoadAction((q, c) -> {
-              q.init();
-              c.values.set(WeatherProvider.class, q.getContent());
-            }));
-
-    ctx.sdfManager.setSerializer(WeatherUserSource.class, new ObjectSerializer()
-            .withValueClassCheck(WeatherUserSource.class, false)
-            .withIgnoredFields("content"));
-    ctx.sdfManager.setDeserializer(WeatherUserSource.class, new ObjectDeserializer<WeatherUserSource>()
-            .withIgnoredFields("content")
-            .withAfterLoadAction((q, c) -> {
-              q.init();
-              c.values.set(WeatherProvider.class, q.getContent());
-            }));
-
-    ctx.sdfManager.setSerializer(WeatherOnlineSource.class, new ObjectSerializer()
-            .withValueClassCheck(WeatherOnlineSource.class, false)
-            .withIgnoredFields("content"));
-    ctx.sdfManager.setDeserializer(WeatherOnlineSource.class, new ObjectDeserializer<WeatherOnlineSource>()
-            .withIgnoredFields("content")
-            .withAfterLoadAction((q, c) -> {
-              q.init();
-              c.values.set(WeatherProvider.class, q.getContent());
-            }));
-
-    ctx.sdfManager.setSerializer(Weather.class, new ObjectSerializer());
-    ctx.sdfManager.setDeserializer(Weather.class, new ObjectDeserializer<>());
-    // endregion sources
-  }
-
-  private static void prepareXmlContextForSimulation(XmlContext ctx) {
-    ctx.sdfManager.setSerializer(GID.class, new ObjectSerializer());
-    ctx.sdfManager.setDeserializer(GID.class, new ObjectDeserializer<>());
-
-    ctx.sdfManager.setSerializers(SDFFactory.getSimpleSerializers());
-    ctx.sdfManager.setDeserializers(SDFFactory.getSimpleDeserializers());
-
-    ctx.sdfManager.setSerializers(SDFFactory.getSimpleArraySerializers());
-    ctx.sdfManager.setDeserializers(SDFFactory.getSimpleArrayDeserializers());
-
-    ctx.sdfManager.setSerializers(SDFFactory.getESystemSerializers());
-    ctx.sdfManager.setDeserializers(SDFFactory.getESystemDeserializers());
-
-    ctx.sdfManager.setSerializers(SharedXmlUtils.Serializers.serializers);
-    ctx.sdfManager.setDeserializers(SharedXmlUtils.Deserializers.deserializers);
-
-    AreaXmlContextInit.prepareXmlContext(ctx);
-    MessagingXmlContextInit.prepareXmlContext(ctx);
-    MoodXmlContextInit.prepareXmlContext(ctx);
-    AirplaneXmlContextInit.prepareXmlContext(ctx);
-    TrafficXmlContextInit.prepareXmlContext(ctx);
-
-    SimulationXmlContextInit.prepareXmlContext(ctx);
   }
 
   public void save(IGame game, IMap<String, Object> customData, String fileName) {
