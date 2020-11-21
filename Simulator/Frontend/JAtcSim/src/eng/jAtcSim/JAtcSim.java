@@ -66,7 +66,7 @@ public class JAtcSim {
 
   public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
 
-    Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Loading saved simulation game");
+    Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Loading simulation game");
 
     IMap<String, Object> map = new EMap<>();
 
@@ -77,14 +77,6 @@ public class JAtcSim {
 
     try {
       g = new GameFactoryAndRepository().load(xmlFileName);
-
-      // enable duplicates
-      //TODO do the following
-//      try {
-//        g.getSimulation().getArea().checkForDuplicits();
-//      } catch (Exception ex) {
-//        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
-//      }
 
       Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Initializing sound environment");
       // sound

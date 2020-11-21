@@ -1,13 +1,10 @@
 package eng.jAtcSim.newLib.gameSim.simulation;
 
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.ReflectionUtils;
 import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.Border;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
-import eng.jAtcSim.newLib.area.context.IAreaAcc;
 import eng.jAtcSim.newLib.atcs.AtcXmlContextInit;
 import eng.jAtcSim.newLib.fleet.airliners.AirlinesFleets;
 import eng.jAtcSim.newLib.fleet.generalAviation.GeneralAviationFleets;
@@ -15,7 +12,6 @@ import eng.jAtcSim.newLib.gameSim.simulation.controllers.AirproxController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.MrvaController;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.*;
-import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.stats.StatsXmlContextInit;
 import eng.jAtcSim.newLib.weather.WeatherXmlContextInit;
@@ -100,19 +96,11 @@ public class SimulationXmlContextInit {
     // endregion
 
     // region TimerModule
-    ctx.sdfManager.setSerializer(TimerModule.class, (XElement e, Object v, XmlContext c) -> {
-      TimerModule t = (TimerModule) v;
-      if (t.isRunning())
-        e.setContent("y" + t.getTickInterval());
-      else
-        e.setContent("n" + t.getTickInterval());
-    });
+    ctx.sdfManager.setFormatter(TimerModule.class, q -> Integer.toString(q.getTickInterval()));
     ctx.sdfManager.setDeserializer(TimerModule.class, (e, c) -> {
       Simulation sim = c.values.get(Simulation.class);
       int tickInterval = Integer.parseInt(e.getContent().substring(1));
       TimerModule ret = new TimerModule(sim, tickInterval);
-      if (e.getContent().charAt(0) == 'y')
-        ret.start();
       return ret;
     });
     // endregion

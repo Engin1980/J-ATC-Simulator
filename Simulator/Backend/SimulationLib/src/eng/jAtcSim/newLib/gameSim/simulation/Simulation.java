@@ -264,6 +264,10 @@ public class Simulation {
 
 
     this.timerModule = new TimerModule(this, simulationSettings.simulationSettings.secondLengthInMs);
+
+  }
+
+  public void init(){
     this.timerModule.registerOnTickListener(this::timerTicked);
   }
 
