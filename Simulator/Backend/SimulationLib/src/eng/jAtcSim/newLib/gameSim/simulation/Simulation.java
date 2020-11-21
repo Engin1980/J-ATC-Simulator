@@ -200,7 +200,6 @@ public class Simulation {
             new SystemMessagesModule(this)
     );
 
-    this.ioModule.init();
     this.statsModule = null;
     this.timerModule = null;
     this.trafficModule = null;
@@ -216,33 +215,21 @@ public class Simulation {
 
     ETimeStamp simulationStartTime = simulationSettings.simulationSettings.startTime;
     this.now = new EDayTimeRun(simulationStartTime.getValue());
-    SharedAcc sharedContext = new SharedAcc(
-            simulationContext.activeAirport.getIcao(),
-            simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()),
-            this.now,
-            new SimulationLog()
-    );
-    ContextManager.setContext(ISharedAcc.class, sharedContext);
 
     this.worldModule = new WorldModule(this, simulationContext);
-    this.worldModule.init();
 
     this.weatherModule = new WeatherModule(this, new WeatherManager(simulationContext.weatherProvider));
-    this.weatherModule.init();
 
     this.ioModule = new IOModule(
             this,
             new KeyShortcutManager(),
             new SystemMessagesModule(this)
     );
-    this.ioModule.init();
 
     this.statsModule = new StatsModule(this, new StatsProvider(simulationSettings.simulationSettings.statsSnapshotDistanceInMinutes));
-    this.statsModule.init();
 
     this.atcModule = new AtcModule(
             new AtcProvider(worldModule.getActiveAirport()));
-    this.atcModule.init();
 
     this.trafficModule = new TrafficModule(
             this,
@@ -250,7 +237,6 @@ public class Simulation {
             simulationSettings.trafficSettings.trafficDelayStepProbability,
             simulationSettings.trafficSettings.trafficDelayStep,
             simulationSettings.trafficSettings.useExtendedCallsigns);
-    this.trafficModule.init();
 
     this.airplanesModule = new AirplanesModule(
             this,
@@ -260,14 +246,27 @@ public class Simulation {
             new EmergencyAppearanceController(simulationSettings.trafficSettings.emergencyPerDayProbability),
             new MoodManager()
     );
-    this.airplanesModule.init();
-
 
     this.timerModule = new TimerModule(this, simulationSettings.simulationSettings.secondLengthInMs);
-
   }
 
   public void init(){
+    SharedAcc sharedContext = new SharedAcc(
+            this.worldModule.getActiveAirport().getIcao(),
+            this.worldModule.getActiveAirport().getAtcTemplates().select(q -> q.toAtcId()),
+            this.now,
+            new SimulationLog()
+    );
+    ContextManager.setContext(ISharedAcc.class, sharedContext);
+
+    this.worldModule.init();
+    this.weatherModule.init();
+    this.ioModule.init();
+    this.statsModule.init();
+    this.atcModule.init();
+    this.trafficModule.init();
+    this.airplanesModule.init();
+
     this.timerModule.registerOnTickListener(this::timerTicked);
   }
 

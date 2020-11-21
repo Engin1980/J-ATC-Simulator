@@ -6,6 +6,9 @@ import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.context.IAreaAcc;
 import eng.jAtcSim.newLib.shared.ContextManager;
+import eng.jAtcSim.newLib.shared.context.ISharedAcc;
+import eng.jAtcSim.newLib.shared.context.NonSimSharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.xml.area.AreaXmlLoader;
 import eng.newXmlUtils.annotations.XmlConstructor;
 
@@ -26,6 +29,13 @@ public class AreaSource extends Source<Area> {
     this.icao = icao;
   }
 
+  public Airport getActiveAirport() {
+    Airport ret = content.getAirports().tryGetFirst(q -> q.getIcao().equals(icao));
+    if (ret == null)
+      throw new EApplicationException("Unable to load airport {" + icao + "} from selected area file.");
+    return ret;
+  }
+
   public Area getArea() {
     return content;
   }
@@ -42,13 +52,6 @@ public class AreaSource extends Source<Area> {
     this.icao = icao;
   }
 
-  public Airport getActiveAirport() {
-    Airport ret = content.getAirports().tryGetFirst(q -> q.getIcao().equals(icao));
-    if (ret == null)
-      throw new EApplicationException("Unable to load airport {" + icao + "} from selected area file.");
-    return ret;
-  }
-
   public void init() {
     try {
       this.content = AreaXmlLoader.load(this.fileName);
@@ -58,6 +61,11 @@ public class AreaSource extends Source<Area> {
 
     IAreaAcc areaAcc = new AreaAcc(this.getArea(), this.getActiveAirport());
     ContextManager.setContext(IAreaAcc.class, areaAcc);
+
+    ISharedAcc sharedAcc = new NonSimSharedAcc(
+            this.getActiveAirport().getIcao(),
+            this.getActiveAirport().getAtcTemplates().select(q -> q.toAtcId()));
+    ContextManager.setContext(ISharedAcc.class, sharedAcc);
 
     super.setInitialized();
   }

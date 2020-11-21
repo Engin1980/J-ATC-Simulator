@@ -248,6 +248,7 @@ public class GameFactoryAndRepository {
       );
 
       simulation = new Simulation(simulationContext, simulationSettings);
+      simulation.init();
       game = new Game(
               gsi.areaSource,
               gsi.airplaneTypesSource,
@@ -301,6 +302,7 @@ public class GameFactoryAndRepository {
     PostContracts.checkAndClear();
 
     Simulation simulation = XmlContext.deserialize(root.getChild("simulation"), ctx, Simulation.class);
+    simulation.init();
 
     PostContracts.checkAndClear();
 

@@ -42,7 +42,6 @@ public class SimulationXmlContextInit {
                       c.values.get(GeneralAviationFleets.class));
               ReflectionUtils.FieldUtils.setFieldValue(q, "worldModule", worldModule);
               c.values.remove(q);
-              q.reinitAfterLoad();
             }));
 
     // endregion
@@ -54,8 +53,8 @@ public class SimulationXmlContextInit {
             .withCustomFieldFormatter("parent", q -> "-"));
     ctx.sdfManager.setDeserializer(AirplanesModule.class, new ObjectDeserializer<AirplanesModule>()
             .withIgnoredFields("planes4public")
-            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class))
-            .withAfterLoadAction((q, c) -> q.init()));
+            .withCustomFieldDeserialization("parent", (e, c) -> c.values.get(Simulation.class)));
+//            .withAfterLoadAction((q, c) -> q.init())); //TODEL
 
     ctx.sdfManager.setSerializer(AirproxController.class, new ObjectSerializer());
     ctx.sdfManager.setDeserializer(AirproxController.class, new ObjectDeserializer<AirproxController>());

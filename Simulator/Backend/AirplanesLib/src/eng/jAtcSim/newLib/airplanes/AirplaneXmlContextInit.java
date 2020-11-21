@@ -1,5 +1,7 @@
 package eng.jAtcSim.newLib.airplanes;
 
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
@@ -27,7 +29,12 @@ import eng.newXmlUtils.implementations.ItemsSerializer;
 import eng.newXmlUtils.implementations.ObjectDeserializer;
 import eng.newXmlUtils.implementations.ObjectSerializer;
 
+import java.security.KeyStore;
+
 public class AirplaneXmlContextInit {
+
+  private static final String PLANE_READERS_KEY = "planeReaders";
+
   public static void prepareXmlContext(XmlContext ctx) {
     if (XmlContextInit.checkCanBeInitialized(ctx, "airplane") == false) return;
 
@@ -42,17 +49,12 @@ public class AirplaneXmlContextInit {
                     .withCustomFieldDeserialization(
                             "planes",
                             new ItemsDeserializer().withInstanceFactory(c ->
-                                    new AirplaneList<Airplane>(q -> q.getReader().getCallsign(), q -> q.getReader().getSqwk())))
-                    .withAfterLoadAction((q, c) -> {
-                      // q.init(); invoked when AirplanesModule is loaded
-                      c.values.set("planes", q.getPlanes());
-                    }));
+                                    new AirplaneList<Airplane>(q -> q.getReader().getCallsign(), q -> q.getReader().getSqwk()))));
 
     ctx.sdfManager.setFormatter(Airplane.AirplaneImpl.class, q -> q.getCallsign().toString());
     ctx.sdfManager.setParser(Airplane.AirplaneImpl.class, (q, c) -> {
-      AirplaneList<IAirplane> lst = (AirplaneList<IAirplane>) c.values.get("planes");
-      Callsign clsgn = new Callsign(q);
-      IAirplane plane = lst.get(clsgn);
+      IMap<String, IAirplane> planesMap = (IMap<String, IAirplane>) c.values.get(PLANE_READERS_KEY);
+      IAirplane plane = planesMap.get(q);
       Airplane.AirplaneImpl ret = (Airplane.AirplaneImpl) plane;
       return ret;
     });
@@ -70,6 +72,9 @@ public class AirplaneXmlContextInit {
                     .withAfterLoadAction((q, c) -> {
                       q.initRecorders();
                       c.values.remove(q);
+                      if (c.values.containsKey(PLANE_READERS_KEY)== false)
+                        c.values.set(PLANE_READERS_KEY, new EMap<String, IAirplane>());
+                      ((IMap<String, IAirplane>)c.values.get(PLANE_READERS_KEY)).set(q.getReader().getCallsign().toString(), q.getReader());
                     }));
 
     {

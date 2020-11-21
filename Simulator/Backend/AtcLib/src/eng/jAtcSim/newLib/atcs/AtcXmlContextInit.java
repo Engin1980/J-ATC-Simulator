@@ -25,8 +25,8 @@ public class AtcXmlContextInit {
     ctx.sdfManager.setDeserializer(AtcProvider.class, new ObjectDeserializer<AtcProvider>()
             .withIgnoredFields("atcIdsCache", "userAtcIdsCache")
             .withCustomFieldDeserialization("atcs", new ItemsDeserializer().withInstanceFactory(c ->
-                    new AtcList<Atc>(q -> q.getAtcId(), EDistinctList.Behavior.exception)))
-            .withAfterLoadAction((q, c) -> q.init()));
+                    new AtcList<Atc>(q -> q.getAtcId(), EDistinctList.Behavior.exception))));
+//            .withAfterLoadAction((q, c) -> q.init())); //TODEL
 
     ctx.sdfManager.setSerializer(AtcList.class, new ItemsSerializer());
     // no des
