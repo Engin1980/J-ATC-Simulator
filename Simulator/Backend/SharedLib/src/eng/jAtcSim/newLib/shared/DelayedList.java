@@ -16,6 +16,7 @@ public class DelayedList<T> {
     public final T item;
     public int delayLeft;
 
+    @XmlConstructor
     private DelayedItem(T item, int delay) {
       this.item = item;
       this.delayLeft = delay;

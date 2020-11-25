@@ -4,6 +4,7 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import java.util.Objects;
 
@@ -44,6 +45,7 @@ public class Participant {
   private final eType type;
   private final String id;
 
+  @XmlConstructor
   private Participant(eType type, String id) {
     this.type = type;
     this.id = id;

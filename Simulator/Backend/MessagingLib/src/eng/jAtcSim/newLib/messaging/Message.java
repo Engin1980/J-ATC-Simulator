@@ -1,6 +1,8 @@
 package eng.jAtcSim.newLib.messaging;
 
 import eng.eSystem.validation.EAssert;
+import eng.newXmlUtils.annotations.XmlConstructor;
+import eng.newXmlUtils.annotations.XmlConstructorParameter;
 
 public class Message {
 
@@ -8,6 +10,14 @@ public class Message {
   private final Participant target;
   private final IMessageContent content;
 
+  @XmlConstructor
+  private Message(){
+    this.source = null;
+    this.target = null;
+    this.content = null;
+  }
+
+  @XmlConstructor
   public Message(Participant source, Participant target, IMessageContent content) {
     EAssert.Argument.isNotNull(source, "source");
     EAssert.Argument.isNotNull(target, "target");

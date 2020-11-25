@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.traffic.movementTemplating;
 
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
 public abstract class MovementTemplate {
@@ -14,12 +15,15 @@ public abstract class MovementTemplate {
   private final EntryExitInfo entryExitInfo;
 
   public MovementTemplate(eKind kind, ETimeStamp appearanceTime, EntryExitInfo entryExitInfo) {
-    EAssert.isNotNull(appearanceTime);
-    EAssert.isNotNull(entryExitInfo);
+//    EAssert.isNotNull(appearanceTime);
+//    EAssert.isNotNull(entryExitInfo);
 
     this.kind = kind;
     this.appearanceTime = appearanceTime;
     this.entryExitInfo = entryExitInfo;
+
+    PostContracts.register(this,
+            () -> appearanceTime != null && entryExitInfo != null);
   }
 
   public ETimeStamp getAppearanceTime() {

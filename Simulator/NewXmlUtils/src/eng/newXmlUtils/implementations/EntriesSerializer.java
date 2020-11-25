@@ -17,7 +17,7 @@ public class EntriesSerializer implements Serializer {
     InternalXmlUtils.saveType(element, value.getClass());
     Iterable<Map.Entry> entries = getEntries(value);
     for (Map.Entry entry : entries) {
-      XElement itemElement = new XElement(InternalXmlUtils.ITEM);
+      XElement itemElement = new XElement(InternalXmlUtils.ENTRY);
 
       storeToElement(itemElement, InternalXmlUtils.KEY, entry.getKey(), xmlContext);
       storeToElement(itemElement, InternalXmlUtils.VALUE, entry.getValue(), xmlContext);
