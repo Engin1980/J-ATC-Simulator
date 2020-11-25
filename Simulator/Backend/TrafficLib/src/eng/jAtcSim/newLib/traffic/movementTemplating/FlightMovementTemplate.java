@@ -14,11 +14,11 @@ public class FlightMovementTemplate extends MovementTemplate {
 
   @XmlConstructor
   private FlightMovementTemplate(){
-    super(eKind.arrival, null, null);
+    super();
     this.callsign = null;
     this.airplaneTypeName = null;
-    PostContracts.register(this,
-            () -> callsign != null &&airplaneTypeName != null);
+    PostContracts.register(this, () -> callsign != null, "Callsign is null.");
+    PostContracts.register(this, () -> airplaneTypeName != null, "Airplane-Type-Name is null.");
   }
 
   public FlightMovementTemplate(Callsign callsign, String airplaneTypeName,

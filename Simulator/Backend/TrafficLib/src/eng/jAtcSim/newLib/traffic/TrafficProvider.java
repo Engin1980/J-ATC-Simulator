@@ -48,7 +48,8 @@ public class TrafficProvider {
   }
 
   public void init() {
-    // intentionally blank
+    if (movementsForDay.getKeys().isEmpty())
+      prepareTrafficForDay(0);
   }
 
   public void prepareTrafficForDay(int dayIndex) {

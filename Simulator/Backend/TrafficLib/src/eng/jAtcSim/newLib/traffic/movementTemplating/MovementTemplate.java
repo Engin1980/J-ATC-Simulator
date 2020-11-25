@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.traffic.movementTemplating;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public abstract class MovementTemplate {
   public enum eKind {
@@ -14,16 +15,22 @@ public abstract class MovementTemplate {
   private final ETimeStamp appearanceTime;
   private final EntryExitInfo entryExitInfo;
 
+  @XmlConstructor
+  protected MovementTemplate() {
+    kind = eKind.arrival;
+    appearanceTime = null;
+    entryExitInfo = null;
+    PostContracts.register(this, () -> this.appearanceTime != null, "appereanceTime");
+    PostContracts.register(this, () -> this.entryExitInfo != null, "entryExitInfo");
+  }
+
   public MovementTemplate(eKind kind, ETimeStamp appearanceTime, EntryExitInfo entryExitInfo) {
-//    EAssert.isNotNull(appearanceTime);
-//    EAssert.isNotNull(entryExitInfo);
+    EAssert.isNotNull(appearanceTime);
+    EAssert.isNotNull(entryExitInfo);
 
     this.kind = kind;
     this.appearanceTime = appearanceTime;
     this.entryExitInfo = entryExitInfo;
-
-    PostContracts.register(this,
-            () -> appearanceTime != null && entryExitInfo != null);
   }
 
   public ETimeStamp getAppearanceTime() {

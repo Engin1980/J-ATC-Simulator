@@ -38,6 +38,9 @@ public class AirplanesController {
 
     for (Airplane plane : planes) {
       this.publicPlanes.add(plane.getReader());
+
+      Context.getMessaging().getMessenger().registerListener(
+              Participant.createAirplane(plane.getReader().getCallsign()));
     }
   }
 

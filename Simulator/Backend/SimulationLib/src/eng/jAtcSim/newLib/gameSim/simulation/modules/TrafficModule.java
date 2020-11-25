@@ -63,7 +63,7 @@ public class TrafficModule extends SimulationModule {
   }
 
   public void init() {
-    this.trafficProvider.prepareTrafficForDay(Context.getShared().getNow().getDays());
+    this.trafficProvider.init();
   }
 
   private FlightMovementTemplate convertGenericMovementTemplateToFlightMovementTemplate(MovementTemplate m) {

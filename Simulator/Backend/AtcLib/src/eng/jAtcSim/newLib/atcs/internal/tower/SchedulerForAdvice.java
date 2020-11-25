@@ -1,14 +1,29 @@
 package eng.jAtcSim.newLib.atcs.internal.tower;
 
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class SchedulerForAdvice {
+
+                      <checkIntervals __item_type="int" __type="eng.eSystem.collections.EList">
+                      <item __type="java.lang.Integer">1800</item>
+                      <item __type="java.lang.Integer">900</item>
+                      <item __type="java.lang.Integer">600</item>
+                      <item __type="java.lang.Integer">300</item>
+                    </checkIntervals>
+  se načítá blbě, bo to čte list a má to být array
 
   private boolean approved;
   private int[] checkIntervals;
   private int lastAnnouncedSecond;
   private EDayTimeStamp scheduledTime;
+
+  @XmlConstructor
+  private SchedulerForAdvice() {
+    PostContracts.register(this, () -> this.scheduledTime != null);
+  }
 
   public SchedulerForAdvice(EDayTimeStamp scheduledTime, int[] checkIntervalsInMinutes) {
     resetScheduledTime(scheduledTime);
@@ -35,7 +50,7 @@ public class SchedulerForAdvice {
 
   public boolean isElapsed() {
     boolean ret = approved ||
-        (scheduledTime != null && scheduledTime.isBeforeOrEq(Context.getShared().getNow().toStamp()));
+            (scheduledTime != null && scheduledTime.isBeforeOrEq(Context.getShared().getNow().toStamp()));
     return ret;
   }
 

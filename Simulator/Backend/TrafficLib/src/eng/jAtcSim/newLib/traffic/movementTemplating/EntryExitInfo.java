@@ -2,8 +2,11 @@ package eng.jAtcSim.newLib.traffic.movementTemplating;
 
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.traffic.contextLocal.Context;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
+//TODO rewrite to separate classes NavaidEntryExitInfo, RadialEntryExitInfo or CoordinateEntryExitInfo
 public class EntryExitInfo {
   public static EntryExitInfo getRandom() {
     int radial = Context.getApp().getRnd().nextInt(0, 360);
@@ -15,11 +18,24 @@ public class EntryExitInfo {
   private final Integer radial;
   private final Coordinate otherAirportCoordinate;
 
+  @XmlConstructor
+  private EntryExitInfo() {
+    this.navaid = null;
+    this.radial = null;
+    this.otherAirportCoordinate = null;
+    PostContracts.register(this, () ->
+            this.otherAirportCoordinate != null
+            || this.radial != null
+            || this.navaid != null);
+  }
+
   public EntryExitInfo(Coordinate otherAirportCoordinate) {
     EAssert.isNotNull(otherAirportCoordinate);
     this.otherAirportCoordinate = otherAirportCoordinate;
     this.navaid = null;
     this.radial = null;
+
+
   }
 
   public EntryExitInfo(String navaid) {

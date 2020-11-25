@@ -55,6 +55,7 @@ public class SharedXmlUtils {
 
   public static class Parsers {
     public static final IMap<Class<?>, Parser<?>> parsers;
+    public static Parser <ETimeStamp> timeStampParser = (q, c) -> ETimeStamp.parse(q);
     public static Parser<EDayTimeStamp> dayTimeStampParser = (q, c) -> EDayTimeStamp.parse(q);
     public static Parser<EDayTimeRun> dayTimeRunParser = (q, c) -> EDayTimeRun.parse(q);
     public static Parser<Squawk> squawkParser = (q, c) -> Squawk.create(q.toCharArray());
@@ -80,6 +81,7 @@ public class SharedXmlUtils {
       parsers.set(Squawk.class, squawkParser);
       parsers.set(Coordinate.class, coordinateParser);
       parsers.set(Callsign.class, callsignParser);
+      parsers.set(ETimeStamp.class, timeStampParser);
     }
   }
 

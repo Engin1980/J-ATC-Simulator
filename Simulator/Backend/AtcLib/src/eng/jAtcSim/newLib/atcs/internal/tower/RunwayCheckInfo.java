@@ -1,7 +1,9 @@
 package eng.jAtcSim.newLib.atcs.internal.tower;
 
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class RunwayCheckInfo {
   private static final int[] RWY_CHECK_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5};
@@ -36,35 +38,29 @@ public class RunwayCheckInfo {
 
   public static RunwayCheckInfo createSnowCleaning(boolean isInitial, boolean isIntensive) {
     int maxTime = isIntensive
-        ? Context.getApp().getRnd().nextInt(MIN_SNOW_INTENSIVE_MAINTENANCE_INTERVAL, MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL)
-        : Context.getApp().getRnd().nextInt(MIN_SNOW_MAINTENANCE_INTERVAL, MAX_SNOW_MAINTENANCE_INTERVAL);
+            ? Context.getApp().getRnd().nextInt(MIN_SNOW_INTENSIVE_MAINTENANCE_INTERVAL, MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL)
+            : Context.getApp().getRnd().nextInt(MIN_SNOW_MAINTENANCE_INTERVAL, MAX_SNOW_MAINTENANCE_INTERVAL);
     if (isInitial)
       maxTime = Context.getApp().getRnd().nextInt(maxTime);
 
     RunwayCheckInfo ret = new RunwayCheckInfo(maxTime, SNOW_MAINENANCE_DURATION);
     return ret;
   }
+
   private final int expectedDurationInMinutes;
   private EDayTimeStamp realDurationEnd;
   private SchedulerForAdvice scheduler;
+
+  @XmlConstructor
+  private RunwayCheckInfo() {
+    expectedDurationInMinutes = 0;
+    PostContracts.register(this, () -> this.scheduler != null);
+  }
 
   private RunwayCheckInfo(int minutesToNextCheck, int expectedDurationInMinutes) {
     EDayTimeStamp et = Context.getShared().getNow().toStamp().addMinutes(minutesToNextCheck);
     this.scheduler = new SchedulerForAdvice(et, RWY_CHECK_ANNOUNCE_INTERVALS);
     this.expectedDurationInMinutes = expectedDurationInMinutes;
-  }
-
-  public boolean isActive() {
-    return scheduler == null;
-  }
-
-  public void start() {
-    double durationRangeSeconds = expectedDurationInMinutes * 60 * 0.2d;
-    int realDurationSeconds = (int) Context.getApp().getRnd().nextDouble(
-        expectedDurationInMinutes * 60 - durationRangeSeconds,
-        expectedDurationInMinutes * 60 + durationRangeSeconds);
-    realDurationEnd = Context.getShared().getNow().toStamp().addSeconds(realDurationSeconds);
-    this.scheduler = null;
   }
 
   public int getExpectedDurationInMinutes() {
@@ -77,5 +73,18 @@ public class RunwayCheckInfo {
 
   public SchedulerForAdvice getScheduler() {
     return scheduler;
+  }
+
+  public boolean isActive() {
+    return scheduler == null;
+  }
+
+  public void start() {
+    double durationRangeSeconds = expectedDurationInMinutes * 60 * 0.2d;
+    int realDurationSeconds = (int) Context.getApp().getRnd().nextDouble(
+            expectedDurationInMinutes * 60 - durationRangeSeconds,
+            expectedDurationInMinutes * 60 + durationRangeSeconds);
+    realDurationEnd = Context.getShared().getNow().toStamp().addSeconds(realDurationSeconds);
+    this.scheduler = null;
   }
 }
