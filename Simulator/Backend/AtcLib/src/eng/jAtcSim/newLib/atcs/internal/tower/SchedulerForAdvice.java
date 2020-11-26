@@ -7,13 +7,13 @@ import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class SchedulerForAdvice {
 
-                      <checkIntervals __item_type="int" __type="eng.eSystem.collections.EList">
-                      <item __type="java.lang.Integer">1800</item>
-                      <item __type="java.lang.Integer">900</item>
-                      <item __type="java.lang.Integer">600</item>
-                      <item __type="java.lang.Integer">300</item>
-                    </checkIntervals>
-  se načítá blbě, bo to čte list a má to být array
+//                      <checkIntervals __item_type="int" __type="eng.eSystem.collections.EList">
+//                      <item __type="java.lang.Integer">1800</item>
+//                      <item __type="java.lang.Integer">900</item>
+//                      <item __type="java.lang.Integer">600</item>
+//                      <item __type="java.lang.Integer">300</item>
+//                    </checkIntervals>
+//  se načítá blbě, bo to čte list a má to být array
 
   private boolean approved;
   private int[] checkIntervals;

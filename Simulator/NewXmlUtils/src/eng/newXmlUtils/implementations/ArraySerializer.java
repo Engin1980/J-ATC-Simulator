@@ -18,6 +18,7 @@ public class ArraySerializer extends ItemsSerializer {
     }
 
     super.invoke(element, items, xmlContext);
+    InternalXmlUtils.saveType(element, value.getClass());
     InternalXmlUtils.saveComponentType(element, value.getClass().getComponentType());
   }
 }

@@ -62,10 +62,27 @@ public class InternalXmlUtils {
 
   private static Class<?> loadClassFromString(String className) {
     Class<?> ret;
+    if ("byte".equals(className))
+      ret = byte.class;
+    else if ("short".equals(className))
+      ret = short.class;
+    else if ("int".equals(className))
+      ret = int.class;
+    else if ("long".equals(className))
+      ret = long.class;
+    else if ("float".equals(className))
+      ret = float.class;
+    else if ("double".equals(className))
+      ret = double.class;
+    else if ("boolean".equals(className))
+      ret = boolean.class;
+    else if ("char".equals(className))
+      ret = char.class;
+    else
     try {
       ret = Class.forName(className);
     } catch (ClassNotFoundException e) {
-      throw new EXmlException(sf("Failed to load type '%s'"), e);
+      throw new EXmlException(sf("Failed to load type '%s'", className), e);
     }
     return ret;
   }

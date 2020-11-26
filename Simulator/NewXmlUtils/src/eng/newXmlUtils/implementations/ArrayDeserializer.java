@@ -10,6 +10,7 @@ import java.lang.reflect.Array;
 public class ArrayDeserializer extends ItemsDeserializer {
   @Override
   public Object invoke(XElement e, XmlContext c) {
+    InternalXmlUtils.saveType(e, EList.class);
     EList lst = (EList) super.invoke(e, c);
     Class<?> componentType = InternalXmlUtils.loadComponentType(e);
     Object ret = Array.newInstance(componentType, lst.size());

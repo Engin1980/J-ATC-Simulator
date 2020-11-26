@@ -3,13 +3,21 @@ package eng.jAtcSim.newLib.atcs.internal.computer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.Squawk;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 class SwitchInfo {
   private final AtcId atcId;
   private final EDayTimeStamp firstRequest;
   private EDayTimeStamp lastRequest;
+
+  @XmlConstructor
+  private SwitchInfo() {
+    atcId = null;
+    firstRequest = null;
+    PostContracts.register(this, () -> this.atcId != null);
+  }
 
   public SwitchInfo(AtcId otherAtcId) {
     EAssert.Argument.isNotNull(otherAtcId, "otherAtcId");
