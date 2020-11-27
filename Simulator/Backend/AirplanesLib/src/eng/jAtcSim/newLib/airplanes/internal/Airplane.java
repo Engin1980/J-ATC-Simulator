@@ -502,8 +502,17 @@ public class Airplane {
     }
 
     private void setPilotAndState(Pilot pilot, AirplaneState state) {
+      this.updateFlightExitTimeIfRequired(pilot, state);
       Airplane.this.pilot = pilot;
       Airplane.this.state = state;
+    }
+
+    private void updateFlightExitTimeIfRequired(Pilot newPilot, AirplaneState newState) {
+      if (Airplane.this.flightModule.isDeparture() && Airplane.this.pilot instanceof TakeOffPilot && newPilot instanceof DeparturePilot)
+        // is departed departure
+        Airplane.this.flightModule.setExitTimeNow();
+      else if (Airplane.this.flightModule.isArrival() && Airplane.this.pilot instanceof ApproachPilot && newState == AirplaneState.landed)
+        Airplane.this.flightModule.setExitTimeNow();
     }
   }
 

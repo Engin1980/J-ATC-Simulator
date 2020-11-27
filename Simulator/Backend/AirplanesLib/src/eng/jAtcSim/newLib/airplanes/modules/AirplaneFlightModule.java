@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes.modules;
 
 
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
@@ -52,5 +53,9 @@ public class AirplaneFlightModule {
 
   public void raiseEmergency() {
     this.departure = false;
+  }
+
+  public void setExitTimeNow() {
+    this.exitTime = Context.getShared().getNow().toStamp();
   }
 }
