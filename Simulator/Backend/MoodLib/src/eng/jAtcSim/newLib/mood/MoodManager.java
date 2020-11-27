@@ -23,11 +23,11 @@ public class MoodManager {
   }
 
   public void registerCallsign(Callsign callsign) {
-    EAssert.isTrue(inner.containsKey(callsign));
+    EAssert.isFalse(inner.containsKey(callsign));
     inner.set(callsign, new Mood());
   }
 
-  public void unregister(Callsign callsign) {
+  public void unregisterCallsign(Callsign callsign) {
     EAssert.isTrue(inner.containsKey(callsign));
     inner.remove(callsign);
   }

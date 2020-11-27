@@ -84,7 +84,8 @@ public class AirplanesModule extends SimulationModule {
   public void deletePlane(Squawk squawk) {
     EAssert.Argument.isNotNull(squawk, "squawk");
     Callsign callsign = this.airplanesController.getPlanes().getFirst(q -> q.getSqwk().equals(squawk)).getCallsign();
-    this.removePlane(callsign);
+    this.removePlane(callsign, true);
+    this.moodManager.unregisterCallsign(callsign);
   }
 
   public void elapseSecond() {
@@ -152,24 +153,19 @@ public class AirplanesModule extends SimulationModule {
 
     this.airplanesController.init();
 
-    this.airplanesController.getPlanes().forEach(q -> addAirplaneInfo(q));
+    this.airplanesController.getPlanes().forEach(q -> this.planes4public.add(new AirplaneInfo(q, this.parent)));
   }
 
   public boolean isMrvaErrorForPlane(IAirplane airplane) {
     return this.mrvaController.isMrvaErrorForPlane(airplane);
   }
 
-  public void removePlane(Callsign callsign) {
+  public void removePlane(Callsign callsign, boolean isForced) {
+    super.parent.getAtcModule().unregisterPlane(callsign, isForced);
+    this.planes4public.remove(q -> q.callsign().equals(callsign));
+    this.moodManager.unregisterCallsign(callsign);
     this.airplanesController.unregisterPlane(callsign);
     Context.getMessaging().getMessenger().unregisterListener(Participant.createAirplane(callsign));
-    this.mrvaController.unregisterPlane(callsign);
-    this.planes4public.remove(q -> q.callsign().equals(callsign));
-
-  }
-
-  private void addAirplaneInfo(IAirplane tmp) {
-    IAirplaneInfo airplaneInfo = new AirplaneInfo(tmp, this.parent);
-    this.planes4public.add(airplaneInfo);
   }
 
   private FinishedPlaneStats buildFinishedAirplaneStats(IAirplane airplane) {
@@ -184,12 +180,12 @@ public class AirplanesModule extends SimulationModule {
   }
 
   private void evaluateFails() {
-    this.mrvaController.evaluateMrvaFails();
+    this.mrvaController.evaluateMrvaFails(this.getPlanes());
     this.mrvaController.getMrvaViolatingPlanes()
             .where(q -> Context.getAtc().getResponsibleAtcId(q).getType() == AtcType.app)
             .forEach(q -> Context.getMood().getMoodManager().get(q).experience(Mood.SharedExperience.mrvaViolation));
 
-    this.airproxController.evaluateAirproxFails();
+    this.airproxController.evaluateAirproxFails(this.getPlanes());
     this.airproxController.getAirproxViolatingPlanes()
             .where(q -> Context.getAtc().getResponsibleAtcId(q.getKey()).getType() == AtcType.app
                     && q.getValue() == AirproxType.full)
@@ -222,10 +218,14 @@ public class AirplanesModule extends SimulationModule {
       if (at instanceof ArrivalAirplaneTemplate && isInSeparationConflictWithTraffic((ArrivalAirplaneTemplate) at))
         index++;
       else {
-        IAirplane tmp = registerAirplaneTemplate(at);
-        planesPrepared.removeAt(index);
-        addAirplaneInfo(tmp);
+        IAirplane tmp = this.airplanesController.registerPlane(at, generateAvailableSquawk());
+        Context.getMessaging().getMessenger().registerListener(Participant.createAirplane(tmp.getCallsign()));
+        this.moodManager.registerCallsign(tmp.getCallsign());
+        this.planes4public.add(new AirplaneInfo(tmp, this.parent));
         super.parent.getAtcModule().registerNewPlane(tmp);
+
+
+        planesPrepared.removeAt(index);
       }
     }
   }
@@ -262,11 +262,6 @@ public class AirplanesModule extends SimulationModule {
     return ret;
   }
 
-  private IAirplane registerAirplaneTemplate(AirplaneTemplate at) {
-    Squawk sqwk = generateAvailableSquawk();
-    return this.airplanesController.registerPlane(at, sqwk);
-  }
-
   private void removeOldPlanes() {
     IList<IAirplane> ret = new EList<>();
 
@@ -294,7 +289,7 @@ public class AirplanesModule extends SimulationModule {
     }
 
     for (IAirplane plane : ret) {
-      this.removePlane(plane.getCallsign());
+      this.removePlane(plane.getCallsign(), false);
     }
   }
 

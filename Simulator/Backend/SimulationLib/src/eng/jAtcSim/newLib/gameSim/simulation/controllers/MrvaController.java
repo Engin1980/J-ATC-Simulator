@@ -19,10 +19,10 @@ public class MrvaController {
     this.mrvas = mrvas;
   }
 
-  public void evaluateMrvaFails() {
+  public void evaluateMrvaFails(IReadOnlyList<IAirplane> planes) {
     this.mrvaViolatingPlanes.clear();
-    for (IAirplane airplane : mrvaMaps.getKeys()) {
-      evaluateMrvaFail(airplane);
+    for (IAirplane plane : planes) {
+      evaluateMrvaFail(plane);
     }
   }
 
@@ -32,15 +32,6 @@ public class MrvaController {
 
   public boolean isMrvaErrorForPlane(IAirplane airplane) {
     return this.mrvaViolatingPlanes.isAny(q -> q.equals(airplane.getCallsign()));
-  }
-
-  public void registerPlane(IAirplane plane) {
-    mrvaMaps.set(plane, null);
-  }
-
-  public void unregisterPlane(Callsign callsign) {
-    IAirplane airplane = mrvaMaps.getKeys().getFirst(q -> q.getCallsign().equals(callsign));
-    mrvaMaps.remove(airplane);
   }
 
   private void evaluateMrvaFail(IAirplane airplane) {
@@ -55,9 +46,9 @@ public class MrvaController {
             AirplaneState.shortFinal,
             AirplaneState.landed
     )) {
-      if (mrvaMaps.get(airplane) != null) mrvaMaps.set(airplane, null);
+      mrvaMaps.tryRemove(airplane);
     } else {
-      Border m = mrvaMaps.get(airplane);
+      Border m = mrvaMaps.tryGet(airplane, null);
       boolean findNewOne = false;
       if (m == null && airplane.getSha().getVerticalSpeed() <= 0)
         findNewOne = true;
@@ -65,7 +56,7 @@ public class MrvaController {
         findNewOne = true;
       if (findNewOne) {
         m = this.mrvas.tryGetFirst(q -> q.isIn(airplane.getCoordinate()));
-        mrvaMaps.set(airplane, m);
+        if (m != null) mrvaMaps.set(airplane, m);
       }
 
       boolean isOutOfAltitude = false;

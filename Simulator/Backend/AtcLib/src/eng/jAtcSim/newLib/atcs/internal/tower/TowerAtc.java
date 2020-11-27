@@ -264,7 +264,6 @@ public class TowerAtc extends ComputerAtc {
   public void unregisterPlaneDeletedFromGame(Callsign callsign, boolean isForcedDeletion) {
     IAirplane plane = Context.Internal.getPlane(callsign);
     if (plane.isDeparture()) {
-      departureManager.deletePlane(plane);
       if (isForcedDeletion == false) {
         // add to stats
         EDayTimeStamp holdingPointEntryTime = departureManager.getAndEraseHoldingPointEntryTime(plane);
@@ -273,6 +272,7 @@ public class TowerAtc extends ComputerAtc {
         if (diffSecs < 0) diffSecs = 0;
         //TODO this stats value should be increased outside of Tower atc??
         Context.getStats().getStatsProvider().registerDeparture(diffSecs);
+        departureManager.deletePlane(plane);
       }
     } else { // plane.isArrival()
       arrivalManager.deletePlane(plane);

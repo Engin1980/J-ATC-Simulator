@@ -12,6 +12,7 @@ import eng.jAtcSim.newLib.atcs.IUserAtcInterface;
 import eng.jAtcSim.newLib.atcs.context.AtcAcc;
 import eng.jAtcSim.newLib.atcs.context.IAtcAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.newXmlUtils.annotations.XmlConstructor;
 
@@ -68,6 +69,10 @@ public class AtcModule {
 
   public void registerNewPlane(IAirplane tmp) {
     this.atcProvider.registerNewPlane(tmp.getAtc().getTunedAtc(), tmp.getCallsign());
+  }
+
+  public void unregisterPlane(Callsign callsign, boolean isForced){
+    this.atcProvider.unregisterPlane(callsign, isForced);
   }
 
   public RunwayConfiguration tryGetSchedulerRunwayConfiguration() {

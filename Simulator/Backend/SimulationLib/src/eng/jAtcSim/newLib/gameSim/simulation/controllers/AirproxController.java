@@ -75,10 +75,8 @@ public class AirproxController {
 
   private final IMap<Callsign, AirproxType> airproxViolatingPlanes = new EMap<>();
 
-  public void evaluateAirproxFails() {
+  public void evaluateAirproxFails(IReadOnlyList<IAirplane> planes) {
     airproxViolatingPlanes.clear();
-
-    IReadOnlyList<IAirplane> planes = Context.getAirplane().getAirplanes();
 
     for (int i = 0; i < planes.count() - 1; i++) {
       IAirplane a = planes.get(i);

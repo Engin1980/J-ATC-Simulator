@@ -1,6 +1,8 @@
 package eng.jAtcSim.newLib.stats.properties;
 
 import eng.eSystem.collections.IReadOnlyList;
+import eng.jAtcSim.newLib.shared.PostContracts;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class MMM {
   public static MMM createMerge(IReadOnlyList<MMM> set) {
@@ -13,6 +15,14 @@ public class MMM {
   private final double minimum;
   private final double maximum;
   private final double mean;
+
+  @XmlConstructor
+  private MMM(){
+    minimum = Double.NaN;
+    maximum = Double.NaN;
+    mean = Double.NaN;
+    System.out.println("Loading of this not checked.");
+  }
 
   public MMM(double minimum, double maximum, double mean) {
     this.minimum = minimum;

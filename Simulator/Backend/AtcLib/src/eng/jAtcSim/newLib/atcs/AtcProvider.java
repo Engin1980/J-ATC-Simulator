@@ -99,6 +99,10 @@ public class AtcProvider {
     atc.registerNewPlaneInGame(callsign, true);
   }
 
+  public void unregisterPlane(Callsign callsign, boolean isForced){
+    this.atcs.forEach(q->q.unregisterPlaneDeletedFromGame(callsign, isForced));
+  }
+
   public RunwayConfiguration tryGetSchedulerRunwayConfiguration() {
     TowerAtc towerAtc = (TowerAtc) atcs.getFirst(q -> q.getAtcId().getType() == AtcType.twr);
     RunwayConfiguration ret = towerAtc.tryGetRunwayConfigurationScheduled();
