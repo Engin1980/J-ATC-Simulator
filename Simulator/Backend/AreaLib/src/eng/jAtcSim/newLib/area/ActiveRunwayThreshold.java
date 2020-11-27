@@ -43,19 +43,19 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
   }
 
   public static IList<ActiveRunwayThreshold> create(
-      Prototype firstThreshold,
-      Prototype secondThreshold) {
+          Prototype firstThreshold,
+          Prototype secondThreshold) {
     EAssert.Argument.isNotNull(firstThreshold, "Parameter 'firstThreshold' cannot be null.");
     EAssert.Argument.isNotNull(secondThreshold, "Parameter 'secondThreshold' cannot be null.");
 
     ActiveRunwayThreshold a = new ActiveRunwayThreshold(
-        firstThreshold.name, firstThreshold.coordinate, firstThreshold.initialDepartureAltitude,
-        firstThreshold.accelerationAltitude,
-        firstThreshold.approaches, firstThreshold.routes);
+            firstThreshold.name, firstThreshold.coordinate, firstThreshold.initialDepartureAltitude,
+            firstThreshold.accelerationAltitude,
+            firstThreshold.approaches, firstThreshold.routes);
     ActiveRunwayThreshold b = new ActiveRunwayThreshold(
-        secondThreshold.name, secondThreshold.coordinate, secondThreshold.initialDepartureAltitude,
-        secondThreshold.accelerationAltitude,
-        secondThreshold.approaches, secondThreshold.routes);
+            secondThreshold.name, secondThreshold.coordinate, secondThreshold.initialDepartureAltitude,
+            secondThreshold.accelerationAltitude,
+            secondThreshold.approaches, secondThreshold.routes);
 
     a.other = b;
     b.other = a;
@@ -95,13 +95,13 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
 
     // estimate faf
     this.estimatedFafPoint = Coordinates.getCoordinate(
-        this.coordinate,
-        Headings.getOpposite(this.course),
-        9);
+            this.coordinate,
+            Headings.getOpposite(this.course),
+            9);
   }
 
   public void bind() {
-    this.approaches.forEach(q->q.setParent(this));
+    this.approaches.forEach(q -> q.setParent(this));
   }
 
   public int getAccelerationAltitude() {
@@ -111,8 +111,6 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
   public IReadOnlyList<Approach> getApproaches() {
     return approaches;
   }
-
-
 
   public Coordinate getCoordinate() {
     return coordinate;
@@ -125,8 +123,6 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
   public int getCourseInt() {
     return (int) Math.round(this.course);
   }
-
-
 
   @Deprecated
   public Coordinate getEstimatedFafPoint() {
@@ -174,7 +170,10 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
 
   @Override
   public String toString() {
-    return this.getName() + "{rwyThr}";
+    if (this.getParent() == null || this.getParent().getParent() == null)
+      return "???? " + this.name;
+    else
+      return this.getParent().getParent() + " " + this.name;
   }
 
   public Approach tryGetHighestApproachExceptVisuals() {
@@ -194,6 +193,4 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
 
     return ret;
   }
-
-
 }

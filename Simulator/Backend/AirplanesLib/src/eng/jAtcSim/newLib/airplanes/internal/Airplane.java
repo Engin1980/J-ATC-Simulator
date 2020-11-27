@@ -252,6 +252,11 @@ public class Airplane {
       if (ret != null) Airplane.this.lastGoAroundReasonIfAny = null;
       return ret;
     }
+
+    @Override
+    public String toString(){
+      return this.getCallsign() + " {rdr}";
+    }
   }
 
   public class AirplaneWriterImpl implements IAirplaneWriter {
