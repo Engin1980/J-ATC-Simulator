@@ -43,7 +43,7 @@ public class ETimeStamp implements ITime, ITimeComparable<ETimeStamp> {
   }
 
   public ETimeStamp(int value) {
-    EAssert.Argument.isTrue(value >= 0, "Number of seconds must be non-negative.");
+    EAssert.Argument.isTrue(value >= 0, sf("Number of seconds must be non-negative (is %d).", value));
     EAssert.Argument.isTrue(value < ITime.SECONDS_PER_DAY, "Number of seconds must be less than one day.");
     this.value = value;
   }

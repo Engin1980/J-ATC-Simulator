@@ -42,10 +42,10 @@ public class TrafficModule extends SimulationModule {
   @XmlConstructor
   private TrafficModule() {
     super(null);
-    this.trafficProvider =null;
+    this.trafficProvider = null;
     this.callsignFactory = null;
     this.delayStep = 0;
-    this.delayStepProbability =0;
+    this.delayStepProbability = 0;
   }
 
   public TrafficModule(Simulation parent, TrafficProvider trafficProvider,
@@ -212,10 +212,9 @@ public class TrafficModule extends SimulationModule {
     int alt = generateArrivingPlaneAltitude(entryPoint, coord, pt);
     int spd = pt.vCruise;
 
-    EDayTimeStamp entryTime =
-            m.getAppearanceTime().isAfterOrEq(Context.getShared().getNow().getTime()) ?
-                    new EDayTimeStamp(Context.getShared().getNow().getDays(), m.getAppearanceTime()) :
-                    new EDayTimeStamp(Context.getShared().getNow().getDays() + 1, m.getAppearanceTime());
+    EDayTimeStamp entryTime = new EDayTimeStamp(
+            Context.getShared().getNow().getDays(),
+            m.getAppearanceTime());
 
     EDayTimeStamp expectedExitTime = entryTime.addMinutes(25);
     int delay = generateDelay();
@@ -239,10 +238,9 @@ public class TrafficModule extends SimulationModule {
       return new TryResult<>(new EApplicationException("Unable to find routing.")); // no route means disallowed IFR
     }
 
-    EDayTimeStamp entryTime =
-            m.getAppearanceTime().isAfterOrEq(Context.getShared().getNow().getTime()) ?
-                    new EDayTimeStamp(Context.getShared().getNow().getDays(), m.getAppearanceTime()) :
-                    new EDayTimeStamp(Context.getShared().getNow().getDays() + 1, m.getAppearanceTime());
+    EDayTimeStamp entryTime = new EDayTimeStamp(
+            Context.getShared().getNow().getDays(),
+            m.getAppearanceTime());
 
     int entryDelay = generateDelay();
 

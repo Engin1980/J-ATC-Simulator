@@ -67,10 +67,10 @@ public class StatsPanel extends JPanel {
 
   private void initComponents() {
     this.setPreferredSize(
-        new Dimension(200, 200)
+            new Dimension(200, 200)
     );
     this.setBackground(
-        new Color(50, 50, 50)
+            new Color(50, 50, 50)
     );
 
 
@@ -78,33 +78,33 @@ public class StatsPanel extends JPanel {
     lbl.setForeground(Color.white);
 
     JPanel pnlLabels = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0,
-        lblElapsed,
-        lblBusyDuration,
-        lblFinished,
-        lblMovementsGame,
-        lblMaxInGame,
-        lblCurInGame,
-        lblMaxApp,
-        lblCurApp,
-        lblErrors,
-        lblDelay,
-        lblHpCount,
-        lblHpTime
+            lblElapsed,
+            lblBusyDuration,
+            lblFinished,
+            lblMovementsGame,
+            lblMaxInGame,
+            lblCurInGame,
+            lblMaxApp,
+            lblCurApp,
+            lblErrors,
+            lblDelay,
+            lblHpCount,
+            lblHpTime
     );
 
     JPanel pnlValues = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0,
-        lvlElapsed,
-        lvlBusyDuration,
-        lvlFinished,
-        lvlMovementsGame,
-        lvlMaxInGame,
-        lvlCurInGame,
-        lvlMaxApp,
-        lvlCurApp,
-        lvlErrors,
-        lvlDelay,
-        lvlHpCount,
-        lvlHpTime
+            lvlElapsed,
+            lvlBusyDuration,
+            lvlFinished,
+            lvlMovementsGame,
+            lvlMaxInGame,
+            lvlCurInGame,
+            lvlMaxApp,
+            lvlCurApp,
+            lvlErrors,
+            lvlDelay,
+            lvlHpCount,
+            lvlHpTime
     );
 
     JPanel pnlStats = LayoutManager.createBorderedPanel(null, null, pnlLabels, pnlValues, null);
@@ -133,8 +133,8 @@ public class StatsPanel extends JPanel {
 
     lvlElapsed.setText(toTime(stats.getElapsedSeconds()));
     lvlBusyDuration.setText(String.format("%.3f (%.3f)",
-        view.getElapsedSecondDuration().getMean(),
-        view.getElapsedSecondDuration().getMaximum()));
+            view.getElapsedSecondDuration().getMean(),
+            view.getElapsedSecondDuration().getMaximum()));
 
     updateFinished(view);
     updateMaxAll(view);
@@ -158,7 +158,7 @@ public class StatsPanel extends JPanel {
     int a = view.getCurrentPlanesCount().getArrivals();
     int d = view.getCurrentPlanesCount().getDepartures();
     String s = String.format("%d / %d / %d",
-        d, a, a + d);
+            d, a, a + d);
     lvlCurInGame.setText(s);
   }
 
@@ -166,13 +166,15 @@ public class StatsPanel extends JPanel {
     int a = view.getCurrentPlanesCount().getArrivalsUnderApp();
     int d = view.getCurrentPlanesCount().getDeparturesUnderApp();
     String s = String.format("%d / %d / %d",
-        d, a, a + d);
+            d, a, a + d);
     lvlCurApp.setText(s);
   }
 
   private void updateDelays(RecentStats view) {
-    ETimeStamp tmean = new ETimeStamp((int) view.getDelays().getMean());
-    ETimeStamp tmax = new ETimeStamp((int) view.getDelays().getMaximum());
+    double dmean = (int) view.getDelays().getMean();
+    ETimeStamp tmean = new ETimeStamp((int) dmean);
+    double dmax = view.getDelays().getMaximum();
+    ETimeStamp tmax = new ETimeStamp((int) dmax);
 
     String s = String.format("%s / %s", tmean.toMinuteSecondString(), tmax.toMinuteSecondString());
     lvlDelay.setText(s);
@@ -182,19 +184,19 @@ public class StatsPanel extends JPanel {
     int a = view.getFinishedPlanes().getArrivals();
     int d = view.getFinishedPlanes().getDepartures();
     String s = String.format("%d / %d / %d",
-        d, a, d + a);
+            d, a, d + a);
     lvlFinished.setText(s);
   }
 
   private void updateHoldingPointInfo(RecentStats view) {
     String tmp = String.format("%d / %d",
-        view.getHoldingPoint().getCount(),
-        view.getHoldingPoint().getMaximum());
+            view.getHoldingPoint().getCount(),
+            view.getHoldingPoint().getMaximum());
     lvlHpCount.setText(tmp);
 
     tmp = String.format("%s / %s",
-        toTime(view.getHoldingPoint().getAverageDelay()),
-        toTime(view.getHoldingPoint().getMaximumDelay())
+            toTime(view.getHoldingPoint().getAverageDelay()),
+            toTime(view.getHoldingPoint().getMaximumDelay())
     );
     lvlHpTime.setText(tmp);
   }
@@ -204,7 +206,7 @@ public class StatsPanel extends JPanel {
     int d = view.getCurrentPlanesCount().getMaximalDepartures();
     int t = view.getCurrentPlanesCount().getMaximal();
     String s = String.format("%d / %d / %d",
-        d, a, t);
+            d, a, t);
     lvlMaxInGame.setText(s);
   }
 
@@ -213,7 +215,7 @@ public class StatsPanel extends JPanel {
     int d = view.getCurrentPlanesCount().getMaximalDeparturesUnderApp();
     int t = view.getCurrentPlanesCount().getMaximalUnderApp();
     String s = String.format("%d / %d / %d",
-        d, a, t);
+            d, a, t);
     lvlMaxApp.setText(s);
   }
 
@@ -222,9 +224,9 @@ public class StatsPanel extends JPanel {
     double arrs = view.getMovementsPerHour().getArrivals();
     double tots = deps + arrs;
     String s = String.format("%.0f / %.0f / %.0f",
-        deps,
-        arrs,
-        tots
+            deps,
+            arrs,
+            tots
     );
     lvlMovementsGame.setText(s);
   }
