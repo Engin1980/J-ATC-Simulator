@@ -2,12 +2,13 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
-import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.recent.RecentStats;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class StatsPanel extends JPanel {
 
@@ -171,14 +172,33 @@ public class StatsPanel extends JPanel {
   }
 
   private void updateDelays(RecentStats view) {
-    double dmean = (int) view.getDelays().getMean();
-    ETimeStamp tmean = new ETimeStamp((int) dmean);
-    double dmax = view.getDelays().getMaximum();
-    ETimeStamp tmax = new ETimeStamp((int) dmax);
+    int mean = (int) view.getDelays().getMean();
+    int max = (int) view.getDelays().getMaximum();
 
-    String s = String.format("%s / %s", tmean.toMinuteSecondString(), tmax.toMinuteSecondString());
+    String s = String.format("%s / %s",
+            convertSecondsToTimeString(mean),
+            convertSecondsToTimeString(max));
     lvlDelay.setText(s);
   }
+
+  private String convertSecondsToTimeString(int value) {
+    boolean isNeg = value < 0;
+    value = Math.abs(value);
+    int sec = value % 60;
+    int min = value / 60;
+    int hour = min / 60;
+    min = min % 60;
+
+    StringBuilder sb = new StringBuilder();
+    if (isNeg) sb.append("-");
+    if (hour > 0)
+      sb.append(hour).append(":").append(sf("%02d", min));
+    else
+      sb.append(min);
+    sb.append(":").append(sf("%02d", sec));
+    return sb.toString();
+  }
+
 
   private void updateFinished(RecentStats view) {
     int a = view.getFinishedPlanes().getArrivals();
