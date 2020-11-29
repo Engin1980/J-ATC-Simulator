@@ -38,6 +38,8 @@ public class AirplaneXmlContextInit {
   public static void prepareXmlContext(XmlContext ctx) {
     if (XmlContextInit.checkCanBeInitialized(ctx, "airplane") == false) return;
 
+    ctx.values.set(PLANE_READERS_KEY, new EMap<String, IAirplane>());
+
     ctx.sdfManager.setSerializer(AirplanesController.class,
             new ObjectSerializer()
                     .withValueClassCheck(AirplanesController.class)
@@ -72,8 +74,6 @@ public class AirplaneXmlContextInit {
                     .withAfterLoadAction((q, c) -> {
                       q.initRecorders();
                       c.values.remove(q);
-                      if (c.values.containsKey(PLANE_READERS_KEY)== false)
-                        c.values.set(PLANE_READERS_KEY, new EMap<String, IAirplane>());
                       ((IMap<String, IAirplane>)c.values.get(PLANE_READERS_KEY)).set(q.getReader().getCallsign().toString(), q.getReader());
                     }));
 

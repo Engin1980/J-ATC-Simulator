@@ -182,12 +182,12 @@ public class AirplanesModule extends SimulationModule {
   private void evaluateFails() {
     this.mrvaController.evaluateMrvaFails(this.getPlanes());
     this.mrvaController.getMrvaViolatingPlanes()
-            .where(q -> Context.getAtc().getResponsibleAtcId(q).getType() == AtcType.app)
+            .where(q -> Context.getAtc().getResponsibleAtcId(q) != null && Context.getAtc().getResponsibleAtcId(q).getType() == AtcType.app)
             .forEach(q -> Context.getMood().getMoodManager().get(q).experience(Mood.SharedExperience.mrvaViolation));
 
     this.airproxController.evaluateAirproxFails(this.getPlanes());
     this.airproxController.getAirproxViolatingPlanes()
-            .where(q -> Context.getAtc().getResponsibleAtcId(q.getKey()).getType() == AtcType.app
+            .where(q -> (Context.getAtc().getResponsibleAtcId(q.getKey()) == null || Context.getAtc().getResponsibleAtcId(q.getKey()).getType() == AtcType.app)
                     && q.getValue() == AirproxType.full)
             .forEach(q -> Context.getMood().getMoodManager().get(q.getKey()).experience(Mood.SharedExperience.airprox));
   }

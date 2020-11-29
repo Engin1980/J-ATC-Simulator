@@ -166,6 +166,8 @@ public class CenterAtc extends ComputerAtc {
         farArrivals.tryRemove(plane);
         middleArrivals.tryRemove(plane);
         closeArrivals.tryRemove(plane);
+      } else {
+        departures.tryRemove(plane);
       }
     }
 
@@ -184,7 +186,7 @@ public class CenterAtc extends ComputerAtc {
   private final SwitchManagerInterface switchManagerInterface = new SwitchManagerInterface();
 
   @XmlConstructor
-  private CenterAtc(){
+  private CenterAtc() {
   }
 
   public CenterAtc(eng.jAtcSim.newLib.area.Atc template) {
@@ -217,7 +219,8 @@ public class CenterAtc extends ComputerAtc {
       farArrivals.tryRemove(plane);
       middleArrivals.tryRemove(plane);
       closeArrivals.tryRemove(plane);
-      //TODO here somewhere should be stats after finished departer, don't they?
+    } else {
+      departures.tryRemove(plane);
     }
   }
 

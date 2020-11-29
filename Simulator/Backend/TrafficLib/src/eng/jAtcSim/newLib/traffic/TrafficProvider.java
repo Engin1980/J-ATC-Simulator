@@ -40,9 +40,10 @@ public class TrafficProvider {
       movementsForDay.get(dayKey).removeMany(tmp);
     }
 
-    // delete empty days
-    movementsForDay.removeMany(
-            movementsForDay.whereValue(q -> q.isEmpty()).getKeys());
+    // TODO
+    // delete movements for days that have already passed
+//    movementsForDay.removeMany(
+//            movementsForDay.whereValue(q -> q.isEmpty()).getKeys());
 
     return ret;
   }

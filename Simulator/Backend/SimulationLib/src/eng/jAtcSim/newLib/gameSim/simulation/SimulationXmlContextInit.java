@@ -98,7 +98,7 @@ public class SimulationXmlContextInit {
     ctx.sdfManager.setFormatter(TimerModule.class, q -> Integer.toString(q.getTickInterval()));
     ctx.sdfManager.setDeserializer(TimerModule.class, (e, c) -> {
       Simulation sim = c.values.get(Simulation.class);
-      int tickInterval = Integer.parseInt(e.getContent().substring(1));
+      int tickInterval = Integer.parseInt(e.getContent());
       TimerModule ret = new TimerModule(sim, tickInterval);
       return ret;
     });
