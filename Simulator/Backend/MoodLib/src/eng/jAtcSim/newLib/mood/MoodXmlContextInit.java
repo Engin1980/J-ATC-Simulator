@@ -14,6 +14,12 @@ public class MoodXmlContextInit {
     ctx.sdfManager.setSerializer(MoodManager.class, new ObjectSerializer());
     ctx.sdfManager.setDeserializer(MoodManager.class, new ObjectDeserializer<MoodManager>());
 
+    ctx.sdfManager.setSerializer(MoodResult.class, new ObjectSerializer());
+    ctx.sdfManager.setDeserializer(MoodResult.class, new ObjectDeserializer<>());
+
+    ctx.sdfManager.setSerializer(MoodExperienceResult.class, new ObjectSerializer());
+    ctx.sdfManager.setDeserializer(MoodExperienceResult.class, new ObjectDeserializer<>());
+
     ctx.sdfManager.setSerializer("eng.jAtcSim.newLib.mood.Mood$Experience", new ObjectSerializer());
   }
 

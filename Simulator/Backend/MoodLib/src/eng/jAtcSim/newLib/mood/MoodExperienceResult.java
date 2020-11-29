@@ -1,6 +1,8 @@
 package eng.jAtcSim.newLib.mood;
 
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 import java.util.Comparator;
 
@@ -19,6 +21,11 @@ public class MoodExperienceResult {
   private EDayTimeStamp time;
   private String description;
   private int points;
+
+  @XmlConstructor
+  private MoodExperienceResult() {
+    PostContracts.register(this, () -> time != null);
+  }
 
   MoodExperienceResult(EDayTimeStamp time, String description, int points) {
     this.time = time;
