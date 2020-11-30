@@ -20,6 +20,7 @@ public class TimerModule extends SimulationModule {
   private java.util.Timer tmr = null;
   private final EventSimple<TimerModule> tickEvent = new EventSimple<>(this);
   private int tickInterval;
+  private boolean tickIntervalChanged = false;
 
   public TimerModule(Simulation parent, int tickInterval) {
     super(parent);
@@ -33,6 +34,7 @@ public class TimerModule extends SimulationModule {
   public final void setTickInterval(int tickInterval) {
     EAssert.Argument.isTrue(tickInterval > 0);
     this.tickInterval = tickInterval;
+    this.tickIntervalChanged = true;
   }
 
   public synchronized boolean isRunning() {
@@ -52,11 +54,20 @@ public class TimerModule extends SimulationModule {
     TimerTask tt = new TimerTask() {
       @Override
       public void run() {
-        tickEvent.raise();
+        onTick();
       }
     };
     tmr = new java.util.Timer(true);
     tmr.scheduleAtFixedRate(tt, tickInterval, tickInterval);
+  }
+
+  private void onTick(){
+    tickEvent.raise();
+    if (tickIntervalChanged){
+      stop();
+      start();
+      tickIntervalChanged = false;
+    }
   }
 
   public synchronized void stop() {

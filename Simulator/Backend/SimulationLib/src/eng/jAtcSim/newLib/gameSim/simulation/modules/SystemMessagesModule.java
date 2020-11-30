@@ -9,7 +9,8 @@ import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
+import eng.jAtcSim.newLib.speeches.system.ISystemNotification;
 import eng.jAtcSim.newLib.speeches.system.system2user.*;
 import eng.jAtcSim.newLib.speeches.system.user2system.*;
 
@@ -17,7 +18,7 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class SystemMessagesModule extends SimulationModule {
   private static final int MAX_TICK_LENGTH_INTERVAL = 5000;
-  private static final int MIN_TICK_LENGTH_INTERVAL = 100;
+  private static final int MIN_TICK_LENGTH_INTERVAL = 50;
 
   public SystemMessagesModule(Simulation parent) {
     super(parent);
@@ -25,7 +26,7 @@ public class SystemMessagesModule extends SimulationModule {
 
   public void elapseSecond() {
     IList<Message> systemMessages =
-        Context.getMessaging().getMessenger().getMessagesByListener(Participant.createSystem(), true);
+            Context.getMessaging().getMessenger().getMessagesByListener(Participant.createSystem(), true);
 
     for (Message m : systemMessages) {
       processSystemMessage(m);
@@ -60,7 +61,7 @@ public class SystemMessagesModule extends SimulationModule {
     }
 
     if (content.getType() == ShortcutRequest.eType.delete
-        || (content.getType() == ShortcutRequest.eType.set && StringUtils.isNullOrWhitespace(content.getValue()))) {
+            || (content.getType() == ShortcutRequest.eType.set && StringUtils.isNullOrWhitespace(content.getValue()))) {
       parent.getIoModule().getKeyShortcutManager().shortcutDeletion(content.getKey());
       sendMessage(source, new SystemConfirmation(content));
     } else if (content.getType() == ShortcutRequest.eType.set) {
@@ -90,30 +91,45 @@ public class SystemMessagesModule extends SimulationModule {
   }
 
   private void processTickSpeedRequest(TickSpeedRequest content, Participant source) {
+    String returnAtcId = null;
+    ISystemNotification notification;
+    if (source.getType() == Participant.eType.atc) returnAtcId = source.getId();
+
     if (content.getValue() == null) {
-      sendMessage(source, new CurrentTickNotification(parent.getTimerModule().getTickInterval(), false));
+      notification = new CurrentTickNotification(parent.getTimerModule().getTickInterval(), false);
     } else {
       int newInterval = content.getValue();
       if (newInterval < MIN_TICK_LENGTH_INTERVAL)
-        sendMessage(source, new SystemRejection(content, sf("Tick-length must be greater than %d (request was %d).",
-            MIN_TICK_LENGTH_INTERVAL, newInterval)));
+        notification = new SystemRejection(content, sf("Tick-length must be greater than %d (request was %d).",
+                MIN_TICK_LENGTH_INTERVAL, newInterval));
       else if (newInterval > MAX_TICK_LENGTH_INTERVAL)
-        sendMessage(source, new SystemRejection(content, sf("Tick-length must be lower than %d (request was %d).",
-            MAX_TICK_LENGTH_INTERVAL, newInterval)));
+        notification = new SystemRejection(content, sf("Tick-length must be lower than %d (request was %d).",
+                MAX_TICK_LENGTH_INTERVAL, newInterval));
       else {
         parent.getTimerModule().setTickInterval(newInterval);
-        sendMessage(source, new CurrentTickNotification(parent.getTimerModule().getTickInterval(), true));
+        notification = new CurrentTickNotification(parent.getTimerModule().getTickInterval(), true);
       }
+    }
+
+    if (returnAtcId != null)
+      sendMessage(source, notification);
+    else {
+      Context.getAtc().getAtcList()
+              .where(q -> q.getType() == AtcType.app)
+              .forEach(q -> sendMessage(
+                      Participant.createAtc(q),
+                      notification
+              ));
     }
   }
 
   private void sendMessage(Participant receiver, IMessageContent content) {
     Context.getMessaging().getMessenger().send(
-        new Message(
-            Participant.createSystem(),
-            receiver,
-            content
-        )
+            new Message(
+                    Participant.createSystem(),
+                    receiver,
+                    content
+            )
     );
   }
 }

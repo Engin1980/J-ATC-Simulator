@@ -80,6 +80,7 @@ public class HoldPilot extends Pilot {
           else
             wrt.addExperience(Mood.DepartureExperience.holdCycleFinished);
         } else {
+          //FIXME
           double newHeading = Coordinates.getHeadingToRadial(
                   rdr.getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial,
                   Coordinates.eHeadingToRadialBehavior.standard);
