@@ -335,6 +335,11 @@ public class Simulation {
     // airplanes stuff
     this.airplanesModule.elapseSecond();
 
+    atc je po airplane
+            ale airplane chce runway
+            a atc ho nastavi az pak
+            a aby ho atc nastavil, tak asi chce weather
+
     // atc stuff
     this.atcModule.elapseSecond();
 
