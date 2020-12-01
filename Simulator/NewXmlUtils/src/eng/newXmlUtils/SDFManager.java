@@ -37,11 +37,11 @@ public class SDFManager {
     if (type == null)
       return nullDeserializer;
 
-    if (type.isEnum())
-      return createEnumDeserializer((Class<Enum>) type);
-
     if (deserializers.containsKey(type))
       return deserializers.get(type);
+
+    if (type.isEnum())
+      return createEnumDeserializer((Class<Enum>) type);
 
     if (isAutoserializedyByPackageName(type))
       return new ObjectDeserializer<>();

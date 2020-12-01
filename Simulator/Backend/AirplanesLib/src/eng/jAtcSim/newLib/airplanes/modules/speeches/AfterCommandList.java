@@ -29,12 +29,16 @@ public class AfterCommandList {
     extensions
   }
 
+  private static final double MAXIMAL_COORDINATE_DISTANCE_TO_BE_CONSIDERED_AS_EQUAL = 0.3;
+
   private static boolean isLateralDirectionAfterNavaidCommand(Coordinate coordinate, AFItem item) {
     boolean ret = false;
     if (item.antecedent instanceof AfterDistanceCommand) {
       AfterDistanceCommand anc = (AfterDistanceCommand) item.antecedent;
       Navaid navaid = Context.getArea().getNavaids().get(anc.getNavaidName());
-      if (navaid.getCoordinate().equals(coordinate)) {
+      Coordinate antecedentCoordinate = navaid.getCoordinate();
+      double coordinateDistance = Coordinates.getDistanceInNM(coordinate, antecedentCoordinate);
+      if (coordinateDistance < MAXIMAL_COORDINATE_DISTANCE_TO_BE_CONSIDERED_AS_EQUAL) {
         if (item.consequent instanceof ChangeHeadingCommand ||
                 item.consequent instanceof ProceedDirectCommand ||
                 item.consequent instanceof HoldCommand ||

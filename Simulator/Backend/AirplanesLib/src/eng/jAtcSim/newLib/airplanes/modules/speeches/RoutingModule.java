@@ -78,6 +78,10 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     return assignedDARouteName;
   }
 
+  public boolean isRoutingEmpty() {
+    return this.afterCommands.isRouteEmpty();
+  }
+
   public void setAssignedDARouteName(String assignedDARouteName) {
     EAssert.Argument.isNotNull(assignedDARouteName, "assignedDARouteName");
     this.assignedDARouteName = assignedDARouteName;

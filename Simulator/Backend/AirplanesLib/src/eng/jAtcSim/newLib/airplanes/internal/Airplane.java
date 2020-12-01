@@ -158,7 +158,7 @@ public class Airplane {
 
     @Override
     public boolean isRoutingEmpty() {
-      throw new ToDoException();
+      return Airplane.this.routingModule.isRoutingEmpty();
     }
 
     @Override
@@ -441,8 +441,10 @@ public class Airplane {
 
     @Override
     public void setTargetCoordinate(Coordinate coordinate) {
-      EAssert.Argument.isNotNull(coordinate, "coordinate");
-      Airplane.this.sha.setNavigator(new ToCoordinateNavigator(coordinate));
+      if (coordinate == null)
+        Airplane.this.sha.setNavigator(new HeadingNavigator(Airplane.this.sha.getTargetHeading()));
+      else
+        Airplane.this.sha.setNavigator(new ToCoordinateNavigator(coordinate));
     }
 
     @Override

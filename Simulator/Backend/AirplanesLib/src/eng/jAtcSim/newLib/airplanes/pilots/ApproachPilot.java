@@ -172,7 +172,8 @@ public class ApproachPilot extends Pilot {
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
             AirplaneState.arrivingHigh,
-            AirplaneState.arrivingLow
+            AirplaneState.arrivingLow,
+            AirplaneState.flyingIaf2Faf
     };
   }
 
@@ -217,6 +218,5 @@ public class ApproachPilot extends Pilot {
     if (beh instanceof FlyRouteBehavior) {
       wrt.setRouting(((FlyRouteBehavior) beh).getCommands());
     }
-
   }
 }

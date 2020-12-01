@@ -39,13 +39,20 @@ public class ArrivalPilot extends BasicPilot {
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
             AirplaneState.arrivingHigh,
-            AirplaneState.arrivingLow
+            AirplaneState.arrivingLow,
+            AirplaneState.arrivingCloseFaf,
+            AirplaneState.flyingIaf2Faf
     };
   }
 
   @Override
   protected AirplaneState[] getValidStates() {
-    return getInitialStates();
+    return new AirplaneState[]{
+            AirplaneState.arrivingHigh,
+            AirplaneState.arrivingLow,
+            AirplaneState.arrivingCloseFaf,
+            AirplaneState.flyingIaf2Faf
+    };
   }
 
   private void setArrivingCloseFafStateIfReady() {

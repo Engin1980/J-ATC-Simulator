@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.atcs;
 
 import eng.eSystem.collections.EDistinctList;
-import eng.jAtcSim.newLib.area.Airport;
+import eng.jAtcSim.newLib.area.context.IAreaAcc;
 import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.atcs.internal.UserAtc;
 import eng.jAtcSim.newLib.atcs.internal.center.CenterAtc;
@@ -9,6 +9,7 @@ import eng.jAtcSim.newLib.atcs.internal.tower.RunwayCheckInfo;
 import eng.jAtcSim.newLib.atcs.internal.tower.RunwaysInUseInfo;
 import eng.jAtcSim.newLib.atcs.internal.tower.SchedulerForAdvice;
 import eng.jAtcSim.newLib.atcs.internal.tower.TowerAtc;
+import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.xml.XmlContextInit;
 import eng.newXmlUtils.XmlContext;
 import eng.newXmlUtils.implementations.ItemsDeserializer;
@@ -55,8 +56,11 @@ public class AtcXmlContextInit {
     // region TowerAtc stuff
     ctx.sdfManager.setSerializer(TowerAtc.class, new ObjectSerializer()
             .withIgnoredFields("recorder", "switchManagerInterface", "onRunwayChanged"));
-    ctx.sdfManager.setDeserializer(TowerAtc.class, new ObjectDeserializer<>()
-            .withIgnoredFields("recorder", "switchManagerInterface", "onRunwayChanged"));
+    ctx.sdfManager.setDeserializer(TowerAtc.class, new ObjectDeserializer<TowerAtc>()
+            .withIgnoredFields("recorder", "switchManagerInterface", "onRunwayChanged")
+            .withAfterLoadAction((q, c) -> {
+              ContextManager.getContext(IAreaAcc.class).setCurrentRunwayConfiguration(q.getRunwayConfigurationInUse());
+            }));
 
     ctx.sdfManager.setSerializer("eng.jAtcSim.newLib.atcs.internal.tower.DepartureManager",
             new eng.newXmlUtils.implementations.ObjectSerializer()

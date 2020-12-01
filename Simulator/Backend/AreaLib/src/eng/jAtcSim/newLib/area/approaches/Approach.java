@@ -12,6 +12,7 @@ import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 
 public class Approach extends Parentable<ActiveRunwayThreshold> {
+
   public static Approach create(ApproachType type, IList<ApproachEntry> entries, IList<ICommand> beforeStagesCommands, IList<ApproachStage> stages, GaRoute gaRoute) {
     return new Approach(type, entries, beforeStagesCommands, stages, gaRoute);
   }

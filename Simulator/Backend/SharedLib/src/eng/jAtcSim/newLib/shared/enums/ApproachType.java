@@ -1,6 +1,5 @@
 package eng.jAtcSim.newLib.shared.enums;
 
-import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 
 public enum ApproachType {
@@ -12,6 +11,27 @@ public enum ApproachType {
   gnss,
   visual;
 
+  public static ApproachType parse(String str) {
+    switch (str) {
+      case "GNSS":
+        return gnss;
+      case "ILS I":
+        return ils_I;
+      case "ILS II":
+        return ils_II;
+      case "ILS III":
+        return ils_III;
+      case "NDB":
+        return ndb;
+      case "visual":
+        return visual;
+      case "VOR":
+        return vor;
+      default:
+        throw new EEnumValueUnsupportedException(str);
+    }
+  }
+
   public boolean isILS() {
     return this == ils_I || this == ils_II || this == ils_III;
   }
@@ -21,8 +41,8 @@ public enum ApproachType {
   }
 
   @Override
-  public String toString(){
-    switch (this){
+  public String toString() {
+    switch (this) {
       case gnss:
         return "GNSS";
       case ils_I:

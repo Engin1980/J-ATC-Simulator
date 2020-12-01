@@ -3,13 +3,18 @@ package eng.jAtcSim.newLib.airplanes.modules.sha.navigators;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class ToCoordinateNavigator extends Navigator {
   private final Coordinate coordinate;
 
-  @XmlConstructor
+  @XmlConstructor ToCoordinateNavigator(){
+    coordinate = null;
+    PostContracts.register(this, () -> coordinate != null);
+  }
+
   public ToCoordinateNavigator(Coordinate coordinate) {
     assert coordinate != null;
     this.coordinate = coordinate;
