@@ -235,6 +235,8 @@ public class TowerAtc extends ComputerAtc {
       inUseInfo = new RunwaysInUseInfo();
       inUseInfo.current = getSuggestedThresholds();
       inUseInfo.scheduler = null;
+      Context.getArea().setCurrentRunwayConfiguration(this.inUseInfo.current);
+      Context.getArea().setScheduledRunwayConfiguration(null);
     }
 
     Context.getWeather().onWeatherUpdated().add(() -> this.isUpdatedWeather = true);
