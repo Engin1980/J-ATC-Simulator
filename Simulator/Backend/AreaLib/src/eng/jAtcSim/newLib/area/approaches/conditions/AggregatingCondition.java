@@ -1,17 +1,16 @@
 package eng.jAtcSim.newLib.area.approaches.conditions;
 
-import eng.eSystem.collections.*;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.validation.EAssert;
 
-import static eng.eSystem.utilites.FunctionShortcuts.*;
-
 public class AggregatingCondition implements ICondition {
-  public enum eConditionAggregator{
+  public enum eConditionAggregator {
     and,
     or
   }
 
-  public static AggregatingCondition create(eConditionAggregator aggregator, ICondition  ... conditions) {
+  public static AggregatingCondition create(eConditionAggregator aggregator, ICondition... conditions) {
     return new AggregatingCondition(EList.of(conditions), aggregator);
   }
 
@@ -24,11 +23,18 @@ public class AggregatingCondition implements ICondition {
     this.aggregator = aggregator;
   }
 
+  public eConditionAggregator getAggregator() {
+    return aggregator;
+  }
+
   public IList<ICondition> getConditions() {
     return conditions;
   }
 
-  public eConditionAggregator getAggregator() {
-    return aggregator;
+  @Override
+  public String toString() {
+    return "AggregatingCondition{" +
+            "aggregator=" + aggregator +
+            '}';
   }
 }

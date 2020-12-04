@@ -41,6 +41,7 @@ public class ApproachPilot extends Pilot {
   private final IafRoute iafRoute;
   private Integer currentStageIndex = null;
 
+  //TODO this should be done via @XmlConstructor
   private ApproachPilot(Airplane airplane) {
     super(airplane);
     this.approach = null;

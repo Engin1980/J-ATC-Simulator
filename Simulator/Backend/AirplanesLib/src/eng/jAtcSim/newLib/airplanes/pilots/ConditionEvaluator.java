@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Headings;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.area.approaches.conditions.*;
@@ -28,7 +29,7 @@ public class ConditionEvaluator {
       throw new UnsupportedOperationException("Unknown condition type.");
   }
 
-  private static boolean checkTrue(RunwayThresholdVisibilityCondition condition, IAirplane plane){
+  private static boolean checkTrue(RunwayThresholdVisibilityCondition condition, IAirplane plane) {
     Weather w = Context.getWeather().getWeather();
     if (w.getCloudBaseInFt() > plane.getSha().getAltitude())
       return true;
@@ -36,24 +37,26 @@ public class ConditionEvaluator {
       return Context.getApp().getRnd().nextDouble() > w.getCloudBaseHitProbability();
   }
 
-  private static boolean checkTrue(FlyRouteBehaviorEmptyCondition condition, IAirplane plane){
+  private static boolean checkTrue(FlyRouteBehaviorEmptyCondition condition, IAirplane plane) {
     return plane.getRouting().isRoutingEmpty();
   }
 
   private static boolean checkTrue(PlaneShaCondition condition, IAirplane plane) {
+    boolean ret;
     char c = plane.getType().category;
-    if (condition.getMinAltitude() != null && condition.getMinAltitude().get(c) > plane.getSha().getAltitude())
-      return false;
-    if (condition.getMaxAltitude() != null && condition.getMaxAltitude().get(c) < plane.getSha().getAltitude())
-      return false;
-    if (condition.getMinSpeed() != null && condition.getMinSpeed().get(c) > plane.getSha().getSpeed())
-      return false;
-    if (condition.getMaxSpeed() != null && condition.getMaxSpeed().get(c) < plane.getSha().getSpeed())
-      return false;
-    if (condition.getMinHeading() != null && condition.getMaxHeading() != null &&
-        Headings.isBetween(condition.getMinHeading().get(c), plane.getSha().getHeading(), condition.getMaxHeading().get(c)))
-      return false;
-    return true;
+
+    if (condition.getType() == PlaneShaCondition.eType.heading)
+      ret = Headings.isBetween(condition.getMinimum().get(c), plane.getSha().getHeading(), condition.getMaximum().get(c));
+    else {
+      EAssert.isTrue(condition.getType() == PlaneShaCondition.eType.altitude || condition.getType() == PlaneShaCondition.eType.speed);
+      double currentValue = condition.getType() == PlaneShaCondition.eType.altitude ?
+              plane.getSha().getAltitude() : plane.getSha().getSpeed();
+      ret = (condition.getMinimum() == null || condition.getMinimum().get(c) < currentValue)
+              &&
+              (condition.getMaximum() == null || condition.getMaximum().get(c) > currentValue);
+    }
+
+    return ret;
   }
 
   private static boolean checkTrue(PlaneOrderedAltitudeDifferenceCondition condition, IAirplane plane) {

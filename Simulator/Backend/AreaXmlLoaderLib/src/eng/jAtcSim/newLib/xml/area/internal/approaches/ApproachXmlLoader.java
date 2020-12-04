@@ -208,14 +208,14 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     { // radial descent stage
       ICondition exitCondition = AggregatingCondition.create(
               AggregatingCondition.eConditionAggregator.and,
-              PlaneShaCondition.createAsMaximalAltitude(IntegerPerCategoryValue.create(daA, daB, daC, daD)),
+              PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
               RunwayThresholdVisibilityCondition.create()
       );
       ICondition errorCondition = AggregatingCondition.create(
               AggregatingCondition.eConditionAggregator.or,
-              PlaneShaCondition.createAsMaximalAltitude(IntegerPerCategoryValue.create(daA, daB, daC, daD)),
+              PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
               PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(1000)),
-              createNotStabilizedApproachErrorCondition(radial, 15, 1000)
+              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude, 1000, 15)
       );
       stages.add(ApproachStage.create(
               FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.altitude, slope),
@@ -299,15 +299,15 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       { // radial descent stage
         ICondition exitCondition = AggregatingCondition.create(
                 AggregatingCondition.eConditionAggregator.and,
-                PlaneShaCondition.createAsMaximalAltitude(IntegerPerCategoryValue.create(daA, daB, daC, daD)),
+                PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
                 RunwayThresholdVisibilityCondition.create()
         );
         ICondition errorCondition = AggregatingCondition.create(
                 AggregatingCondition.eConditionAggregator.or,
-                PlaneShaCondition.createAsMaximalAltitude(IntegerPerCategoryValue.create(daA, daB, daC, daD)), // is below mda
+                PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)), // is below mda
                 PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(1000)), // cannot be too high
                 PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(-300)),
-                createNotStabilizedApproachErrorCondition(radial, 15, 1000)
+                createNotStabilizedApproachErrorCondition(radial, context.airport.altitude, 1000, 15)
         );
         stages.add(ApproachStage.create(
                 FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.altitude, slope),
@@ -333,13 +333,14 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     return ret;
   }
 
-  private ICondition createNotStabilizedApproachErrorCondition(int radial, int height, int maxHeadingDeviance) {
-    ICondition ret = PlaneShaCondition.create(null,
-            IntegerPerCategoryValue.create(Context.getArea().getAirport().getAltitude() + height),
-            null,
-            null,
-            IntegerPerCategoryValue.create((int) Headings.add(radial, +maxHeadingDeviance)),
-            IntegerPerCategoryValue.create((int) Headings.add(radial, -maxHeadingDeviance)));
+  private ICondition createNotStabilizedApproachErrorCondition(int radial, int airportAltitude, int height, int maxHeadingDeviance) {
+    ICondition ret = AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
+            PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, airportAltitude + height),
+            PlaneShaCondition.create(PlaneShaCondition.eType.heading,
+                    (int) Headings.add(radial, +maxHeadingDeviance),
+                    (int) Headings.add(radial, -maxHeadingDeviance)
+            )
+    );
     return ret;
   }
 
@@ -396,17 +397,16 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       ICondition exitCondition = AggregatingCondition.create(
               AggregatingCondition.eConditionAggregator.and,
               LocationCondition.create(FixRelatedLocation.create(mapt.getCoordinate(), 0.5)),
-              PlaneShaCondition.create(
+              PlaneShaCondition.create(PlaneShaCondition.eType.altitude,
                       IntegerPerCategoryValue.create(mdaA, mdaB, mdaC, mdaD),
-                      IntegerPerCategoryValue.create(mdaA + 500, mdaB + 500, mdaC + 500, mdaD + 500),
-                      null, null, null, null),
+                      IntegerPerCategoryValue.create(mdaA + 500, mdaB + 500, mdaC + 500, mdaD + 500)),
               RunwayThresholdVisibilityCondition.create()
       );
       ICondition errorCondition = AggregatingCondition.create(
               AggregatingCondition.eConditionAggregator.or,
-              PlaneShaCondition.createAsMaximalAltitude(IntegerPerCategoryValue.create(mdaA, mdaB, mdaC, mdaD)),
+              PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(mdaA, mdaB, mdaC, mdaD)),
               PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(1000)),
-              createNotStabilizedApproachErrorCondition(radial, 15, 500)
+              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude, 500, 15)
       );
 
       double slope =

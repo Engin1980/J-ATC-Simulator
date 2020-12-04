@@ -14,4 +14,11 @@ public class FlyRouteBehaviorEmptyCondition implements ICondition {
   public FlyRouteBehavior getFlyRouteBehavior() {
     return flyRouteBehavior;
   }
+
+  @Override
+  public String toString() {
+    return "FlyRouteBehaviorEmptyCondition{" +
+            "cnt=" + flyRouteBehavior.getCommands().count() +
+            '}';
+  }
 }

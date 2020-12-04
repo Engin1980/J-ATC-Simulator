@@ -1,71 +1,65 @@
 package eng.jAtcSim.newLib.area.approaches.conditions;
 
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.approaches.perCategoryValues.IntegerPerCategoryValue;
 
 public class PlaneShaCondition implements ICondition {
 
-  public static PlaneShaCondition create(IntegerPerCategoryValue minAltitude, IntegerPerCategoryValue maxAltitude,
-                                         IntegerPerCategoryValue minSpeed, IntegerPerCategoryValue maxSpeed,
-                                         IntegerPerCategoryValue minHeading, IntegerPerCategoryValue maxHeading) {
-    return new PlaneShaCondition(minAltitude, maxAltitude, minSpeed, maxSpeed, minHeading, maxHeading);
+  public enum eType {
+    heading,
+    speed,
+    altitude
   }
 
-  public static PlaneShaCondition createAsMinimalAltitude(IntegerPerCategoryValue minAltitude) {
-    EAssert.Argument.isNotNull(minAltitude, "minAltitude");
-    return new PlaneShaCondition(
-        minAltitude, null, null, null, null, null);
+  public static PlaneShaCondition create(eType type, Integer minimum, Integer maximum) {
+    IntegerPerCategoryValue ipcvMin = minimum == null ? null : IntegerPerCategoryValue.create(minimum);
+    IntegerPerCategoryValue ipcvMax = maximum == null ? null : IntegerPerCategoryValue.create(maximum);
+    PlaneShaCondition ret = create(type, ipcvMin, ipcvMax);
+    return ret;
   }
 
-  public static PlaneShaCondition createAsMaximalAltitude(IntegerPerCategoryValue maxAltitude) {
-    EAssert.Argument.isNotNull(maxAltitude, "maxAltitude");
-    return new PlaneShaCondition(
-        null, maxAltitude, null, null, null, null);
+  public static PlaneShaCondition create(eType type, IntegerPerCategoryValue minimum, IntegerPerCategoryValue maximum) {
+    return new PlaneShaCondition(type, minimum, maximum);
   }
 
-  private final IntegerPerCategoryValue minAltitude;
-  private final IntegerPerCategoryValue maxAltitude;
-  private final IntegerPerCategoryValue minSpeed;
-  private final IntegerPerCategoryValue maxSpeed;
-  private final IntegerPerCategoryValue minHeading;
-  private final IntegerPerCategoryValue maxHeading;
+  private final IntegerPerCategoryValue minimum;
+  private final IntegerPerCategoryValue maximum;
+  private final eType type;
 
-  private PlaneShaCondition(IntegerPerCategoryValue minAltitude, IntegerPerCategoryValue maxAltitude, IntegerPerCategoryValue minSpeed, IntegerPerCategoryValue maxSpeed, IntegerPerCategoryValue minHeading, IntegerPerCategoryValue maxHeading) {
-    EAssert.Argument.isTrue(
-        (minHeading != null && maxHeading != null)
-        ||
-            (maxHeading == null && minHeading == null),
-        "Both min/max heading or none must be set or empty."
-    );
-    this.minAltitude = minAltitude;
-    this.maxAltitude = maxAltitude;
-    this.minSpeed = minSpeed;
-    this.maxSpeed = maxSpeed;
-    this.minHeading = minHeading;
-    this.maxHeading = maxHeading;
+  private PlaneShaCondition(eType type, IntegerPerCategoryValue minimum, IntegerPerCategoryValue maximum) {
+    switch (type) {
+      case altitude:
+      case speed:
+        EAssert.Argument.isTrue(minimum != null || maximum != null);
+        break;
+      case heading:
+        EAssert.Argument.isTrue(minimum != null && maximum != null);
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(type);
+    }
+
+    this.type = type;
+    this.minimum = minimum;
+    this.maximum = maximum;
   }
 
-  public IntegerPerCategoryValue getMaxAltitude() {
-    return maxAltitude;
+  public IntegerPerCategoryValue getMaximum() {
+    return maximum;
   }
 
-  public IntegerPerCategoryValue getMaxHeading() {
-    return maxHeading;
+  public IntegerPerCategoryValue getMinimum() {
+    return minimum;
   }
 
-  public IntegerPerCategoryValue getMaxSpeed() {
-    return maxSpeed;
+  public eType getType() {
+    return type;
   }
 
-  public IntegerPerCategoryValue getMinAltitude() {
-    return minAltitude;
-  }
-
-  public IntegerPerCategoryValue getMinHeading() {
-    return minHeading;
-  }
-
-  public IntegerPerCategoryValue getMinSpeed() {
-    return minSpeed;
+  @Override
+  public String toString() {
+    return "PlaneShaCondition{" +
+            this.type.toString() + " :: " + minimum + " ... " + maximum + "}";
   }
 }

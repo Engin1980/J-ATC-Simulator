@@ -19,4 +19,11 @@ public class PlaneOrderedAltitudeDifferenceCondition implements ICondition {
   public IntegerPerCategoryValue getActualMinusTargetAltitudeMaximalDifference() {
     return actualMinusTargetAltitudeMaximalDifference;
   }
+
+  @Override
+  public String toString() {
+    return "PlaneOrderedAltitudeDifferenceCondition{" +
+            "diff = " + actualMinusTargetAltitudeMaximalDifference +
+            '}';
+  }
 }

@@ -42,14 +42,20 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
     super(context);
   }
 
+  //TODO solve this
+  @Override
+  public ActiveRunwayThreshold load(XElement source) {
+    throw new UnsupportedOperationException("This method is here not supported. Use 'loadBoth()' instead.");
+  }
+
   private Approach generateDefaultVisualApproach() {
 
     final double VISUAL_DISTANCE = 8;
     final double VFAF_DISTANCE = 2.5;
     final int FINAL_ALTITUDE =
-        (context.airport.altitude / 1000 + 2) * 1000;
+            (context.airport.altitude / 1000 + 2) * 1000;
     final int BASE_ALTITUDE =
-        (context.airport.altitude / 1000 + 3) * 1000;
+            (context.airport.altitude / 1000 + 3) * 1000;
     String thrsName = context.airport.icao + ":" + context.threshold.name;
 
 
@@ -60,44 +66,44 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
     Approach ret;
 
     Navaid vfaf = context.area.navaids.getOrGenerate(
-        thrsName + "_VFAF",
-        Coordinates.getCoordinate(
-            context.threshold.coordinate,
-            context.threshold.getOppositeCourse(),
-            VFAF_DISTANCE));
+            thrsName + "_VFAF",
+            Coordinates.getCoordinate(
+                    context.threshold.coordinate,
+                    context.threshold.getOppositeCourse(),
+                    VFAF_DISTANCE));
     Navaid vlft = context.area.navaids.getOrGenerate(
-        thrsName + "_VRGT",
-        Coordinates.getCoordinate(vfaf.getCoordinate(),
-            Headings.add(context.threshold.course, 90),
-            VFAF_DISTANCE));
+            thrsName + "_VRGT",
+            Coordinates.getCoordinate(vfaf.getCoordinate(),
+                    Headings.add(context.threshold.course, 90),
+                    VFAF_DISTANCE));
     Navaid vrgt = context.area.navaids.getOrGenerate(
-        thrsName + "_VLFT",
-        Coordinates.getCoordinate(vfaf.getCoordinate(),
-            Headings.add(context.threshold.course, -90),
-            VFAF_DISTANCE));
+            thrsName + "_VLFT",
+            Coordinates.getCoordinate(vfaf.getCoordinate(),
+                    Headings.add(context.threshold.course, -90),
+                    VFAF_DISTANCE));
 
     Coordinate a = Coordinates.getCoordinate(
-        vfaf.getCoordinate(), context.threshold.course, VFAF_DISTANCE + VISUAL_DISTANCE);
+            vfaf.getCoordinate(), context.threshold.course, VFAF_DISTANCE + VISUAL_DISTANCE);
     Coordinate rb = Coordinates.getCoordinate(
-        a, Headings.add(context.threshold.course, 90), VISUAL_DISTANCE);
+            a, Headings.add(context.threshold.course, 90), VISUAL_DISTANCE);
     Coordinate rc = Coordinates.getCoordinate(vfaf.getCoordinate(), Headings.add(context.threshold.course, 90), VISUAL_DISTANCE);
     Coordinate lb = Coordinates.getCoordinate(
-        a, Headings.add(context.threshold.course, -90), VISUAL_DISTANCE);
+            a, Headings.add(context.threshold.course, -90), VISUAL_DISTANCE);
     Coordinate lc = Coordinates.getCoordinate(
-        vfaf.getCoordinate(), Headings.add(context.threshold.course, -90), VISUAL_DISTANCE);
+            vfaf.getCoordinate(), Headings.add(context.threshold.course, -90), VISUAL_DISTANCE);
 
     IList<ApproachEntry> entries = new EList<>();
 
     // direct approach
     {
       ILocation entryLocation = FixRelatedLocation.create(vfaf.getCoordinate(),
-          (int) Headings.add(context.threshold.course, 90), (int) Headings.add(context.threshold.course, -90),
-          VISUAL_DISTANCE);
+              (int) Headings.add(context.threshold.course, 90), (int) Headings.add(context.threshold.course, -90),
+              VISUAL_DISTANCE);
       IafRoute route = IafRoute.create(
-          EList.of(
-              ChangeAltitudeCommand.createDescend(FINAL_ALTITUDE),
-              ProceedDirectCommand.create(vfaf.getName())),
-          vfaf, PlaneCategoryDefinitions.getAll());
+              EList.of(
+                      ChangeAltitudeCommand.createDescend(FINAL_ALTITUDE),
+                      ProceedDirectCommand.create(vfaf.getName())),
+              vfaf, PlaneCategoryDefinitions.getAll());
       ApproachEntry entry = ApproachEntry.create(entryLocation, route);
       entries.add(entry);
     }
@@ -106,14 +112,14 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
     {
       ILocation entryLocation = RegionalLocation.create(a, rb, rc, vfaf.getCoordinate());
       IafRoute route = IafRoute.create(
-          EList.of(
-              ChangeAltitudeCommand.createDescend(BASE_ALTITUDE),
-              ProceedDirectCommand.create(vrgt.getName()),
-              ThenCommand.create(),
-              ChangeAltitudeCommand.createDescend(FINAL_ALTITUDE),
-              ProceedDirectCommand.create(vfaf.getName())
-          ),
-          vrgt, PlaneCategoryDefinitions.getAll());
+              EList.of(
+                      ChangeAltitudeCommand.createDescend(BASE_ALTITUDE),
+                      ProceedDirectCommand.create(vrgt.getName()),
+                      ThenCommand.create(),
+                      ChangeAltitudeCommand.createDescend(FINAL_ALTITUDE),
+                      ProceedDirectCommand.create(vfaf.getName())
+              ),
+              vrgt, PlaneCategoryDefinitions.getAll());
       ApproachEntry entry = ApproachEntry.create(entryLocation, route);
       entries.add(entry);
     }
@@ -122,14 +128,14 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
     {
       ILocation entryLocation = RegionalLocation.create(a, lb, lc, vfaf.getCoordinate());
       IafRoute route = IafRoute.create(
-          EList.of(
-              ChangeAltitudeCommand.createDescend(BASE_ALTITUDE),
-              ProceedDirectCommand.create(vlft.getName()),
-              ThenCommand.create(),
-              ChangeAltitudeCommand.createDescend(FINAL_ALTITUDE),
-              ProceedDirectCommand.create(vfaf.getName())
-          ),
-          vlft, PlaneCategoryDefinitions.getAll());
+              EList.of(
+                      ChangeAltitudeCommand.createDescend(BASE_ALTITUDE),
+                      ProceedDirectCommand.create(vlft.getName()),
+                      ThenCommand.create(),
+                      ChangeAltitudeCommand.createDescend(FINAL_ALTITUDE),
+                      ProceedDirectCommand.create(vfaf.getName())
+              ),
+              vlft, PlaneCategoryDefinitions.getAll());
       ApproachEntry entry = ApproachEntry.create(entryLocation, route);
       entries.add(entry);
     }
@@ -138,41 +144,36 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
     // stages
     {
       ApproachStage stage = ApproachStage.create(
-          FlyRadialWithDescentBehavior.create(
-              context.threshold.coordinate,
-              context.threshold.course,
-              context.airport.altitude,
-              ApproachXmlLoader.convertGlidePathDegreesToSlope(3)
-          ),
-          AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
-              RunwayThresholdVisibilityCondition.create(),
-              PlaneShaCondition.create(IntegerPerCategoryValue.create(
-                  context.airport.altitude + 200,
-                  context.airport.altitude + 300,
-                  context.airport.altitude + 500,
-                  context.airport.altitude + 500), null, null, null, null, null)
+              FlyRadialWithDescentBehavior.create(
+                      context.threshold.coordinate,
+                      context.threshold.course,
+                      context.airport.altitude,
+                      ApproachXmlLoader.convertGlidePathDegreesToSlope(3)
               ),
-          NegationCondition.create(
-              RunwayThresholdVisibilityCondition.create()),
-          "Visual descent stage " + context.airport.icao + ":" + context.threshold.name);
+              AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
+                      RunwayThresholdVisibilityCondition.create(),
+                      PlaneShaCondition.create(PlaneShaCondition.eType.altitude,
+                              IntegerPerCategoryValue.create(
+                                      context.airport.altitude + 200,
+                                      context.airport.altitude + 300,
+                                      context.airport.altitude + 500,
+                                      context.airport.altitude + 500), null)
+              ),
+              NegationCondition.create(
+                      RunwayThresholdVisibilityCondition.create()),
+              "Visual descent stage " + context.airport.icao + ":" + context.threshold.name);
       stages.add(stage);
       stage = ApproachStage.create(
-          LandingBehavior.create(),
-          null,
-          NegationCondition.create(
-              RunwayThresholdVisibilityCondition.create())
+              LandingBehavior.create(),
+              null,
+              NegationCondition.create(
+                      RunwayThresholdVisibilityCondition.create())
       );
       stages.add(stage);
     }
 
     ret = Approach.create(ApproachType.visual, entries, null, stages, gaRoute);
     return ret;
-  }
-
-  //TODO solve this
-  @Override
-  public ActiveRunwayThreshold load(XElement source) {
-    throw new UnsupportedOperationException("This method is here not supported. Use 'loadBoth()' instead.");
   }
 
   private ActiveRunwayThreshold.Prototype loadOne(XElement source) {
@@ -183,7 +184,7 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
     Coordinate coordinate = SmartXmlLoaderUtils.loadCoordinate("coordinate");
     int initialDepartureAltitude = SmartXmlLoaderUtils.loadInteger("initialDepartureAltitude");
     int accelerationAltitude = SmartXmlLoaderUtils.loadInteger("accelerationAltitude",
-        context.airport.altitude + 1500); // default acc-alt is 1500 ft above airport
+            context.airport.altitude + 1500); // default acc-alt is 1500 ft above airport
     String mapping = SmartXmlLoaderUtils.loadString("mapping");
 
     context.threshold.coordinate = coordinate;
@@ -192,14 +193,14 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
     IList<DARoute> routes = context.airport.daMappings.get(mapping);
 
     IList<IList<Approach>> approachesList = SmartXmlLoaderUtils.loadList(
-        source.getChild("approaches").getChildren(),
-        new ApproachXmlLoader(context));
+            source.getChild("approaches").getChildren(),
+            new ApproachXmlLoader(context));
 
     IList<Approach> approaches = approachesList.selectMany(q -> q);
 
     ActiveRunwayThreshold.Prototype ret = new ActiveRunwayThreshold.Prototype(
-        name, coordinate, initialDepartureAltitude, accelerationAltitude,
-        approaches, routes);
+            name, coordinate, initialDepartureAltitude, accelerationAltitude,
+            approaches, routes);
     return ret;
   }
 

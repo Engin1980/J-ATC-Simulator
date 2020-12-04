@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.area.approaches.perCategoryValues;
 
-import eng.eSystem.utilites.FunctionShortcuts;
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class IntegerPerCategoryValue extends PerCategoryValue<Integer> {
 
@@ -18,10 +18,14 @@ public class IntegerPerCategoryValue extends PerCategoryValue<Integer> {
 
   @Override
   public String toString() {
-    return FunctionShortcuts.sf("%s (%d/%d/%d/%d)", this.getClass().getSimpleName(),
-        this.get('a'),
-        this.get('b'),
-        this.get('c'),
-        this.get('d'));
+    int a = this.get('a');
+    int b = this.get('b');
+    int c = this.get('c');
+    int d = this.get('d');
+
+    if (a != b || a != c || a != d)
+      return sf("(%d/%d/%d/%d)", a, b, c, d);
+    else
+      return sf("%d", a);
   }
 }

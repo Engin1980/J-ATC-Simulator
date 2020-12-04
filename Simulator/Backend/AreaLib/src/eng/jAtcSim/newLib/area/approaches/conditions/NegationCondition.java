@@ -7,6 +7,7 @@ public class NegationCondition implements ICondition {
   public static NegationCondition create(ICondition condition) {
     return new NegationCondition(condition);
   }
+
   private final ICondition condition;
 
   private NegationCondition(ICondition condition) {
@@ -16,5 +17,12 @@ public class NegationCondition implements ICondition {
 
   public ICondition getCondition() {
     return condition;
+  }
+
+  @Override
+  public String toString() {
+    return "NegationCondition{" +
+            "condition=" + condition.toString() +
+            '}';
   }
 }

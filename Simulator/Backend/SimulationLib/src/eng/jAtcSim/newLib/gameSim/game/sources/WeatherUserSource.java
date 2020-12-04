@@ -14,8 +14,8 @@ public class WeatherUserSource extends WeatherSource {
   @XmlConstructor
   public WeatherUserSource() {
     this.initialWeather = null;
-    PostContracts.register(this, () -> initialWeather != null);
-    PostContracts.register(this, () -> content != null);
+    PostContracts.register(this, () -> initialWeather != null, "initialWeather");
+    PostContracts.register(this, () -> content != null, "content");
   }
 
   WeatherUserSource(Weather weather) {
