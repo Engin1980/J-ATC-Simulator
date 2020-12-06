@@ -20,6 +20,9 @@ public class ApproachStage {
 
   private ApproachStage(IApproachBehavior behavior, ICondition exitCondition, ICondition errorCondition, String name) {
     EAssert.Argument.isNotNull(behavior, "behavior");
+    EAssert.Argument.isNotNull(exitCondition, "exitCondition");
+    EAssert.Argument.isNotNull(errorCondition, "errorCondition");
+
     this.exitCondition = exitCondition;
     this.errorCondition = errorCondition;
     this.behavior = behavior;

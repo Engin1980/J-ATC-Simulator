@@ -4,7 +4,6 @@ import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
@@ -31,7 +30,7 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
       // not resume speed
 
       boolean isInApproach = plane.getReader().getState().is(
-          AirplaneState.approachEnter,
+          AirplaneState.approachEntry,
           AirplaneState.approachDescend
       );
 

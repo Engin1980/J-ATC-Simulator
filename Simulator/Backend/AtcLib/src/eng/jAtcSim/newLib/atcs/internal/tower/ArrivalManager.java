@@ -95,7 +95,7 @@ class ArrivalManager {
 
     assert plane.isArrival();
     assert plane.getRouting().getAssignedRunwayThreshold() != null : "Assigned arrival for " + plane.getCallsign() + " is null.";
-    if (plane.getState().is(AirplaneState.approachEnter, AirplaneState.approachDescend, AirplaneState.longFinal, AirplaneState.shortFinal))
+    if (plane.getState().is(AirplaneState.approachEntry, AirplaneState.approachDescend, AirplaneState.longFinal, AirplaneState.shortFinal))
       this.landingPlanesList.add(plane);
     else
       this.goAroundedPlanesToSwitchList.add(plane);

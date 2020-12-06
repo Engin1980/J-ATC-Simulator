@@ -1,7 +1,8 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
@@ -14,13 +15,14 @@ import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.area.approaches.ApproachStage;
-import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialBehavior;
-import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialWithDescentBehavior;
-import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRouteBehavior;
-import eng.jAtcSim.newLib.area.approaches.behaviors.IApproachBehavior;
+import eng.jAtcSim.newLib.area.approaches.behaviors.*;
+import eng.jAtcSim.newLib.area.approaches.conditions.FlyRouteBehaviorEmptyCondition;
 import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
-import eng.jAtcSim.newLib.area.routes.IafRoute;
+import eng.jAtcSim.newLib.area.approaches.conditions.NeverCondition;
+import eng.jAtcSim.newLib.area.routes.GaRoute;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.RadialCalculator;
+import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
@@ -37,15 +39,24 @@ public class ApproachPilot extends Pilot {
   public static ApproachPilot createEmptyToLoad(Airplane airplane) {
     return new ApproachPilot(airplane);
   }
-  private final Approach approach;
-  private final IafRoute iafRoute;
-  private Integer currentStageIndex = null;
+
+  private ApproachType type;
+  private final IList<ApproachStage> stages;
+  private final GaRoute gaRoute;
+  private final ActiveRunwayThreshold threshold;
+  private final int initialAltitude;
 
   //TODO this should be done via @XmlConstructor
   private ApproachPilot(Airplane airplane) {
     super(airplane);
-    this.approach = null;
-    this.iafRoute = null;
+    this.stages = null;
+    this.gaRoute = null;
+    this.threshold = null;
+    this.initialAltitude = 0;
+
+    PostContracts.register(this, () -> stages != null);
+    PostContracts.register(this, () -> gaRoute != null);
+    PostContracts.register(this, () -> threshold != null);
   }
 
   public ApproachPilot(Airplane plane,
@@ -55,12 +66,36 @@ public class ApproachPilot extends Pilot {
     EAssert.Argument.isNotNull(entry, "entry");
     EAssert.Argument.isTrue(approach.getEntries().contains(entry));
 
-    this.approach = approach;
-    this.iafRoute = entry.getIafRoute() == null ? null : entry.getIafRoute().createClone();
+    this.threshold = approach.getParent();
+    this.type = approach.getType();
+    this.stages = new EList<>(approach.getStages());
+    this.initialAltitude = approach.getInitialAltitude();
+
+    if (entry.getIafRoute() != null) {
+      FlyRouteBehavior frb = new FlyRouteBehavior(entry.getIafRoute().getRouteCommands().toList());
+      ApproachStage iafStage = ApproachStage.create(
+              frb,
+              new FlyRouteBehaviorEmptyCondition(),
+              new NeverCondition(),
+              "IAF via " + entry.getIafRoute().getNavaid());
+      this.stages.insert(0, iafStage);
+    }
+
+    if (approach.getBeforeStagesCommands().isEmpty() == false) {
+      FlyRouteBehavior frb = new FlyRouteBehavior(approach.getBeforeStagesCommands().toList());
+      ApproachStage iafStage = ApproachStage.create(
+              frb,
+              new FlyRouteBehaviorEmptyCondition(),
+              new NeverCondition(),
+              "Initial approach commands");
+      this.stages.insert(0, iafStage);
+    }
+
+    this.gaRoute = approach.getGaRoute();
   }
 
   public SpeechList<ICommand> getGoAroundRouting() {
-    SpeechList<ICommand> ret = new SpeechList<>(this.approach.getGaRoute().getRouteCommands());
+    SpeechList<ICommand> ret = new SpeechList<>(this.gaRoute.getRouteCommands());
     ChangeAltitudeCommand cac = null; // remember climb command and add it as first at the end
     if (ret.get(0) instanceof ChangeAltitudeCommand) {
       cac = (ChangeAltitudeCommand) ret.get(0);
@@ -88,7 +123,7 @@ public class ApproachPilot extends Pilot {
   }
 
   public ActiveRunwayThreshold getRunwayThreshold() {
-    return approach.getParent();
+    return threshold;
   }
 
   @Override
@@ -98,33 +133,23 @@ public class ApproachPilot extends Pilot {
 
   @Override
   protected void elapseSecondInternal() {
-    switch (rdr.getState()) {
-      case arrivingHigh:
-      case arrivingLow:
-        wrt.setRouting(iafRoute, approach.getParent());
-        wrt.setState(AirplaneState.flyingIaf2Faf);
-        break;
-      case flyingIaf2Faf:
-        if (rdr.getRouting().isRoutingEmpty() && currentStageIndex == null) {
-          wrt.setRouting(approach.getBeforeStagesCommands());
-          currentStageIndex = -1;
-        } else if (rdr.getRouting().isRoutingEmpty() && currentStageIndex != null) {
-          wrt.setState(AirplaneState.approachEnter);
-          setNextStage();
-          flyStage();
-        }
-        break;
-      case approachEnter:
-      case approachDescend:
-      case longFinal:
-      case shortFinal:
-        flyStage();
-        break;
-      case landed:
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(rdr.getState());
-    }
+    flyStage();
+//    switch (rdr.getState()) {
+//      case arrivingHigh:
+//      case arrivingLow:
+//        resetStage = true;
+//      case approachEntry:
+//      case flyingIaf2Faf:
+//      case approachDescend:
+//      case longFinal:
+//      case shortFinal:
+//        flyStage();
+//        break;
+//      case landed:
+//        break;
+//      default:
+//        throw new EEnumValueUnsupportedException(rdr.getState());
+//    }
   }
 
   private void flyRadialBehavior(FlyRadialBehavior behavior) {
@@ -135,8 +160,31 @@ public class ApproachPilot extends Pilot {
             rdr.getCoordinate(), behavior.getCoordinate(), behavior.getInboundRadial(),
             MAX_HEADING_DIFFERENCE, rdr.getSha().getSpeed());
 
-    wrt.setTargetHeading(
-            new HeadingNavigator(heading, LeftRightAny.any));
+    wrt.setTargetHeading(new HeadingNavigator(heading, LeftRightAny.any));
+  }
+
+  private void updateApproachState() {
+    AirplaneState newState;
+    if (this.stages.getFirst().getBehavior() instanceof FlyIafRouteBehavior)
+      newState = AirplaneState.flyingIaf2Faf;
+    else if (rdr.getState() == AirplaneState.landed || rdr.getState() == AirplaneState.shortFinal)
+      newState = rdr.getState();
+    else {
+      if (rdr.getSha().getAltitude() > initialAltitude)
+        newState = AirplaneState.approachEntry;
+      else {
+        int alt = rdr.getSha().getAltitude() - Context.getArea().getAirport().getAltitude();
+        double dist = Coordinates.getDistanceInNM(rdr.getCoordinate(), rdr.getRouting().getAssignedRunwayThreshold().getCoordinate());
+        if (alt < 2000 && dist < 6)
+          newState = AirplaneState.longFinal;
+        else if (alt < 1000 && dist < 3)
+          newState = AirplaneState.shortFinal;
+        else
+          newState = AirplaneState.approachEntry;
+      }
+    }
+
+    if (rdr.getState() != newState) wrt.setState(newState);
   }
 
   private void flyRadialWithDescentBehavior(FlyRadialWithDescentBehavior behavior) {
@@ -146,9 +194,26 @@ public class ApproachPilot extends Pilot {
     wrt.setTargetAltitude(altitudeInt);
   }
 
+  private void flyRouteBehavior(FlyRouteBehavior behavior) {
+    if (behavior.isApplied() == false) {
+      wrt.setRouting(behavior.getCommands());
+      behavior.setApplied();
+    }
+  }
+
   private void flyStage() {
-    EAssert.isNotNull(currentStageIndex);
-    ApproachStage stage = approach.getStages().get(currentStageIndex);
+    EAssert.isFalse(stages.isEmpty());
+    ApproachStage stage = stages.getFirst();
+
+    IApproachBehavior beh = stage.getBehavior();
+    if (beh instanceof FlyRadialBehavior)
+      flyRadialBehavior((FlyRadialBehavior) beh);
+    else if (beh instanceof FlyRouteBehavior)
+      flyRouteBehavior((FlyRouteBehavior) beh);
+    else if (beh instanceof LandingBehavior)
+      flyLandingBehavior((LandingBehavior) beh);
+    else
+      throw new EApplicationException("Unknown behavior type at this place.");
 
     if (isConditionTrue(stage.getExitCondition())) {
       // go to next stage
@@ -156,16 +221,20 @@ public class ApproachPilot extends Pilot {
       return;
     }
 
-    IApproachBehavior beh = stage.getBehavior();
-    if (beh instanceof FlyRadialBehavior)
-      flyRadialBehavior((FlyRadialBehavior) beh);
-    else if (beh instanceof FlyRouteBehavior) {
-      // nothing, everything already done in "setNextStep()"
-    } else
-      throw new EApplicationException("Unknown behavior type at this place.");
-
     if (isConditionTrue(stage.getErrorCondition()))
       goAround(GoingAroundNotification.GoAroundReason.notStabilizedAirplane);
+
+    updateApproachState();
+  }
+
+  private void flyLandingBehavior(LandingBehavior beh){
+    if (rdr.getState() != AirplaneState.landed){
+      wrt.setTargetSpeed(0);
+    }
+    double hdg = Coordinates.getBearing(
+            rdr.getCoordinate(),
+            rdr.getRouting().getAssignedRunwayThreshold().getOtherThreshold().getCoordinate());
+    wrt.setTargetHeading(new HeadingNavigator(hdg, LeftRightAny.any));
   }
 
   @Override
@@ -182,7 +251,7 @@ public class ApproachPilot extends Pilot {
     return new AirplaneState[]{
             AirplaneState.arrivingCloseFaf,
             AirplaneState.flyingIaf2Faf,
-            AirplaneState.approachEnter,
+            AirplaneState.approachEntry,
             AirplaneState.approachDescend,
             AirplaneState.longFinal,
             AirplaneState.shortFinal,
@@ -211,12 +280,8 @@ public class ApproachPilot extends Pilot {
   }
 
   private void setNextStage() {
-    this.currentStageIndex++;
-    EAssert.isTrue(currentStageIndex >= 0);
-    ApproachStage stage = approach.getStages().get(currentStageIndex);
-    IApproachBehavior beh = stage.getBehavior();
-    if (beh instanceof FlyRouteBehavior) {
-      wrt.setRouting(((FlyRouteBehavior) beh).getCommands());
-    }
+    this.stages.removeAt(0);
+    EAssert.isFalse(this.stages.isEmpty());
+    wrt.setState(AirplaneState.approachEntry);
   }
 }

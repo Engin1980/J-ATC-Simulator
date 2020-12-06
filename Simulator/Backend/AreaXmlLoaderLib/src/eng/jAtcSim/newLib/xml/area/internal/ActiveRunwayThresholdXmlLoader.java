@@ -38,6 +38,8 @@ import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
 public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThreshold> {
 
+  private static final int DEFAULT_VISUAL_APPROACH_PATTERN_AGL_HEIGHT = 2000;
+
   ActiveRunwayThresholdXmlLoader(LoadingContext context) {
     super(context);
   }
@@ -172,7 +174,7 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
       stages.add(stage);
     }
 
-    ret = Approach.create(ApproachType.visual, entries, null, stages, gaRoute);
+    ret = new Approach(ApproachType.visual, context.airport.altitude + DEFAULT_VISUAL_APPROACH_PATTERN_AGL_HEIGHT,  entries, null, stages, gaRoute);
     return ret;
   }
 

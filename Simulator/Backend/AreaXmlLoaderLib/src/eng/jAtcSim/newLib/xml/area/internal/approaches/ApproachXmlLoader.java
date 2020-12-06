@@ -252,13 +252,13 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       // landing stage
       stages.add(ApproachStage.create(
               LandingBehavior.create(),
-              null,
+              new NeverCondition(),
               RunwayThresholdVisibilityCondition.create(),
               "GNSS landing " + context.airport.icao + ":" + context.threshold.name
       ));
     }
 
-    Approach ret = new Approach(ApproachType.gnss, entries, beforeStagesCommands, stages, gaRoute);
+    Approach ret = new Approach(ApproachType.gnss, initialAltitude, entries, beforeStagesCommands, stages, gaRoute);
 
     return EList.of(ret);
   }
@@ -345,13 +345,13 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
         // landing stage
         stages.add(ApproachStage.create(
                 LandingBehavior.create(),
-                null,
+                new NeverCondition(),
                 RunwayThresholdVisibilityCondition.create(),
                 type + " landing " + context.airport.icao + ":" + context.threshold.name
         ));
       }
 
-      Approach tmp = new Approach(type, entries, beforeStagesCommands, stages, gaRoute);
+      Approach tmp = new Approach(type, initialAltitude, entries, beforeStagesCommands, stages, gaRoute);
       ret.add(tmp);
     }
 
@@ -453,13 +453,13 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       // landing stage
       stages.add(ApproachStage.create(
               LandingBehavior.create(),
-              null,
+              new NeverCondition(),
               RunwayThresholdVisibilityCondition.create(),
               approachType + " landing " + context.airport.icao + ":" + context.threshold.name
       ));
     }
 
-    Approach ret = new Approach(approachType, entries, beforeStagesCommands, stages, gaRoute);
+    Approach ret = new Approach(approachType, initialAltitude, entries, beforeStagesCommands, stages, gaRoute);
 
     return EList.of(ret);
   }

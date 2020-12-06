@@ -42,7 +42,7 @@ public class HoldCommandApplication extends CommandApplication<HoldCommand> {
         AirplaneState.takeOffRoll,
         AirplaneState.takeOffGoAround,
         AirplaneState.flyingIaf2Faf,
-        AirplaneState.approachEnter,
+        AirplaneState.approachEntry,
         AirplaneState.approachDescend,
         AirplaneState.longFinal,
         AirplaneState.shortFinal,

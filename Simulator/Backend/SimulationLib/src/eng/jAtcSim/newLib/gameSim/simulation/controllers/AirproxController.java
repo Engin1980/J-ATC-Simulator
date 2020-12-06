@@ -19,7 +19,7 @@ public class AirproxController {
   private static final double AIRPROX_APPROACH_DISTANCE = 2.5;
   private static final AirplaneState[] airproxApproachStates = {
           AirplaneState.flyingIaf2Faf,
-          AirplaneState.approachEnter,
+          AirplaneState.approachEntry,
           AirplaneState.approachDescend,
           AirplaneState.longFinal,
           AirplaneState.shortFinal,

@@ -27,6 +27,8 @@ public class ConditionEvaluator {
       return checkTrue((PlaneShaCondition) condition, plane);
     else if (condition instanceof RunwayThresholdVisibilityCondition)
       return checkTrue((RunwayThresholdVisibilityCondition) condition, plane);
+    else if (condition instanceof NeverCondition)
+      return false;
     else
       throw new UnsupportedOperationException("Unknown condition type.");
   }

@@ -22,7 +22,7 @@ public class DivertCommandApplication extends CommandApplication<DivertCommand> 
   protected AirplaneState[] getInvalidStates() {
     return new AirplaneState[]{
         AirplaneState.flyingIaf2Faf,
-        AirplaneState.approachEnter,
+        AirplaneState.approachEntry,
         AirplaneState.approachDescend,
         AirplaneState.longFinal,
         AirplaneState.shortFinal,

@@ -12,7 +12,7 @@ public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitude
     return new AirplaneState[]{
         AirplaneState.takeOffRoll,
         AirplaneState.flyingIaf2Faf,
-        AirplaneState.approachEnter,
+        AirplaneState.approachEntry,
         AirplaneState.approachDescend,
         AirplaneState.longFinal,
         AirplaneState.shortFinal,

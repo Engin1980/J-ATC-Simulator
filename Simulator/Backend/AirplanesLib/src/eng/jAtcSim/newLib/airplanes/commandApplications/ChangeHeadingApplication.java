@@ -6,7 +6,6 @@ import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 
@@ -23,7 +22,7 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
         AirplaneState.holdingPoint,
         AirplaneState.takeOffRoll,
         AirplaneState.flyingIaf2Faf,
-        AirplaneState.approachEnter,
+        AirplaneState.approachEntry,
         AirplaneState.approachDescend,
         AirplaneState.longFinal,
         AirplaneState.shortFinal,

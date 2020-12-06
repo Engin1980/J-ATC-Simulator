@@ -308,7 +308,7 @@ public class Airplane {
       DARoute route = DARoute.createNewVectoringByFix(divertNavaid);
 
       Airplane.this.flightModule.divert();
-      setRouting(route, Airplane.this.routingModule.getRunwayThreshold());
+      setDaRouting(route, Airplane.this.routingModule.getRunwayThreshold());
       setPilotAndState(new DeparturePilot(Airplane.this), AirplaneState.departingLow);
 
       if (!isInvokedByAtc)
@@ -406,9 +406,9 @@ public class Airplane {
     }
 
     @Override
-    public void setRouting(IafRoute iafRoute, ActiveRunwayThreshold activeRunwayThreshold) {
+    public void setIafRouting(IReadOnlyList<ICommand> routeCommands, ActiveRunwayThreshold activeRunwayThreshold) {
       Airplane.this.routingModule.setRunwayThreshold(activeRunwayThreshold);
-      Airplane.this.routingModule.setRouting(iafRoute.getRouteCommands());
+      Airplane.this.routingModule.setRouting(routeCommands);
     }
 
     @Override
@@ -417,7 +417,7 @@ public class Airplane {
     }
 
     @Override
-    public void setRouting(DARoute daRoute, ActiveRunwayThreshold activeRunwayThreshold) {
+    public void setDaRouting(DARoute daRoute, ActiveRunwayThreshold activeRunwayThreshold) {
       Airplane.this.routingModule.setRunwayThreshold(activeRunwayThreshold);
       Airplane.this.routingModule.setEntryExitPoint(daRoute.getMainNavaid());
       Airplane.this.routingModule.setAssignedDARouteName(daRoute.getName());

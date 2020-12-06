@@ -24,7 +24,7 @@ public class ClearedForTakeOffCommandApplication extends CommandApplication<Clea
             AirplaneState.arrivingLow,
             AirplaneState.arrivingCloseFaf,
             AirplaneState.flyingIaf2Faf,
-            AirplaneState.approachEnter,
+            AirplaneState.approachEntry,
             AirplaneState.approachDescend,
             AirplaneState.longFinal,
             AirplaneState.shortFinal,

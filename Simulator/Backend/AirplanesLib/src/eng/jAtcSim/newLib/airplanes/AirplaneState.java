@@ -24,7 +24,7 @@ public enum AirplaneState {
   /**
    * Entering approach, before descend
    */
-  approachEnter,
+  approachEntry,
   /**
    * Descending in approach
    */

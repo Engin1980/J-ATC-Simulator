@@ -13,24 +13,22 @@ import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 
 public class Approach extends Parentable<ActiveRunwayThreshold> {
 
-  public static Approach create(ApproachType type, IList<ApproachEntry> entries, IList<ICommand> beforeStagesCommands, IList<ApproachStage> stages, GaRoute gaRoute) {
-    return new Approach(type, entries, beforeStagesCommands, stages, gaRoute);
-  }
-
   private final ApproachType type;
   private final IList<ApproachEntry> entries;
   private final IList<ICommand> beforeStagesCommands;
   private final IList<ApproachStage> stages;
   private final GaRoute gaRoute;
+  private final int initialAltitude;
   private Integer calculatedGeographicalRadial;
 
-  public Approach(ApproachType type, IList<ApproachEntry> entries, IList<ICommand> beforeStagesCommands, IList<ApproachStage> stages, GaRoute gaRoute) {
+  public Approach(ApproachType type, int initialAltitude, IList<ApproachEntry> entries, IList<ICommand> beforeStagesCommands, IList<ApproachStage> stages, GaRoute gaRoute) {
     EAssert.Argument.isNotNull(entries, "entries");
     EAssert.Argument.isTrue(entries.size() > 0, "There must be at least one approach entry.");
     EAssert.Argument.isNotNull(stages, "stages");
     EAssert.Argument.isTrue(stages.size() > 0, "There must be at least one approach stage.");
     EAssert.Argument.isNotNull(gaRoute, "gaRoute");
     this.type = type;
+    this.initialAltitude = initialAltitude;
     this.entries = entries;
     this.beforeStagesCommands = beforeStagesCommands;
     this.stages = stages;
@@ -55,6 +53,10 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
     return calculatedGeographicalRadial;
   }
 
+  public int getInitialAltitude() {
+    return initialAltitude;
+  }
+
   public IReadOnlyList<ApproachStage> getStages() {
     return stages;
   }
@@ -68,8 +70,8 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
     FlyRadialBehavior frb = (FlyRadialBehavior) stage.getBehavior();
     int radial = frb.getInboundRadial();
     int ret = (int) Math.round(
-        Headings.add(radial,
-            this.getParent().getParent().getParent().getDeclination()));
+            Headings.add(radial,
+                    this.getParent().getParent().getParent().getDeclination()));
     return ret;
   }
 }

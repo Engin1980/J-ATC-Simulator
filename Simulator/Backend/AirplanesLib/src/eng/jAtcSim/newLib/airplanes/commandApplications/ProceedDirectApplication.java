@@ -38,7 +38,7 @@ public class ProceedDirectApplication extends CommandApplication<ProceedDirectCo
         AirplaneState.holdingPoint,
         AirplaneState.takeOffRoll,
         AirplaneState.flyingIaf2Faf,
-        AirplaneState.approachEnter,
+        AirplaneState.approachEntry,
         AirplaneState.approachDescend,
         AirplaneState.longFinal,
         AirplaneState.shortFinal,

@@ -5,7 +5,6 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.AltitudeRestrictionCommand;
-import eng.jAtcSim.newLib.speeches.base.Rejection;
 
 public class AltitudeRestrictionApplication extends CommandApplication<AltitudeRestrictionCommand> {
 
@@ -14,7 +13,7 @@ public class AltitudeRestrictionApplication extends CommandApplication<AltitudeR
     return new AirplaneState[]{
         AirplaneState.takeOffRoll,
         AirplaneState.flyingIaf2Faf,
-        AirplaneState.approachEnter,
+        AirplaneState.approachEntry,
         AirplaneState.approachDescend,
         AirplaneState.longFinal,
         AirplaneState.shortFinal,

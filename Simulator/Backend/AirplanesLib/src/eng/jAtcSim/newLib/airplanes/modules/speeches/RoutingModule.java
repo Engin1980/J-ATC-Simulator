@@ -40,14 +40,17 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     extension
   }
 
-  private final static AirplaneState[] FLYING_ROUTE_STATES = {
-          AirplaneState.arrivingHigh,
-          AirplaneState.arrivingLow,
-          AirplaneState.arrivingCloseFaf,
-          AirplaneState.flyingIaf2Faf,
-          AirplaneState.departingHigh,
-          AirplaneState.departingLow,
-  };
+//  private final static AirplaneState[] FLYING_ROUTE_STATES = {
+//          AirplaneState.arrivingHigh,
+//          AirplaneState.arrivingLow,
+//          AirplaneState.arrivingCloseFaf,
+//          AirplaneState.flyingIaf2Faf,
+//          AirplaneState.approachEntry,
+//          AirplaneState.approachDescend,
+//          AirplaneState.longFinal,
+//          AirplaneState.departingHigh,
+//          AirplaneState.departingLow,
+//  };
   private final AfterCommandList afterCommands = new AfterCommandList();
   private String assignedDARouteName = null;
   private Navaid entryExitPoint;
@@ -271,7 +274,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
     AirplaneState[] unableProcessAfterCommandsStates = {
             AirplaneState.flyingIaf2Faf,
-            AirplaneState.approachEnter,
+            AirplaneState.approachEntry,
             AirplaneState.approachDescend,
             AirplaneState.longFinal,
             AirplaneState.shortFinal,
@@ -328,12 +331,13 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     wrt.getCVR().logProcessedAfterSpeeches(cmds, "extensions");
     processSpeeches(cmds, CommandSource.extension);
 
-    if (ArrayUtils.contains(FLYING_ROUTE_STATES, rdr.getState())) {
+    //TODEL
+//    if (ArrayUtils.contains(FLYING_ROUTE_STATES, rdr.getState())) {
       cmds = afterCommands.getAndRemoveSatisfiedCommands(
               rdr, targetCoordinate, AfterCommandList.Type.route);
       wrt.getCVR().logProcessedAfterSpeeches(cmds, "route");
       processSpeeches(cmds, CommandSource.route);
-    }
+//    }
   }
 
   private void processNewSpeeches() {

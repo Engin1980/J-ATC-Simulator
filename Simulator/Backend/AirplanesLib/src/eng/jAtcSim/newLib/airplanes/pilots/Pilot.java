@@ -81,7 +81,7 @@ public abstract class Pilot {
       case flyingIaf2Faf:
         ts = NumberUtils.boundBetween(minOrdered, Math.min(287, rdr.getType().vMinClean + 15), maxOrdered);
         break;
-      case approachEnter:
+      case approachEntry:
         ts = NumberUtils.boundBetween(minOrdered, Math.min(rdr.getType().vMaxApp, rdr.getType().vMinClean), maxOrdered);
         break;
       case approachDescend:

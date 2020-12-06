@@ -58,8 +58,8 @@ public interface IAirplaneWriter {
 
   void setAltitudeRestriction(Restriction restriction);
 
-  void setRouting(IafRoute iafRoute, ActiveRunwayThreshold parent);
-  void setRouting(DARoute daRoute, ActiveRunwayThreshold threshold);
+  void setIafRouting(IReadOnlyList<ICommand> commands, ActiveRunwayThreshold parent);
+  void setDaRouting(DARoute daRoute, ActiveRunwayThreshold threshold);
   void setRouting(IReadOnlyList<ICommand> commands);
 
   void setSpeedRestriction(Restriction restriction);

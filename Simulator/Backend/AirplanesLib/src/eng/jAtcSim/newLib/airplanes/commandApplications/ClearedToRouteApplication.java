@@ -18,7 +18,7 @@ public class ClearedToRouteApplication extends CommandApplication<ClearedToRoute
   protected ApplicationResult adjustAirplane(Airplane plane, ClearedToRouteCommand c) {
     ActiveRunwayThreshold threshold = InternalAcc.tryGetRunwayThreshold(c.getExpectedRunwayThresholdName());
     DARoute route = InternalAcc.tryGetDARoute(c.getRouteName());
-    plane.getWriter().setRouting(route, threshold);
+    plane.getWriter().setDaRouting(route, threshold);
     return ApplicationResult.getEmpty();
   }
 
@@ -41,7 +41,7 @@ public class ClearedToRouteApplication extends CommandApplication<ClearedToRoute
   protected AirplaneState[] getInvalidStates() {
     return new AirplaneState[]{
         AirplaneState.arrivingCloseFaf,
-        AirplaneState.approachEnter,
+        AirplaneState.approachEntry,
         AirplaneState.approachDescend,
         AirplaneState.longFinal,
         AirplaneState.shortFinal,

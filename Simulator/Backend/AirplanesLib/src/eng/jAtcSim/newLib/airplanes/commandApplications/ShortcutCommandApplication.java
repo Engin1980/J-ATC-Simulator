@@ -43,7 +43,7 @@ public class ShortcutCommandApplication extends CommandApplication<ShortcutComma
     return new AirplaneState[]{
         AirplaneState.holdingPoint,
         AirplaneState.takeOffRoll,
-        AirplaneState.approachEnter,
+        AirplaneState.approachEntry,
         AirplaneState.approachDescend,
         AirplaneState.longFinal,
         AirplaneState.shortFinal,
