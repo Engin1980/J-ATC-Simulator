@@ -18,8 +18,7 @@ import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialBehavior;
 import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialWithDescentBehavior;
 import eng.jAtcSim.newLib.area.approaches.behaviors.LandingBehavior;
 import eng.jAtcSim.newLib.area.approaches.conditions.*;
-import eng.jAtcSim.newLib.area.approaches.locations.FixRelatedLocation;
-import eng.jAtcSim.newLib.area.approaches.locations.ILocation;
+import eng.jAtcSim.newLib.area.approaches.conditions.locations.FixRelatedLocation;
 import eng.jAtcSim.newLib.area.approaches.perCategoryValues.IntegerPerCategoryValue;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
@@ -84,46 +83,70 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     return ret;
   }
 
-  private ILocation createApproachEntryLocationBetweenMaptAndFaf(String maptName, String fafName) {
+  private ICondition createApproachEntryConditionBetweenMaptAndFaf(String maptName, String fafName) {
     Navaid faf = this.context.area.navaids.getWithPBD(fafName);
     Navaid mapt = this.context.area.navaids.getWithPBD(maptName);
     double distance = Coordinates.getDistanceInNM(faf.getCoordinate(), mapt.getCoordinate());
     double radial = Coordinates.getBearing(faf.getCoordinate(), mapt.getCoordinate());
-    ILocation ret = FixRelatedLocation.create(mapt.getCoordinate(),
-            (int) Headings.add(radial, -30),
-            (int) Headings.add(radial, +30),
-            distance + 1);
+
+    ICondition ret = AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
+            FixRelatedLocation.create(mapt.getCoordinate(),
+                    (int) Headings.add(radial, -30),
+                    (int) Headings.add(radial, 30),
+                    MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH),
+            PlaneShaCondition.create(PlaneShaCondition.eType.heading,
+                    (int) Headings.add(radial, -30),
+                    (int) Headings.add(radial, 30))
+    );
+
     return ret;
   }
 
-  private ILocation createApproachEntryLocationForFafByFafName(String fafName, int course) {
+  private ICondition createApproachEntryConditionForFafByFafName(String fafName, int course) {
     Navaid navaid = context.area.navaids.getWithPBD(fafName);
-    ILocation ret = FixRelatedLocation.create(navaid.getCoordinate(),
-            (int) Headings.add(course, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
-            (int) Headings.add(course, ENTRY_SECTOR_ONE_SIDE_ANGLE),
-            MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH);
+
+    ICondition ret = AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
+            FixRelatedLocation.create(navaid.getCoordinate(),
+                    (int) Headings.add(course, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    (int) Headings.add(course, ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH),
+            PlaneShaCondition.create(PlaneShaCondition.eType.heading,
+                    (int) Headings.add(course, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    (int) Headings.add(course, ENTRY_SECTOR_ONE_SIDE_ANGLE))
+    );
+
     return ret;
   }
 
-  private ILocation createApproachEntryLocationForRoute(IafRoute route) {
+  private ICondition createApproachEntryConditionForRoute(IafRoute route) {
     //IDEA this should somehow allow set custom entry location?
     HeadingAndCoordinate hac = getOptimalEntryHeadingForRoute(route);
     int fromRadial = (int) Headings.add(hac.heading, -115);
     int toRadial = (int) Headings.add(hac.heading, 115);
-    FixRelatedLocation ret = FixRelatedLocation.create(
-            hac.coordinate, fromRadial, toRadial, hac.range);
+
+    ICondition ret;
+    ret = AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
+            FixRelatedLocation.create(route.getNavaid().getCoordinate(), 3),
+            PlaneShaCondition.create(PlaneShaCondition.eType.heading, fromRadial, toRadial));
+
     return ret;
   }
 
-  private ILocation createApproachEntryLocationForThresholdAndSlope(
+  private ICondition createApproachEntryConditionForThresholdAndSlope(
           Coordinate coordinate, int coordinateAltitude, int radial, int altitude, double slope) {
     double dist = (altitude - coordinateAltitude) / slope;
     Coordinate fafCoordinate = Coordinates.getCoordinate(
             coordinate, Headings.getOpposite(radial), dist);
-    ILocation ret = FixRelatedLocation.create(fafCoordinate,
-            (int) Headings.add(radial, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
-            (int) Headings.add(radial, ENTRY_SECTOR_ONE_SIDE_ANGLE),
-            MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH);
+
+    ICondition ret = AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
+            FixRelatedLocation.create(fafCoordinate,
+                    (int) Headings.add(radial, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    (int) Headings.add(radial, ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH),
+            PlaneShaCondition.create(PlaneShaCondition.eType.heading,
+                    (int) Headings.add(radial, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    (int) Headings.add(radial, ENTRY_SECTOR_ONE_SIDE_ANGLE))
+    );
     return ret;
   }
 
@@ -187,16 +210,16 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     IList<ApproachEntry> entries = new EList<>();
     IReadOnlyList<IafRoute> iafRoutes = context.airport.iafMappings.get(iafMapping);
     for (IafRoute iafRoute : iafRoutes) {
-      ILocation entryLocation = createApproachEntryLocationForRoute(iafRoute);
-      ApproachEntry entry = ApproachEntry.create(entryLocation, iafRoute);
+      ICondition entryCondition = createApproachEntryConditionForRoute(iafRoute);
+      ApproachEntry entry = ApproachEntry.create(entryCondition, iafRoute);
       entries.add(entry);
     }
 
     // estimate faf by slope and daA
     {
-      ILocation entryLocation = createApproachEntryLocationForThresholdAndSlope(
+      ICondition entryConditionForThresholdAndSlope = createApproachEntryConditionForThresholdAndSlope(
               context.threshold.coordinate, context.airport.altitude, radial, initialAltitude, slope);
-      ApproachEntry entry = ApproachEntry.createDirect(entryLocation);
+      ApproachEntry entry = ApproachEntry.createDirect(entryConditionForThresholdAndSlope);
       entries.add(entry);
     }
 
@@ -214,8 +237,9 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       ICondition errorCondition = AggregatingCondition.create(
               AggregatingCondition.eConditionAggregator.or,
               PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
-              PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(1000)),
-              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude, 1000, 15)
+              PlaneOrderedAltitudeDifferenceCondition.create(null, 1000),
+              createAltitudeDifferenceRestriction(context.airport.altitude + 2500, 300, 500),
+              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 1000, 15)
       );
       stages.add(ApproachStage.create(
               FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.altitude, slope),
@@ -250,20 +274,20 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     Double glidePathPercentage = SmartXmlLoaderUtils.loadDouble("glidePathPercentage", 3d);
     double slope = convertGlidePathDegreesToSlope(glidePathPercentage);
 
-    // build approach entry
     IList<ApproachEntry> entries = new EList<>();
+    // build approach entry
     IReadOnlyList<IafRoute> iafRoutes = context.airport.iafMappings.get(iafMapping);
     for (IafRoute iafRoute : iafRoutes) {
-      ILocation entryLocation = createApproachEntryLocationForRoute(iafRoute);
-      ApproachEntry entry = ApproachEntry.create(entryLocation, iafRoute);
+      ICondition entryCondition = createApproachEntryConditionForRoute(iafRoute);
+      ApproachEntry entry = ApproachEntry.create(entryCondition, iafRoute);
       entries.add(entry);
     }
 
     // direct FAF entry
     {
-      ILocation entryLocation = createApproachEntryLocationForThresholdAndSlope(
+      ICondition entryCondition = createApproachEntryConditionForThresholdAndSlope(
               context.threshold.coordinate, context.airport.altitude, radial, initialAltitude, slope);
-      ApproachEntry entry = ApproachEntry.createDirect(entryLocation);
+      ApproachEntry entry = ApproachEntry.createDirect(entryCondition);
       entries.add(entry);
     }
 
@@ -299,15 +323,16 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       { // radial descent stage
         ICondition exitCondition = AggregatingCondition.create(
                 AggregatingCondition.eConditionAggregator.and,
-                PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
+                PlaneShaCondition.create(
+                        PlaneShaCondition.eType.altitude,
+                        null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
                 RunwayThresholdVisibilityCondition.create()
         );
         ICondition errorCondition = AggregatingCondition.create(
                 AggregatingCondition.eConditionAggregator.or,
                 PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)), // is below mda
-                PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(1000)), // cannot be too high
-                PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(-300)),
-                createNotStabilizedApproachErrorCondition(radial, context.airport.altitude, 1000, 15)
+                createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 1000, 15),
+                createAltitudeDifferenceRestriction(context.airport.altitude + 2500, 300, 500)
         );
         stages.add(ApproachStage.create(
                 FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.altitude, slope),
@@ -333,9 +358,16 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     return ret;
   }
 
-  private ICondition createNotStabilizedApproachErrorCondition(int radial, int airportAltitude, int height, int maxHeadingDeviance) {
+  private ICondition createAltitudeDifferenceRestriction(int checkedWhenBelowAltitude, Integer belowMaxDiff, Integer aboveMaxDiff) {
     ICondition ret = AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
-            PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, airportAltitude + height),
+            PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, checkedWhenBelowAltitude),
+            PlaneOrderedAltitudeDifferenceCondition.create(belowMaxDiff, aboveMaxDiff));
+    return ret;
+  }
+
+  private ICondition createNotStabilizedApproachErrorCondition(int radial, int checkedWhenBelowAltitude, int maxHeadingDeviance) {
+    ICondition ret = AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
+            PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, checkedWhenBelowAltitude),
             PlaneShaCondition.create(PlaneShaCondition.eType.heading,
                     (int) Headings.add(radial, +maxHeadingDeviance),
                     (int) Headings.add(radial, -maxHeadingDeviance)
@@ -367,22 +399,22 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     IList<ApproachEntry> entries = new EList<>();
     IReadOnlyList<IafRoute> iafRoutes = context.airport.iafMappings.get(iafMapping);
     for (IafRoute iafRoute : iafRoutes) {
-      ILocation entryLocation = createApproachEntryLocationForRoute(iafRoute);
-      ApproachEntry entry = ApproachEntry.create(entryLocation, iafRoute);
+      ICondition entryCondition = createApproachEntryConditionForRoute(iafRoute);
+      ApproachEntry entry = ApproachEntry.create(entryCondition, iafRoute);
       entries.add(entry);
     }
 
     // entry via faf before faf
     {
-      ILocation entryLocation = createApproachEntryLocationForFafByFafName(fafName, radial);
-      ApproachEntry entry = ApproachEntry.createDirect(entryLocation);
+      ICondition entryCondition = createApproachEntryConditionForFafByFafName(fafName, radial);
+      ApproachEntry entry = ApproachEntry.createDirect(entryCondition);
       entries.add(entry);
     }
 
     // entry before mapt to faf
     {
-      ILocation entryLocation = createApproachEntryLocationBetweenMaptAndFaf(maptName, fafName);
-      ApproachEntry entry = ApproachEntry.createDirect(entryLocation);
+      ICondition entryCondition = createApproachEntryConditionBetweenMaptAndFaf(maptName, fafName);
+      ApproachEntry entry = ApproachEntry.createDirect(entryCondition);
       entries.add(entry);
     }
 
@@ -396,7 +428,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     { // radial descent stage
       ICondition exitCondition = AggregatingCondition.create(
               AggregatingCondition.eConditionAggregator.and,
-              LocationCondition.create(FixRelatedLocation.create(mapt.getCoordinate(), 0.5)),
+              FixRelatedLocation.create(mapt.getCoordinate(), 0.5),
               PlaneShaCondition.create(PlaneShaCondition.eType.altitude,
                       IntegerPerCategoryValue.create(mdaA, mdaB, mdaC, mdaD),
                       IntegerPerCategoryValue.create(mdaA + 500, mdaB + 500, mdaC + 500, mdaD + 500)),
@@ -405,8 +437,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       ICondition errorCondition = AggregatingCondition.create(
               AggregatingCondition.eConditionAggregator.or,
               PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(mdaA, mdaB, mdaC, mdaD)),
-              PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(1000)),
-              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude, 500, 15)
+              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 500, 15)
       );
 
       double slope =

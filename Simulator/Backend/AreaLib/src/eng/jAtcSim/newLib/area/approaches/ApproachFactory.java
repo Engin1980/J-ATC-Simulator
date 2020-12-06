@@ -6,8 +6,8 @@
 //import eng.eSystem.validation.EAssert;
 //import eng.jAtcSim.newLib.area.Navaid;
 //import eng.jAtcSim.newLib.area.NavaidList;
-//import eng.jAtcSim.newLib.area.approaches.locations.FixRelatedLocation;
-//import eng.jAtcSim.newLib.area.approaches.locations.ILocation;
+//import eng.jAtcSim.newLib.area.approaches.conditions.locations.FixRelatedLocation;
+//import eng.jAtcSim.newLib.area.approaches.conditions.locations.ILocation;
 //import eng.jAtcSim.newLib.area.routes.IafRoute;
 //import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 //import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;

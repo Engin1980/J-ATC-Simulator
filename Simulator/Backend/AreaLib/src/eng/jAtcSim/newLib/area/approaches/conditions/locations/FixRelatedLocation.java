@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.area.approaches.locations;
+package eng.jAtcSim.newLib.area.approaches.conditions.locations;
 
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
@@ -24,7 +24,7 @@ public class FixRelatedLocation implements ILocation {
     EAssert.Argument.isNotNull(coordinate, "coordinate");
     EAssert.Argument.isTrue(maximalDistance >= 0);
     EAssert.Argument.isTrue((fromRadial == null && toRadial == null) || (fromRadial != null && toRadial != null),
-        "Both 'fromRadial' and 'toRadial' must be set, or both must be null.");
+            "Both 'fromRadial' and 'toRadial' must be set, or both must be null.");
     this.coordinate = coordinate;
     this.fromRadial = fromRadial;
     this.toRadial = toRadial;
@@ -53,11 +53,13 @@ public class FixRelatedLocation implements ILocation {
     double dist = Coordinates.getDistanceInNM(coordinate, this.coordinate);
     double radial = Coordinates.getBearing(this.coordinate, coordinate);
     if (maximalDistance < dist) return false;
-    if (fromRadial <= toRadial)
+    if (fromRadial == null) // toRadial is null too
+      return true;
+    else if (fromRadial <= toRadial)
       return NumberUtils.isBetweenOrEqual(fromRadial, radial, toRadial);
     else
       return
-          NumberUtils.isBetweenOrEqual(fromRadial, radial, 360)
-              || NumberUtils.isBetweenOrEqual(0, radial, toRadial);
+              NumberUtils.isBetweenOrEqual(fromRadial, radial, 360)
+                      || NumberUtils.isBetweenOrEqual(0, radial, toRadial);
   }
 }

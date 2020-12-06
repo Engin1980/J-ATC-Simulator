@@ -1,30 +1,31 @@
 package eng.jAtcSim.newLib.area.approaches;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.area.approaches.locations.ILocation;
+import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
+import eng.jAtcSim.newLib.area.approaches.conditions.locations.ILocation;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 
 public class ApproachEntry {
-  public static ApproachEntry createDirect(ILocation entryLocation) {
-    return new ApproachEntry(null, entryLocation);
+  public static ApproachEntry createDirect(ICondition entryCondition) {
+    return new ApproachEntry(null, entryCondition);
   }
 
-  public static ApproachEntry create(ILocation entryLocation, IafRoute iafRoute) {
+  public static ApproachEntry create(ICondition entryCondition, IafRoute iafRoute) {
     EAssert.Argument.isNotNull(iafRoute, "iafRoute");
-    return new ApproachEntry(iafRoute, entryLocation);
+    return new ApproachEntry(iafRoute, entryCondition);
   }
 
   private final IafRoute iafRoute;
-  private final ILocation entryLocation;
+  private final ICondition entryCondition;
 
-  private ApproachEntry(IafRoute iafRoute, ILocation entryLocation) {
-    EAssert.Argument.isNotNull(entryLocation, "entryLocation");
+  private ApproachEntry(IafRoute iafRoute, ICondition entryCondition) {
+    EAssert.Argument.isNotNull(entryCondition, "entryCondition");
     this.iafRoute = iafRoute;
-    this.entryLocation = entryLocation;
+    this.entryCondition = entryCondition;
   }
 
-  public ILocation getEntryLocation() {
-    return entryLocation;
+  public ICondition getEntryCondition() {
+    return entryCondition;
   }
 
   public IafRoute getIafRoute() {

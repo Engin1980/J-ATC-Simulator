@@ -3,11 +3,12 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
+import eng.jAtcSim.newLib.airplanes.pilots.ConditionEvaluator;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
@@ -31,15 +32,15 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     Restriction sr = plane.getReader().getSha().getSpeedRestriction();
 
     if (sr != null &&
-        (sr.direction == AboveBelowExactly.above ||
-            sr.direction == AboveBelowExactly.exactly) &&
-        sr.value > plane.getReader().getType().vApp) {
+            (sr.direction == AboveBelowExactly.above ||
+                    sr.direction == AboveBelowExactly.exactly) &&
+            sr.value > plane.getReader().getType().vApp) {
       IFromPlaneSpeech tmp = new HighOrderedSpeedForApproach(sr.value, plane.getReader().getType().vApp);
       ret.informations.add(tmp);
     }
 
     ActiveRunwayThreshold rt = Context.getArea().getAirport().tryGetRunwayThreshold(c.getThresholdName());
-    ApproachInfo ai = ApproachInfo.create(rt, c.getType(), plane.getReader().getType().category, plane.getReader().getCoordinate());
+    ApproachInfo ai = ApproachInfo.create(rt, c.getType(), plane.getReader());
     assert ai.status == ApproachInfo.Status.ok : "Error to obtain approach.";
 
     plane.getWriter().clearedToApproach(ai.approach, ai.entry);
@@ -54,24 +55,24 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     ActiveRunwayThreshold rt = Context.getArea().getAirport().tryGetRunwayThreshold(c.getThresholdName());
     if (rt == null) {
       ret = new PlaneRejection(c,
-          "Cannot be cleared to approach. There is no runway designated as " + c.getThresholdName());
+              "Cannot be cleared to approach. There is no runway designated as " + c.getThresholdName());
     } else {
-      ApproachInfo ai = ApproachInfo.create(rt, c.getType(), plane.getReader().getType().category, plane.getReader().getCoordinate());
+      ApproachInfo ai = ApproachInfo.create(rt, c.getType(), plane.getReader());
       switch (ai.status) {
         case noApproachAtAll:
           ret = new PlaneRejection(c,
-              sf("Cannot be cleared to approach. There is no approach for runway %s.",
-                  c.getType().toString(), rt.getName()));
+                  sf("Cannot be cleared to approach. There is no approach for runway %s.",
+                          c.getType().toString(), rt.getName()));
           break;
         case noApproachKind:
           ret = new PlaneRejection(c,
-              sf("Cannot be cleared to approach. There is no approach kind %s for runway %s.",
-                  c.getType().toString(), rt.getName()));
+                  sf("Cannot be cleared to approach. There is no approach kind %s for runway %s.",
+                          c.getType().toString(), rt.getName()));
           break;
         case noApproachForPlaneType:
           ret = new PlaneRejection(c,
-              sf("Cannot be cleared to approach. There is no approach kind %s for runway %s for our plane type.",
-                  c.getType().toString(), rt.getName()));
+                  sf("Cannot be cleared to approach. There is no approach kind %s for runway %s for our plane type.",
+                          c.getType().toString(), rt.getName()));
           break;
         case noApproachForPlaneLocation:
           ret = new UnableToEnterApproachFromDifficultPosition(c, "We are not in the correct position to enter the approach.");
@@ -89,17 +90,17 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
   @Override
   protected AirplaneState[] getInvalidStates() {
     return new AirplaneState[]{
-        AirplaneState.holdingPoint,
-        AirplaneState.takeOffRoll,
-        AirplaneState.takeOffGoAround,
-        AirplaneState.departingLow,
-        AirplaneState.departingHigh,
-        AirplaneState.flyingIaf2Faf,
-        AirplaneState.approachEnter,
-        AirplaneState.approachDescend,
-        AirplaneState.longFinal,
-        AirplaneState.shortFinal,
-        AirplaneState.landed
+            AirplaneState.holdingPoint,
+            AirplaneState.takeOffRoll,
+            AirplaneState.takeOffGoAround,
+            AirplaneState.departingLow,
+            AirplaneState.departingHigh,
+            AirplaneState.flyingIaf2Faf,
+            AirplaneState.approachEnter,
+            AirplaneState.approachDescend,
+            AirplaneState.longFinal,
+            AirplaneState.shortFinal,
+            AirplaneState.landed
     };
   }
 }
@@ -114,7 +115,7 @@ class ApproachInfo {
   }
 
   public static ApproachInfo create(ActiveRunwayThreshold threshold, ApproachType type,
-                                    char planeCategory, Coordinate planeEntryLocation
+                                    IAirplane airplane
   ) {
     IReadOnlyList<Approach> apps = threshold.getApproaches();
 
@@ -127,14 +128,14 @@ class ApproachInfo {
       return new ApproachInfo(Status.noApproachKind);
 
     // select by type
-    apps = apps.where(q -> q.getEntries().isAny(p -> p.isForCategory(planeCategory)));
+    apps = apps.where(q -> q.getEntries().isAny(p -> p.isForCategory(airplane.getType().category)));
     if (apps.isEmpty())
       return new ApproachInfo(Status.noApproachForPlaneType);
 
     // select by location
     for (Approach app : apps) {
       for (ApproachEntry entry : app.getEntries()) {
-        if (entry.getEntryLocation().isInside(planeEntryLocation)) {
+        if (ConditionEvaluator.check(entry.getEntryCondition(), airplane)) {
           return new ApproachInfo(entry, app);
         }
       }
@@ -142,6 +143,7 @@ class ApproachInfo {
 
     return new ApproachInfo(Status.noApproachForPlaneLocation);
   }
+
   public final Approach approach;
   public final ApproachEntry entry;
   public final Status status;

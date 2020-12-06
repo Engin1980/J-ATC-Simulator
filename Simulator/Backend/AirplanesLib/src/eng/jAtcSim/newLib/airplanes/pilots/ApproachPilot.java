@@ -54,7 +54,6 @@ public class ApproachPilot extends Pilot {
     EAssert.Argument.isNotNull(approach, "approach");
     EAssert.Argument.isNotNull(entry, "entry");
     EAssert.Argument.isTrue(approach.getEntries().contains(entry));
-    EAssert.Argument.isTrue(entry.getEntryLocation().isInside(plane.getReader().getCoordinate()));
 
     this.approach = approach;
     this.iafRoute = entry.getIafRoute() == null ? null : entry.getIafRoute().createClone();

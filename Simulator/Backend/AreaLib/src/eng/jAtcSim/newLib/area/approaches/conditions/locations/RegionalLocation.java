@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.area.approaches.locations;
+package eng.jAtcSim.newLib.area.approaches.conditions.locations;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;

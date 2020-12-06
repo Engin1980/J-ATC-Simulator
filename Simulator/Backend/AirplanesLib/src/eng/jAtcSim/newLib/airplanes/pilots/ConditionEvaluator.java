@@ -6,6 +6,8 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.area.approaches.conditions.*;
+import eng.jAtcSim.newLib.area.approaches.conditions.locations.ILocation;
+import eng.jAtcSim.newLib.area.approaches.perCategoryValues.IntegerPerCategoryValue;
 import eng.jAtcSim.newLib.weather.Weather;
 
 public class ConditionEvaluator {
@@ -15,8 +17,8 @@ public class ConditionEvaluator {
       return checkTrue((AggregatingCondition) condition, plane);
     else if (condition instanceof FlyRouteBehaviorEmptyCondition)
       return checkTrue((FlyRouteBehaviorEmptyCondition) condition, plane);
-    else if (condition instanceof LocationCondition)
-      return checkTrue((LocationCondition) condition, plane);
+    else if (condition instanceof ILocation)
+      return checkTrue((ILocation) condition, plane);
     else if (condition instanceof NegationCondition)
       return checkTrue((NegationCondition) condition, plane);
     else if (condition instanceof PlaneOrderedAltitudeDifferenceCondition)
@@ -60,8 +62,12 @@ public class ConditionEvaluator {
   }
 
   private static boolean checkTrue(PlaneOrderedAltitudeDifferenceCondition condition, IAirplane plane) {
-    int diff = plane.getSha().getTargetAltitude() - plane.getSha().getAltitude();
-    return condition.getActualMinusTargetAltitudeMaximalDifference().get(plane.getType().category) > diff;
+    int diff = Math.abs(plane.getSha().getTargetAltitude() - plane.getSha().getAltitude());
+    char category = plane.getType().category;
+    IntegerPerCategoryValue below = condition.tryGetMaximumBelowTargetAltitude();
+    IntegerPerCategoryValue above = condition.tryGetMaximumAboveTargetAltitude();
+    boolean ret = (below == null || below.get(category) > diff) && (above == null || above.get(category) > diff);
+    return ret;
   }
 
   private static boolean checkTrue(AggregatingCondition condition, IAirplane plane) {
@@ -75,8 +81,8 @@ public class ConditionEvaluator {
     }
   }
 
-  private static boolean checkTrue(LocationCondition condition, IAirplane plane) {
-    return condition.getLocation().isInside(plane.getCoordinate());
+  private static boolean checkTrue(ILocation condition, IAirplane plane) {
+    return condition.isInside(plane.getCoordinate());
   }
 
   private static boolean checkTrue(NegationCondition condition, IAirplane plane) {
