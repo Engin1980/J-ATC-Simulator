@@ -25,5 +25,11 @@ public class AreaXmlContextInit {
 
     ctx.sdfManager.setSerializer(RunwayThresholdConfiguration.class, new ObjectSerializer());
     ctx.sdfManager.setDeserializer(RunwayThresholdConfiguration.class, new ObjectDeserializer<RunwayConfiguration>());
+
+    ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.area.approaches");
+    ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.area.approaches.behaviors");
+    ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.area.approaches.conditions");
+    ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.area.approaches.locations");
+    ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.area.approaches.perCategoryValues");
   }
 }

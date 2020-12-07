@@ -47,7 +47,7 @@ public class ApproachPilot extends Pilot {
 
   private ApproachType type;
   private final IList<ApproachStage> stages;
-  private final GaRoute gaRoute;
+  private final IList<ICommand> gaRouteCommands;
   private final ActiveRunwayThreshold threshold;
   private final int initialAltitude;
 
@@ -55,17 +55,16 @@ public class ApproachPilot extends Pilot {
   private ApproachPilot(Airplane airplane) {
     super(airplane);
     this.stages = null;
-    this.gaRoute = null;
+    this.gaRouteCommands = null;
     this.threshold = null;
     this.initialAltitude = 0;
 
     PostContracts.register(this, () -> stages != null);
-    PostContracts.register(this, () -> gaRoute != null);
+    PostContracts.register(this, () -> gaRouteCommands != null);
     PostContracts.register(this, () -> threshold != null);
   }
 
-  public ApproachPilot(Airplane plane,
-                       Approach approach, ApproachEntry entry) {
+  public ApproachPilot(Airplane plane,                       Approach approach, ApproachEntry entry) {
     super(plane);
     EAssert.Argument.isNotNull(approach, "approach");
     EAssert.Argument.isNotNull(entry, "entry");
@@ -96,11 +95,11 @@ public class ApproachPilot extends Pilot {
       this.stages.insert(0, iafStage);
     }
 
-    this.gaRoute = approach.getGaRoute();
+    this.gaRouteCommands = approach.getGaRoute().getRouteCommands().toList();
   }
 
   public SpeechList<ICommand> getGoAroundRouting() {
-    SpeechList<ICommand> ret = new SpeechList<>(this.gaRoute.getRouteCommands());
+    SpeechList<ICommand> ret = new SpeechList<>(this.gaRouteCommands);
     ChangeAltitudeCommand cac = null; // remember climb command and add it as first at the end
     if (ret.get(0) instanceof ChangeAltitudeCommand) {
       cac = (ChangeAltitudeCommand) ret.get(0);
