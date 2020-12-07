@@ -1,14 +1,11 @@
 package eng.jAtcSim.newLib.shared;
 
 import eng.eSystem.Tuple;
-import eng.eSystem.collections.*;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.geometry2D.Line;
-
-import static eng.eSystem.utilites.FunctionShortcuts.*;
 
 public class RadialCalculator {
   public enum eToPointLocation {
@@ -32,96 +29,79 @@ public class RadialCalculator {
     }
   }
 
-  public enum eRadialLocation {
-    unset,
-    behind,
+  private enum eRadialLocation {
     aligned,
+    capturing,
     close,
-    unturnable,
-    atTurnBelt,
-    freeArea
+    far
   }
 
-  private final static double ALIGNED_TO_RADIAL_LINE_DISTANCE = .7;
-  private final static double CLOSE_TO_RADIAL_LINE_DISTANCE = 2;
-  private final static double TCC_CAPTURED_RADIUS_WIDTH = 2;
+  private final static double ALIGNED_TO_RADIAL_LINE_DISTANCE = 0.001;
+  private final static double CLOSE_TO_RADIAL_LINE_DISTANCE = .05;
+  private final static double CAPTURE_AGGRESIVITY = 10000;
+  private static final double CUSTOM_EXTENSION_TO_SUPPRESS_WIND_AND_OTHER_INFLUENCES = 0.05;
 
   public static double getHeadingToFollowRadial(Coordinate currentPosition, Coordinate fix, double radial,
-                                                double maxHeadingDifference, double speedInKt) {
+                                                double speedInKt) {
+    double ret = getHeadingToFollowRadial(currentPosition, fix, radial, speedInKt, 360);
+    return ret;
+  }
+
+  public static double getHeadingToFollowRadial(Coordinate currentPosition, Coordinate fix, double radial,
+                                                double speedInKt, double maxHeadingDifference) {
 
     double ret;
     eRadialLocation radialLocation;
-    Tuple<Coordinate, Double> tcc = null; // coordinate and turn radius
-    Line radialLine = null;
+    Line radialLine = getRadialLine(fix, radial);
+    double turnRadius = calculateTurnRadius(speedInKt);
 
-    eToPointLocation positionToFix = evaluateLocationToPoint(currentPosition, fix, radial);
-    if (positionToFix.isBehind())
-      radialLocation = eRadialLocation.behind;
-    else {
-      radialLine = getRadialLine(fix, radial);
-      double distanceToRadialLine = evaluateDistanceToRadialLine(currentPosition, radialLine);
-      if (distanceToRadialLine < ALIGNED_TO_RADIAL_LINE_DISTANCE)
-        radialLocation = eRadialLocation.aligned;
-      else if (distanceToRadialLine < CLOSE_TO_RADIAL_LINE_DISTANCE)
-        radialLocation = eRadialLocation.close;
-      else {
-        tcc = evaluateTurnCircleCenter(fix, radial, positionToFix.isLeft(), speedInKt);
-        eToPointLocation positionToTcc = evaluateLocationToPoint(currentPosition, tcc.getA(), radial);
-        if (positionToTcc.isBehind())
-          radialLocation = eRadialLocation.unturnable;
-        else {
-          double distanceToTcc = Coordinates.getDistanceInNM(tcc.getA(), currentPosition);
-          if (distanceToTcc < tcc.getB())
-            radialLocation = eRadialLocation.unturnable;
-          else if (distanceToTcc < (tcc.getB() + TCC_CAPTURED_RADIUS_WIDTH))
-            radialLocation = eRadialLocation.atTurnBelt;
-          else
-            radialLocation = eRadialLocation.freeArea;
-        }
-
-      }
-    }
+    double distanceToRadialLine = evaluateDistanceToRadialLine(currentPosition, radialLine);
+    if (distanceToRadialLine < ALIGNED_TO_RADIAL_LINE_DISTANCE)
+      radialLocation = eRadialLocation.aligned;
+    else if (distanceToRadialLine < CLOSE_TO_RADIAL_LINE_DISTANCE)
+      radialLocation = eRadialLocation.capturing;
+    else if (distanceToRadialLine < (turnRadius + CUSTOM_EXTENSION_TO_SUPPRESS_WIND_AND_OTHER_INFLUENCES))
+      radialLocation = eRadialLocation.close;
+    else
+      radialLocation = eRadialLocation.far;
 
     switch (radialLocation) {
-      case unturnable:
-      case behind:
-        ret = Double.NaN;
+      case aligned:
+        assert radialLine != null;
+        ret = getHeadingInAlignment(currentPosition, radial, radialLine, (int) Math.min(10, maxHeadingDifference));
+        break;
+      case capturing:
+        assert radialLine != null;
+        ret = getHeadingInAlignment(currentPosition, radial, radialLine, (int) Math.min(15, maxHeadingDifference));
         break;
       case close:
         assert radialLine != null;
-        ret = getHeadingInAlignment(currentPosition, radial, radialLine, 10);
+        ret = getHeadingInAlignment(currentPosition, radial, radialLine, (int) Math.min(30, maxHeadingDifference));
         break;
-      case aligned:
+      case far:
         assert radialLine != null;
-        ret = getHeadingInAlignment(currentPosition, radial, radialLine, 30);
+        ret = getHeadingInAlignment(currentPosition, radial, radialLine, (int) Math.min(90, maxHeadingDifference));
         break;
-      case freeArea:
-        assert radialLine != null;
-        ret = getHeadingInAlignment(currentPosition, radial, radialLine, 45);
-        break;
-      case atTurnBelt:
-        assert tcc != null;
-        ret = getHeadingAtTurnBelt(currentPosition, tcc.getA());
-        break;
-      default: // including "unset"
-//      case unset:
-        throw new EApplicationException("Unable to evaluate plane location according to the radial data.");
+      default:
+        throw new EEnumValueUnsupportedException(radialLocation);
     }
 
+    ret = Headings.to(ret);
     return ret;
   }
 
-  private static double getHeadingAtTurnBelt(Coordinate current, Coordinate turnCenter) {
-    double ret = Coordinates.getBearing(turnCenter, current);
-    return ret;
+  private static double calculateTurnRadius(double speedInKt) {
+    double distanceInTwoMinutes = speedInKt / 30d;
+    double radius = distanceInTwoMinutes / 2 / Math.PI;
+    return radius;
   }
 
   private static double getHeadingInAlignment(Coordinate current, double radial, Line radialLine, int maxDifference) {
     double ret;
     double distance = evaluateDistanceToRadialLine(current, radialLine);
     Line.eSide side = radialLine.getRelativeLocation(current.getLatitude().get(), current.getLongitude().get());
-    double headingDifference = distance / ALIGNED_TO_RADIAL_LINE_DISTANCE * 15;
-    headingDifference = Math.max(headingDifference, maxDifference);
+    double headingDifference = distance * CAPTURE_AGGRESIVITY;
+    headingDifference = Math.min(headingDifference, maxDifference);
     if (side == Line.eSide.left)
       ret = radial - headingDifference;
     else
@@ -129,35 +109,10 @@ public class RadialCalculator {
     return ret;
   }
 
-  private static eToPointLocation evaluateLocationToPoint(Coordinate point, Coordinate center, double radial) {
-    eToPointLocation ret;
-    double pointRadial = Coordinates.getBearing(center, point);
-    double diff = Headings.getDifference(radial, pointRadial, false);
-    if (diff <= 90)
-      ret = eToPointLocation.inFrontRight;
-    else if (diff <= 180)
-      ret = eToPointLocation.behindRight;
-    else if (diff <= 270)
-      ret = eToPointLocation.behindLeft;
-    else
-      ret = eToPointLocation.inFrontLeft;
-    return ret;
-  }
-
   private static double evaluateDistanceToRadialLine(Coordinate currentPosition, Line radialLine) {
     double ret = radialLine.getDistance(
-        currentPosition.getLatitude().get(), currentPosition.getLongitude().get());
+            currentPosition.getLatitude().get(), currentPosition.getLongitude().get());
     return ret;
-  }
-
-
-  private static Tuple<Coordinate, Double> evaluateTurnCircleCenter(
-      Coordinate fix, double radial, boolean isOnLeft, double speedInKt) {
-    double flownDistance = speedInKt / 30;
-    double radius = flownDistance / 2 / Math.PI;
-    double directionFromFix = isOnLeft ? Headings.add(radial, 90) : Headings.add(radial, -90);
-    Coordinate coordinate = Coordinates.getCoordinate(fix, directionFromFix, radius);
-    return new Tuple<>(coordinate, radius);
   }
 
   private static Line getRadialLine(Coordinate a, double radial) {

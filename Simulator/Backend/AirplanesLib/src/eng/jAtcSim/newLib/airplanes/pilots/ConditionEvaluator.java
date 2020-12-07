@@ -13,24 +13,27 @@ import eng.jAtcSim.newLib.weather.Weather;
 public class ConditionEvaluator {
 
   public static boolean check(ICondition condition, IAirplane plane) {
+    boolean ret;
     if (condition instanceof AggregatingCondition)
-      return checkTrue((AggregatingCondition) condition, plane);
+      ret = checkTrue((AggregatingCondition) condition, plane);
     else if (condition instanceof FlyRouteBehaviorEmptyCondition)
-      return checkTrue((FlyRouteBehaviorEmptyCondition) condition, plane);
+      ret = checkTrue((FlyRouteBehaviorEmptyCondition) condition, plane);
     else if (condition instanceof ILocation)
-      return checkTrue((ILocation) condition, plane);
+      ret = checkTrue((ILocation) condition, plane);
     else if (condition instanceof NegationCondition)
-      return checkTrue((NegationCondition) condition, plane);
+      ret = checkTrue((NegationCondition) condition, plane);
     else if (condition instanceof PlaneOrderedAltitudeDifferenceCondition)
-      return checkTrue((PlaneOrderedAltitudeDifferenceCondition) condition, plane);
+      ret = checkTrue((PlaneOrderedAltitudeDifferenceCondition) condition, plane);
     else if (condition instanceof PlaneShaCondition)
-      return checkTrue((PlaneShaCondition) condition, plane);
+      ret = checkTrue((PlaneShaCondition) condition, plane);
     else if (condition instanceof RunwayThresholdVisibilityCondition)
-      return checkTrue((RunwayThresholdVisibilityCondition) condition, plane);
+      ret = checkTrue((RunwayThresholdVisibilityCondition) condition, plane);
     else if (condition instanceof NeverCondition)
-      return false;
+      ret = false;
     else
       throw new UnsupportedOperationException("Unknown condition type.");
+
+    return ret;
   }
 
   private static boolean checkTrue(RunwayThresholdVisibilityCondition condition, IAirplane plane) {

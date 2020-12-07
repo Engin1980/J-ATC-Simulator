@@ -239,7 +239,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
               PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
               PlaneOrderedAltitudeDifferenceCondition.create(null, 1000),
               createAltitudeDifferenceRestriction(context.airport.altitude + 2500, 300, 500),
-              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 1000, 15)
+              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 1000, 16)
       );
       stages.add(ApproachStage.create(
               FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.altitude, slope),
@@ -331,7 +331,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
         ICondition errorCondition = AggregatingCondition.create(
                 AggregatingCondition.eConditionAggregator.or,
                 PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)), // is below mda
-                createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 1000, 15),
+                createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 1000, 16),
                 createAltitudeDifferenceRestriction(context.airport.altitude + 2500, 300, 500)
         );
         stages.add(ApproachStage.create(
@@ -437,7 +437,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       ICondition errorCondition = AggregatingCondition.create(
               AggregatingCondition.eConditionAggregator.or,
               PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(mdaA, mdaB, mdaC, mdaD)),
-              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 500, 15)
+              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 500, 16)
       );
 
       double slope =
