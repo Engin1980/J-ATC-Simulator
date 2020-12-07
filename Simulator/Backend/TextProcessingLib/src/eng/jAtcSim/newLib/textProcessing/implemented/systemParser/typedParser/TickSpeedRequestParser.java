@@ -9,7 +9,7 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class TickSpeedRequestParser extends TextSpeechParser<TickSpeedRequest> {
   private static final String[][] patterns = {
-      {"TICK", "\\d{3,}"},
+      {"TICK", "\\d{1,}"},
       {"TICK"}};
 
   @Override

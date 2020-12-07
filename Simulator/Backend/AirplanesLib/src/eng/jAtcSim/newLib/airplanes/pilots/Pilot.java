@@ -102,7 +102,9 @@ public abstract class Pilot {
       default:
         throw new EEnumValueUnsupportedException(rdr.getState());
     }
-    wrt.setTargetSpeed(ts);
+
+    if (rdr.getSha().getTargetSpeed() != ts)
+      wrt.setTargetSpeed(ts);
   }
 
   public final void elapseSecond() {
@@ -121,6 +123,7 @@ public abstract class Pilot {
         ));
     }
     elapseSecondInternal();
+    adjustTargetSpeed();
   }
 
   void throwIllegalStateException() {
