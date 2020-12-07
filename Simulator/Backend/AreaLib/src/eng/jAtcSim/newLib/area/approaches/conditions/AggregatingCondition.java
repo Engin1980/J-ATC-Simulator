@@ -3,6 +3,8 @@ package eng.jAtcSim.newLib.area.approaches.conditions;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.PostContracts;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class AggregatingCondition implements ICondition {
   public enum eConditionAggregator {
@@ -16,6 +18,14 @@ public class AggregatingCondition implements ICondition {
 
   private final IList<ICondition> conditions;
   private final eConditionAggregator aggregator;
+
+  @XmlConstructor
+  private AggregatingCondition() {
+    this.conditions = null;
+    this.aggregator = eConditionAggregator.or;
+
+    PostContracts.register(this, () -> this.conditions != null);
+  }
 
   public AggregatingCondition(IList<ICondition> conditions, eConditionAggregator aggregator) {
     EAssert.Argument.isNotNull(conditions, "conditions");

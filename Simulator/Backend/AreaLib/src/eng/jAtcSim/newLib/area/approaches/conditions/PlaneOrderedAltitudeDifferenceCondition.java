@@ -1,6 +1,9 @@
 package eng.jAtcSim.newLib.area.approaches.conditions;
 
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.approaches.perCategoryValues.IntegerPerCategoryValue;
+import eng.jAtcSim.newLib.shared.PostContracts;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class PlaneOrderedAltitudeDifferenceCondition implements ICondition {
 
@@ -17,7 +20,18 @@ public class PlaneOrderedAltitudeDifferenceCondition implements ICondition {
   private final IntegerPerCategoryValue maximalBelowDifference;
   private final IntegerPerCategoryValue maximalAboveDifference;
 
+  @XmlConstructor
+  private PlaneOrderedAltitudeDifferenceCondition() {
+    this.maximalBelowDifference = null;
+    this.maximalAboveDifference = null;
+
+    PostContracts.register(this, () -> this.maximalAboveDifference != null || this.maximalBelowDifference != null);
+  }
+
   public PlaneOrderedAltitudeDifferenceCondition(IntegerPerCategoryValue maximalBelowDifference, IntegerPerCategoryValue maximalAboveDifference) {
+
+    EAssert.Argument.isTrue(maximalAboveDifference != null || maximalBelowDifference != null);
+
     this.maximalBelowDifference = maximalBelowDifference;
     this.maximalAboveDifference = maximalAboveDifference;
   }

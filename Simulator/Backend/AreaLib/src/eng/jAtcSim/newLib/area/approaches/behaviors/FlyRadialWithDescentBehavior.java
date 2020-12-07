@@ -2,7 +2,6 @@ package eng.jAtcSim.newLib.area.approaches.behaviors;
 
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
-import eng.jAtcSim.newLib.area.approaches.perCategoryValues.DoublePerCategoryValue;
 
 public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
 

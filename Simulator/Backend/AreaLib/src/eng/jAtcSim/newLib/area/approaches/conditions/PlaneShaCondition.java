@@ -3,6 +3,8 @@ package eng.jAtcSim.newLib.area.approaches.conditions;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.approaches.perCategoryValues.IntegerPerCategoryValue;
+import eng.jAtcSim.newLib.shared.PostContracts;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class PlaneShaCondition implements ICondition {
 
@@ -26,6 +28,15 @@ public class PlaneShaCondition implements ICondition {
   private final IntegerPerCategoryValue minimum;
   private final IntegerPerCategoryValue maximum;
   private final eType type;
+
+  @XmlConstructor
+  private PlaneShaCondition() {
+    this.minimum = null;
+    this.maximum = null;
+    this.type = eType.speed;
+
+    PostContracts.register(this, () -> this.minimum != null || this.maximum != null);
+  }
 
   private PlaneShaCondition(eType type, IntegerPerCategoryValue minimum, IntegerPerCategoryValue maximum) {
     switch (type) {
