@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
@@ -72,7 +73,7 @@ public class ApproachPilot extends Pilot {
     this.initialAltitude = approach.getInitialAltitude();
 
     if (entry.getIafRoute() != null) {
-      FlyRouteBehavior frb = new FlyRouteBehavior(entry.getIafRoute().getRouteCommands().toList());
+      FlyIafRouteBehavior frb = new FlyIafRouteBehavior(entry.getIafRoute());
       ApproachStage iafStage = ApproachStage.create(
               frb,
               new FlyRouteBehaviorEmptyCondition(),
@@ -153,7 +154,8 @@ public class ApproachPilot extends Pilot {
   }
 
   private void flyRadialBehavior(FlyRadialBehavior behavior) {
-    if (behavior instanceof FlyRadialWithDescentBehavior) {
+    int alt = rdr.getSha().getAltitude() - Context.getArea().getAirport().getAltitude();
+    if (alt>100 && behavior instanceof FlyRadialWithDescentBehavior) {
       flyRadialWithDescentBehavior((FlyRadialWithDescentBehavior) behavior);
     }
     double heading = RadialCalculator.getHeadingToFollowRadial(
@@ -175,10 +177,10 @@ public class ApproachPilot extends Pilot {
       else {
         int alt = rdr.getSha().getAltitude() - Context.getArea().getAirport().getAltitude();
         double dist = Coordinates.getDistanceInNM(rdr.getCoordinate(), rdr.getRouting().getAssignedRunwayThreshold().getCoordinate());
-        if (alt < 2000 && dist < 6)
-          newState = AirplaneState.longFinal;
-        else if (alt < 1000 && dist < 3)
+        if (alt < 1000 && dist < 3)
           newState = AirplaneState.shortFinal;
+        else if (alt < 2000 && dist < 6)
+          newState = AirplaneState.longFinal;
         else
           newState = AirplaneState.approachEntry;
       }
@@ -189,9 +191,10 @@ public class ApproachPilot extends Pilot {
 
   private void flyRadialWithDescentBehavior(FlyRadialWithDescentBehavior behavior) {
     double distance = Coordinates.getDistanceInNM(behavior.getCoordinate(), rdr.getCoordinate());
-    double altitudeDouble = behavior.getAltitudeFixValue() + behavior.getSlope() * distance;
+    double altitudeDouble = behavior.getAltitudeFixValue() + behavior.getSlope() * 6076.1 * distance; // http://www.aviationchief.com/ils.html
     int altitudeInt = (int) Math.round(altitudeDouble);
-    wrt.setTargetAltitude(altitudeInt);
+    if (altitudeInt < rdr.getSha().getTargetAltitude())
+      wrt.setTargetAltitude(altitudeInt);
   }
 
   private void flyRouteBehavior(FlyRouteBehavior behavior) {
@@ -225,15 +228,57 @@ public class ApproachPilot extends Pilot {
       goAround(GoingAroundNotification.GoAroundReason.notStabilizedAirplane);
 
     updateApproachState();
+    updateApproachSpeed();
   }
 
-  private void flyLandingBehavior(LandingBehavior beh){
-    if (rdr.getState() != AirplaneState.landed){
-      wrt.setTargetSpeed(0);
+  private void updateApproachSpeed() {
+    int newSpeed;
+    switch (rdr.getState()) {
+      case flyingIaf2Faf:
+        newSpeed = rdr.getType().vMinClean + 15;
+        break;
+      case approachEntry:
+        newSpeed = (rdr.getType().vMinClean + rdr.getType().vApp) / 2;
+        break;
+      case approachDescend:
+      case longFinal:
+      case shortFinal:
+        newSpeed = rdr.getType().vApp;
+        break;
+      case landed:
+        newSpeed = 0;
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(rdr.getState());
     }
-    double hdg = Coordinates.getBearing(
-            rdr.getCoordinate(),
-            rdr.getRouting().getAssignedRunwayThreshold().getOtherThreshold().getCoordinate());
+
+    if (rdr.getSha().getTargetSpeed() != newSpeed)
+      wrt.setTargetSpeed(newSpeed);
+  }
+
+  private void flyLandingBehavior(LandingBehavior beh) {
+    if (rdr.getState() != AirplaneState.landed) {
+      int alt = rdr.getSha().getAltitude() - Context.getArea().getAirport().getAltitude();
+      if (alt < 20) {
+        // wrt.resetAltitude()
+        wrt.setState(AirplaneState.landed);
+        wrt.setTargetAltitude(Context.getArea().getAirport().getAltitude());
+        wrt.setTargetSpeed(0);
+      }
+      if (alt < 100) {
+        wrt.setTargetAltitude(0);
+      }
+    }
+
+    //TODEL
+//    double hdg = Coordinates.getBearing(
+//            rdr.getCoordinate(),
+//            rdr.getRouting().getAssignedRunwayThreshold().getOtherThreshold().getCoordinate());
+
+    double hdg = RadialCalculator.getHeadingToFollowRadial(rdr.getCoordinate(),
+            rdr.getRouting().getAssignedRunwayThreshold().getOtherThreshold().getCoordinate(),
+            rdr.getRouting().getAssignedRunwayThreshold().getCourse(), 1, 5);
+
     wrt.setTargetHeading(new HeadingNavigator(hdg, LeftRightAny.any));
   }
 

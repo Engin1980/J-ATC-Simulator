@@ -232,13 +232,13 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       ICondition exitCondition = AggregatingCondition.create(
               AggregatingCondition.eConditionAggregator.and,
               PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
-              RunwayThresholdVisibilityCondition.create()
+              RunwayThresholdVisibleCondition.create()
       );
       ICondition errorCondition = AggregatingCondition.create(
               AggregatingCondition.eConditionAggregator.or,
               PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
               PlaneOrderedAltitudeDifferenceCondition.create(null, 1000),
-              createAltitudeDifferenceRestriction(context.airport.altitude + 2500, 300, 500),
+              createAltitudeDifferenceRestriction(context.airport.altitude + 1800, 300, 500),
               createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 1000, 16)
       );
       stages.add(ApproachStage.create(
@@ -253,7 +253,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       stages.add(ApproachStage.create(
               LandingBehavior.create(),
               new NeverCondition(),
-              RunwayThresholdVisibilityCondition.create(),
+              new NeverCondition(),
               "GNSS landing " + context.airport.icao + ":" + context.threshold.name
       ));
     }
@@ -326,13 +326,13 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
                 PlaneShaCondition.create(
                         PlaneShaCondition.eType.altitude,
                         null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
-                RunwayThresholdVisibilityCondition.create()
+                RunwayThresholdVisibleCondition.create()
         );
         ICondition errorCondition = AggregatingCondition.create(
                 AggregatingCondition.eConditionAggregator.or,
                 PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)), // is below mda
                 createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 1000, 16),
-                createAltitudeDifferenceRestriction(context.airport.altitude + 2500, 300, 500)
+                createAltitudeDifferenceRestriction(context.airport.altitude + 1800, 300, 500)
         );
         stages.add(ApproachStage.create(
                 FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.altitude, slope),
@@ -346,7 +346,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
         stages.add(ApproachStage.create(
                 LandingBehavior.create(),
                 new NeverCondition(),
-                RunwayThresholdVisibilityCondition.create(),
+                new NeverCondition(),
                 type + " landing " + context.airport.icao + ":" + context.threshold.name
         ));
       }
@@ -432,7 +432,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
               PlaneShaCondition.create(PlaneShaCondition.eType.altitude,
                       IntegerPerCategoryValue.create(mdaA, mdaB, mdaC, mdaD),
                       IntegerPerCategoryValue.create(mdaA + 500, mdaB + 500, mdaC + 500, mdaD + 500)),
-              RunwayThresholdVisibilityCondition.create()
+              RunwayThresholdVisibleCondition.create()
       );
       ICondition errorCondition = AggregatingCondition.create(
               AggregatingCondition.eConditionAggregator.or,
@@ -454,7 +454,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       stages.add(ApproachStage.create(
               LandingBehavior.create(),
               new NeverCondition(),
-              RunwayThresholdVisibilityCondition.create(),
+              new NeverCondition(),
               approachType + " landing " + context.airport.icao + ":" + context.threshold.name
       ));
     }

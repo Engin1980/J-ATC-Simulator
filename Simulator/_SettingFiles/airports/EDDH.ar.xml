@@ -115,7 +115,7 @@
             <then/>
             <proceedDirect fix="DH257"/>
             <then/>
-            <altitude direction="descend" value="30"/>
+            <altitude direction="descend" value="3000"/>
             <proceedDirect fix="DH025"/>
             <then/>
             <proceedDirect fix="ANEXI"/>
@@ -145,7 +145,7 @@
             <then/>
             <proceedDirect fix="DH257"/>
             <then/>
-            <altitude direction="descend" value="30"/>
+            <altitude direction="descend" value="3000"/>
             <proceedDirect fix="DH025"/>
             <then/>
             <proceedDirect fix="ANEXI"/>
@@ -175,7 +175,7 @@
             <then/>
             <proceedDirect fix="DH257"/>
             <then/>
-            <altitude direction="descend" value="30"/>
+            <altitude direction="descend" value="3000"/>
             <proceedDirect fix="DH025"/>
             <then/>
             <proceedDirect fix="ANEXI"/>
@@ -216,7 +216,7 @@
             <then/>
             <proceedDirect fix="DH257"/>
             <then/>
-            <altitude direction="descend" value="30"/>
+            <altitude direction="descend" value="3000"/>
             <proceedDirect fix="DH025"/>
             <then/>
             <proceedDirect fix="ANEXI"/>

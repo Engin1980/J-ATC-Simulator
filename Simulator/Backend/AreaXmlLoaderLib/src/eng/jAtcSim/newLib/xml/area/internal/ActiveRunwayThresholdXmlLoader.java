@@ -17,7 +17,7 @@ import eng.jAtcSim.newLib.area.approaches.behaviors.LandingBehavior;
 import eng.jAtcSim.newLib.area.approaches.conditions.AggregatingCondition;
 import eng.jAtcSim.newLib.area.approaches.conditions.NegationCondition;
 import eng.jAtcSim.newLib.area.approaches.conditions.PlaneShaCondition;
-import eng.jAtcSim.newLib.area.approaches.conditions.RunwayThresholdVisibilityCondition;
+import eng.jAtcSim.newLib.area.approaches.conditions.RunwayThresholdVisibleCondition;
 import eng.jAtcSim.newLib.area.approaches.conditions.locations.FixRelatedLocation;
 import eng.jAtcSim.newLib.area.approaches.conditions.locations.ILocation;
 import eng.jAtcSim.newLib.area.approaches.conditions.locations.RegionalLocation;
@@ -153,7 +153,7 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
                       ApproachXmlLoader.convertGlidePathDegreesToSlope(3)
               ),
               AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
-                      RunwayThresholdVisibilityCondition.create(),
+                      RunwayThresholdVisibleCondition.create(),
                       PlaneShaCondition.create(PlaneShaCondition.eType.altitude,
                               IntegerPerCategoryValue.create(
                                       context.airport.altitude + 200,
@@ -162,14 +162,14 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
                                       context.airport.altitude + 500), null)
               ),
               NegationCondition.create(
-                      RunwayThresholdVisibilityCondition.create()),
+                      RunwayThresholdVisibleCondition.create()),
               "Visual descent stage " + context.airport.icao + ":" + context.threshold.name);
       stages.add(stage);
       stage = ApproachStage.create(
               LandingBehavior.create(),
               null,
               NegationCondition.create(
-                      RunwayThresholdVisibilityCondition.create())
+                      RunwayThresholdVisibleCondition.create())
       );
       stages.add(stage);
     }

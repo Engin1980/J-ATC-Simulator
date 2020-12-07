@@ -377,7 +377,7 @@
                 </group>
                 <group note="22">
                     <iafRoute iaf="OTA" iafMapping="22ils">
-                        <altitude direction="descend" value="30"/>
+                        <altitude direction="descend" value="3000"/>
                         <proceedDirect fix="OTA/015/10"/>
                         <then/>
                         <proceedDirect fix="MT825"/>
@@ -385,7 +385,7 @@
                         <heading value="200" direction="right"/>
                     </iafRoute>
                     <iafRoute iaf="BOGTU" iafMapping="22ils">
-                        <altitude direction="descend" value="30"/>
+                        <altitude direction="descend" value="3000"/>
                         <proceedDirect fix="MT821"/>
                         <then/>
                         <proceedDirect fix="MT825"/>
@@ -393,7 +393,7 @@
                         <heading value="222" direction="nearest"/>
                     </iafRoute>
                     <iafRoute iaf="EKMIT" iafMapping="22ils">
-                        <altitude direction="descend" value="30"/>
+                        <altitude direction="descend" value="3000"/>
                         <proceedDirect fix="MT823"/>
                         <then/>
                         <proceedDirect fix="MT825"/>
@@ -401,7 +401,7 @@
                         <heading value="222" direction="nearest"/>
                     </iafRoute>
                     <iafRoute iaf="BOGTU" iafMapping="22vor">
-                        <altitude direction="descend" value="30"/>
+                        <altitude direction="descend" value="3000"/>
                         <proceedDirect fix="MT821"/>
                         <then/>
                         <proceedDirect fix="MT827"/>
@@ -409,7 +409,7 @@
                         <heading value="226" direction="nearest"/>
                     </iafRoute>
                     <iafRoute iaf="EKMIT" iafMapping="22vor">
-                        <altitude direction="descend" value="30"/>
+                        <altitude direction="descend" value="3000"/>
                         <proceedDirect fix="MT823"/>
                         <then/>
                         <proceedDirect fix="MT827"/>
@@ -417,7 +417,7 @@
                         <heading value="226" direction="nearest"/>
                     </iafRoute>
                     <iafRoute iaf="OTA" category="CD" iafMapping="22vor">
-                        <altitude direction="descend" value="30"/>
+                        <altitude direction="descend" value="3000"/>
                         <proceedDirect fix="OTA/020/10"/>
                         <then/>
                         <proceedDirect fix="MT827"/>
@@ -425,7 +425,7 @@
                         <heading value="226" direction="nearest"/>
                     </iafRoute>
                     <iafRoute iaf="OTA" category="AB" iafMapping="22vor">
-                        <altitude direction="descend" value="30"/>
+                        <altitude direction="descend" value="3000"/>
                         <proceedDirect fix="OTA/036/10"/>
                         <then/>
                         <proceedDirect fix="MT827"/>
@@ -433,7 +433,7 @@
                         <heading value="226" direction="nearest"/>
                     </iafRoute>
                     <iafRoute iaf="BOGTU" iafMapping="22ndb">
-                        <altitude direction="descend" value="30" />
+                        <altitude direction="descend" value="3000" />
                         <proceedDirect fix="MT821" />
                         <then />
                         <proceedDirect fix="MT825" />
@@ -441,7 +441,7 @@
                         <heading value="222" direction="nearest" />
                     </iafRoute>
                     <iafRoute iaf="EKMIT" iafMapping="22ndb">
-                        <altitude direction="descend" value="30" />
+                        <altitude direction="descend" value="3000" />
                         <proceedDirect fix="MT823" />
                         <then />
                         <proceedDirect fix="MT825" />
@@ -449,7 +449,7 @@
                         <heading value="222" direction="nearest" />
                     </iafRoute>
                     <iafRoute iaf="OTA" category="CD"  iafMapping="22ndb">
-                        <altitude direction="descend" value="30" />
+                        <altitude direction="descend" value="3000" />
                         <proceedDirect fix="OTA/015/10" />
                         <then />
                         <proceedDirect fix="MT825" />
@@ -457,7 +457,7 @@
                         <heading value="222" direction="nearest" />
                     </iafRoute>
                     <iafRoute iaf="OTA" category="AB"  iafMapping="22ndb">
-                        <altitude direction="descend" value="30" />
+                        <altitude direction="descend" value="3000" />
                         <then />
                         <proceedDirect fix="OTA/033/10" />
                         <then />
@@ -466,7 +466,7 @@
                         <heading value="222" direction="nearest" />
                     </iafRoute>
                     <iafRoute iaf="OTA"  iafMapping="22gnss">
-                        <altitude direction="descend" value="30" />
+                        <altitude direction="descend" value="3000" />
                         <proceedDirect fix="BOGTU" />
                         <then />
                         <proceedDirect fix="MT821" />
@@ -478,7 +478,7 @@
                         <heading value="222" direction="nearest" />
                     </iafRoute>
                     <iafRoute iaf="BOGTU"  iafMapping="22gnss">
-                        <altitude direction="descend" value="30" />
+                        <altitude direction="descend" value="3000" />
                         <proceedDirect fix="MT821" />
                         <then />
                         <proceedDirect fix="MT825" />
@@ -488,7 +488,7 @@
                         <heading value="222" direction="nearest" />
                     </iafRoute>
                     <iafRoute iaf="EKMIT"  iafMapping="22gnss">
-                        <altitude direction="descend" value="30" />
+                        <altitude direction="descend" value="3000" />
                         <proceedDirect fix="MT823" />
                         <then />
                         <proceedDirect fix="MT825" />
@@ -503,17 +503,17 @@
                 <group note="04">
                     <gaRoute gaMapping="04">
                         <heading value="039" direction="nearest"/>
-                        <altitude direction="climb" value="025"/>
+                        <altitude direction="climb" value="2500"/>
                         <afterAltitude value="2500" extension="orAbove" />
                         <proceedDirect fix="MT598"/>
-                        <altitude direction="climb" value="035"/>
+                        <altitude direction="climb" value="3500"/>
                         <afterNavaid fix="MT598"/>
                         <proceedDirect fix="ODRAN"/>
                     </gaRoute>
                 </group>
                 <group note="22">
                     <gaRoute gaMapping="22ils">
-                        <altitude direction="climb" value="30"/>
+                        <altitude direction="climb" value="3000"/>
                         <heading value="222" direction="nearest"/>
                         <afterAltitude value="500" extension="orAbove" />
                         <proceedDirect fix="MT598"/>
@@ -535,7 +535,7 @@
                         <proceedDirect fix="BOGTU" />
                     </gaRoute>
                     <gaRoute gaMapping="22gnss">
-                        <altitude direction="climb" value="30" />
+                        <altitude direction="climb" value="3000" />
                         <proceedDirect fix="MT597" />
                         <then />
                         <proceedDirect fix="MT598" />

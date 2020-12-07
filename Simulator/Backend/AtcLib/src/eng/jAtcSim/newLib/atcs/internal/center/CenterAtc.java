@@ -26,6 +26,7 @@ import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterDistanceCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterNavaidCommand;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
@@ -139,7 +140,7 @@ public class CenterAtc extends ComputerAtc {
 
       // order to continue after last fix
       Navaid n = plane.getRouting().getEntryExitPoint();
-      cmds.add(AfterNavaidCommand.create(n.getName()));
+      cmds.add(AfterDistanceCommand.create(n.getName()));
       cmds.add(ChangeHeadingCommand.createContinueCurrentHeading());
 
       Message msg = new Message(

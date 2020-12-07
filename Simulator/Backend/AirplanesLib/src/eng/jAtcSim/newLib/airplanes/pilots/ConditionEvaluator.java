@@ -26,8 +26,8 @@ public class ConditionEvaluator {
       ret = checkTrue((PlaneOrderedAltitudeDifferenceCondition) condition, plane);
     else if (condition instanceof PlaneShaCondition)
       ret = checkTrue((PlaneShaCondition) condition, plane);
-    else if (condition instanceof RunwayThresholdVisibilityCondition)
-      ret = checkTrue((RunwayThresholdVisibilityCondition) condition, plane);
+    else if (condition instanceof RunwayThresholdVisibleCondition)
+      ret = checkTrue((RunwayThresholdVisibleCondition) condition, plane);
     else if (condition instanceof NeverCondition)
       ret = false;
     else
@@ -36,7 +36,7 @@ public class ConditionEvaluator {
     return ret;
   }
 
-  private static boolean checkTrue(RunwayThresholdVisibilityCondition condition, IAirplane plane) {
+  private static boolean checkTrue(RunwayThresholdVisibleCondition condition, IAirplane plane) {
     Weather w = Context.getWeather().getWeather();
     if (w.getCloudBaseInFt() > plane.getSha().getAltitude())
       return true;
@@ -71,7 +71,7 @@ public class ConditionEvaluator {
     char category = plane.getType().category;
     IntegerPerCategoryValue below = condition.tryGetMaximumBelowTargetAltitude();
     IntegerPerCategoryValue above = condition.tryGetMaximumAboveTargetAltitude();
-    boolean ret = (below == null || below.get(category) > diff) && (above == null || above.get(category) > diff);
+    boolean ret = (below != null && below.get(category) < diff) || (above != null && above.get(category) < diff);
     return ret;
   }
 

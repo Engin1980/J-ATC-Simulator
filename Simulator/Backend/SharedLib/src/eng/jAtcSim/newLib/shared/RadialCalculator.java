@@ -36,8 +36,8 @@ public class RadialCalculator {
     far
   }
 
-  private final static double ALIGNED_TO_RADIAL_LINE_DISTANCE = 0.001;
-  private final static double CLOSE_TO_RADIAL_LINE_DISTANCE = .05;
+  private final static double ALIGNED_TO_RADIAL_LINE_DISTANCE = 0.0005;
+  private final static double CLOSE_TO_RADIAL_LINE_DISTANCE = .005;
   private final static double CAPTURE_AGGRESIVITY = 10000;
   private static final double CUSTOM_EXTENSION_TO_SUPPRESS_WIND_AND_OTHER_INFLUENCES = 0.05;
 

@@ -6,6 +6,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -62,18 +63,19 @@ public class AfterCommandList {
       int trgSpd = ((AfterSpeedCommand) item.antecedent).getSpeed();
       ret = (Math.abs(trgSpd - plane.getSha().getSpeed()) < 10);
     } else if (item.antecedent instanceof AfterNavaidCommand) {
-      AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
-      Navaid navaid = Context.getArea().getNavaids().get(anc.getNavaidName());
-      if ((navaid.getCoordinate().equals(currentTargetCoordinateOrNull) == false)) {
-        // flying over some navaid, but not over current targeted by plane(pilot)
-        ret = false;
-      } else {
-        double dist = Coordinates.getDistanceInNM(
-                navaid.getCoordinate(),
-                plane.getCoordinate());
-        double overDist = Navaid.getOverNavaidDistance(plane.getSha().getSpeed());
-        ret = (dist < overDist);
-      }
+      throw new ToDoException("This is not supported now. Is it really required to exist?");
+//      AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
+//      Navaid navaid = Context.getArea().getNavaids().get(anc.getNavaidName());
+//      if ((navaid.getCoordinate().equals(currentTargetCoordinateOrNull) == false)) {
+//        // flying over some navaid, but not over current targeted by plane(pilot)
+//        ret = false;
+//      } else {
+//        double dist = Coordinates.getDistanceInNM(
+//                navaid.getCoordinate(),
+//                plane.getCoordinate());
+//        double overDist = Navaid.getOverNavaidDistance(plane.getSha().getSpeed());
+//        ret = (dist < overDist);
+//      }
     } else if (item.antecedent instanceof AfterHeadingCommand) {
       AfterHeadingCommand anc = (AfterHeadingCommand) item.antecedent;
       double trgHdg = Headings.add(anc.getHeading(), Context.getArea().getAirport().getDeclination());
@@ -85,13 +87,13 @@ public class AfterCommandList {
       double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), navaid.getCoordinate());
       switch (anc.getPosition()) {
         case above:
-          ret = dist - anc.getDistance() > -0.3;
+          ret = dist - anc.getDistance() > -0.5;
           break;
         case below:
-          ret = anc.getDistance() - dist > -0.3;
+          ret = anc.getDistance() - dist > -0.5;
           break;
         case exactly:
-          ret = Math.abs((anc.getDistance() - dist)) < 0.3;
+          ret = Math.abs((anc.getDistance() - dist)) < 1.0;
           break;
         default:
           throw new EEnumValueUnsupportedException(anc.getPosition());

@@ -29,9 +29,6 @@ public interface IAirplaneWriter {
 
   void applyShortcut(Navaid navaid);
 
-  //TODO this should be replace with specific methods to start specific behaviors??
-  //void changePilot(Pilot pilot, AirplaneState state);
-
   void clearedToApproach(Approach approach, ApproachEntry entry);
 
   void divert(boolean unknown);

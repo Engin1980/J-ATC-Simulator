@@ -9,17 +9,17 @@ import eng.newXmlUtils.annotations.XmlConstructor;
  */
 public class AfterNavaidCommand extends AfterDistanceCommand {
 
-  public static AfterNavaidCommand create(String navaidName) {
-    AfterNavaidCommand ret = new AfterNavaidCommand(navaidName);
-    return ret;
-  }
+//  public static AfterNavaidCommand create(String navaidName) {
+//    AfterNavaidCommand ret = new AfterNavaidCommand(navaidName);
+//    return ret;
+//  }
 
   @XmlConstructor
   private AfterNavaidCommand() {
     super("?", 0, AboveBelowExactly.exactly);
   }
 
-  public AfterNavaidCommand(String navaidName) {
+  private AfterNavaidCommand(String navaidName) {
     super(navaidName, 0, AboveBelowExactly.exactly);
   }
 }
