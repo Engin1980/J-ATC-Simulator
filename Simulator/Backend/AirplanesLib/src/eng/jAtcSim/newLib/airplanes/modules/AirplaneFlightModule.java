@@ -39,6 +39,10 @@ public class AirplaneFlightModule {
     return diff;
   }
 
+  public EDayTimeStamp getExitTime(){
+    return this.exitTime;
+  }
+
   public EDayTimeStamp getExpectedExitTime() {
     return expectedExitTime;
   }

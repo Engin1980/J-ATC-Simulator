@@ -54,6 +54,7 @@ class AirportXmlLoader extends XmlLoader<Airport> {
     context.airport.icao = icao;
     context.airport.mainNavaid = mainAirportNavaid;
     context.airport.altitude = altitude;
+    context.airport.declination = declination;
     context.airport.daMappings = new XmlMappingDictinary<>();
     context.airport.iafMappings = new XmlMappingDictinary<>();
     context.airport.gaMappings = new XmlMappingDictinary<>();

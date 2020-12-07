@@ -26,6 +26,7 @@ public class LoadingContext {
     public XmlMappingDictinary<GaRoute> gaMappings;
     public IList<ActiveRunway> activeRunways;
     public int altitude;
+    public double declination;
   }
 
   public static class ThresholdInfo{

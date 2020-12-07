@@ -167,7 +167,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       } else if (routeCommand instanceof FlyRadialBehavior) {
         FlyRadialBehavior flyRadialBehavior = (FlyRadialBehavior) routeCommand;
         ret = new HeadingAndCoordinate(
-                flyRadialBehavior.getInboundRadial(),
+                (int) Math.round(flyRadialBehavior.getInboundRadialWithDeclination()),
                 firstNavaid.getCoordinate(),
                 25);
         break;
@@ -242,7 +242,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
               createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 1000, 16)
       );
       stages.add(ApproachStage.create(
-              FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.altitude, slope),
+              FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.declination, context.airport.altitude, slope),
               exitCondition,
               errorCondition,
               "GNSS radial " + context.airport.icao + ":" + context.threshold.name
@@ -335,7 +335,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
                 createAltitudeDifferenceRestriction(context.airport.altitude + 1800, 300, 500)
         );
         stages.add(ApproachStage.create(
-                FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.altitude, slope),
+                FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.declination, context.airport.altitude, slope),
                 exitCondition,
                 errorCondition,
                 type + " radial " + context.airport.icao + ":" + context.threshold.name
@@ -443,7 +443,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       double slope =
               (initialAltitude - context.airport.altitude) / Coordinates.getDistanceInNM(faf.getCoordinate(), context.threshold.coordinate);
       stages.add(ApproachStage.create(
-              FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.altitude, slope),
+              FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.declination, context.airport.altitude, slope),
               exitCondition,
               errorCondition,
               approachType + " radial " + context.airport.icao + ":" + context.threshold.name

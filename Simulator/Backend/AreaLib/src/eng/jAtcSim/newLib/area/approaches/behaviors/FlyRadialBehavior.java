@@ -1,23 +1,25 @@
 package eng.jAtcSim.newLib.area.approaches.behaviors;
 
 import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.area.contextLocal.Context;
 
 public class FlyRadialBehavior implements IApproachBehavior {
   private final Coordinate coordinate;
-  private final int inboundRadial;
+  private final double inboundRadialWithDeclination;
 
-  protected FlyRadialBehavior(Coordinate coordinate, int inboundRadial) {
+  protected FlyRadialBehavior(Coordinate coordinate, double inboundRadialWithDeclination) {
     EAssert.Argument.isNotNull(coordinate, "coordinate");
     this.coordinate = coordinate;
-    this.inboundRadial = inboundRadial;
+    this.inboundRadialWithDeclination = inboundRadialWithDeclination;
   }
 
   public Coordinate getCoordinate() {
     return coordinate;
   }
 
-  public int getInboundRadial() {
-    return inboundRadial;
+  public double getInboundRadialWithDeclination() {
+    return inboundRadialWithDeclination;
   }
 }

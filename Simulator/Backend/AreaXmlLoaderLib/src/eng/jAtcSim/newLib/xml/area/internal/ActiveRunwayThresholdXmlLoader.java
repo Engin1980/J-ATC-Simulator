@@ -149,6 +149,7 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
               FlyRadialWithDescentBehavior.create(
                       context.threshold.coordinate,
                       context.threshold.course,
+                      context.airport.declination,
                       context.airport.altitude,
                       ApproachXmlLoader.convertGlidePathDegreesToSlope(3)
               ),

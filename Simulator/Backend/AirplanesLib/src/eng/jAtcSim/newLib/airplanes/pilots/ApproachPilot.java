@@ -36,6 +36,11 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ThenCommand;
 public class ApproachPilot extends Pilot {
 
   private static final int MAX_HEADING_DIFFERENCE = 40;
+  private static final int FLARE_HEIGHT = 100;
+  public static final int SHORT_FINAL_HEIGHT = 1000;
+  public static final int SHORT_FINAL_DISTANCE = 3;
+  public static final int LONG_FINAL_HEIGHT = 2000;
+  public static final int LONG_FINAL_DISTANCE = 6;
 
   public static ApproachPilot createEmptyToLoad(Airplane airplane) {
     return new ApproachPilot(airplane);
@@ -155,11 +160,11 @@ public class ApproachPilot extends Pilot {
 
   private void flyRadialBehavior(FlyRadialBehavior behavior) {
     int alt = rdr.getSha().getAltitude() - Context.getArea().getAirport().getAltitude();
-    if (alt>100 && behavior instanceof FlyRadialWithDescentBehavior) {
+    if (alt > FLARE_HEIGHT && behavior instanceof FlyRadialWithDescentBehavior) {
       flyRadialWithDescentBehavior((FlyRadialWithDescentBehavior) behavior);
     }
     double heading = RadialCalculator.getHeadingToFollowRadial(
-            rdr.getCoordinate(), behavior.getCoordinate(), behavior.getInboundRadial(),
+            rdr.getCoordinate(), behavior.getCoordinate(), behavior.getInboundRadialWithDeclination(),
             MAX_HEADING_DIFFERENCE, rdr.getSha().getSpeed());
 
     wrt.setTargetHeading(new HeadingNavigator(heading, LeftRightAny.any));
@@ -177,9 +182,9 @@ public class ApproachPilot extends Pilot {
       else {
         int alt = rdr.getSha().getAltitude() - Context.getArea().getAirport().getAltitude();
         double dist = Coordinates.getDistanceInNM(rdr.getCoordinate(), rdr.getRouting().getAssignedRunwayThreshold().getCoordinate());
-        if (alt < 1000 && dist < 3)
+        if (alt < SHORT_FINAL_HEIGHT && dist < SHORT_FINAL_DISTANCE)
           newState = AirplaneState.shortFinal;
-        else if (alt < 2000 && dist < 6)
+        else if (alt < LONG_FINAL_HEIGHT && dist < LONG_FINAL_DISTANCE)
           newState = AirplaneState.longFinal;
         else
           newState = AirplaneState.approachEntry;
@@ -264,8 +269,9 @@ public class ApproachPilot extends Pilot {
         wrt.setState(AirplaneState.landed);
         wrt.setTargetAltitude(Context.getArea().getAirport().getAltitude());
         wrt.setTargetSpeed(0);
+
       }
-      if (alt < 100) {
+      if (alt < FLARE_HEIGHT) {
         wrt.setTargetAltitude(0);
       }
     }
@@ -277,7 +283,7 @@ public class ApproachPilot extends Pilot {
 
     double hdg = RadialCalculator.getHeadingToFollowRadial(rdr.getCoordinate(),
             rdr.getRouting().getAssignedRunwayThreshold().getOtherThreshold().getCoordinate(),
-            rdr.getRouting().getAssignedRunwayThreshold().getCourse(), 1, 5);
+            rdr.getRouting().getAssignedRunwayThreshold().getCourse(), 1);
 
     wrt.setTargetHeading(new HeadingNavigator(hdg, LeftRightAny.any));
   }

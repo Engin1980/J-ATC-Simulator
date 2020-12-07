@@ -1,22 +1,23 @@
 package eng.jAtcSim.newLib.area.approaches.behaviors;
 
 import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.area.approaches.perCategoryValues.DoublePerCategoryValue;
 
 public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
 
   public static FlyRadialWithDescentBehavior create(
-      Coordinate coordinate, int radial, int altitudeOverCoordinate,
+      Coordinate coordinate, int radial, double declination, int altitudeOverCoordinate,
       double slope) {
-    return new FlyRadialWithDescentBehavior(coordinate, radial, coordinate, altitudeOverCoordinate, slope);
+    return new FlyRadialWithDescentBehavior(coordinate, Headings.add(radial, declination), coordinate, altitudeOverCoordinate, slope);
   }
 
   private final Coordinate altitudeFixCoordinate;
   private final int altitudeFixValue;
   private final double slope;
 
-  private FlyRadialWithDescentBehavior(Coordinate coordinate, int inboundRadial, Coordinate altitudeFixCoordinate, int altitudeFixValue, double slope) {
-    super(coordinate, inboundRadial);
+  private FlyRadialWithDescentBehavior(Coordinate coordinate, double inboundRadialWithDeclination, Coordinate altitudeFixCoordinate, int altitudeFixValue, double slope) {
+    super(coordinate, inboundRadialWithDeclination);
     this.altitudeFixCoordinate = altitudeFixCoordinate;
     this.altitudeFixValue = altitudeFixValue;
     this.slope = slope;
