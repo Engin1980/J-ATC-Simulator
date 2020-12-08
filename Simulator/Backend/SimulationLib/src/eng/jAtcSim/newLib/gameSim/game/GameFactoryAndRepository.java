@@ -7,6 +7,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplaneType.AirplaneTypesXmlContextInit;
 import eng.jAtcSim.newLib.airplanes.AirplaneXmlContextInit;
 import eng.jAtcSim.newLib.area.AreaXmlContextInit;
 import eng.jAtcSim.newLib.gameSim.IGame;
@@ -115,6 +116,7 @@ public class GameFactoryAndRepository {
     ctx.sdfManager.setDeserializers(SharedXmlUtils.Deserializers.deserializers);
 
     AreaXmlContextInit.prepareXmlContext(ctx);
+    AirplaneTypesXmlContextInit.prepareXmlContext(ctx);
     MessagingXmlContextInit.prepareXmlContext(ctx);
     MoodXmlContextInit.prepareXmlContext(ctx);
     AirplaneXmlContextInit.prepareXmlContext(ctx);
@@ -155,12 +157,6 @@ public class GameFactoryAndRepository {
 
     try {
       appLog.write(ApplicationLog.eType.info, "Loading traffic");
-//TODEL if not required
-      //      if (gsi.trafficSource.specificTraffic != null) {
-//        trafficSource = new TrafficUserSource(gsi.trafficSource.specificTraffic);
-//      } else {
-//        trafficSource = new TrafficXmlSource(gsi.trafficSource.trafficXmlFile);
-//      }
       EAssert.isNotNull(gsi.trafficSource, "Traffic-Source not set.");
       gsi.trafficSource.init();
     } catch (Exception ex) {
@@ -229,7 +225,7 @@ public class GameFactoryAndRepository {
   }
 
   public Game load(String fileName) {
-    //TODO update
+    //TODO update with custom data
     IMap<String, Object> customData = new EMap<>();
 
     XDocument doc;

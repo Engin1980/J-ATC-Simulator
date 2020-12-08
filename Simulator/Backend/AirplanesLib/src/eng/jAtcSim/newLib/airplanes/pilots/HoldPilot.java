@@ -162,7 +162,8 @@ public class HoldPilot extends Pilot {
         throw new EEnumValueUnsupportedException(this.phase);
     }
 
-    throw new ToDoException("Use this or not?");
+    //TODEL
+//    throw new ToDoException("Use this or not?");
 //    if (isBelowFL100 == null) {
 //      isBelowFL100 = plane.getAltitude() <= FL100;
 //    } else if (isBelowFL100 && plane.getAltitude() > FL100) {

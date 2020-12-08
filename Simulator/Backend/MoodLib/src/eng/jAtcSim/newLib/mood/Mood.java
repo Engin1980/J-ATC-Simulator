@@ -105,7 +105,7 @@ public class Mood {
     tmp.addMany(sharedEvals);
 
     if (delayMinutesPlusMinus != 0) {
-      tmp.add(new MoodExperienceResult(null,
+      tmp.add(new MoodExperienceResult(Context.getShared().getNow().toStamp(),
               sf("%s (%+d minutes)",
                       DELAY,
                       delayMinutesPlusMinus),

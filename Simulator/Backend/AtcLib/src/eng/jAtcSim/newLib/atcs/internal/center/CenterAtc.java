@@ -140,7 +140,7 @@ public class CenterAtc extends ComputerAtc {
 
       // order to continue after last fix
       Navaid n = plane.getRouting().getEntryExitPoint();
-      cmds.add(AfterDistanceCommand.create(n.getName()));
+      cmds.add(AfterNavaidCommand.create(n.getName()));
       cmds.add(ChangeHeadingCommand.createContinueCurrentHeading());
 
       Message msg = new Message(

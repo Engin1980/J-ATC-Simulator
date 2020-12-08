@@ -7,21 +7,23 @@ import eng.newXmlUtils.annotations.XmlConstructor;
 public class MMM {
   public static MMM createMerge(IReadOnlyList<MMM> set) {
     MMM ret = new MMM(
-        set.minDouble(q -> q.minimum),
-        set.maxDouble(q -> q.maximum),
-        set.mean(q -> q.mean));
+            set.minDouble(q -> q.minimum),
+            set.maxDouble(q -> q.maximum),
+            set.mean(q -> q.mean));
     return ret;
   }
+
   private final double minimum;
   private final double maximum;
   private final double mean;
 
   @XmlConstructor
-  private MMM(){
+  private MMM() {
     minimum = Double.NaN;
     maximum = Double.NaN;
     mean = Double.NaN;
-    System.out.println("Loading of this not checked.");
+
+//    PostContracts.register(this, () -> !Double.isNaN(minimum));
   }
 
   public MMM(double minimum, double maximum, double mean) {

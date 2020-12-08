@@ -414,7 +414,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
         AfterCommand n; // new
         if (prev instanceof ProceedDirectCommand) {
-          n = AfterDistanceCommand.create(((ProceedDirectCommand) prev).getNavaidName(), 0, AboveBelowExactly.exactly);
+          n = AfterNavaidCommand.create(((ProceedDirectCommand) prev).getNavaidName());
         } else if (prev instanceof ChangeAltitudeCommand) {
           ChangeAltitudeCommand ca = (ChangeAltitudeCommand) prev;
           AboveBelowExactly restriction;

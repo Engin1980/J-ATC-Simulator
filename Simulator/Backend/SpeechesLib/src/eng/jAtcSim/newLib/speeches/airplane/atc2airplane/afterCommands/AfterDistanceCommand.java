@@ -6,12 +6,8 @@ import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class AfterDistanceCommand extends AfterCommandWithNavaid {
   public static AfterDistanceCommand create(String navaidName, double distance, AboveBelowExactly position) {
+    EAssert.Argument.isTrue(distance != 0, "You should create AfterNavaidCommand here!");
     AfterDistanceCommand ret = new AfterDistanceCommand(navaidName, distance, position);
-    return ret;
-  }
-
-  public static AfterDistanceCommand create(String navaidName) {
-    AfterDistanceCommand ret = AfterDistanceCommand.create(navaidName, 0, AboveBelowExactly.exactly);
     return ret;
   }
 

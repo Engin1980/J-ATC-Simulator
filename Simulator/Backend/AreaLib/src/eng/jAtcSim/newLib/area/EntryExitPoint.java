@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.area;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class EntryExitPoint extends Parentable<Airport> {
 
@@ -12,6 +13,8 @@ public class EntryExitPoint extends Parentable<Airport> {
     both
   }
 
+  private static final int UNSET = -1;
+
   public static EntryExitPoint create(Navaid navaid, Type type, Integer maxMrvaAltitude) {
     EntryExitPoint ret = new EntryExitPoint(navaid, type, maxMrvaAltitude);
     return ret;
@@ -20,20 +23,16 @@ public class EntryExitPoint extends Parentable<Airport> {
   private Navaid navaid;
   private Type type;
   private Integer maxMrvaAltitude;
-  private int radialFromAirport;
+  private int radialFromAirport = UNSET;
 
-  //TODEL delete if not used!
-  public EntryExitPoint() {
+  @XmlConstructor
+  private EntryExitPoint() {
   }
 
   private EntryExitPoint(Navaid navaid, Type type, Integer maxMrvaAltitude) {
     this.navaid = navaid;
     this.type = type;
     this.maxMrvaAltitude = maxMrvaAltitude;
-    super.getOnParentSet().add(
-        () -> this.radialFromAirport = (int) Math.round(Coordinates.getBearing(
-            super.getParent().getLocation(), navaid.getCoordinate()))
-    );
   }
 
   public void adjustBy(EntryExitPoint eep) {
@@ -62,6 +61,9 @@ public class EntryExitPoint extends Parentable<Airport> {
   }
 
   public int getRadialFromAirport() {
+    if (radialFromAirport == UNSET)
+      this.radialFromAirport = (int) Math.round(Coordinates.getBearing(
+              super.getParent().getLocation(), navaid.getCoordinate()));
     return radialFromAirport;
   }
 

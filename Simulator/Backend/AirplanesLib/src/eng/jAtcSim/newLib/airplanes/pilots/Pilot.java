@@ -94,10 +94,16 @@ public abstract class Pilot {
         ts = NumberUtils.boundBetween(minOrdered, rdr.getType().vApp, maxOrdered);
         break;
       case holding:
-        if (rdr.getSha().getTargetAltitude() > 10000)
-          ts = NumberUtils.boundBetween(minOrdered, Math.min(250, rdr.getType().vCruise), maxOrdered);
+        int holdingOptimalSpeed; // https://www.quora.com/What-is-the-most-efficient-altitude-and-speed-for-a-plane-to-fly-at-when-in-a-holding-pattern
+        if (rdr.getSha().getTargetAltitude() > 24000)
+          holdingOptimalSpeed = 265;
+        else if (rdr.getSha().getTargetAltitude() > 20000)
+          holdingOptimalSpeed = 240;
+        else if (rdr.getSha().getTargetAltitude() > 10000)
+          holdingOptimalSpeed = 230;
         else
-          ts = NumberUtils.boundBetween(minOrdered, Math.min(220, rdr.getType().vCruise), maxOrdered);
+          holdingOptimalSpeed = rdr.getType().vMinClean + 10;
+        ts = NumberUtils.boundBetween(minOrdered, Math.min(holdingOptimalSpeed, rdr.getType().vCruise), maxOrdered);
         break;
       default:
         throw new EEnumValueUnsupportedException(rdr.getState());

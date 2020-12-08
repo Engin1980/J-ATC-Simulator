@@ -19,7 +19,6 @@ import eng.jAtcSim.newLib.area.approaches.behaviors.*;
 import eng.jAtcSim.newLib.area.approaches.conditions.FlyRouteBehaviorEmptyCondition;
 import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 import eng.jAtcSim.newLib.area.approaches.conditions.NeverCondition;
-import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.RadialCalculator;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
@@ -64,7 +63,7 @@ public class ApproachPilot extends Pilot {
     PostContracts.register(this, () -> threshold != null);
   }
 
-  public ApproachPilot(Airplane plane,                       Approach approach, ApproachEntry entry) {
+  public ApproachPilot(Airplane plane, Approach approach, ApproachEntry entry) {
     super(plane);
     EAssert.Argument.isNotNull(approach, "approach");
     EAssert.Argument.isNotNull(entry, "entry");
@@ -223,8 +222,7 @@ public class ApproachPilot extends Pilot {
       if (alt < 20) {
         wrt.setState(AirplaneState.landed);
         wrt.setTargetAltitude(Context.getArea().getAirport().getAltitude());
-      }
-      if (alt < FLARE_HEIGHT) {
+      } else if (alt < FLARE_HEIGHT) {
         wrt.setTargetAltitude(0);
       }
     }

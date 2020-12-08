@@ -9,10 +9,9 @@ import eng.newXmlUtils.annotations.XmlConstructor;
  */
 public class AfterNavaidCommand extends AfterDistanceCommand {
 
-//  public static AfterNavaidCommand create(String navaidName) {
-//    AfterNavaidCommand ret = new AfterNavaidCommand(navaidName);
-//    return ret;
-//  }
+  public static AfterNavaidCommand create(String name){
+    return new AfterNavaidCommand(name);
+  }
 
   @XmlConstructor
   private AfterNavaidCommand() {

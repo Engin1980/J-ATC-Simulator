@@ -1,5 +1,7 @@
 package eng.jAtcSim.newLib.area;
 
+import eng.jAtcSim.newLib.area.context.IAreaAcc;
+import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.xml.XmlContextInit;
 import eng.newXmlUtils.XmlContext;
 import eng.newXmlUtils.implementations.ItemsDeserializer;
@@ -9,7 +11,7 @@ import eng.newXmlUtils.implementations.ObjectSerializer;
 
 public class AreaXmlContextInit {
   public static void prepareXmlContext(XmlContext ctx) {
-    if (XmlContextInit.checkCanBeInitialized(ctx,"area") == false) return;
+    if (XmlContextInit.checkCanBeInitialized(ctx, "area") == false) return;
 
     ctx.sdfManager.setFormatter(ActiveRunwayThreshold.class, q -> q.getName());
     ctx.sdfManager.setParser(ActiveRunwayThreshold.class, (q, c) -> c.values.get(Airport.class).getRunwayThreshold(q));
@@ -25,6 +27,11 @@ public class AreaXmlContextInit {
 
     ctx.sdfManager.setSerializer(RunwayThresholdConfiguration.class, new ObjectSerializer());
     ctx.sdfManager.setDeserializer(RunwayThresholdConfiguration.class, new ObjectDeserializer<RunwayConfiguration>());
+
+    ctx.sdfManager.setSerializer(EntryExitPoint.class, new ObjectSerializer()
+            .withCustomFieldSerializer("parent", (e, v, c) -> e.setContent("-")));
+    ctx.sdfManager.setDeserializer(EntryExitPoint.class, new ObjectDeserializer<>()
+            .withCustomFieldDeserialization("parent", (e, c) -> ContextManager.getContext(IAreaAcc.class).getAirport()));
 
     ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.area.approaches");
     ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.area.approaches.behaviors");

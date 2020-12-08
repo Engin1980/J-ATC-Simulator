@@ -5,6 +5,7 @@ import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterDistanceCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterNavaidCommand;
 
 public class AfterNavaidCommandXmlLoader implements IXmlLoader<AfterDistanceCommand> {
   @Override
@@ -12,7 +13,7 @@ public class AfterNavaidCommandXmlLoader implements IXmlLoader<AfterDistanceComm
 
     SmartXmlLoaderUtils.setContext(element);
     String navaidName = SmartXmlLoaderUtils.loadString("fix");
-    AfterDistanceCommand ret = AfterDistanceCommand.create(navaidName, 0, AboveBelowExactly.exactly);
+    AfterNavaidCommand ret = AfterNavaidCommand.create(navaidName);
     return ret;
   }
 }

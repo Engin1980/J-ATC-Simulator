@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.mood;
 
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
@@ -28,6 +29,8 @@ public class MoodExperienceResult {
   }
 
   MoodExperienceResult(EDayTimeStamp time, String description, int points) {
+    EAssert.Argument.isNotNull(time, "time");
+
     this.time = time;
     this.description = description;
     this.points = points;

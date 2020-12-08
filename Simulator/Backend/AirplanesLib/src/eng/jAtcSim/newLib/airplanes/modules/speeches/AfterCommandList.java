@@ -62,20 +62,6 @@ public class AfterCommandList {
     } else if (item.antecedent instanceof AfterSpeedCommand) {
       int trgSpd = ((AfterSpeedCommand) item.antecedent).getSpeed();
       ret = (Math.abs(trgSpd - plane.getSha().getSpeed()) < 10);
-    } else if (item.antecedent instanceof AfterNavaidCommand) {
-      throw new ToDoException("This is not supported now. Is it really required to exist?");
-//      AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
-//      Navaid navaid = Context.getArea().getNavaids().get(anc.getNavaidName());
-//      if ((navaid.getCoordinate().equals(currentTargetCoordinateOrNull) == false)) {
-//        // flying over some navaid, but not over current targeted by plane(pilot)
-//        ret = false;
-//      } else {
-//        double dist = Coordinates.getDistanceInNM(
-//                navaid.getCoordinate(),
-//                plane.getCoordinate());
-//        double overDist = Navaid.getOverNavaidDistance(plane.getSha().getSpeed());
-//        ret = (dist < overDist);
-//      }
     } else if (item.antecedent instanceof AfterHeadingCommand) {
       AfterHeadingCommand anc = (AfterHeadingCommand) item.antecedent;
       double trgHdg = Headings.add(anc.getHeading(), Context.getArea().getAirport().getDeclination());

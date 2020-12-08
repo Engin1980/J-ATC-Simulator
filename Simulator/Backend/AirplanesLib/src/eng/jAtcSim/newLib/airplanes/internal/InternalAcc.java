@@ -34,7 +34,7 @@ public class InternalAcc {
   }
 
   public static PublishedHold tryGetPublishedHold(String navaidName) {
-    return Context.getArea().getAirport().getHolds().getFirst(q -> q.getNavaid().equals(navaidName));
+    return Context.getArea().getAirport().getHolds().tryGetFirst(q -> q.getNavaid().getName().equals(navaidName));
   }
 
   public static ActiveRunwayThreshold tryGetRunwayThreshold(String runwayThresholdName) {
