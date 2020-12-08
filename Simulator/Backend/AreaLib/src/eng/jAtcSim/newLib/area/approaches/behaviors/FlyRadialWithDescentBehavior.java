@@ -2,6 +2,8 @@ package eng.jAtcSim.newLib.area.approaches.behaviors;
 
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
+import eng.jAtcSim.newLib.shared.PostContracts;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
 
@@ -14,6 +16,16 @@ public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
   private final Coordinate altitudeFixCoordinate;
   private final int altitudeFixValue;
   private final double slope;
+
+  @XmlConstructor
+  private FlyRadialWithDescentBehavior(){
+    super();
+    this.altitudeFixCoordinate= null;
+    this.altitudeFixValue = 0;
+    this.slope = 0;
+
+    PostContracts.register(this, () -> this.altitudeFixCoordinate != null);
+  }
 
   private FlyRadialWithDescentBehavior(Coordinate coordinate, double inboundRadialWithDeclination, Coordinate altitudeFixCoordinate, int altitudeFixValue, double slope) {
     super(coordinate, inboundRadialWithDeclination);
