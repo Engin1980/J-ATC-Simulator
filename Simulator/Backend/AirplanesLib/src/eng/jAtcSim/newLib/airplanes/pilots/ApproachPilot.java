@@ -22,9 +22,11 @@ import eng.jAtcSim.newLib.area.approaches.conditions.NeverCondition;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.RadialCalculator;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.EstablishedOnApproachNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
@@ -39,6 +41,7 @@ public class ApproachPilot extends Pilot {
   public static final int SHORT_FINAL_DISTANCE = 3;
   public static final int LONG_FINAL_HEIGHT = 2000;
   public static final int LONG_FINAL_DISTANCE = 6;
+  public static final int TOUCHDOWN_SIMULATED_HEIGHT = 20;
 
   public static ApproachPilot createEmptyToLoad(Airplane airplane) {
     return new ApproachPilot(airplane);
@@ -49,6 +52,11 @@ public class ApproachPilot extends Pilot {
   private final IList<ICommand> gaRouteCommands;
   private final ActiveRunwayThreshold threshold;
   private final int initialAltitude;
+  private boolean switchToTowerRequested = false;
+  /**
+   * Represents plane height at the current second
+   */
+  private int height;
 
   //TODO this should be done via @XmlConstructor
   private ApproachPilot(Airplane airplane) {
@@ -136,12 +144,12 @@ public class ApproachPilot extends Pilot {
 
   @Override
   protected void elapseSecondInternal() {
+    this.height = rdr.getSha().getAltitude() - Context.getArea().getAirport().getAltitude();
     flyStage();
   }
 
   private void flyRadialBehavior(FlyRadialBehavior behavior) {
-    int alt = rdr.getSha().getAltitude() - Context.getArea().getAirport().getAltitude();
-    if (alt > FLARE_HEIGHT && behavior instanceof FlyRadialWithDescentBehavior) {
+    if (height > FLARE_HEIGHT && behavior instanceof FlyRadialWithDescentBehavior) {
       flyRadialWithDescentBehavior((FlyRadialWithDescentBehavior) behavior);
     }
     double heading = RadialCalculator.getHeadingToFollowRadial(
@@ -161,11 +169,10 @@ public class ApproachPilot extends Pilot {
       if (rdr.getSha().getAltitude() > initialAltitude)
         newState = AirplaneState.approachEntry;
       else {
-        int alt = rdr.getSha().getAltitude() - Context.getArea().getAirport().getAltitude();
         double dist = Coordinates.getDistanceInNM(rdr.getCoordinate(), rdr.getRouting().getAssignedRunwayThreshold().getCoordinate());
-        if (alt < SHORT_FINAL_HEIGHT && dist < SHORT_FINAL_DISTANCE)
+        if (height < SHORT_FINAL_HEIGHT && dist < SHORT_FINAL_DISTANCE)
           newState = AirplaneState.shortFinal;
-        else if (alt < LONG_FINAL_HEIGHT && dist < LONG_FINAL_DISTANCE)
+        else if (height < LONG_FINAL_HEIGHT && dist < LONG_FINAL_DISTANCE)
           newState = AirplaneState.longFinal;
         else
           newState = AirplaneState.approachEntry;
@@ -205,24 +212,36 @@ public class ApproachPilot extends Pilot {
       throw new EApplicationException("Unknown behavior type at this place.");
 
     if (isConditionTrue(stage.getExitCondition())) {
-      // go to next stage
       setNextStage();
       return;
     }
 
-    if (isConditionTrue(stage.getErrorCondition()))
+    if (isConditionTrue(stage.getErrorCondition())) {
       goAround(GoingAroundNotification.GoAroundReason.notStabilizedAirplane);
+      return;
+    }
+
+    if (switchToTowerRequested == false && rdr.getAtc().getTunedAtc().getType() != AtcType.twr) {
+      if (height < 1800) {
+        wrt.sendMessage(new EstablishedOnApproachNotification(this.threshold.getName()));
+        this.switchToTowerRequested = true;
+      }
+    } else {
+      if (height < 500) {
+        goAround(GoingAroundNotification.GoAroundReason.noLandingClearance);
+        return;
+      }
+    }
 
     updateApproachState();
   }
 
   private void flyLandingBehavior(LandingBehavior beh) {
     if (rdr.getState() != AirplaneState.landed) {
-      int alt = rdr.getSha().getAltitude() - Context.getArea().getAirport().getAltitude();
-      if (alt < 20) {
+      if (height < TOUCHDOWN_SIMULATED_HEIGHT) {
         wrt.setState(AirplaneState.landed);
         wrt.setTargetAltitude(Context.getArea().getAirport().getAltitude());
-      } else if (alt < FLARE_HEIGHT) {
+      } else if (height < FLARE_HEIGHT) {
         wrt.setTargetAltitude(0);
       }
     }

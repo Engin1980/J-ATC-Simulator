@@ -40,13 +40,6 @@ class SwitchManager {
     PostContracts.register(this, () -> parent != null);
   }
 
-  void bind(IAtcSwitchManagerInterface parent,
-            Producer<IReadOnlyList<Message>> delayedMessagesProducer) {
-    EAssert.Argument.isNotNull(parent, "parent");
-    this.parent = parent;
-    this.delayedMessagesProducer = delayedMessagesProducer;
-  }
-
   public void elapseSecond() {
     this.elapCheckAndProcessPlanesReadyToSwitch();
     this.elapRepeatOldSwitchRequests();
@@ -85,6 +78,13 @@ class SwitchManager {
       this.processIncomingPlaneSwitchMessage(planeSwitchRequest, sender);
     else
       this.processOutgoingPlaneSwitchMessage(si, planeSwitchRequest, sender);
+  }
+
+  void bind(IAtcSwitchManagerInterface parent,
+            Producer<IReadOnlyList<Message>> delayedMessagesProducer) {
+    EAssert.Argument.isNotNull(parent, "parent");
+    this.parent = parent;
+    this.delayedMessagesProducer = delayedMessagesProducer;
   }
 
   private void elapCheckAndProcessPlanesReadyToSwitch() {
@@ -134,17 +134,20 @@ class SwitchManager {
 
   private void processOutgoingPlaneSwitchMessage(SwitchInfo si, PlaneSwitchRequest psr, AtcId sender) {
     IAtcSpeech speech;
-
-    if (psr.getRouting() != null) {
-      // the other ATC tries to change plane routing, we can check in and reject it if required
-      IAirplane plane = Context.Internal.getPlane(psr.getSquawk());
-      if (!parent.acceptsNewRouting(plane, psr.getRouting())) {
-        speech = new AtcRejection(psr, sf("Updated routing %s not accepted.", psr.getRouting().toString()));
-      } else {
+    IAirplane plane = Context.Internal.tryGetPlane(psr.getSquawk());
+    if (plane == null) {
+      speech = new AtcRejection(psr, sf("Squawk code '%s' not under my control.", psr.getSquawk().toString()));
+    } else {
+      if (psr.getRouting() != null) {
+        // the other ATC tries to change plane routing, we can check in and reject it if required
+        if (!parent.acceptsNewRouting(plane, psr.getRouting())) {
+          speech = new AtcRejection(psr, sf("Updated routing %s not accepted.", psr.getRouting().toString()));
+        } else {
+          speech = new AtcConfirmation(psr);
+        }
+      } else
         speech = new AtcConfirmation(psr);
-      }
-    } else
-      speech = new AtcConfirmation(psr);
+    }
 
     if (speech instanceof AtcConfirmation) {
       parent.onOutgoingPlaneSwitchCompleted(psr.getSquawk());
@@ -161,14 +164,17 @@ class SwitchManager {
 
   private void processIncomingPlaneSwitchMessage(PlaneSwitchRequest planeSwitchRequest, AtcId sender) {
     IAtcSpeech msgContent;
-    IAirplane plane = Context.Internal.getPlane(planeSwitchRequest.getSquawk());
-
-    RequestResult planeAcceptance = parent.canIAcceptPlaneIncomingFromAnotherAtc(plane);
-    if (planeAcceptance.isAccepted) {
-      this.incomingPlanes.add(plane.getSqwk());
-      msgContent = new AtcConfirmation(planeSwitchRequest);
+    IAirplane plane = Context.Internal.tryGetPlane(planeSwitchRequest.getSquawk());
+    if (plane == null) {
+      msgContent = new AtcRejection(planeSwitchRequest, sf("Squawk code '%s' not under my control.", planeSwitchRequest.getSquawk().toString()));
     } else {
-      msgContent = new AtcRejection(planeSwitchRequest, planeAcceptance.message);
+      RequestResult planeAcceptance = parent.canIAcceptPlaneIncomingFromAnotherAtc(plane);
+      if (planeAcceptance.isAccepted) {
+        this.incomingPlanes.add(plane.getSqwk());
+        msgContent = new AtcConfirmation(planeSwitchRequest);
+      } else {
+        msgContent = new AtcRejection(planeSwitchRequest, planeAcceptance.message);
+      }
     }
 
     Message msg = new Message(

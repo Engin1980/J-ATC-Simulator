@@ -75,10 +75,6 @@ public class TowerAtc extends ComputerAtc {
       if (plane.isDeparture()) {
         return new RequestResult(false, String.format("%s is a departure.", plane.getCallsign()));
       }
-      //FIXME is it needed to be plane from APP?
-//    if (this.pa Context.Internal.getPre().getResponsibleAtc(plane).equals(Context.Internal.getApp().getAtcId())) {
-//      return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", plane.getCallsign()));
-//    }
       if (isOnApproachOfTheRunwayInUse(plane) == false)
         return new RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", plane.getCallsign()));
       if (isRunwayThresholdUnderMaintenance(plane.getRouting().getAssignedRunwayThreshold()) == false) {
@@ -125,7 +121,8 @@ public class TowerAtc extends ComputerAtc {
 
     @Override
     public void onAfterIncomingPlaneGoodDayNotificationConfirmed(Squawk sqwk) {
-
+      IAirplane plane = Context.Internal.getPlane(sqwk);
+      TowerAtc.this.arrivalManager.registerNewArrival(plane);
     }
 
     @Override
@@ -305,26 +302,6 @@ public class TowerAtc extends ComputerAtc {
     this.processRunwayCheckBackground();
     this.processRunwayChangeBackground();
   }
-
-  //  @Override
-//  protected void _load(XElement elm) {
-//    super._load(elm);
-//    LoadSave.loadField(elm, this, "departureManager");
-//    LoadSave.saveField(elm, this, "arrivalManager");
-//    LoadSave.loadField(elm, this, "inUseInfo");
-//    LoadSave.loadField(elm, this, "runwayChecks");
-//    LoadSave.loadField(elm, this, "isUpdatedWeather");
-//  }
-//
-//  @Override
-//  protected void _save(XElement elm) {
-//    super._save(elm);
-//    LoadSave.saveField(elm, this, "departureManager");
-//    LoadSave.saveField(elm, this, "arrivalManager");
-//    LoadSave.saveField(elm, this, "inUseInfo");
-//    LoadSave.saveField(elm, this, "runwayChecks");
-//    LoadSave.saveField(elm, this, "isUpdatedWeather");
-//  }
 
   private void hangOffDepartedPlanes() {
     IReadOnlyList<IAirplane> departedPlanes = this.departureManager.getDepartedPlanesReadyToHangoff(true);

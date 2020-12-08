@@ -60,7 +60,8 @@ public class TakeOffPilot extends Pilot {
   @Override
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
-            AirplaneState.holdingPoint
+            AirplaneState.holdingPoint,
+            AirplaneState.takeOffGoAround
     };
   }
 
