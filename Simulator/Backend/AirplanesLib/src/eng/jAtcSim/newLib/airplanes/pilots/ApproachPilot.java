@@ -221,13 +221,11 @@ public class ApproachPilot extends Pilot {
       return;
     }
 
-    if (switchToTowerRequested == false && rdr.getAtc().getTunedAtc().getType() != AtcType.twr) {
-      if (height < 1800) {
+    if (rdr.getAtc().getTunedAtc().getType() != AtcType.twr){
+      if (switchToTowerRequested == false && height < 1800){
         wrt.sendMessage(new EstablishedOnApproachNotification(this.threshold.getName()));
         this.switchToTowerRequested = true;
-      }
-    } else {
-      if (height < 500) {
+      } else if (height < 500){
         goAround(GoingAroundNotification.GoAroundReason.noLandingClearance);
         return;
       }

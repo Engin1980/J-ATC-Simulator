@@ -72,23 +72,28 @@ public class TowerAtc extends ComputerAtc {
 
     @Override
     public RequestResult canIAcceptPlaneIncomingFromAnotherAtc(IAirplane plane) {
+      RequestResult ret;
       if (plane.isDeparture()) {
-        return new RequestResult(false, String.format("%s is a departure.", plane.getCallsign()));
-      }
-      if (isOnApproachOfTheRunwayInUse(plane) == false)
-        return new RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", plane.getCallsign()));
-      if (isRunwayThresholdUnderMaintenance(plane.getRouting().getAssignedRunwayThreshold()) == false) {
-        return new RequestResult(false, String.format("Runway %s is closed now.", plane.getRouting().getAssignedRunwayThreshold().getParent().getName()));
-      }
-      if (plane.getSha().getAltitude() > TowerAtc.this.getAcceptAltitude()) {
-        return new RequestResult(false, String.format("%s is too high.", plane.getCallsign()));
-      }
-      double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), Context.getArea().getAirport().getLocation());
-      if (dist > MAXIMAL_ACCEPT_DISTANCE_IN_NM) {
-        return new RequestResult(false, String.format("%s is too far.", plane.getCallsign()));
+        ret = new RequestResult(false, String.format("%s is a departure.", plane.getCallsign()));
+      } else {
+        if (AirplaneState.approachDescend.is(AirplaneState.approachEntry, AirplaneState.approachDescend, AirplaneState.longFinal, AirplaneState.shortFinal) == false)
+          ret = new RequestResult(false, String.format("%s is not cleared to approach.", plane.getCallsign()));
+        if (isOnApproachOfTheRunwayInUse(plane) == false)
+          ret = new RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", plane.getCallsign()));
+        else if (isRunwayThresholdUnderMaintenance(plane.getRouting().getAssignedRunwayThreshold()) == false) {
+          ret = new RequestResult(false, String.format("Runway %s is closed now.", plane.getRouting().getAssignedRunwayThreshold().getParent().getName()));
+        } else if (plane.getSha().getAltitude() > TowerAtc.this.getAcceptAltitude()) {
+          ret = new RequestResult(false, String.format("%s is too high.", plane.getCallsign()));
+        } else {
+          double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), Context.getArea().getAirport().getLocation());
+          if (dist > MAXIMAL_ACCEPT_DISTANCE_IN_NM) {
+            ret = new RequestResult(false, String.format("%s is too far.", plane.getCallsign()));
+          } else
+            ret = new RequestResult(true, null);
+        }
       }
 
-      return new RequestResult(true, null);
+      return ret;
     }
 
     @Override
