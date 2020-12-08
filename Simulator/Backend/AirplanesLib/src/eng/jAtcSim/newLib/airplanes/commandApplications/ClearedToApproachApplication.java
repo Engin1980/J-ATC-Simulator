@@ -66,16 +66,16 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
           break;
         case noApproachKind:
           ret = new PlaneRejection(c,
-                  sf("Cannot be cleared to approach. There is no approach kind %s for runway %s.",
+                  sf("Cannot be cleared to approach. There is no %s approach for runway %s.",
                           c.getType().toString(), rt.getName()));
           break;
         case noApproachForPlaneType:
           ret = new PlaneRejection(c,
-                  sf("Cannot be cleared to approach. There is no approach kind %s for runway %s for our plane type.",
+                  sf("Cannot be cleared to approach. There is no %s approach for runway %s for our plane type.",
                           c.getType().toString(), rt.getName()));
           break;
         case noApproachForPlaneLocation:
-          ret = new UnableToEnterApproachFromDifficultPosition(c, "We are not in the correct position to enter the approach.");
+          ret = new UnableToEnterApproachFromDifficultPosition(c, sf("We are not in the correct position to enter %s approach.", c.getType().toString()));
           break;
         case ok:
           ret = null;

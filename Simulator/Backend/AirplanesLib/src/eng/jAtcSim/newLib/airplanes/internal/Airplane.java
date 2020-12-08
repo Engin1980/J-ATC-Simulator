@@ -267,8 +267,6 @@ public class Airplane {
         setPilotAndState(new ArrivalPilot(Airplane.this), AirplaneState.arrivingHigh);
       else
         setPilotAndState(new DeparturePilot(Airplane.this), AirplaneState.departingLow);
-      throw new ToDoException("next line?");
-      //Pilot.this.pilotWriteSimple.adjustTargetSpeed();
     }
 
     @Override

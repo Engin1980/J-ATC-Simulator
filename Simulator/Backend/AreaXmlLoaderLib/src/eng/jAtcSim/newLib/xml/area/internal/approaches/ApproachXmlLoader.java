@@ -134,7 +134,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
 
   private ICondition createApproachEntryConditionForThresholdAndSlope(
           Coordinate coordinate, int coordinateAltitude, int radial, int altitude, double slope) {
-    double dist = (altitude - coordinateAltitude) / slope;
+    double dist = (altitude - coordinateAltitude) / slope / 6076.1;
     Coordinate fafCoordinate = Coordinates.getCoordinate(
             coordinate, Headings.getOpposite(radial), dist);
 
