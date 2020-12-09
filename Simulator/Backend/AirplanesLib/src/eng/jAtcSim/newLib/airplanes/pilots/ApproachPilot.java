@@ -82,15 +82,7 @@ public class ApproachPilot extends Pilot {
     this.stages = new EList<>(approach.getStages());
     this.initialAltitude = approach.getInitialAltitude();
 
-    if (entry.getIafRoute() != null) {
-      FlyIafRouteBehavior frb = new FlyIafRouteBehavior(entry.getIafRoute());
-      ApproachStage iafStage = ApproachStage.create(
-              frb,
-              new FlyRouteBehaviorEmptyCondition(),
-              new NeverCondition(),
-              "IAF via " + entry.getIafRoute().getNavaid());
-      this.stages.insert(0, iafStage);
-    }
+    this.stages.insertMany(0, entry.getEntryStages());
 
     if (approach.getBeforeStagesCommands().isEmpty() == false) {
       FlyRouteBehavior frb = new FlyRouteBehavior(approach.getBeforeStagesCommands().toList());

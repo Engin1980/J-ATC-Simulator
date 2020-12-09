@@ -29,6 +29,7 @@ public class FixRelatedLocation implements ILocation {
     this.fromRadial = fromRadial;
     this.toRadial = toRadial;
     this.maximalDistance = maximalDistance;
+
   }
 
   public Coordinate getCoordinate() {

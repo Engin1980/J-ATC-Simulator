@@ -17,7 +17,7 @@ public class FlyRadialBehavior implements IApproachBehavior {
     PostContracts.register(this, () -> this.coordinate != null);
   }
 
-  protected FlyRadialBehavior(Coordinate coordinate, double inboundRadialWithDeclination) {
+  public FlyRadialBehavior(Coordinate coordinate, double inboundRadialWithDeclination) {
     EAssert.Argument.isNotNull(coordinate, "coordinate");
     this.coordinate = coordinate;
     this.inboundRadialWithDeclination = inboundRadialWithDeclination;

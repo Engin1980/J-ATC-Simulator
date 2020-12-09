@@ -20,6 +20,11 @@ public class PlaneCategoryDefinitions {
     this.inner = inner;
   }
 
+  public PlaneCategoryDefinitions(char c){
+    c = ensureValidAndNormalize(c);
+    this.inner = EList.of(c);
+  }
+
   public PlaneCategoryDefinitions(String chars) {
     IList<Character> tmp = new EList<>();
     for (int i = 0; i < chars.length(); i++) {

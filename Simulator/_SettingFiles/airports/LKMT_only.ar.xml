@@ -39,6 +39,7 @@
                                 <unpreciseApproach gaMapping="04" iafMapping="04"
                                                    radial="039" type="vor" mapt="OTA/219/1.7" faf="OTA/219/8.2" mdaA="1220" mdaB="1220"
                                                    mdaC="1220" mdaD="1220" initialAltitude="3200" />
+                                <defaultVisualApproach />
                             </approaches>
                         </threshold>
                         <threshold name="22" mapping="22" coordinate="49 42 25.65 N 018 07 42.41 E"
