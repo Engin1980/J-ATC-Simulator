@@ -60,12 +60,5 @@ public class FixRelatedLocation implements ILocation {
       return true;
     else
       return Headings.isBetween(fromRadial, radial, toRadial);
-
-//      if (fromRadial <= toRadial)
-//      return NumberUtils.isBetweenOrEqual(fromRadial, radial, toRadial);
-//    else
-//      return
-//              NumberUtils.isBetweenOrEqual(fromRadial, radial, 360)
-//                      || NumberUtils.isBetweenOrEqual(0, radial, toRadial);
   }
 }

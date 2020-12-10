@@ -48,10 +48,11 @@ public class ApproachEntry {
 
     FlyIafRouteBehavior frb = new FlyIafRouteBehavior(iafRoute);
     ApproachStage iafStage = ApproachStage.create(
+            "IAF via " + iafRoute.getNavaid(),
             frb,
             new FlyRouteBehaviorEmptyCondition(),
-            new NeverCondition(),
-            "IAF via " + iafRoute.getNavaid());
+            new NeverCondition()
+            );
 
     ICondition entryCondition = createApproachEntryConditionForRoute(iafRoute);
 

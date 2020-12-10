@@ -84,7 +84,6 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
   private ICondition createApproachEntryConditionBetweenMaptAndFaf(String maptName, String fafName) {
     Navaid faf = this.context.area.navaids.getWithPBD(fafName);
     Navaid mapt = this.context.area.navaids.getWithPBD(maptName);
-    double distance = Coordinates.getDistanceInNM(faf.getCoordinate(), mapt.getCoordinate());
     double radial = Coordinates.getBearing(faf.getCoordinate(), mapt.getCoordinate());
 
     ICondition ret = AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
@@ -94,8 +93,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
                     MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH),
             PlaneShaCondition.create(PlaneShaCondition.eType.heading,
                     (int) Headings.add(radial, -30),
-                    (int) Headings.add(radial, 30))
-    );
+                    (int) Headings.add(radial, 30)));
 
     return ret;
   }
@@ -186,20 +184,18 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
               createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 1000, 16)
       );
       stages.add(ApproachStage.create(
+              "GNSS radial " + context.airport.icao + ":" + context.threshold.name,
               FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.declination, context.airport.altitude, slope),
               exitCondition,
-              errorCondition,
-              "GNSS radial " + context.airport.icao + ":" + context.threshold.name
-      ));
+              errorCondition));
     }
     {
       // landing stage
       stages.add(ApproachStage.create(
+              "GNSS landing " + context.airport.icao + ":" + context.threshold.name,
               LandingBehavior.create(),
               new NeverCondition(),
-              new NeverCondition(),
-              "GNSS landing " + context.airport.icao + ":" + context.threshold.name
-      ));
+              new NeverCondition()));
     }
 
     Approach ret = new Approach(ApproachType.gnss, initialAltitude, entries, beforeStagesCommands, stages, gaRoute);
@@ -213,9 +209,9 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     double slope = convertGlidePathDegreesToSlope(DEFAULT_SLOPE);
 
     for (char c = 'A'; c <= 'E'; c++) {
-      double fafAlt = c == 'A' ? 200 : c == 'B' ? 300 : c == 'C' ? 400 : c == 'D' ? 500 : 750;
+      double fafAlt = c == 'A' ? 300 : c == 'B' ? 500 : c == 'C' ? 800 : c == 'D' ? 1200 : 1500;
       int circleAlt = context.airport.altitude +
-              (c == 'A' ? 500 : c == 'B' ? 500 : c == 'C' ? 500 : c == 'D' ? 100 : 1500);
+              (c == 'A' ? 500 : c == 'B' ? 700 : c == 'C' ? 1000 : c == 'D' ? 2000 : 3000);
       double dist = fafAlt / slope / 6076.1;
       Coordinate faf = Coordinates.getCoordinate(context.threshold.coordinate, context.threshold.getOppositeCourse(), dist);
       ApproachEntry ae;
@@ -235,6 +231,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
 
     IList<ApproachStage> stages = new EList<>();
     stages.add(ApproachStage.create(
+            "Visual-default final descend",
             FlyRadialWithDescentBehavior.create(context.threshold.coordinate, context.threshold.course, context.airport.declination,
                     context.airport.altitude, convertGlidePathDegreesToSlope(DEFAULT_SLOPE)),
             AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
@@ -245,6 +242,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
             PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, context.airport.altitude + 150)
     ));
     stages.add(ApproachStage.create(
+            "Visual-default landing",
             LandingBehavior.create(),
             new NeverCondition(),
             new NeverCondition()
@@ -280,7 +278,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
                             8)),
             new PlaneCategoryDefinitions(category),
             new EList<>()
-    ).withTag("default visual nearby inbound " + threshold.name);
+    ).withTag("Visual-app close final stage " + threshold.name);
     return ret;
   }
 
@@ -308,7 +306,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
                     RegionalLocation.create(a, b, c, d)),
             new PlaneCategoryDefinitions(category),
             stages
-    ).withTag("default visual nearby outbound " + threshold.name + "/" + dir);
+    ).withTag("Visual-app close downwind stage " + threshold.name + "/" + dir);
 
     return ret;
   }
@@ -317,14 +315,17 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     IList<ApproachStage> ret = new EList<>();
     double DECLINATION_HACK = 0;
     ret.add(ApproachStage.create(
-            FlyRadialWithDescentBehavior.create(downwindEndPoint, (int) Headings.getOpposite(runwayCourse), DECLINATION_HACK, downwindEndPointAltitude, DEFAULT_SLOPE),
+            "Visual-default downwind",
+            FlyRadialWithDescentBehavior.create(downwindEndPoint,
+                    (int) Headings.getOpposite(runwayCourse),
+                    DECLINATION_HACK,
+                    downwindEndPointAltitude,
+                    DEFAULT_SLOPE),
             FixRelatedLocation.create(downwindEndPoint,
                     (int) Headings.add(runwayCourse, 90),
                     (int) Headings.add(runwayCourse, -90),
                     50),
-            PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, downwindEndPointAltitude),
-            "Visual-app-close-outbound-leg"
-    ));
+            PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, downwindEndPointAltitude)));
     return ret;
   }
 
@@ -336,8 +337,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
                     15),
             new PlaneCategoryDefinitions(category),
             new EList<>()
-    )
-            .withTag("default visual direct " + threshold.name);
+    ).withTag("Visual-app direct to final stage " + threshold.name);
     return ret;
   }
 
@@ -358,7 +358,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
   }
 
   private Coordinate calculateDownwindEndPoint(char category, Coordinate faf, int runwayCourse, int asideHeading) {
-    int expectedSpeed = category == 'A' ? 70 : category == 'B' ? 100 : category == 'C' ? 130 : category == 'D' ? 145 : 155;
+    int expectedSpeed = category == 'A' ? 70 : category == 'B' ? 100 : category == 'C' ? 150 : category == 'D' ? 210 : 230;
     Coordinate ret = Coordinates.getCoordinate(
             faf,
             Headings.add(runwayCourse, asideHeading),
@@ -437,20 +437,18 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
                 createAltitudeDifferenceRestriction(context.airport.altitude + 1800, 300, 500)
         );
         stages.add(ApproachStage.create(
+                type + " final",
                 FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.declination, context.airport.altitude, slope),
                 exitCondition,
-                errorCondition,
-                type + " radial " + context.airport.icao + ":" + context.threshold.name
-        ));
+                errorCondition));
       }
       {
         // landing stage
         stages.add(ApproachStage.create(
+                type + " landing",
                 LandingBehavior.create(),
                 new NeverCondition(),
-                new NeverCondition(),
-                type + " landing " + context.airport.icao + ":" + context.threshold.name
-        ));
+                new NeverCondition()));
       }
 
       Approach tmp = new Approach(type, initialAltitude, entries, beforeStagesCommands, stages, gaRoute);
@@ -544,20 +542,18 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       double slope =
               (initialAltitude - context.airport.altitude) / Coordinates.getDistanceInNM(faf.getCoordinate(), context.threshold.coordinate);
       stages.add(ApproachStage.create(
+              approachType + " final",
               FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.declination, context.airport.altitude, slope),
               exitCondition,
-              errorCondition,
-              approachType + " radial " + context.airport.icao + ":" + context.threshold.name
-      ));
+              errorCondition));
     }
     {
       // landing stage
       stages.add(ApproachStage.create(
+              approachType + " landing",
               LandingBehavior.create(),
               new NeverCondition(),
-              new NeverCondition(),
-              approachType + " landing " + context.airport.icao + ":" + context.threshold.name
-      ));
+              new NeverCondition()));
     }
 
     Approach ret = new Approach(approachType, initialAltitude, entries, beforeStagesCommands, stages, gaRoute);

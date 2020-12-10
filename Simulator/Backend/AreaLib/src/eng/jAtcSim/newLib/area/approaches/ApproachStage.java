@@ -8,11 +8,7 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class ApproachStage {
-  public static ApproachStage create(IApproachBehavior behavior, ICondition exitCondition, ICondition errorCondition) {
-    return new ApproachStage(behavior, exitCondition, errorCondition, "Unnamed stage");
-  }
-
-  public static ApproachStage create(IApproachBehavior behavior, ICondition exitCondition, ICondition errorCondition, String name) {
+  public static ApproachStage create(String name, IApproachBehavior behavior, ICondition exitCondition, ICondition errorCondition) {
     return new ApproachStage(behavior, exitCondition, errorCondition, name);
   }
 

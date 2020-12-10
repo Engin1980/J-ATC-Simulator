@@ -36,7 +36,7 @@ public class AreaXmlContextInit {
     ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.area.approaches");
     ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.area.approaches.behaviors");
     ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.area.approaches.conditions");
-    ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.area.approaches.locations");
+    ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.area.approaches.conditions.locations");
     ctx.sdfManager.addAutoPackage("eng.jAtcSim.newLib.area.approaches.perCategoryValues");
   }
 }

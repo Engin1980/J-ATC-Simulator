@@ -87,10 +87,10 @@ public class ApproachPilot extends Pilot {
     if (approach.getBeforeStagesCommands().isEmpty() == false) {
       FlyRouteBehavior frb = new FlyRouteBehavior(approach.getBeforeStagesCommands().toList());
       ApproachStage iafStage = ApproachStage.create(
+              "Initial aproach commands",
               frb,
               new FlyRouteBehaviorEmptyCondition(),
-              new NeverCondition(),
-              "Initial approach commands");
+              new NeverCondition());
       this.stages.insert(0, iafStage);
     }
 

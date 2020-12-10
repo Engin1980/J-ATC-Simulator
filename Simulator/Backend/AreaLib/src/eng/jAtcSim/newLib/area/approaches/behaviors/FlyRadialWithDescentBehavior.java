@@ -6,6 +6,12 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
+  private String tag;
+
+  public FlyRadialWithDescentBehavior withTag(String value){
+    this.tag = value;
+    return this;
+  }
 
   public static FlyRadialWithDescentBehavior create(
       Coordinate coordinate, int radial, double declination, int altitudeOverCoordinate,
