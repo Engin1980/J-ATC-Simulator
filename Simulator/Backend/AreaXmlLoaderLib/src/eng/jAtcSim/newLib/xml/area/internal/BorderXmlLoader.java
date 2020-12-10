@@ -144,7 +144,7 @@ public class BorderXmlLoader implements IXmlLoader<Border> {
       BorderPoint afterBorderPoint = index == ret.count() ? ret.get(0) : ret.get(index);
       IList<BorderPoint> arcPoints = generateArcPoints(
           beforeBorderPoint, coordinate, isClockwise, afterBorderPoint);
-      ret.insert(index, arcPoints);
+      ret.insertMany(index, arcPoints);
     }
 
     return ret;

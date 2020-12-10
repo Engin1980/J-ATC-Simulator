@@ -35,7 +35,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ThenCommand;
 
 public class ApproachPilot extends Pilot {
 
-  private static final int MAX_HEADING_DIFFERENCE = 40;
+  private static final int MAX_HEADING_DIFFERENCE = 90;
   private static final int FLARE_HEIGHT = 100;
   public static final int SHORT_FINAL_HEIGHT = 1000;
   public static final int SHORT_FINAL_DISTANCE = 3;
@@ -146,7 +146,7 @@ public class ApproachPilot extends Pilot {
     }
     double heading = RadialCalculator.getHeadingToFollowRadial(
             rdr.getCoordinate(), behavior.getCoordinate(), behavior.getInboundRadialWithDeclination(),
-            MAX_HEADING_DIFFERENCE, rdr.getSha().getSpeed());
+            rdr.getSha().getSpeed(), MAX_HEADING_DIFFERENCE);
 
     wrt.setTargetHeading(new HeadingNavigator(heading, LeftRightAny.any));
   }
@@ -213,11 +213,11 @@ public class ApproachPilot extends Pilot {
       return;
     }
 
-    if (rdr.getAtc().getTunedAtc().getType() != AtcType.twr){
-      if (switchToTowerRequested == false && height < 1800){
+    if (rdr.getAtc().getTunedAtc().getType() != AtcType.twr) {
+      if (switchToTowerRequested == false && height < 1800) {
         wrt.sendMessage(new EstablishedOnApproachNotification(this.threshold.getName()));
         this.switchToTowerRequested = true;
-      } else if (height < 500){
+      } else if (height < 500) {
         goAround(GoingAroundNotification.GoAroundReason.noLandingClearance);
         return;
       }

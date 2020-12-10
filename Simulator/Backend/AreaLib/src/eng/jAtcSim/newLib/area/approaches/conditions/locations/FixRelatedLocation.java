@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.area.approaches.conditions.locations;
 
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
+import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
 
@@ -52,15 +53,19 @@ public class FixRelatedLocation implements ILocation {
   public boolean isInside(Coordinate coordinate) {
     EAssert.Argument.isNotNull(coordinate, "coordinate");
     double dist = Coordinates.getDistanceInNM(coordinate, this.coordinate);
-    double radial = Coordinates.getBearing(coordinate, this.coordinate);
+    double radial = Coordinates.getBearing(this.coordinate, coordinate);
+
     if (maximalDistance < dist) return false;
     if (fromRadial == null) // toRadial is null too
       return true;
-    else if (fromRadial <= toRadial)
-      return NumberUtils.isBetweenOrEqual(fromRadial, radial, toRadial);
     else
-      return
-              NumberUtils.isBetweenOrEqual(fromRadial, radial, 360)
-                      || NumberUtils.isBetweenOrEqual(0, radial, toRadial);
+      return Headings.isBetween(fromRadial, radial, toRadial);
+
+//      if (fromRadial <= toRadial)
+//      return NumberUtils.isBetweenOrEqual(fromRadial, radial, toRadial);
+//    else
+//      return
+//              NumberUtils.isBetweenOrEqual(fromRadial, radial, 360)
+//                      || NumberUtils.isBetweenOrEqual(0, radial, toRadial);
   }
 }

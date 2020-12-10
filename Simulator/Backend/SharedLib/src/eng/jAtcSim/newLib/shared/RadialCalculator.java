@@ -1,11 +1,11 @@
 package eng.jAtcSim.newLib.shared;
 
-import eng.eSystem.Tuple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.geometry2D.Line;
+import eng.jAtcSim.newLib.shared.enums.LeftRight;
 
 public class RadialCalculator {
   public enum eToPointLocation {
@@ -49,13 +49,13 @@ public class RadialCalculator {
 
   public static double getHeadingToFollowRadial(Coordinate currentPosition, Coordinate fix, double radial,
                                                 double speedInKt, double maxHeadingDifference) {
-
     double ret;
-    eRadialLocation radialLocation;
-    Line radialLine = getRadialLine(fix, radial);
+
+    LeftRight sideToRadialLine = getSideFromRadial(currentPosition, fix, radial);
+    double distanceToRadialLine = evaluateDistanceToRadialLine2(currentPosition, sideToRadialLine, fix, Headings.getOpposite(radial));
     double turnRadius = calculateTurnRadius(speedInKt);
 
-    double distanceToRadialLine = evaluateDistanceToRadialLine(currentPosition, radialLine);
+    eRadialLocation radialLocation;
     if (distanceToRadialLine < ALIGNED_TO_RADIAL_LINE_DISTANCE)
       radialLocation = eRadialLocation.aligned;
     else if (distanceToRadialLine < CLOSE_TO_RADIAL_LINE_DISTANCE)
@@ -67,20 +67,16 @@ public class RadialCalculator {
 
     switch (radialLocation) {
       case aligned:
-        assert radialLine != null;
-        ret = getHeadingInAlignment(currentPosition, radial, radialLine, (int) Math.min(10, maxHeadingDifference));
+        ret = getHeadingInAlignment(currentPosition, radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(10, maxHeadingDifference));
         break;
       case capturing:
-        assert radialLine != null;
-        ret = getHeadingInAlignment(currentPosition, radial, radialLine, (int) Math.min(15, maxHeadingDifference));
+        ret = getHeadingInAlignment(currentPosition, radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(15, maxHeadingDifference));
         break;
       case close:
-        assert radialLine != null;
-        ret = getHeadingInAlignment(currentPosition, radial, radialLine, (int) Math.min(30, maxHeadingDifference));
+        ret = getHeadingInAlignment(currentPosition, radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(30, maxHeadingDifference));
         break;
       case far:
-        assert radialLine != null;
-        ret = getHeadingInAlignment(currentPosition, radial, radialLine, (int) Math.min(90, maxHeadingDifference));
+        ret = getHeadingInAlignment(currentPosition, radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(90, maxHeadingDifference));
         break;
       default:
         throw new EEnumValueUnsupportedException(radialLocation);
@@ -96,23 +92,37 @@ public class RadialCalculator {
     return radius;
   }
 
-  private static double getHeadingInAlignment(Coordinate current, double radial, Line radialLine, int maxDifference) {
+  private static double getHeadingInAlignment(Coordinate current, double radial,
+                                              double distanceToRadial, LeftRight sideToRadial,
+                                              int maxDifference) {
     double ret;
-    double distance = evaluateDistanceToRadialLine(current, radialLine);
-    Line.eSide side = radialLine.getRelativeLocation(current.getLatitude().get(), current.getLongitude().get());
+    double distance = distanceToRadial;
+    LeftRight side = sideToRadial;
     double headingDifference = distance * CAPTURE_AGGRESIVITY;
     headingDifference = Math.min(headingDifference, maxDifference);
-    if (side == Line.eSide.left)
+    if (side == LeftRight.left)
       ret = radial - headingDifference;
     else
       ret = radial + headingDifference;
     return ret;
   }
 
-  private static double evaluateDistanceToRadialLine(Coordinate currentPosition, Line radialLine) {
-    double ret = radialLine.getDistance(
-            currentPosition.getLatitude().get(), currentPosition.getLongitude().get());
+  private static LeftRight getSideFromRadial(Coordinate position, Coordinate fix, double fixRadial) {
+    LeftRight ret = Headings.isBetween(
+            fixRadial,
+            Coordinates.getBearing(fix, position),
+            Headings.add(fixRadial, 180))
+            ? LeftRight.right : LeftRight.left;
     return ret;
+  }
+
+  private static double evaluateDistanceToRadialLine2(Coordinate position, LeftRight positionSide, Coordinate fix, double fixRadial) {
+    double positionRadial = positionSide == LeftRight.left ?
+            Headings.add(fixRadial, +90) :
+            Headings.add(fixRadial, -90);
+    Coordinate intersection = Coordinates.getIntersection(position, positionRadial, fix, fixRadial);
+    double dist = Coordinates.getDistanceInNM(intersection, position);
+    return dist;
   }
 
   private static Line getRadialLine(Coordinate a, double radial) {

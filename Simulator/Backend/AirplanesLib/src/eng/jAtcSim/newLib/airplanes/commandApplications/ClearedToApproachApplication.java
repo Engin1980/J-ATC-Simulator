@@ -135,7 +135,7 @@ class ApproachInfo {
     // select by location
     for (Approach app : apps) {
       for (ApproachEntry entry : app.getEntries()) {
-        if (ConditionEvaluator.check(entry.getEntryCondition(), airplane)) {
+        if (entry.isForCategory(airplane.getType().category) && ConditionEvaluator.check(entry.getEntryCondition(), airplane)) {
           return new ApproachInfo(entry, app);
         }
       }

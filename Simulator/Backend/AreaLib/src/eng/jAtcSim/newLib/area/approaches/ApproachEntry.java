@@ -89,11 +89,7 @@ public class ApproachEntry {
       }
     }
 
-    EAssert.isNotNull(
-            ret,
-            sf("Unable to detect entry heading for iaf-route. Airport: %s, navaid: %s",
-                    route.getParent().getIcao(),
-                    route.getNavaid()));
+    EAssert.isNotNull(ret, sf("Unable to detect entry heading for iaf-route via '%s'.", route.getNavaid()));
     return ret;
   }
 
@@ -114,6 +110,20 @@ public class ApproachEntry {
   private final IList<ApproachStage> entryStages = new EList<>();
   private final ICondition entryCondition;
   private final PlaneCategoryDefinitions categoryDefinitions;
+  private String tag;
+
+  public ApproachEntry withTag(String tag){
+    this.tag = tag;
+    return this;
+  }
+
+  public String getTag() {
+    return tag;
+  }
+
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
 
   private ApproachEntry(ICondition entryCondition, PlaneCategoryDefinitions categoryDefinitions, IList<ApproachStage> entryStages) {
     EAssert.Argument.isNotNull(entryCondition, "entryCondition");

@@ -32,12 +32,10 @@ import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.area.routes.DARoute;
-import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.*;
-import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
@@ -47,7 +45,6 @@ import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertingNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
-import eng.jAtcSim.newLib.speeches.base.Confirmation;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.newXmlUtils.annotations.XmlConstructor;
 
@@ -254,7 +251,7 @@ public class Airplane {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
       return this.getCallsign() + " {rdr}";
     }
   }
@@ -399,6 +396,14 @@ public class Airplane {
     }
 
     @Override
+    public void setDaRouting(DARoute daRoute, ActiveRunwayThreshold activeRunwayThreshold) {
+      Airplane.this.routingModule.setRunwayThreshold(activeRunwayThreshold);
+      Airplane.this.routingModule.setEntryExitPoint(daRoute.getMainNavaid());
+      Airplane.this.routingModule.setAssignedDARouteName(daRoute.getName());
+      Airplane.this.routingModule.setRouting(daRoute.getRouteCommands());
+    }
+
+    @Override
     public void setHoldingPoint(ActiveRunwayThreshold t) {
       Airplane.this.coordinate = t.getCoordinate();
     }
@@ -412,14 +417,6 @@ public class Airplane {
     @Override
     public void setRouting(IReadOnlyList<ICommand> routeCommands) {
       Airplane.this.routingModule.setRouting(routeCommands);
-    }
-
-    @Override
-    public void setDaRouting(DARoute daRoute, ActiveRunwayThreshold activeRunwayThreshold) {
-      Airplane.this.routingModule.setRunwayThreshold(activeRunwayThreshold);
-      Airplane.this.routingModule.setEntryExitPoint(daRoute.getMainNavaid());
-      Airplane.this.routingModule.setAssignedDARouteName(daRoute.getName());
-      Airplane.this.routingModule.setRouting(daRoute.getRouteCommands());
     }
 
     @Override
@@ -559,7 +556,7 @@ public class Airplane {
   private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> speechCache = new EMap<>();
 
   @XmlConstructor
-  private Airplane(){
+  private Airplane() {
     this.airplaneType = null;
     this.atcModule = null;
     this.divertModule = null;
@@ -621,6 +618,8 @@ public class Airplane {
 
     logToFdr();
 
+    bublej();
+
     //printAfterCommands();
     //this.recorder.logPostponedAfterSpeeches(this.afterCommands);
   }
@@ -638,6 +637,20 @@ public class Airplane {
     this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
     CommandQueueRecorder cqr = new CommandQueueRecorder(this.flightModule.getCallsign());
     this.routingModule.setCqr(cqr);
+  }
+
+  //TODEL
+  private void bublej() {
+    ActiveRunwayThreshold threshold = rdr.getRouting().getAssignedRunwayThreshold();
+    if (threshold == null) return;
+    System.out.println(Context.getShared().getNow().toStamp().toDayTimeString());
+    for (Approach approach : threshold.getApproaches()) {
+      for (ApproachEntry entry : approach.getEntries().where(q -> q.isForCategory(rdr.getType().category))) {
+        if (ConditionEvaluator.check(entry.getEntryCondition(), rdr)) {
+          System.out.println(sf("%s %s, %s", threshold.getName(), approach.getType(), entry.getTag()));
+        }
+      }
+    }
   }
 
   private void flushSpeeches() {
