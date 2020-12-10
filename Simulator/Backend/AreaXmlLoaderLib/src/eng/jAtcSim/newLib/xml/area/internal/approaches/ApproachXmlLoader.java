@@ -316,6 +316,8 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     double DECLINATION_HACK = 0;
     ret.add(ApproachStage.create(
             "Visual-default downwind",
+
+            tady to nahradit fly to point stagou with descnd, ne radialou, ta se chova blbe.
             FlyRadialWithDescentBehavior.create(downwindEndPoint,
                     (int) Headings.getOpposite(runwayCourse),
                     DECLINATION_HACK,
