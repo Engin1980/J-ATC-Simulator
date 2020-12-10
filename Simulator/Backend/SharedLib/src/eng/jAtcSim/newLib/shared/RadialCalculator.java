@@ -36,8 +36,8 @@ public class RadialCalculator {
     far
   }
 
-  private final static double ALIGNED_TO_RADIAL_LINE_DISTANCE = 0.0005;
-  private final static double CLOSE_TO_RADIAL_LINE_DISTANCE = .005;
+  private final static double ALIGNED_TO_RADIAL_LINE_DISTANCE = 0.25;
+  private final static double CLOSE_TO_RADIAL_LINE_DISTANCE = 1.0;
   private final static double CAPTURE_AGGRESIVITY = 10000;
   private static final double CUSTOM_EXTENSION_TO_SUPPRESS_WIND_AND_OTHER_INFLUENCES = 0.05;
 
@@ -52,7 +52,7 @@ public class RadialCalculator {
     double ret;
 
     LeftRight sideToRadialLine = getSideFromRadial(currentPosition, fix, radial);
-    double distanceToRadialLine = evaluateDistanceToRadialLine2(currentPosition, sideToRadialLine, fix, Headings.getOpposite(radial));
+    double distanceToRadialLine = evaluateDistanceToRadialLine2(currentPosition, sideToRadialLine, fix, radial);
     double turnRadius = calculateTurnRadius(speedInKt);
 
     eRadialLocation radialLocation;
@@ -67,16 +67,16 @@ public class RadialCalculator {
 
     switch (radialLocation) {
       case aligned:
-        ret = getHeadingInAlignment(currentPosition, radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(10, maxHeadingDifference));
+        ret = getHeadingInAlignment(radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(10, maxHeadingDifference));
         break;
       case capturing:
-        ret = getHeadingInAlignment(currentPosition, radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(15, maxHeadingDifference));
+        ret = getHeadingInAlignment(radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(15, maxHeadingDifference));
         break;
       case close:
-        ret = getHeadingInAlignment(currentPosition, radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(30, maxHeadingDifference));
+        ret = getHeadingInAlignment(radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(30, maxHeadingDifference));
         break;
       case far:
-        ret = getHeadingInAlignment(currentPosition, radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(90, maxHeadingDifference));
+        ret = getHeadingInAlignment(radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(90, maxHeadingDifference));
         break;
       default:
         throw new EEnumValueUnsupportedException(radialLocation);
@@ -92,7 +92,7 @@ public class RadialCalculator {
     return radius;
   }
 
-  private static double getHeadingInAlignment(Coordinate current, double radial,
+  private static double getHeadingInAlignment(double radial,
                                               double distanceToRadial, LeftRight sideToRadial,
                                               int maxDifference) {
     double ret;
@@ -120,7 +120,7 @@ public class RadialCalculator {
     double positionRadial = positionSide == LeftRight.left ?
             Headings.add(fixRadial, +90) :
             Headings.add(fixRadial, -90);
-    Coordinate intersection = Coordinates.getIntersection(position, positionRadial, fix, fixRadial);
+    Coordinate intersection = Coordinates.getIntersection(position, positionRadial, fix, Headings.getOpposite(fixRadial));
     double dist = Coordinates.getDistanceInNM(intersection, position);
     return dist;
   }
