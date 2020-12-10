@@ -28,4 +28,12 @@ public class AfterAltitudeCommand extends AfterCommand {
   public int getAltitude() {
     return altitude;
   }
+
+  @Override
+  public String toString() {
+    return "AfterAltitudeCommand{" +
+            "position=" + super.getPosition() +
+            ", altitude=" + altitude +
+            '}';
+  }
 }

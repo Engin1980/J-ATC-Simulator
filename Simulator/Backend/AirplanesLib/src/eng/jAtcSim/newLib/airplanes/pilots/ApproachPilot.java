@@ -95,6 +95,8 @@ public class ApproachPilot extends Pilot {
     }
 
     this.gaRouteCommands = approach.getGaRoute().getRouteCommands().toList();
+
+    EAssert.isTrue(this.stages.getLast().getBehavior() instanceof LandingBehavior, "The last approach stage should be with landing behavior.");
   }
 
   public SpeechList<ICommand> getGoAroundRouting() {
@@ -238,7 +240,7 @@ public class ApproachPilot extends Pilot {
 
     double hdg = RadialCalculator.getHeadingToFollowRadial(rdr.getCoordinate(),
             rdr.getRouting().getAssignedRunwayThreshold().getOtherThreshold().getCoordinate(),
-            rdr.getRouting().getAssignedRunwayThreshold().getCourse(), 1);
+            rdr.getRouting().getAssignedRunwayThreshold().getCourse(), rdr.getSha().getSpeed());
 
     wrt.setTargetHeading(new HeadingNavigator(hdg, LeftRightAny.any));
   }

@@ -6,7 +6,6 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -128,10 +127,10 @@ public class AfterCommandList {
         ret = Math.abs(trgAlt - altitudeInFt) < 100;
         break;
       case above:
-        ret = altitudeInFt > trgAlt;
+        ret = altitudeInFt >= (trgAlt - 100);
         break;
       case below:
-        ret = altitudeInFt < trgAlt;
+        ret = altitudeInFt <= (trgAlt + 100);
         break;
       default:
         throw new UnsupportedOperationException();

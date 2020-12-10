@@ -146,9 +146,11 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   }
 
   private void addNewSpeeches(SpeechList<IForPlaneSpeech> speeches) {
+    if (speeches.isEmpty()) return;
+
     this.queue.newRandomDelay();
     SpeechList<ICommand> tmp = new SpeechList<>(speeches.whereItemClassIs(ICommand.class, true));
-    tryExpandThenCommands(tmp);
+    tmp = tryExpandThenCommands(tmp);
     for (ICommand speech : tmp) {
       this.queue.add(speech);
     }

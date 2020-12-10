@@ -244,6 +244,11 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
                             (int) Headings.add(context.threshold.course, 16))),
             PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, context.airport.altitude + 150)
     ));
+    stages.add(ApproachStage.create(
+            LandingBehavior.create(),
+            new NeverCondition(),
+            new NeverCondition()
+    ));
 
     GaRoute gaRoute = new GaRoute(EList.of(
             ChangeAltitudeCommand.create(context.airport.altitude + 1500),
@@ -253,7 +258,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     Approach app = new Approach(ApproachType.visual,
             context.airport.altitude + 1500,
             aes,
-            EList.of(ChangeAltitudeCommand.create(context.airport.altitude + 1500)),
+            new EList<>(),
             stages,
             gaRoute);
 

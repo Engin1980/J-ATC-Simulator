@@ -25,7 +25,7 @@ public class ApplicationManager {
     } else if (speech instanceof ICommand) {
       ICommand command = (ICommand) speech;
       CommandApplication ca = cmdApps.tryGet(command.getClass());
-      assert ca != null : "Unknown application. Probably not added into cmdApps list?";
+      assert ca != null : "Unknown application. Probably not added into cmdApps list?: " + command.getClass();
       assert plane != null;
       assert command != null;
       ret = ca.confirm(plane, command, checkStateSanity, checkCommandSanity);

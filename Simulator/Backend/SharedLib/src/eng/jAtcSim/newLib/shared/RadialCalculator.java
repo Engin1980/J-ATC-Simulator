@@ -1,6 +1,5 @@
 package eng.jAtcSim.newLib.shared;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -38,7 +37,7 @@ public class RadialCalculator {
 
   private final static double ALIGNED_TO_RADIAL_LINE_DISTANCE = 0.25;
   private final static double CLOSE_TO_RADIAL_LINE_DISTANCE = 1.0;
-  private final static double CAPTURE_AGGRESIVITY = 10000;
+  private final static double CAPTURE_AGGRESIVITY = 1;
   private static final double CUSTOM_EXTENSION_TO_SUPPRESS_WIND_AND_OTHER_INFLUENCES = 0.05;
 
   public static double getHeadingToFollowRadial(Coordinate currentPosition, Coordinate fix, double radial,
@@ -52,37 +51,16 @@ public class RadialCalculator {
     double ret;
 
     LeftRight sideToRadialLine = getSideFromRadial(currentPosition, fix, radial);
-    double distanceToRadialLine = evaluateDistanceToRadialLine2(currentPosition, sideToRadialLine, fix, radial);
+    double distanceToRadialLine = Coordinates.getDistanceToRadialInNM(currentPosition, fix, radial);
     double turnRadius = calculateTurnRadius(speedInKt);
 
-    eRadialLocation radialLocation;
-    if (distanceToRadialLine < ALIGNED_TO_RADIAL_LINE_DISTANCE)
-      radialLocation = eRadialLocation.aligned;
-    else if (distanceToRadialLine < CLOSE_TO_RADIAL_LINE_DISTANCE)
-      radialLocation = eRadialLocation.capturing;
-    else if (distanceToRadialLine < (turnRadius + CUSTOM_EXTENSION_TO_SUPPRESS_WIND_AND_OTHER_INFLUENCES))
-      radialLocation = eRadialLocation.close;
-    else
-      radialLocation = eRadialLocation.far;
+    double turnRange = Math.min(distanceToRadialLine / turnRadius, 1);
 
-    switch (radialLocation) {
-      case aligned:
-        ret = getHeadingInAlignment(radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(10, maxHeadingDifference));
-        break;
-      case capturing:
-        ret = getHeadingInAlignment(radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(15, maxHeadingDifference));
-        break;
-      case close:
-        ret = getHeadingInAlignment(radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(30, maxHeadingDifference));
-        break;
-      case far:
-        ret = getHeadingInAlignment(radial, distanceToRadialLine, sideToRadialLine, (int) Math.min(90, maxHeadingDifference));
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(radialLocation);
-    }
-
-    ret = Headings.to(ret);
+    double headingAddition = turnRange * 90;
+    ret = Headings.add(
+            radial,
+            sideToRadialLine == LeftRight.left ? headingAddition : -headingAddition
+    );
     return ret;
   }
 
@@ -101,9 +79,9 @@ public class RadialCalculator {
     double headingDifference = distance * CAPTURE_AGGRESIVITY;
     headingDifference = Math.min(headingDifference, maxDifference);
     if (side == LeftRight.left)
-      ret = radial - headingDifference;
+      ret = Headings.add(radial, headingDifference);
     else
-      ret = radial + headingDifference;
+      ret = Headings.add(radial, -headingDifference);
     return ret;
   }
 
