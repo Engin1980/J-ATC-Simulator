@@ -34,7 +34,7 @@ public class GoAroundCommandApplication extends CommandApplication<GoAroundComma
   protected ApplicationResult adjustAirplane(Airplane plane, GoAroundCommand c) {
     ApplicationResult ret = new ApplicationResult();
 
-    plane.getWriter().goAround(GoingAroundNotification.GoAroundReason.atcDecision);
+    plane.getWriter().goAround(GoingAroundNotification.GoAroundReason.orderedByAtc);
 
     return ret;
   }

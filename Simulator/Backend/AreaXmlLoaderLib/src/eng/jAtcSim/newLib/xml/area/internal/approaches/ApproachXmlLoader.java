@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.xml.area.internal.approaches;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
@@ -13,8 +14,10 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
+import eng.jAtcSim.newLib.area.approaches.ApproachErrorCondition;
 import eng.jAtcSim.newLib.area.approaches.ApproachStage;
 import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialWithDescentBehavior;
+import eng.jAtcSim.newLib.area.approaches.behaviors.FlyToPointWithDescentBehavior;
 import eng.jAtcSim.newLib.area.approaches.behaviors.LandingBehavior;
 import eng.jAtcSim.newLib.area.approaches.conditions.*;
 import eng.jAtcSim.newLib.area.approaches.conditions.locations.FixRelatedLocation;
@@ -28,6 +31,7 @@ import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
@@ -176,25 +180,22 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
               PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
               RunwayThresholdVisibleCondition.create()
       );
-      ICondition errorCondition = AggregatingCondition.create(
-              AggregatingCondition.eConditionAggregator.or,
-              PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
-              PlaneOrderedAltitudeDifferenceCondition.create(null, 1000),
-              createAltitudeDifferenceRestriction(context.airport.altitude + 1800, 300, 500),
-              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 1000, 16)
+      ISet<ApproachErrorCondition> errs = ApproachErrorCondition.createSet(
+              PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)), GoingAroundNotification.GoAroundReason.decisionPointRunwayNotInSight,
+              createAltitudeDifferenceRestriction(context.airport.altitude + 1800, 300, 500), GoingAroundNotification.GoAroundReason.unstabilizedAltitude,
+              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 1000, 16), GoingAroundNotification.GoAroundReason.unstabilizedHeading
       );
       stages.add(ApproachStage.create(
               "GNSS radial " + context.airport.icao + ":" + context.threshold.name,
               FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.declination, context.airport.altitude, slope),
               exitCondition,
-              errorCondition));
+              errs));
     }
     {
       // landing stage
       stages.add(ApproachStage.create(
               "GNSS landing " + context.airport.icao + ":" + context.threshold.name,
               LandingBehavior.create(),
-              new NeverCondition(),
               new NeverCondition()));
     }
 
@@ -230,6 +231,9 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     }
 
     IList<ApproachStage> stages = new EList<>();
+    ISet<ApproachErrorCondition> errs = ApproachErrorCondition.createSet(
+            PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, context.airport.altitude + 150), GoingAroundNotification.GoAroundReason.unstabilizedHeading
+    );
     stages.add(ApproachStage.create(
             "Visual-default final descend",
             FlyRadialWithDescentBehavior.create(context.threshold.coordinate, context.threshold.course, context.airport.declination,
@@ -239,12 +243,11 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
                     PlaneShaCondition.create(PlaneShaCondition.eType.heading,
                             (int) Headings.add(context.threshold.course, -16),
                             (int) Headings.add(context.threshold.course, 16))),
-            PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, context.airport.altitude + 150)
+            errs
     ));
     stages.add(ApproachStage.create(
             "Visual-default landing",
             LandingBehavior.create(),
-            new NeverCondition(),
             new NeverCondition()
     ));
 
@@ -313,21 +316,21 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
 
   private IList<ApproachStage> getDefaultVisualDownwindStages(Coordinate downwindEndPoint, double runwayCourse, int downwindEndPointAltitude) {
     IList<ApproachStage> ret = new EList<>();
-    double DECLINATION_HACK = 0;
+
+    ISet<ApproachErrorCondition> errs = ApproachErrorCondition.createSet(
+            PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, downwindEndPointAltitude), GoingAroundNotification.GoAroundReason.unstabilizedHeading
+    );
+
     ret.add(ApproachStage.create(
             "Visual-default downwind",
-
-            tady to nahradit fly to point stagou with descnd, ne radialou, ta se chova blbe.
-            FlyRadialWithDescentBehavior.create(downwindEndPoint,
-                    (int) Headings.getOpposite(runwayCourse),
-                    DECLINATION_HACK,
-                    downwindEndPointAltitude,
-                    DEFAULT_SLOPE),
+            FlyToPointWithDescentBehavior.create(downwindEndPoint,
+                    downwindEndPointAltitude, convertGlidePathDegreesToSlope(DEFAULT_SLOPE)),
             FixRelatedLocation.create(downwindEndPoint,
                     (int) Headings.add(runwayCourse, 90),
                     (int) Headings.add(runwayCourse, -90),
                     50),
-            PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, downwindEndPointAltitude)));
+            errs
+    ));
     return ret;
   }
 
@@ -432,24 +435,25 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
                         null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
                 RunwayThresholdVisibleCondition.create()
         );
-        ICondition errorCondition = AggregatingCondition.create(
-                AggregatingCondition.eConditionAggregator.or,
-                PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)), // is below mda
+        ISet<ApproachErrorCondition> errs = ApproachErrorCondition.createSet(
+                PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(daA, daB, daC, daD)),
+                GoingAroundNotification.GoAroundReason.decisionPointRunwayNotInSight,
+                createAltitudeDifferenceRestriction(context.airport.altitude + 1800, 300, 500),
+                GoingAroundNotification.GoAroundReason.unstabilizedAltitude,
                 createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 1000, 16),
-                createAltitudeDifferenceRestriction(context.airport.altitude + 1800, 300, 500)
+                GoingAroundNotification.GoAroundReason.unstabilizedHeading
         );
         stages.add(ApproachStage.create(
                 type + " final",
                 FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.declination, context.airport.altitude, slope),
                 exitCondition,
-                errorCondition));
+                errs));
       }
       {
         // landing stage
         stages.add(ApproachStage.create(
                 type + " landing",
                 LandingBehavior.create(),
-                new NeverCondition(),
                 new NeverCondition()));
       }
 
@@ -535,10 +539,9 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
                       IntegerPerCategoryValue.create(mdaA + 500, mdaB + 500, mdaC + 500, mdaD + 500)),
               RunwayThresholdVisibleCondition.create()
       );
-      ICondition errorCondition = AggregatingCondition.create(
-              AggregatingCondition.eConditionAggregator.or,
-              PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(mdaA, mdaB, mdaC, mdaD)),
-              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 500, 16)
+      ISet<ApproachErrorCondition> errs = ApproachErrorCondition.createSet(
+              PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, IntegerPerCategoryValue.create(mdaA, mdaB, mdaC, mdaD)), GoingAroundNotification.GoAroundReason.decisionPointRunwayNotInSight,
+              createNotStabilizedApproachErrorCondition(radial, context.airport.altitude + 500, 16), GoingAroundNotification.GoAroundReason.unstabilizedHeading
       );
 
       double slope =
@@ -547,14 +550,13 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
               approachType + " final",
               FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.declination, context.airport.altitude, slope),
               exitCondition,
-              errorCondition));
+              errs));
     }
     {
       // landing stage
       stages.add(ApproachStage.create(
               approachType + " landing",
               LandingBehavior.create(),
-              new NeverCondition(),
               new NeverCondition()));
     }
 

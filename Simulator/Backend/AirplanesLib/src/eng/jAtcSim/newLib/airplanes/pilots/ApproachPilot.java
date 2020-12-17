@@ -14,11 +14,11 @@ import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
+import eng.jAtcSim.newLib.area.approaches.ApproachErrorCondition;
 import eng.jAtcSim.newLib.area.approaches.ApproachStage;
 import eng.jAtcSim.newLib.area.approaches.behaviors.*;
 import eng.jAtcSim.newLib.area.approaches.conditions.FlyRouteBehaviorEmptyCondition;
 import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
-import eng.jAtcSim.newLib.area.approaches.conditions.NeverCondition;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.RadialCalculator;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
@@ -37,11 +37,11 @@ public class ApproachPilot extends Pilot {
 
   private static final int MAX_HEADING_DIFFERENCE = 90;
   private static final int FLARE_HEIGHT = 100;
-  public static final int SHORT_FINAL_HEIGHT = 1000;
-  public static final int SHORT_FINAL_DISTANCE = 3;
-  public static final int LONG_FINAL_HEIGHT = 2000;
-  public static final int LONG_FINAL_DISTANCE = 6;
-  public static final int TOUCHDOWN_SIMULATED_HEIGHT = 20;
+  private static final int SHORT_FINAL_HEIGHT = 1000;
+  private static final int SHORT_FINAL_DISTANCE = 3;
+  private static final int LONG_FINAL_HEIGHT = 2000;
+  private static final int LONG_FINAL_DISTANCE = 6;
+  private static final int TOUCHDOWN_SIMULATED_HEIGHT = 20;
 
   public static ApproachPilot createEmptyToLoad(Airplane airplane) {
     return new ApproachPilot(airplane);
@@ -89,8 +89,7 @@ public class ApproachPilot extends Pilot {
       ApproachStage iafStage = ApproachStage.create(
               "Initial aproach commands",
               frb,
-              new FlyRouteBehaviorEmptyCondition(),
-              new NeverCondition());
+              new FlyRouteBehaviorEmptyCondition());
       this.stages.insert(0, iafStage);
     }
 
@@ -153,6 +152,14 @@ public class ApproachPilot extends Pilot {
     wrt.setTargetHeading(new HeadingNavigator(heading, LeftRightAny.any));
   }
 
+  private void flyToPointBehavior(FlyToPointBehavior behavior) {
+    if (height > FLARE_HEIGHT && behavior instanceof FlyToPointWithDescentBehavior) {
+      flyToPointWithDescentBehavior((FlyToPointWithDescentBehavior) behavior);
+    }
+    double heading = Coordinates.getBearing(rdr.getCoordinate(), behavior.getCoordinate());
+    wrt.setTargetHeading(new HeadingNavigator(heading, LeftRightAny.any));
+  }
+
   private void updateApproachState() {
     AirplaneState newState;
     if (this.stages.getFirst().getBehavior() instanceof FlyIafRouteBehavior)
@@ -184,6 +191,15 @@ public class ApproachPilot extends Pilot {
       wrt.setTargetAltitude(altitudeInt);
   }
 
+  private void flyToPointWithDescentBehavior(FlyToPointWithDescentBehavior behavior) {
+    //TODO vyřešit identické s radialou
+    double distance = Coordinates.getDistanceInNM(behavior.getCoordinate(), rdr.getCoordinate());
+    double altitudeDouble = behavior.getAltitudeFixValue() + behavior.getSlope() * 6076.1 * distance; // http://www.aviationchief.com/ils.html
+    int altitudeInt = (int) Math.round(altitudeDouble);
+    if (altitudeInt < rdr.getSha().getTargetAltitude())
+      wrt.setTargetAltitude(altitudeInt);
+  }
+
   private void flyRouteBehavior(FlyRouteBehavior behavior) {
     if (behavior.isApplied() == false) {
       wrt.setRouting(behavior.getCommands());
@@ -198,6 +214,8 @@ public class ApproachPilot extends Pilot {
     IApproachBehavior beh = stage.getBehavior();
     if (beh instanceof FlyRadialBehavior)
       flyRadialBehavior((FlyRadialBehavior) beh);
+    else if (beh instanceof FlyToPointBehavior)
+      flyToPointBehavior((FlyToPointBehavior) beh);
     else if (beh instanceof FlyRouteBehavior)
       flyRouteBehavior((FlyRouteBehavior) beh);
     else if (beh instanceof LandingBehavior)
@@ -210,8 +228,9 @@ public class ApproachPilot extends Pilot {
       return;
     }
 
-    if (isConditionTrue(stage.getErrorCondition())) {
-      goAround(GoingAroundNotification.GoAroundReason.notStabilizedAirplane);
+    ApproachErrorCondition err = stage.getErrorConditions().tryGetFirst(q->isConditionTrue(q.getCondition()), null);
+    if (err != null){
+      goAround(err.getGoAroundReason());
       return;
     }
 
@@ -220,7 +239,7 @@ public class ApproachPilot extends Pilot {
         wrt.sendMessage(new EstablishedOnApproachNotification(this.threshold.getName()));
         this.switchToTowerRequested = true;
       } else if (height < 500) {
-        goAround(GoingAroundNotification.GoAroundReason.noLandingClearance);
+        goAround(GoingAroundNotification.GoAroundReason.notOnTowerAtc);
         return;
       }
     }
@@ -229,6 +248,18 @@ public class ApproachPilot extends Pilot {
   }
 
   private void flyLandingBehavior(LandingBehavior beh) {
+
+    if (isAfterRunwayThreshold()) {
+      if (height > 130) {
+        goAround(GoingAroundNotification.GoAroundReason.unstabilizedAltitude);
+        return;
+      }
+      if (Coordinates.getDistanceToRadialInKm(rdr.getCoordinate(), threshold.getCoordinate(), threshold.getCourse()) > 0.1){
+        goAround(GoingAroundNotification.GoAroundReason.unstabilizedRadial);
+        return;
+      }
+    }
+
     if (rdr.getState() != AirplaneState.landed) {
       if (height < TOUCHDOWN_SIMULATED_HEIGHT) {
         wrt.setState(AirplaneState.landed);
@@ -243,6 +274,15 @@ public class ApproachPilot extends Pilot {
             rdr.getRouting().getAssignedRunwayThreshold().getCourse(), rdr.getSha().getSpeed());
 
     wrt.setTargetHeading(new HeadingNavigator(hdg, LeftRightAny.any));
+  }
+
+  private boolean isAfterRunwayThreshold() {
+    ActiveRunwayThreshold threshold = rdr.getRouting().getAssignedRunwayThreshold();
+    double radialToThreshold = Coordinates.getBearing(rdr.getCoordinate(), threshold.getCoordinate());
+    return Headings.isBetween(
+            Headings.add(threshold.getOtherThreshold().getCourse(), -90),
+            radialToThreshold,
+            Headings.add(threshold.getOtherThreshold().getCourse(), 90));
   }
 
   @Override

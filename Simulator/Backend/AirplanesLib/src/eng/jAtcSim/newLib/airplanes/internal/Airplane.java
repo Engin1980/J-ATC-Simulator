@@ -323,10 +323,11 @@ public class Airplane {
 
       boolean isAtcFail = EnumUtils.is(reason,
               new GoingAroundNotification.GoAroundReason[]{
-                      GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach,
-                      GoingAroundNotification.GoAroundReason.noLandingClearance,
+                      GoingAroundNotification.GoAroundReason.unknownUnusedProbablyBut__lostTrafficSeparationInApproach,
+                      GoingAroundNotification.GoAroundReason.notOnTowerAtc,
                       GoingAroundNotification.GoAroundReason.incorrectApproachEnter,
-                      GoingAroundNotification.GoAroundReason.notStabilizedAirplane
+                      GoingAroundNotification.GoAroundReason.unstabilizedAltitude,
+                      GoingAroundNotification.GoAroundReason.unstabilizedHeading
               });
       if (isAtcFail)
         this.addExperience(

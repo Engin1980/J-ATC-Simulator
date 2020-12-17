@@ -1,6 +1,9 @@
 package eng.jAtcSim.newLib.area.approaches;
 
 import eng.eSystem.collections.EDistinctList;
+import eng.eSystem.collections.ESet;
+import eng.eSystem.collections.IReadOnlySet;
+import eng.eSystem.collections.ISet;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.approaches.behaviors.IApproachBehavior;
 import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
@@ -8,12 +11,17 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class ApproachStage {
-  public static ApproachStage create(String name, IApproachBehavior behavior, ICondition exitCondition, ICondition errorCondition) {
-    return new ApproachStage(behavior, exitCondition, errorCondition, name);
+  public static ApproachStage create(String name, IApproachBehavior behavior, ICondition exitCondition, ApproachErrorCondition ... errorCondition) {
+    ESet<ApproachErrorCondition> set = new ESet<>(errorCondition);
+    return new ApproachStage(behavior, exitCondition, set, name);
+  }
+
+  public static ApproachStage create(String name, IApproachBehavior behavior, ICondition exitCondition, ISet<ApproachErrorCondition> errorConditions) {
+    return new ApproachStage(behavior, exitCondition, errorConditions, name);
   }
 
   private final ICondition exitCondition;
-  private final ICondition errorCondition;
+  private final ISet<ApproachErrorCondition> errorCondition;
   private final IApproachBehavior behavior;
   private final String name;
 
@@ -29,13 +37,13 @@ public class ApproachStage {
     PostContracts.register(this, () -> this.errorCondition != null);
   }
 
-  private ApproachStage(IApproachBehavior behavior, ICondition exitCondition, ICondition errorCondition, String name) {
+  private ApproachStage(IApproachBehavior behavior, ICondition exitCondition, ISet<ApproachErrorCondition> errorConditions, String name) {
     EAssert.Argument.isNotNull(behavior, "behavior");
     EAssert.Argument.isNotNull(exitCondition, "exitCondition");
-    EAssert.Argument.isNotNull(errorCondition, "errorCondition");
+    EAssert.Argument.isNotNull(errorConditions, "errorConditions");
 
     this.exitCondition = exitCondition;
-    this.errorCondition = errorCondition;
+    this.errorCondition = errorConditions;
     this.behavior = behavior;
     this.name = name;
   }
@@ -44,7 +52,7 @@ public class ApproachStage {
     return behavior;
   }
 
-  public ICondition getErrorCondition() {
+  public ISet<ApproachErrorCondition> getErrorConditions() {
     return errorCondition;
   }
 

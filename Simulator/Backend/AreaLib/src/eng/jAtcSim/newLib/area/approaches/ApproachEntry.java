@@ -10,7 +10,10 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.behaviors.FlyIafRouteBehavior;
 import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialBehavior;
-import eng.jAtcSim.newLib.area.approaches.conditions.*;
+import eng.jAtcSim.newLib.area.approaches.conditions.AggregatingCondition;
+import eng.jAtcSim.newLib.area.approaches.conditions.FlyRouteBehaviorEmptyCondition;
+import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
+import eng.jAtcSim.newLib.area.approaches.conditions.PlaneShaCondition;
 import eng.jAtcSim.newLib.area.approaches.conditions.locations.FixRelatedLocation;
 import eng.jAtcSim.newLib.area.contextLocal.Context;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
@@ -50,9 +53,8 @@ public class ApproachEntry {
     ApproachStage iafStage = ApproachStage.create(
             "IAF via " + iafRoute.getNavaid(),
             frb,
-            new FlyRouteBehaviorEmptyCondition(),
-            new NeverCondition()
-            );
+            new FlyRouteBehaviorEmptyCondition()
+    );
 
     ICondition entryCondition = createApproachEntryConditionForRoute(iafRoute);
 
@@ -113,19 +115,6 @@ public class ApproachEntry {
   private final PlaneCategoryDefinitions categoryDefinitions;
   private String tag;
 
-  public ApproachEntry withTag(String tag){
-    this.tag = tag;
-    return this;
-  }
-
-  public String getTag() {
-    return tag;
-  }
-
-  public void setTag(String tag) {
-    this.tag = tag;
-  }
-
   private ApproachEntry(ICondition entryCondition, PlaneCategoryDefinitions categoryDefinitions, IList<ApproachStage> entryStages) {
     EAssert.Argument.isNotNull(entryCondition, "entryCondition");
     EAssert.Argument.isNotNull(categoryDefinitions, "categoryDefinitions");
@@ -144,7 +133,20 @@ public class ApproachEntry {
     return entryStages;
   }
 
+  public String getTag() {
+    return tag;
+  }
+
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
+
   public boolean isForCategory(char c) {
     return this.categoryDefinitions.contains(c);
+  }
+
+  public ApproachEntry withTag(String tag) {
+    this.tag = tag;
+    return this;
   }
 }

@@ -5,13 +5,17 @@ import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 public class GoingAroundNotification implements IFromPlaneSpeech {
 
   public enum GoAroundReason{
-    runwayNotInSight,
+    decisionPointRunwayNotInSight,
     incorrectApproachEnter,
-    notStabilizedAirplane,
-    noLandingClearance,
-    windGustBeforeTouchdown,
-    lostTrafficSeparationInApproach,
-    atcDecision
+    unstabilizedAltitude,
+    unstabilizedHeading,
+    unstabilizedRadial,
+    notOnTowerAtc,
+    //    notStabilizedAirplane,
+    //    noLandingClearance,
+    //    windGustBeforeTouchdown,
+    unknownUnusedProbablyBut__lostTrafficSeparationInApproach,
+    orderedByAtc
   }
 
   public GoAroundReason reason;
