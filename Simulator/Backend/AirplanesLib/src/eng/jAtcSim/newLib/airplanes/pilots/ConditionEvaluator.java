@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
@@ -38,6 +39,13 @@ public class ConditionEvaluator {
 
   private static boolean checkTrue(RunwayThresholdVisibleCondition condition, IAirplane plane) {
     Weather w = Context.getWeather().getWeather();
+    if (w.getVisibilityInMeters() < 9999) {
+      double dist = Coordinates.getDistanceInKm(
+              plane.getCoordinate(),
+              plane.getRouting().getAssignedRunwayThreshold().getCoordinate());
+      if (dist > w.getVisibilityInMeters())
+        return false;
+    }
     if (w.getCloudBaseInFt() > plane.getSha().getAltitude())
       return true;
     else

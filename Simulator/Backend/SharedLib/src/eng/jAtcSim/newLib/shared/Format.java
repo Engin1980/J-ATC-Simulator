@@ -89,25 +89,26 @@ public class Format {
     }
   }
 
-  public static class PlaneInfo{
-    public static String toDepartureArrivalChar(boolean isDeparture) {
-      if (isDeparture) {
-        return "▲";
-      } else {
-        return "▼";
-      }
-    }
-
-
-  }
+  // TODEL
+//  public static class PlaneInfo{
+//    public static String toDepartureArrivalChar(boolean isDeparture) {
+//      if (isDeparture) {
+//        return "▲";
+//      } else {
+//        return "▼";
+//      }
+//    }
+//
+//
+//  }
 
   public static class Flight{
     public static char getDepartureArrivalChar(DepartureArrival dir){
       switch (dir) {
         case departure:
-          return '↗';
+          return '▲'; //'↗';
         case arrival:
-          return '↘';
+          return '▼'; //'↘';
         default:throw new EEnumValueUnsupportedException(dir);
       }
     }
@@ -116,18 +117,8 @@ public class Format {
   //TODO fix this to be get from getActiveAirport().getTransitionAltitude()
   private static final int TRANSITION_ALTITUDE = 5000;
 
-
-//  public static String callsignS(Callsign value) {
-//    return value.toString();
-//  }
-
   public static String formatSqwk(Squawk value) {
     return value.toString();
   }
-
-//  public static String formatTypeCategory(AirplaneType value) {
-//    return Character.toString(value.category);
-//  }
-
 
 }

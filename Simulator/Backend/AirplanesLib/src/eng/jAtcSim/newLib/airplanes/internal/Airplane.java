@@ -619,7 +619,7 @@ public class Airplane {
 
     logToFdr();
 
-    bublej();
+    pomocnaFunkceKteraVypisujeAktualniValidniVstupyBody();
 
     //printAfterCommands();
     //this.recorder.logPostponedAfterSpeeches(this.afterCommands);
@@ -641,17 +641,18 @@ public class Airplane {
   }
 
   //TODEL
-  private void bublej() {
-    ActiveRunwayThreshold threshold = rdr.getRouting().getAssignedRunwayThreshold();
-    if (threshold == null) return;
-    System.out.println(Context.getShared().getNow().toStamp().toDayTimeString());
-    for (Approach approach : threshold.getApproaches()) {
-      for (ApproachEntry entry : approach.getEntries().where(q -> q.isForCategory(rdr.getType().category))) {
-        if (ConditionEvaluator.check(entry.getEntryCondition(), rdr)) {
-          System.out.println(sf("%s %s, %s", threshold.getName(), approach.getType(), entry.getTag()));
-        }
-      }
-    }
+  private void pomocnaFunkceKteraVypisujeAktualniValidniVstupyBody() {
+//    ActiveRunwayThreshold threshold = rdr.getRouting().getAssignedRunwayThreshold();
+//    if (threshold == null) return;
+//    System.out.println(Context.getShared().getNow().toStamp().toDayTimeString());
+//    for (Approach approach : threshold.getApproaches()) {
+//      for (ApproachEntry entry : approach.getEntries().where(q -> q.isForCategory(rdr.getType().category))) {
+//
+//        if (ConditionEvaluator.check(entry.getEntryConditions(), rdr)) {
+//          System.out.println(sf("%s %s, %s", threshold.getName(), approach.getType(), entry.getTag()));
+//        }
+//      }
+//    }
   }
 
   private void flushSpeeches() {
@@ -712,6 +713,4 @@ public class Airplane {
 
     this.coordinate = newC;
   }
-
-
 }

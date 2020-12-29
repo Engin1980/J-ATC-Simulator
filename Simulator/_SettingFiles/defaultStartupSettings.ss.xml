@@ -46,5 +46,5 @@
       </movementsForHours>
     </customTraffic>
   </traffic>
-  <weather cloudBaseAltitudeFt="8000" cloudBaseProbability="0.75" snowState="intensive" type="online" visibilityInM="7000" windDirection="281" windSpeed="31"/>
+  <weather cloudBaseAltitudeFt="8000" cloudBaseProbability="0.75" snowState="intensive" type="user" visibilityInM="200" windDirection="281" windSpeed="31"/>
 </startupSettings>

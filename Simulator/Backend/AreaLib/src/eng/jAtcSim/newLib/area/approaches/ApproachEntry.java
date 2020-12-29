@@ -1,8 +1,6 @@
 package eng.jAtcSim.newLib.area.approaches;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.*;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -10,9 +8,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.behaviors.FlyIafRouteBehavior;
 import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialBehavior;
-import eng.jAtcSim.newLib.area.approaches.conditions.AggregatingCondition;
 import eng.jAtcSim.newLib.area.approaches.conditions.FlyRouteBehaviorEmptyCondition;
-import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 import eng.jAtcSim.newLib.area.approaches.conditions.PlaneShaCondition;
 import eng.jAtcSim.newLib.area.approaches.conditions.locations.FixRelatedLocation;
 import eng.jAtcSim.newLib.area.contextLocal.Context;
@@ -38,12 +34,12 @@ public class ApproachEntry {
     }
   }
 
-  public static ApproachEntry create(ICondition entryCondition) {
-    return new ApproachEntry(entryCondition, PlaneCategoryDefinitions.getAll(), null);
+  public static ApproachEntry create(ISet<ApproachEntryCondition> entryConditions) {
+    return new ApproachEntry(entryConditions, PlaneCategoryDefinitions.getAll(), null);
   }
 
-  public static ApproachEntry create(ICondition entryCondition, PlaneCategoryDefinitions categoryDefinitions, IList<ApproachStage> entryStages) {
-    return new ApproachEntry(entryCondition, categoryDefinitions, entryStages);
+  public static ApproachEntry create(ISet<ApproachEntryCondition> entryConditions, PlaneCategoryDefinitions categoryDefinitions, IList<ApproachStage> entryStages) {
+    return new ApproachEntry(entryConditions, categoryDefinitions, entryStages);
   }
 
   public static ApproachEntry createIaf(IafRoute iafRoute) {
@@ -56,9 +52,9 @@ public class ApproachEntry {
             new FlyRouteBehaviorEmptyCondition()
     );
 
-    ICondition entryCondition = createApproachEntryConditionForRoute(iafRoute);
+    ISet<ApproachEntryCondition> entryConditions = createApproachEntryConditionForRoute(iafRoute);
 
-    return new ApproachEntry(entryCondition, iafRoute.getCategory(), EList.of(iafStage));
+    return new ApproachEntry(entryConditions, iafRoute.getCategory(), EList.of(iafStage));
   }
 
   private static HeadingAndCoordinate getOptimalEntryHeadingForRoute(IafRoute route) {
@@ -96,37 +92,46 @@ public class ApproachEntry {
     return ret;
   }
 
-  private static ICondition createApproachEntryConditionForRoute(IafRoute route) {
+  private static ISet<ApproachEntryCondition> createApproachEntryConditionForRoute(IafRoute route) {
     //IDEA this should somehow allow set custom entry location?
     HeadingAndCoordinate hac = getOptimalEntryHeadingForRoute(route);
     int fromRadial = (int) Headings.add(hac.heading, -115);
     int toRadial = (int) Headings.add(hac.heading, 115);
 
-    ICondition ret;
-    ret = AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
+    ISet<ApproachEntryCondition> ret = new ESet<>();
+    ApproachEntryCondition aec;
+
+    aec = ApproachEntryCondition.create(
             FixRelatedLocation.create(route.getNavaid().getCoordinate(), 3),
-            PlaneShaCondition.create(PlaneShaCondition.eType.heading, fromRadial, toRadial));
+            ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
+    ret.add(aec);
+
+    aec = ApproachEntryCondition.create(
+            PlaneShaCondition.create(
+            PlaneShaCondition.eType.heading, fromRadial, toRadial),
+            ApproachEntryCondition.ApproachRejectionReason.invalidHeading);
+    ret.add(aec);
 
     return ret;
   }
 
   private final IList<ApproachStage> entryStages = new EList<>();
-  private final ICondition entryCondition;
+  private final ISet<ApproachEntryCondition> entryConditions;
   private final PlaneCategoryDefinitions categoryDefinitions;
   private String tag;
 
-  private ApproachEntry(ICondition entryCondition, PlaneCategoryDefinitions categoryDefinitions, IList<ApproachStage> entryStages) {
-    EAssert.Argument.isNotNull(entryCondition, "entryCondition");
+  private ApproachEntry(ISet<ApproachEntryCondition> entryConditions, PlaneCategoryDefinitions categoryDefinitions, IList<ApproachStage> entryStages) {
+    EAssert.Argument.isNotNull(entryConditions, "entryConditions");
     EAssert.Argument.isNotNull(categoryDefinitions, "categoryDefinitions");
 
-    this.entryCondition = entryCondition;
+    this.entryConditions = entryConditions;
     if (entryStages != null)
       this.entryStages.addMany(entryStages);
     this.categoryDefinitions = categoryDefinitions;
   }
 
-  public ICondition getEntryCondition() {
-    return entryCondition;
+  public ISet<ApproachEntryCondition> getEntryConditions() {
+    return entryConditions;
   }
 
   public IReadOnlyList<ApproachStage> getEntryStages() {

@@ -1,7 +1,10 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 
+import eng.eSystem.collections.ESet;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.ISet;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
@@ -12,6 +15,7 @@ import eng.jAtcSim.newLib.airplanes.pilots.ConditionEvaluator;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
+import eng.jAtcSim.newLib.area.approaches.ApproachEntryCondition;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
@@ -22,6 +26,9 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.UnableToEnter
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToApproachCommand;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
+interface IApproachInfo {
+}
 
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
 
@@ -40,10 +47,10 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     }
 
     ActiveRunwayThreshold rt = Context.getArea().getAirport().tryGetRunwayThreshold(c.getThresholdName());
-    ApproachInfo ai = ApproachInfo.create(rt, c.getType(), plane.getReader());
-    assert ai.status == ApproachInfo.Status.ok : "Error to obtain approach.";
-
-    plane.getWriter().clearedToApproach(ai.approach, ai.entry);
+    IApproachInfo ai = ApproachInfoFactory.create(rt, c.getType(), plane.getReader());
+    assert ai instanceof AcceptedApproachInfo : "Error to obtain approach.";
+    AcceptedApproachInfo aai = (AcceptedApproachInfo) ai;
+    plane.getWriter().clearedToApproach(aai.approach, aai.entry);
 
     return ret;
   }
@@ -57,31 +64,40 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
       ret = new PlaneRejection(c,
               "Cannot be cleared to approach. There is no runway designated as " + c.getThresholdName());
     } else {
-      ApproachInfo ai = ApproachInfo.create(rt, c.getType(), plane.getReader());
-      switch (ai.status) {
-        case noApproachAtAll:
-          ret = new PlaneRejection(c,
-                  sf("Cannot be cleared to approach. There is no approach for runway %s.",
-                          c.getType().toString(), rt.getName()));
-          break;
-        case noApproachKind:
-          ret = new PlaneRejection(c,
-                  sf("Cannot be cleared to approach. There is no %s approach for runway %s.",
-                          c.getType().toString(), rt.getName()));
-          break;
-        case noApproachForPlaneType:
-          ret = new PlaneRejection(c,
-                  sf("Cannot be cleared to approach. There is no %s approach for runway %s for our plane type.",
-                          c.getType().toString(), rt.getName()));
-          break;
-        case noApproachForPlaneLocation:
-          ret = new UnableToEnterApproachFromDifficultPosition(c, sf("We are not in the correct position to enter %s approach.", c.getType().toString()));
-          break;
-        case ok:
-          ret = null;
-          break;
-        default:
-          throw new EEnumValueUnsupportedException(ai.status);
+      IApproachInfo ai = ApproachInfoFactory.create(rt, c.getType(), plane.getReader());
+      if (ai instanceof AcceptedApproachInfo)
+        ret = null;
+      else {
+        RejectedApproachInfo rai = (RejectedApproachInfo) ai;
+        switch (rai.reason) {
+          case noApproachAtAll:
+            ret = new PlaneRejection(c,
+                    sf("Cannot be cleared to approach. There is no approach for runway %s.",
+                            c.getType().toString(), rt.getName()));
+            break;
+          case noApproachKind:
+            ret = new PlaneRejection(c,
+                    sf("Cannot be cleared to approach. There is no %s approach for runway %s.",
+                            c.getType().toString(), rt.getName()));
+            break;
+          case noApproachForPlaneType:
+            ret = new PlaneRejection(c,
+                    sf("Cannot be cleared to approach. There is no %s approach for runway %s for our plane type.",
+                            c.getType().toString(), rt.getName()));
+            break;
+          case invalidAltitude:
+            ret = new UnableToEnterApproachFromDifficultPosition(c, "We are too high.");
+            break;
+          case invalidHeading:
+            ret = new UnableToEnterApproachFromDifficultPosition(c, "We are heading wrong direction.");
+            break;
+          case invalidLocation:
+            ret = new UnableToEnterApproachFromDifficultPosition(c,
+                    sf("We are not in the correct position to enter %s approach.", c.getType().toString()));
+            break;
+          default:
+            throw new EEnumValueUnsupportedException(rai.reason);
+        }
       }
     }
     return ret;
@@ -105,59 +121,87 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
   }
 }
 
-class ApproachInfo {
-  public enum Status {
-    ok,
-    noApproachAtAll,
+class AcceptedApproachInfo implements IApproachInfo {
+  public final Approach approach;
+  public final ApproachEntry entry;
+
+  public AcceptedApproachInfo(ApproachEntry entry, Approach approach) {
+    EAssert.Argument.isNotNull(entry, "entry");
+    EAssert.Argument.isNotNull(approach, "approach");
+
+    this.entry = entry;
+    this.approach = approach;
+  }
+}
+
+class RejectedApproachInfo implements IApproachInfo {
+  public enum RejectionReason {
     noApproachKind,
     noApproachForPlaneType,
-    noApproachForPlaneLocation
+    noApproachAtAll,
+    invalidAltitude,
+    invalidHeading,
+    invalidLocation
   }
 
-  public static ApproachInfo create(ActiveRunwayThreshold threshold, ApproachType type,
-                                    IAirplane airplane
+  public final RejectionReason reason;
+
+  public RejectedApproachInfo(RejectionReason reason) {
+    this.reason = reason;
+  }
+}
+
+class ApproachInfoFactory {
+  public static IApproachInfo create(ActiveRunwayThreshold threshold, ApproachType type,
+                                     IAirplane airplane
   ) {
     IReadOnlyList<Approach> apps = threshold.getApproaches();
 
     // select all approaches
     if (apps.isEmpty())
-      return new ApproachInfo(Status.noApproachAtAll);
+      return new RejectedApproachInfo(RejectedApproachInfo.RejectionReason.noApproachAtAll);
 
     apps = apps.where(q -> q.getType() == type);
     if (apps.isEmpty())
-      return new ApproachInfo(Status.noApproachKind);
+      return new RejectedApproachInfo(RejectedApproachInfo.RejectionReason.noApproachKind);
 
     // select by type
     apps = apps.where(q -> q.getEntries().isAny(p -> p.isForCategory(airplane.getType().category)));
     if (apps.isEmpty())
-      return new ApproachInfo(Status.noApproachForPlaneType);
+      return new RejectedApproachInfo(RejectedApproachInfo.RejectionReason.noApproachForPlaneType);
 
-    // select by location
-    for (Approach app : apps) {
-      for (ApproachEntry entry : app.getEntries()) {
-        if (entry.isForCategory(airplane.getType().category) && ConditionEvaluator.check(entry.getEntryCondition(), airplane)) {
-          return new ApproachInfo(entry, app);
-        }
+    EAssert.isTrue(apps.size() <= 1, "Here it should be zero or one approach available only.");
+
+    Approach app = apps.getFirst();
+    ISet<ApproachEntryCondition.ApproachRejectionReason> rejections = new ESet<>();
+    for (ApproachEntry entry : app.getEntries()) {
+      IMap<ApproachEntryCondition, Boolean> entryResults = entry
+              .getEntryConditions()
+              .toMap(q -> ConditionEvaluator.check(q.getEntryCondition(), airplane));
+      if (entryResults.getValues().isAll(q -> q))
+        return new AcceptedApproachInfo(entry, app);
+      else {
+        ISet<ApproachEntryCondition.ApproachRejectionReason> rejectionReasons = entryResults
+                .where(q -> q.getValue() == false)
+                .toSet(q -> q.getKey().getRejectionReason());
+        if (rejectionReasons.contains(ApproachEntryCondition.ApproachRejectionReason.invalidLocation) == false)
+          rejections.addMany(rejectionReasons);
+        else
+          rejections.add(ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
       }
     }
 
-    return new ApproachInfo(Status.noApproachForPlaneLocation);
+    EAssert.isFalse(rejections.isEmpty());
+    return convertApproachRejectReasonToApproachInfo(rejections);
   }
 
-  public final Approach approach;
-  public final ApproachEntry entry;
-  public final Status status;
-
-  private ApproachInfo(ApproachEntry entry, Approach approach) {
-    this.status = Status.ok;
-    this.entry = entry;
-    this.approach = approach;
-  }
-
-  private ApproachInfo(Status status) {
-    EAssert.Argument.isTrue(status != Status.ok);
-    this.status = status;
-    this.entry = null;
-    this.approach = null;
+  private static IApproachInfo convertApproachRejectReasonToApproachInfo(ISet<ApproachEntryCondition.ApproachRejectionReason> rejections) {
+    if (rejections.contains(ApproachEntryCondition.ApproachRejectionReason.invalidAltitude))
+      return new RejectedApproachInfo(RejectedApproachInfo.RejectionReason.invalidAltitude);
+    else if (rejections.contains(ApproachEntryCondition.ApproachRejectionReason.invalidHeading))
+      return new RejectedApproachInfo(RejectedApproachInfo.RejectionReason.invalidHeading);
+    else
+      return new RejectedApproachInfo(RejectedApproachInfo.RejectionReason.invalidLocation);
   }
 }
+

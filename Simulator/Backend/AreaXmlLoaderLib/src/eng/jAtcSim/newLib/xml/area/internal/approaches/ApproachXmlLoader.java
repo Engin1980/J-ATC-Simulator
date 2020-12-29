@@ -1,9 +1,6 @@
 package eng.jAtcSim.newLib.xml.area.internal.approaches;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.collections.ISet;
+import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
@@ -12,10 +9,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Navaid;
-import eng.jAtcSim.newLib.area.approaches.Approach;
-import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
-import eng.jAtcSim.newLib.area.approaches.ApproachErrorCondition;
-import eng.jAtcSim.newLib.area.approaches.ApproachStage;
+import eng.jAtcSim.newLib.area.approaches.*;
 import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialWithDescentBehavior;
 import eng.jAtcSim.newLib.area.approaches.behaviors.FlyToPointWithDescentBehavior;
 import eng.jAtcSim.newLib.area.approaches.behaviors.LandingBehavior;
@@ -85,54 +79,79 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     return ret;
   }
 
-  private ICondition createApproachEntryConditionBetweenMaptAndFaf(String maptName, String fafName) {
+  private ISet<ApproachEntryCondition> createApproachEntryConditionBetweenMaptAndFaf(String maptName, String fafName) {
     Navaid faf = this.context.area.navaids.getWithPBD(fafName);
     Navaid mapt = this.context.area.navaids.getWithPBD(maptName);
     double radial = Coordinates.getBearing(faf.getCoordinate(), mapt.getCoordinate());
 
-    ICondition ret = AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
+    ISet<ApproachEntryCondition> ret = new ESet<>();
+    ApproachEntryCondition aec;
+
+    aec = ApproachEntryCondition.create(
             FixRelatedLocation.create(mapt.getCoordinate(),
                     (int) Headings.add(radial, -30),
                     (int) Headings.add(radial, 30),
                     MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH),
+            ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
+    ret.add(aec);
+
+    aec = ApproachEntryCondition.create(
             PlaneShaCondition.create(PlaneShaCondition.eType.heading,
                     (int) Headings.add(radial, -30),
-                    (int) Headings.add(radial, 30)));
+                    (int) Headings.add(radial, 30)),
+            ApproachEntryCondition.ApproachRejectionReason.invalidHeading);
+    ret.add(aec);
 
     return ret;
   }
 
-  private ICondition createApproachEntryConditionForFafByFafName(String fafName, int course) {
+  private ISet<ApproachEntryCondition> createApproachEntryConditionForFafByFafName(String fafName, int course) {
+    ISet<ApproachEntryCondition> ret = new ESet<>();
+    ApproachEntryCondition aec;
     Navaid navaid = context.area.navaids.getWithPBD(fafName);
 
-    ICondition ret = AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
+    aec = ApproachEntryCondition.create(
             FixRelatedLocation.create(navaid.getCoordinate(),
                     (int) Headings.add(course, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
                     (int) Headings.add(course, ENTRY_SECTOR_ONE_SIDE_ANGLE),
                     MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH),
+            ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
+    ret.add(aec);
+
+    aec = ApproachEntryCondition.create(
             PlaneShaCondition.create(PlaneShaCondition.eType.heading,
                     (int) Headings.add(course, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
-                    (int) Headings.add(course, ENTRY_SECTOR_ONE_SIDE_ANGLE))
-    );
+                    (int) Headings.add(course, ENTRY_SECTOR_ONE_SIDE_ANGLE)),
+            ApproachEntryCondition.ApproachRejectionReason.invalidHeading);
+    ret.add(aec);
 
     return ret;
   }
 
-  private ICondition createApproachEntryConditionForThresholdAndSlope(
+  private ISet<ApproachEntryCondition> createApproachEntryConditionForThresholdAndSlope(
           Coordinate coordinate, int coordinateAltitude, int radial, int altitude, double slope) {
     double dist = (altitude - coordinateAltitude) / slope / 6076.1;
     Coordinate fafCoordinate = Coordinates.getCoordinate(
             coordinate, Headings.getOpposite(radial), dist);
 
-    ICondition ret = AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
+    ISet<ApproachEntryCondition> ret = new ESet<>();
+    ApproachEntryCondition aec;
+
+    aec = ApproachEntryCondition.create(
             FixRelatedLocation.create(fafCoordinate,
                     (int) Headings.add(radial, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
                     (int) Headings.add(radial, ENTRY_SECTOR_ONE_SIDE_ANGLE),
                     MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH),
+            ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
+    ret.add(aec);
+
+    aec = ApproachEntryCondition.create(
             PlaneShaCondition.create(PlaneShaCondition.eType.heading,
                     (int) Headings.add(radial, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
-                    (int) Headings.add(radial, ENTRY_SECTOR_ONE_SIDE_ANGLE))
-    );
+                    (int) Headings.add(radial, ENTRY_SECTOR_ONE_SIDE_ANGLE)),
+            ApproachEntryCondition.ApproachRejectionReason.invalidHeading);
+    ret.add(aec);
+
     return ret;
   }
 
@@ -163,7 +182,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
 
     // estimate faf by slope and daA
     {
-      ICondition entryConditionForThresholdAndSlope = createApproachEntryConditionForThresholdAndSlope(
+      ISet<ApproachEntryCondition> entryConditionForThresholdAndSlope = createApproachEntryConditionForThresholdAndSlope(
               context.threshold.coordinate, context.airport.altitude, radial, initialAltitude, slope);
       ApproachEntry entry = ApproachEntry.create(entryConditionForThresholdAndSlope);
       entries.add(entry);
@@ -272,13 +291,21 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     int hdgMin = (int) Headings.add(threshold.course, -46);
     int hdgMax = (int) Headings.add(threshold.course, 46);
 
-    ApproachEntry ret = ApproachEntry.create(
-            AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
-                    PlaneShaCondition.create(PlaneShaCondition.eType.heading, hdgMin, hdgMax),
-                    FixRelatedLocation.create(threshold.coordinate,
-                            hdgMin,
-                            hdgMax,
-                            8)),
+    ISet<ApproachEntryCondition> set = new ESet<>();
+    ApproachEntryCondition aec;
+
+    aec = ApproachEntryCondition.create(
+            PlaneShaCondition.create(PlaneShaCondition.eType.heading, hdgMin, hdgMax), ApproachEntryCondition.ApproachRejectionReason.invalidHeading);
+    set.add(aec);
+
+    aec = ApproachEntryCondition.create(
+            FixRelatedLocation.create(threshold.coordinate,
+                    hdgMin,
+                    hdgMax,
+                    8), ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
+    set.add(aec);
+
+    ApproachEntry ret = ApproachEntry.create(set,
             new PlaneCategoryDefinitions(category),
             new EList<>()
     ).withTag("Visual-app close final stage " + threshold.name);
@@ -303,10 +330,17 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     Coordinate downwindEndPoint = calculateDownwindEndPoint(category, faf, threshold.course, boxAngle);
     IList<ApproachStage> stages = getDefaultVisualDownwindStages(downwindEndPoint, threshold.course, altitude);
 
+    ISet<ApproachEntryCondition> set = new ESet<>();
+    ApproachEntryCondition aec = ApproachEntryCondition.create(
+            PlaneShaCondition.create(PlaneShaCondition.eType.heading, hdgMin, hdgMax), ApproachEntryCondition.ApproachRejectionReason.invalidHeading);
+    set.add(aec);
+
+    aec = ApproachEntryCondition.create(
+            RegionalLocation.create(a, b, c, d), ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
+    set.add(aec);
+
     ApproachEntry ret = ApproachEntry.create(
-            AggregatingCondition.create(AggregatingCondition.eConditionAggregator.and,
-                    PlaneShaCondition.create(PlaneShaCondition.eType.heading, hdgMin, hdgMax),
-                    RegionalLocation.create(a, b, c, d)),
+            set,
             new PlaneCategoryDefinitions(category),
             stages
     ).withTag("Visual-app close downwind stage " + threshold.name + "/" + dir);
@@ -335,11 +369,17 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
   }
 
   private ApproachEntry generateDefaultVisualAfterFaf(LoadingContext.ThresholdInfo threshold, char category, Coordinate faf) {
+    ISet<ApproachEntryCondition> set = new ESet<>();
+    ApproachEntryCondition aec;
+
+    aec = ApproachEntryCondition.create(FixRelatedLocation.create(faf,
+            (int) Headings.add(threshold.course, 91),
+            (int) Headings.add(threshold.course, -91),
+            15), ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
+    set.add(aec);
+
     ApproachEntry ret = ApproachEntry.create(
-            FixRelatedLocation.create(faf,
-                    (int) Headings.add(threshold.course, 91),
-                    (int) Headings.add(threshold.course, -91),
-                    15),
+            set,
             new PlaneCategoryDefinitions(category),
             new EList<>()
     ).withTag("Visual-app direct to final stage " + threshold.name);
@@ -357,7 +397,13 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     Coordinate downwindEndPoint = calculateDownwindEndPoint(category, faf, threshold.course, aside);
     IList<ApproachStage> stages = getDefaultVisualDownwindStages(downwindEndPoint, threshold.course, altitude);
 
-    ApproachEntry ae = ApproachEntry.create(RegionalLocation.create(a, b, c, d), new PlaneCategoryDefinitions(category), stages)
+    ISet<ApproachEntryCondition> set = new ESet<>();
+    ApproachEntryCondition aec;
+
+    aec = ApproachEntryCondition.create(RegionalLocation.create(a, b, c, d), ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
+    set.add(aec);
+
+    ApproachEntry ae = ApproachEntry.create(set, new PlaneCategoryDefinitions(category), stages)
             .withTag("default visual downwind " + threshold.name + "/" + dir);
     return ae;
   }
@@ -392,7 +438,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
 
     // direct FAF entry
     {
-      ICondition entryCondition = createApproachEntryConditionForThresholdAndSlope(
+      ISet<ApproachEntryCondition> entryCondition = createApproachEntryConditionForThresholdAndSlope(
               context.threshold.coordinate, context.airport.altitude, radial, initialAltitude, slope);
       ApproachEntry entry = ApproachEntry.create(entryCondition).withTag("direct");
       entries.add(entry);
@@ -511,15 +557,15 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
 
     // entry via faf before faf
     {
-      ICondition entryCondition = createApproachEntryConditionForFafByFafName(fafName, radial);
-      ApproachEntry entry = ApproachEntry.create(entryCondition);
+      ISet<ApproachEntryCondition> entryConditions = createApproachEntryConditionForFafByFafName(fafName, radial);
+      ApproachEntry entry = ApproachEntry.create(entryConditions);
       entries.add(entry);
     }
 
     // entry before mapt to faf
     {
-      ICondition entryCondition = createApproachEntryConditionBetweenMaptAndFaf(maptName, fafName);
-      ApproachEntry entry = ApproachEntry.create(entryCondition);
+      ISet<ApproachEntryCondition> entryConditions = createApproachEntryConditionBetweenMaptAndFaf(maptName, fafName);
+      ApproachEntry entry = ApproachEntry.create(entryConditions);
       entries.add(entry);
     }
 
