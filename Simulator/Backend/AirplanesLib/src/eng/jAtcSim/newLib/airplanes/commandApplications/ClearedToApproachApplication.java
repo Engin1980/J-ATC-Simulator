@@ -70,11 +70,12 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
       else {
         RejectedApproachInfo rai = (RejectedApproachInfo) ai;
         switch (rai.reason) {
-          case noApproachAtAll:
+          case thresholdNotInSight:
             ret = new PlaneRejection(c,
-                    sf("Cannot be cleared to approach. There is no approach for runway %s.",
-                            c.getType().toString(), rt.getName()));
+                    sf("Cannot be cleared to approach. Runway %s not in sight.",
+                            rt.getName()));
             break;
+          case noApproachAtAll:
           case noApproachKind:
             ret = new PlaneRejection(c,
                     sf("Cannot be cleared to approach. There is no %s approach for runway %s.",
@@ -141,7 +142,7 @@ class RejectedApproachInfo implements IApproachInfo {
     noApproachAtAll,
     invalidAltitude,
     invalidHeading,
-    invalidLocation
+    thresholdNotInSight, invalidLocation
   }
 
   public final RejectionReason reason;
@@ -196,6 +197,8 @@ class ApproachInfoFactory {
   }
 
   private static IApproachInfo convertApproachRejectReasonToApproachInfo(ISet<ApproachEntryCondition.ApproachRejectionReason> rejections) {
+    if (rejections.contains(ApproachEntryCondition.ApproachRejectionReason.thresholdNotInSight))
+      return new RejectedApproachInfo(RejectedApproachInfo.RejectionReason.thresholdNotInSight);
     if (rejections.contains(ApproachEntryCondition.ApproachRejectionReason.invalidAltitude))
       return new RejectedApproachInfo(RejectedApproachInfo.RejectionReason.invalidAltitude);
     else if (rejections.contains(ApproachEntryCondition.ApproachRejectionReason.invalidHeading))

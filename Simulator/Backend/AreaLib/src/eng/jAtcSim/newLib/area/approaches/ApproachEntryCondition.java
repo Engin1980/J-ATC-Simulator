@@ -7,8 +7,7 @@ import eng.newXmlUtils.annotations.XmlConstructor;
 public class ApproachEntryCondition {
 
   public enum ApproachRejectionReason {
-    invalidHeading, invalidLocation, invalidAltitude
-
+    invalidHeading, invalidLocation, thresholdNotInSight, invalidAltitude
   }
 
   public static ApproachEntryCondition create (ICondition condition, ApproachRejectionReason rejectionReason){

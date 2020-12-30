@@ -51,8 +51,8 @@ public class FixRelatedLocation implements ILocation {
   @Override
   public boolean isInside(Coordinate coordinate) {
     EAssert.Argument.isNotNull(coordinate, "coordinate");
-    double dist = Coordinates.getDistanceInNM(coordinate, this.coordinate);
-    double radial = Coordinates.getBearing(coordinate, this.coordinate);
+    double dist = Coordinates.getDistanceInNM(this.coordinate, coordinate);
+    double radial = Coordinates.getBearing(this.coordinate,coordinate);
 
     if (maximalDistance < dist) return false;
     if (fromRadial == null) // toRadial is null too

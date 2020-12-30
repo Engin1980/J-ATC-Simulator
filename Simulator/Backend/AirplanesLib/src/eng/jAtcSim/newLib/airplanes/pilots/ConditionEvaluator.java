@@ -42,7 +42,7 @@ public class ConditionEvaluator {
     if (w.getVisibilityInMeters() < 9999) {
       double dist = Coordinates.getDistanceInKm(
               plane.getCoordinate(),
-              plane.getRouting().getAssignedRunwayThreshold().getCoordinate());
+              plane.getRouting().getAssignedRunwayThreshold().getCoordinate()) * 1000; // km -> m
       if (dist > w.getVisibilityInMeters())
         return false;
     }

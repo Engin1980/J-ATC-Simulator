@@ -137,18 +137,20 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     ISet<ApproachEntryCondition> ret = new ESet<>();
     ApproachEntryCondition aec;
 
+    double radialOpposite = Headings.getOpposite(radial);
+
     aec = ApproachEntryCondition.create(
             FixRelatedLocation.create(fafCoordinate,
-                    (int) Headings.add(radial, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
-                    (int) Headings.add(radial, ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    (int) Headings.add(radialOpposite, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    (int) Headings.add(radialOpposite, ENTRY_SECTOR_ONE_SIDE_ANGLE),
                     MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH),
             ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
     ret.add(aec);
 
     aec = ApproachEntryCondition.create(
             PlaneShaCondition.create(PlaneShaCondition.eType.heading,
-                    (int) Headings.add(radial, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
-                    (int) Headings.add(radial, ENTRY_SECTOR_ONE_SIDE_ANGLE)),
+                    (int) Headings.add(radialOpposite, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    (int) Headings.add(radialOpposite, ENTRY_SECTOR_ONE_SIDE_ANGLE)),
             ApproachEntryCondition.ApproachRejectionReason.invalidHeading);
     ret.add(aec);
 
@@ -297,6 +299,8 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     aec = ApproachEntryCondition.create(
             PlaneShaCondition.create(PlaneShaCondition.eType.heading, hdgMin, hdgMax), ApproachEntryCondition.ApproachRejectionReason.invalidHeading);
     set.add(aec);
+    aec = ApproachEntryCondition.create(new RunwayThresholdVisibleCondition(), ApproachEntryCondition.ApproachRejectionReason.thresholdNotInSight);
+    set.add(aec);
 
     aec = ApproachEntryCondition.create(
             FixRelatedLocation.create(threshold.coordinate,
@@ -339,6 +343,9 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
             RegionalLocation.create(a, b, c, d), ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
     set.add(aec);
 
+    aec = ApproachEntryCondition.create(new RunwayThresholdVisibleCondition(), ApproachEntryCondition.ApproachRejectionReason.thresholdNotInSight);
+    set.add(aec);
+
     ApproachEntry ret = ApproachEntry.create(
             set,
             new PlaneCategoryDefinitions(category),
@@ -377,6 +384,8 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
             (int) Headings.add(threshold.course, -91),
             15), ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
     set.add(aec);
+    aec = ApproachEntryCondition.create(new RunwayThresholdVisibleCondition(), ApproachEntryCondition.ApproachRejectionReason.thresholdNotInSight);
+    set.add(aec);
 
     ApproachEntry ret = ApproachEntry.create(
             set,
@@ -401,6 +410,9 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     ApproachEntryCondition aec;
 
     aec = ApproachEntryCondition.create(RegionalLocation.create(a, b, c, d), ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
+    set.add(aec);
+
+    aec = ApproachEntryCondition.create(new RunwayThresholdVisibleCondition(), ApproachEntryCondition.ApproachRejectionReason.thresholdNotInSight);
     set.add(aec);
 
     ApproachEntry ae = ApproachEntry.create(set, new PlaneCategoryDefinitions(category), stages)
