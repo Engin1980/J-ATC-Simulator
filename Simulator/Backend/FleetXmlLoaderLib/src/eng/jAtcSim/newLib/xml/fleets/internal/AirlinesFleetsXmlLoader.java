@@ -35,7 +35,7 @@ public class AirlinesFleetsXmlLoader {
         q -> loadFleet(q)
     );
 
-    CompanyFleet ret = new CompanyFleet("-default-", "-default-", types);
+    CompanyFleet ret = new CompanyFleet("DEF", "-default-", types);
     return ret;
   }
 

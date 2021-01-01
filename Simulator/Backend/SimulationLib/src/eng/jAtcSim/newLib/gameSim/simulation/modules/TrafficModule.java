@@ -77,7 +77,7 @@ public class TrafficModule extends SimulationModule {
       GenericCommercialMovementTemplate gcmt = (GenericCommercialMovementTemplate) m;
 
       CompanyFleet companyFleet = parent.getWorldModule().getAirlinesFleets().tryGetByIcaoOrDefault(gcmt.getCompanyIcao());
-      callsign = this.callsignFactory.generateCommercial(companyFleet.getIcao());
+      callsign = this.callsignFactory.generateCommercial(gcmt.getCompanyIcao());
       IList<TypeAndWeight> availableTypes = companyFleet.getTypes()
               .where(q -> parent.getWorldModule().getAirplaneTypes()
                       .getTypeNames()
@@ -92,7 +92,7 @@ public class TrafficModule extends SimulationModule {
       GenericGeneralAviationMovementTemplate ggamt = (GenericGeneralAviationMovementTemplate) m;
 
       CountryFleet countryFleet = parent.getWorldModule().getGaFleets().tryGetByIcaoOrDefault(ggamt.getCountryIcao());
-      callsign = this.callsignFactory.generateGeneralAviation(countryFleet.getAircraftPrefix());
+      callsign = this.callsignFactory.generateGeneralAviation(ggamt.getCountryIcao());
       IList<TypeAndWeight> availableTypes = countryFleet.getTypes()
               .where(q -> parent.getWorldModule().getAirplaneTypes()
                       .getTypeNames()

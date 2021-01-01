@@ -165,20 +165,6 @@ public class GameFactoryAndRepository {
 
     try {
       appLog.write(ApplicationLog.eType.info, "Initializing weather");
-      //TODEL
-//      switch (gsi.weatherSource.weatherProviderType) {
-//        case online:
-//          weatherSource = new WeatherOnlineSource(true, gsi.areaSource.icao, gsi.weatherSource.initialWeather);
-//          break;
-//        case xml:
-//          weatherSource = new WeatherXmlSource(gsi.weatherSource.weatherXmlFile);
-//          break;
-//        case user:
-//          weatherSource = new WeatherUserSource(gsi.weatherSource.initialWeather);
-//          break;
-//        default:
-//          throw new EEnumValueUnsupportedException(gsi.weatherSource.weatherProviderType);
-//      }
       EAssert.isNotNull(gsi.weatherSource, "Weather-Source not set.");
       gsi.weatherSource.init();
     } catch (Exception ex) {
