@@ -26,7 +26,7 @@ public class InternalAcc {
   }
 
   public static DARoute tryGetDARoute(String routeName) {
-    return Context.getArea().getAirport().getDaRoutes().getFirst(q -> q.getName().equals(routeName));
+    return Context.getArea().getAirport().getDaRoutes().tryGetFirst(q -> q.getName().equals(routeName));
   }
 
   public static Navaid tryGetNavaid(String navaidName) {

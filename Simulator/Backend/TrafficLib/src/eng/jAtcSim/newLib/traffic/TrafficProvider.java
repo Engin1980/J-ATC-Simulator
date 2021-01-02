@@ -4,8 +4,11 @@ import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.time.EDayTime;
+import eng.jAtcSim.newLib.traffic.contextLocal.Context;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 import eng.newXmlUtils.annotations.XmlConstructor;
+
+import java.io.DataInput;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -49,8 +52,10 @@ public class TrafficProvider {
   }
 
   public void init() {
-    if (movementsForDay.getKeys().isEmpty())
+    if (movementsForDay.getKeys().isEmpty()) {
       prepareTrafficForDay(0);
+      movementsForDay.get(0).remove(q->q.getAppearanceTime().isBefore(Context.getShared().getNow().getTime()));
+    }
   }
 
   public void prepareTrafficForDay(int dayIndex) {

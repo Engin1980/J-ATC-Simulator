@@ -6,7 +6,9 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.Squawk;
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
@@ -31,6 +33,7 @@ public class SharedXmlUtils {
     public static Formatter<Coordinate> coordinateFormatter = q -> q.getLatitude().toDecimalString(true) + ";" + q.getLongitude().toDecimalString(true);
     public static Formatter<Squawk> squawkFormatter = q -> q.toString();
     public static Formatter<ITime> iTimeFormatter = q -> q.format();
+    public static Formatter<Restriction> restrictionFormatter = q -> q.direction.toString() + ";" + q.value;
 
     public static IMap<Class<?>, Formatter<?>> formatters;
 
@@ -44,6 +47,7 @@ public class SharedXmlUtils {
       formatters.set(EDayTimeStamp.class, iTimeFormatter);
       formatters.set(ETimeStamp.class, iTimeFormatter);
       formatters.set(ApproachType.class, q -> q.toString());
+      formatters.set(Restriction.class, restrictionFormatter);
     }
   }
 
@@ -75,6 +79,12 @@ public class SharedXmlUtils {
       return ret;
     };
     public static Parser<Callsign> callsignParser = (q, c) -> new Callsign(q);
+    public static Parser<Restriction> restrictionParser = (q, c) -> {
+      String[] pts = q.split(";");
+      AboveBelowExactly abe = Enum.valueOf(AboveBelowExactly.class, pts[0]);
+      int val = Integer.parseInt(pts[1]);
+      return new Restriction(abe, val);
+    };
 
     static {
       parsers = new EMap<>();
@@ -85,6 +95,7 @@ public class SharedXmlUtils {
       parsers.set(Callsign.class, callsignParser);
       parsers.set(ETimeStamp.class, timeStampParser);
       parsers.set(ApproachType.class, (q, c) -> ApproachType.parse(q));
+      parsers.set(Restriction.class, restrictionParser);
     }
   }
 

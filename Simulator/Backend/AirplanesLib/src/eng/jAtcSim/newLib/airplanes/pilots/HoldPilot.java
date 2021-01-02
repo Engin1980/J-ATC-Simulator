@@ -1,7 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
@@ -35,6 +34,7 @@ public class HoldPilot extends Pilot {
   public static HoldPilot createForLoad(Airplane plane) {
     return new HoldPilot(plane);
   }
+
   //TODO Make all fields private
   public Navaid navaid;
   public int inboundRadial;

@@ -298,7 +298,7 @@ public class CenterAtc extends ComputerAtc {
 
       // assigns route
       Navaid n = plane.getRouting().getEntryExitPoint();
-      Tuple<DARoute, ActiveRunwayThreshold> rrt = getRoutingForPlaneAndFix(plane, n);
+      Tuple<DARoute, ActiveRunwayThreshold> rrt = getRoutingForPlaneAndFix(plane);
       DARoute r = rrt.getA();
       ActiveRunwayThreshold rt = rrt.getB();
       cmds.add(ProceedDirectCommand.create(n.getName()));
@@ -370,7 +370,7 @@ public class CenterAtc extends ComputerAtc {
     return ret;
   }
 
-  private Tuple<DARoute, ActiveRunwayThreshold> getRoutingForPlaneAndFix(IAirplane plane, Navaid n) {
+  private Tuple<DARoute, ActiveRunwayThreshold> getRoutingForPlaneAndFix(IAirplane plane) {
     Tuple<DARoute, ActiveRunwayThreshold> ret;
     DARoute r = null;
     ActiveRunwayThreshold rt = null;

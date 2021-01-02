@@ -10,7 +10,11 @@ public class EntryExitPoint extends Parentable<Airport> {
   public enum Type {
     entry,
     exit,
-    both
+    both;
+
+    public boolean is(Type type){
+      return this == type || this == both;
+    }
   }
 
   private static final int UNSET = -1;

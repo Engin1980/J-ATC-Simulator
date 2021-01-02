@@ -12,9 +12,11 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ToNavaidCommand;
 
 public class DARoute extends Route {
 
+  public static final String VECTORING_ROUTE_NAME_POSTFIX = "/v";
+
   public static DARoute createNewVectoringByFix(Navaid n) {
     DARoute ret = new DARoute(new EList<>(),
-            DARouteType.vectoring, n.getName() + "/v", PlaneCategoryDefinitions.getAll(),
+            DARouteType.vectoring, n.getName() + VECTORING_ROUTE_NAME_POSTFIX, PlaneCategoryDefinitions.getAll(),
             -1, n, null, null);
     return ret;
   }

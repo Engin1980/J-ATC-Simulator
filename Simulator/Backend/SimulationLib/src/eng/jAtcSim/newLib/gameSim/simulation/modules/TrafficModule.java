@@ -2,9 +2,7 @@ package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
 import eng.eSystem.ERandom;
 import eng.eSystem.TryResult;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
@@ -15,6 +13,9 @@ import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.DepartureAirplaneTemplate;
 import eng.jAtcSim.newLib.area.EntryExitPoint;
+import eng.jAtcSim.newLib.area.Navaid;
+import eng.jAtcSim.newLib.area.RunwayConfiguration;
+import eng.jAtcSim.newLib.area.RunwayThresholdConfiguration;
 import eng.jAtcSim.newLib.fleet.TypeAndWeight;
 import eng.jAtcSim.newLib.fleet.airliners.CompanyFleet;
 import eng.jAtcSim.newLib.fleet.generalAviation.CountryFleet;
@@ -23,6 +24,7 @@ import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.CallsignFactory;
+import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
@@ -272,13 +274,15 @@ public class TrafficModule extends SimulationModule {
   private EntryExitPoint tryGetRandomEntryPoint(EntryExitInfo entryExitInfo, boolean isArrival, AirplaneType pt) {
     EntryExitPoint ret;
 
-    IReadOnlyList<EntryExitPoint> tmp = Context.getArea().getAirport().getEntryExitPoints();
-    if (isArrival)
-      tmp = tmp.where(q -> q.getType() == EntryExitPoint.Type.entry || q.getType() == EntryExitPoint.Type.both);
+    IReadOnlyList<EntryExitPoint> eeps;
+    if (Context.getArea().getCurrentRunwayConfiguration() != null)
+      eeps = getEntryExitPointsFromCurrentRunwayConfiguration(isArrival);
     else
-      tmp = tmp.where(q -> q.getType() == EntryExitPoint.Type.exit || q.getType() == EntryExitPoint.Type.both);
-    tmp = tmp.where(q -> q.getMaxMrvaAltitudeOrHigh() < pt.maxAltitude);
-    if (tmp.isEmpty()) {
+      eeps = Context.getArea().getAirport().getEntryExitPoints()
+              .where(q -> q.getType().is(isArrival ? EntryExitPoint.Type.entry : EntryExitPoint.Type.exit));
+
+    eeps = eeps.where(q -> q.getMaxMrvaAltitudeOrHigh() < pt.maxAltitude);
+    if (eeps.isEmpty()) {
       Context.getApp().getAppLog().write(ApplicationLog.eType.warning,
               sf("There are no available entry/exit points for plane of kind %s with service ceiling at %d ft. " +
                               "Flight must be cancelled.",
@@ -287,27 +291,50 @@ public class TrafficModule extends SimulationModule {
     }
 
     if (entryExitInfo.getRadial() != null) {
-      ret = tmp.getSmallest(q -> Headings.getDifference(entryExitInfo.getRadial(), q.getRadialFromAirport(), true));
+      ret = eeps.getSmallest(q -> Headings.getDifference(entryExitInfo.getRadial(), q.getRadialFromAirport(), true));
     } else if (entryExitInfo.getNavaid() != null) {
-      ret = tmp.tryGetFirst(q -> q.getName().equals(entryExitInfo.getNavaid()));
+      ret = eeps.tryGetFirst(q -> q.getName().equals(entryExitInfo.getNavaid()));
       if (ret == null) {
         Context.getApp().getAppLog().write(ApplicationLog.eType.warning,
                 sf("Plane generation asks for entry point %s, but there is not such " +
                                 "entry-exit point available.",
                         entryExitInfo.getNavaid()));
-        ret = tmp.getRandom();
+        ret = eeps.getRandom();
       }
     } else if (entryExitInfo.getOtherAirportCoordinate() != null) {
       double heading = Coordinates.getBearing(entryExitInfo.getOtherAirportCoordinate(), Context.getArea().getAirport().getLocation());
-      ret = tmp.getMinimal(q -> {
+      ret = eeps.getMinimal(q -> {
         double pointHeading = Coordinates.getBearing(q.getNavaid().getCoordinate(), Context.getArea().getAirport().getLocation());
         return Headings.getDifference(heading, pointHeading, true);
       });
     } else
-      ret = tmp.getRandom();
+      ret = eeps.getRandom();
 
     return ret;
   }
 
+  private IReadOnlyList<EntryExitPoint> getEntryExitPointsFromCurrentRunwayConfiguration(boolean isArrival) {
+    RunwayConfiguration crc = Context.getArea().getCurrentRunwayConfiguration();
+    ISet<Navaid> tmp = new ESet<>();
 
+    if (isArrival)
+      for (RunwayThresholdConfiguration arrivalThresholdConfiguration : crc.getArrivals()) {
+        IList<Navaid> ter = arrivalThresholdConfiguration.getThreshold().getRoutes()
+                .where(q -> q.getType().isArrival())
+                .select(q -> q.getMainNavaid());
+        tmp.addMany(ter);
+      }
+    else
+      for (RunwayThresholdConfiguration arrivalThresholdConfiguration : crc.getDepartures()) {
+        IList<Navaid> ter = arrivalThresholdConfiguration.getThreshold().getRoutes()
+                .where(q -> q.getType() == DARouteType.sid)
+                .select(q -> q.getMainNavaid());
+        tmp.addMany(ter);
+      }
+
+    IList<EntryExitPoint> ret = Context.getArea().getAirport().getEntryExitPoints()
+            .where(q -> tmp.contains(q.getNavaid()));
+
+    return ret;
+  }
 }

@@ -4,7 +4,6 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
-import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
@@ -40,7 +39,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     extension
   }
 
-//  private final static AirplaneState[] FLYING_ROUTE_STATES = {
+  //  private final static AirplaneState[] FLYING_ROUTE_STATES = {
 //          AirplaneState.arrivingHigh,
 //          AirplaneState.arrivingLow,
 //          AirplaneState.arrivingCloseFaf,
@@ -72,17 +71,21 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   public void elapseSecond() {
     obtainNewSpeeches();
     processNewSpeeches();
-    processAfterSpeeches();
+
+    if (rdr.getState().is(
+            AirplaneState.landed,
+            AirplaneState.holdingPoint,
+            AirplaneState.takeOffRoll,
+            AirplaneState.takeOffGoAround,
+            AirplaneState.shortFinal
+    ) == false)
+      processAfterSpeeches();
 
     logAfterCommands();
   }
 
   public String getAssignedDARouteName() {
     return assignedDARouteName;
-  }
-
-  public boolean isRoutingEmpty() {
-    return this.afterCommands.isRouteEmpty();
   }
 
   public void setAssignedDARouteName(String assignedDARouteName) {
@@ -115,6 +118,10 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
   public boolean isGoingToFlightOverNavaid(Navaid navaid) {
     return afterCommands.hasProceedDirectToNavaidAsConseqent(navaid);
+  }
+
+  public boolean isRoutingEmpty() {
+    return this.afterCommands.isRouteEmpty();
   }
 
   public void setCqr(CommandQueueRecorder commandQueueRecorder) {
@@ -335,10 +342,10 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
     //TODEL
 //    if (ArrayUtils.contains(FLYING_ROUTE_STATES, rdr.getState())) {
-      cmds = afterCommands.getAndRemoveSatisfiedCommands(
-              rdr, targetCoordinate, AfterCommandList.Type.route);
-      wrt.getCVR().logProcessedAfterSpeeches(cmds, "route");
-      processSpeeches(cmds, CommandSource.route);
+    cmds = afterCommands.getAndRemoveSatisfiedCommands(
+            rdr, targetCoordinate, AfterCommandList.Type.route);
+    wrt.getCVR().logProcessedAfterSpeeches(cmds, "route");
+    processSpeeches(cmds, CommandSource.route);
 //    }
   }
 
