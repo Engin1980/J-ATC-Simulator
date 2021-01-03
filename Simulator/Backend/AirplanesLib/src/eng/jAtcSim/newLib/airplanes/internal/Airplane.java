@@ -150,7 +150,15 @@ public class Airplane {
 
     @Override
     public boolean isGoingToFlightOverNavaid(Navaid n) {
-      return Airplane.this.routingModule.isGoingToFlightOverNavaid(n);
+      boolean ret = false;
+      if (Airplane.this.sha.getNavigator() instanceof ToCoordinateNavigator){
+        ToCoordinateNavigator toCoordinateNavigator = (ToCoordinateNavigator) Airplane.this.sha.getNavigator();
+        ret = toCoordinateNavigator.getTargetCoordinate().equals(n.getCoordinate());
+      }
+      if (!ret)
+        ret = Airplane.this.routingModule.isGoingToFlightOverNavaid(n);
+      
+      return ret;
     }
 
     @Override

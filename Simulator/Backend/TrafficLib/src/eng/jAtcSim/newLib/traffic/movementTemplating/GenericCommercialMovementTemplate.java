@@ -4,10 +4,15 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class GenericCommercialMovementTemplate extends MovementTemplate {
   private String companyIcao;
   private Character category;
+
+  @XmlConstructor
+  private GenericCommercialMovementTemplate() {
+  }
 
   public GenericCommercialMovementTemplate(eKind kind, ETimeStamp time, EntryExitInfo entryExitInfo) {
     this(null, null, kind, time, entryExitInfo);

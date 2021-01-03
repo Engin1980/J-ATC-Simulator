@@ -1,11 +1,12 @@
 package eng.jAtcSim.newLib.airplanes.templates;
 
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.area.EntryExitPoint;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public abstract class AirplaneTemplate {
   private final Callsign callsign;
@@ -14,6 +15,22 @@ public abstract class AirplaneTemplate {
   private final EDayTimeStamp expectedExitTime;
   private final EDayTimeStamp entryTime;
   private final int entryDelay;
+
+  @XmlConstructor
+  protected AirplaneTemplate() {
+    this.callsign = null;
+    this.airplaneType = null;
+    this.entryExitPoint = null;
+    this.expectedExitTime = null;
+    this.entryTime = null;
+    this.entryDelay = 0;
+
+    PostContracts.register(this, () -> callsign != null);
+    PostContracts.register(this, () -> airplaneType != null);
+    PostContracts.register(this, () -> entryExitPoint != null);
+    PostContracts.register(this, () -> expectedExitTime != null);
+    PostContracts.register(this, () -> entryTime != null);
+  }
 
   public AirplaneTemplate(Callsign callsign, AirplaneType airplaneType, EntryExitPoint entryExitPoint,
                           EDayTimeStamp expectedExitTime, EDayTimeStamp entryTime, int entryDelay) {

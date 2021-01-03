@@ -1,15 +1,26 @@
 package eng.jAtcSim.newLib.gameSim.game.sources;
 
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.weather.DynamicWeatherProvider;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.weather.WeatherProvider;
 import eng.jAtcSim.newLib.weather.downloaders.MetarDownloaderNoaaGov;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class WeatherOnlineSource extends WeatherSource {
   private final String icao;
   private final Weather fallbackWeather;
   private WeatherProvider content;
+
+  @XmlConstructor
+  private WeatherOnlineSource() {
+    icao = null;
+    fallbackWeather = null;
+
+    PostContracts.register(this, () -> icao != null);
+    PostContracts.register(this, () -> fallbackWeather != null);
+  }
 
   public WeatherOnlineSource(boolean refreshOnInit, String icao, Weather fallbackWeather) {
     EAssert.matchPattern(icao, "^[A-Z]{4}$");
@@ -17,12 +28,12 @@ public class WeatherOnlineSource extends WeatherSource {
     this.fallbackWeather = fallbackWeather;
   }
 
-  public String getIcao() {
-    return icao;
-  }
-
   public Weather getFallbackWeather() {
     return fallbackWeather;
+  }
+
+  public String getIcao() {
+    return icao;
   }
 
   @Override

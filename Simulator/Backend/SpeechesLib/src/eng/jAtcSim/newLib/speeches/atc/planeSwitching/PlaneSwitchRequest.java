@@ -1,8 +1,10 @@
 package eng.jAtcSim.newLib.speeches.atc.planeSwitching;
 
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class PlaneSwitchRequest implements IAtcSpeech {
   private final PlaneSwitchRequestRouting routing;
@@ -18,6 +20,15 @@ public class PlaneSwitchRequest implements IAtcSpeech {
     if (repeated)
       sb.append(" repeated");
     return sb.toString();
+  }
+
+  @XmlConstructor
+  private PlaneSwitchRequest() {
+    this.routing = null;
+    this.squawk = null;
+    this.repeated = false;
+
+    PostContracts.register(this, () -> this.squawk != null, "Squawk is empty.");
   }
 
   public PlaneSwitchRequest(Squawk squawk, PlaneSwitchRequestRouting routing) {
