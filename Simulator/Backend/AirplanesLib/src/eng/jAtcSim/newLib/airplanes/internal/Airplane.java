@@ -157,7 +157,7 @@ public class Airplane {
       }
       if (!ret)
         ret = Airplane.this.routingModule.isGoingToFlightOverNavaid(n);
-      
+
       return ret;
     }
 
