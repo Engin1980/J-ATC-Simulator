@@ -11,9 +11,7 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class AirplaneTypesSource extends Source<AirplaneTypes> {
 
-  private AirplaneTypes content;
   private final String fileName;
-
 
   public String getFileName() {
     return fileName;
@@ -23,21 +21,15 @@ public class AirplaneTypesSource extends Source<AirplaneTypes> {
     this.fileName = xmlFile;
   }
 
-  @Override
-  protected AirplaneTypes _getContent() {
-    return content;
-  }
-
   public void init() {
     try {
-      this.content = AirplaneTypesXmlLoader.load(this.fileName);
+      AirplaneTypes at = AirplaneTypesXmlLoader.load(this.fileName);
+      super.setContent(at);
     } catch (Exception e) {
       throw new EApplicationException(sf("Failed to load xml-airplaneTypes-file from '%s'", this.fileName), e);
     }
 
-    IAirplaneTypeAcc airplaneTypeAcc = new AirplaneTypeAcc(this.content);
+    IAirplaneTypeAcc airplaneTypeAcc = new AirplaneTypeAcc(super.getContent());
     ContextManager.setContext(IAirplaneTypeAcc.class, airplaneTypeAcc);
-
-    super.setInitialized();
   }
 }

@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import exml.ISimPersistable;
-import exml.XmlContext;
+import exml.XContext;
 
 public class Game implements IGame, ISimPersistable {
 
@@ -35,12 +35,17 @@ public class Game implements IGame, ISimPersistable {
   }
 
   @Override
-  public void save(XElement elm, XmlContext ctx) {
-    ctx.simSave.saveRemainingFields(this, elm, ctx);
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.saveField(this, "areaSource", elm);
+    ctx.saver.saveField(this, "airplaneTypesSource", elm);
+    ctx.saver.saveField(this, "fleetsSource", elm);
+    ctx.saver.saveField(this, "trafficSource", elm);
+    ctx.saver.saveField(this, "weatherSource", elm);
+    ctx.saver.saveRemainingFields(this, elm);
   }
 
   @Override
-  public void load(XElement elm, XmlContext ctx) {
+  public void load(XElement elm, XContext ctx) {
 
   }
 }

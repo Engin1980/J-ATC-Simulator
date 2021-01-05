@@ -6,7 +6,6 @@ import eng.jAtcSim.newLib.xml.traffic.TrafficXmlLoader;
 
 public class TrafficXmlSource extends TrafficSource {
 
-  private ITrafficModel traffic;
   private final String fileName;
 
   public String getFileName() {
@@ -18,20 +17,14 @@ public class TrafficXmlSource extends TrafficSource {
   }
 
   @Override
-  protected ITrafficModel _getContent() {
-    return traffic;
-  }
-
-  @Override
   public void init() {
     try {
-      this.traffic = TrafficXmlLoader.load(this.fileName);
+      ITrafficModel t = TrafficXmlLoader.load(this.fileName);
+      super.setContent(t);
     } catch (Exception e) {
       throw new EApplicationException("Unable to load traffic from file '" + this.fileName + "'.", e);
     } catch (Throwable t) {
       throw new EApplicationException("Unable to load traffic from file '" + this.fileName + "'.", t);
     }
-
-    super.setInitialized();
   }
 }

@@ -1,12 +1,16 @@
 package eng.jAtcSim.newLib.airplanes.modules;
 
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import exml.IPlainObjectSimPersistable;
+import exml.ISimPersistable;
+import exml.XContext;
 
-public class AirplaneFlightModule {
+public class AirplaneFlightModule implements IPlainObjectSimPersistable {
   private final Callsign callsign;
   private final int entryDelay;
   private final EDayTimeStamp expectedExitTime;
@@ -39,7 +43,7 @@ public class AirplaneFlightModule {
     return diff;
   }
 
-  public EDayTimeStamp getExitTime(){
+  public EDayTimeStamp getExitTime() {
     return this.exitTime;
   }
 

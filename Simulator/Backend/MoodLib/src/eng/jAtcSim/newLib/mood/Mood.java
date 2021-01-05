@@ -2,13 +2,17 @@ package eng.jAtcSim.newLib.mood;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.mood.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import exml.IPlainObjectSimPersistable;
+import exml.ISimPersistable;
+import exml.XContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class Mood {
+public class Mood implements ISimPersistable {
 
   public enum ArrivalExperience {
     shortcutToIafAbove100,
@@ -37,7 +41,7 @@ public class Mood {
     prohibitedAreaViolation
   }
 
-  private static class Experience<T> {
+  private static class Experience<T> implements IPlainObjectSimPersistable {
     public final EDayTimeStamp time;
     public final T type;
 
@@ -128,6 +132,18 @@ public class Mood {
 
   public void experience(ArrivalExperience kindOfExperience) {
     this.arrivalExperiences.add(new Experience<>(getNowStamp(), kindOfExperience));
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.saveFieldItems(this, "arrivalExperiences", Experience.class, elm);
+    ctx.saver.saveFieldItems(this, "departureExperiences", Experience.class, elm);
+    ctx.saver.saveFieldItems(this, "sharedExperiences", Experience.class, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+
   }
 
   private IList<MoodExperienceResult> evaluateArrivals(int delayInMinutes) {

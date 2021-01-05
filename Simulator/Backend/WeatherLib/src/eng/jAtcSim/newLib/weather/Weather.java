@@ -3,8 +3,9 @@ package eng.jAtcSim.newLib.weather;
 import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.newLib.shared.UnitProvider;
 import eng.jAtcSim.newLib.weather.contextLocal.Context;
+import exml.IPlainObjectSimPersistable;
 
-public class Weather {
+public class Weather implements IPlainObjectSimPersistable {
 
   public enum eSnowState {
     none,

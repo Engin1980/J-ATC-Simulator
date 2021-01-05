@@ -11,7 +11,6 @@ import eng.newXmlUtils.annotations.XmlConstructor;
 public class WeatherOnlineSource extends WeatherSource {
   private final String icao;
   private final Weather fallbackWeather;
-  private WeatherProvider content;
 
   @XmlConstructor
   private WeatherOnlineSource() {
@@ -38,12 +37,7 @@ public class WeatherOnlineSource extends WeatherSource {
 
   @Override
   protected void _init() {
-    content = new DynamicWeatherProvider(new MetarDownloaderNoaaGov(), icao, fallbackWeather, true);
-    super.setInitialized();
-  }
-
-  @Override
-  protected WeatherProvider _getContent() {
-    return content;
+    WeatherProvider content = new DynamicWeatherProvider(new MetarDownloaderNoaaGov(), icao, fallbackWeather, true);
+    super.setContent(content);
   }
 }

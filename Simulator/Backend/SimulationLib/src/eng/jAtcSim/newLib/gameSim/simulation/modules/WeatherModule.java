@@ -16,7 +16,7 @@ public class WeatherModule extends SimulationModule {
 
   @XmlConstructor
   private WeatherModule(){
-    super(null);
+    super((Simulation) null);
     weatherManager = null;
   }
 

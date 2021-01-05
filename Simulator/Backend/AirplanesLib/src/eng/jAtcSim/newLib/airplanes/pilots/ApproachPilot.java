@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -32,6 +33,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ThenCommand;
+import exml.XContext;
 
 public class ApproachPilot extends Pilot {
 
@@ -47,6 +49,7 @@ public class ApproachPilot extends Pilot {
     return new ApproachPilot(airplane);
   }
 
+  //TODEL probably unused
   private ApproachType type;
   private final IList<ApproachStage> stages;
   private final IList<ICommand> gaRouteCommands;
@@ -57,6 +60,19 @@ public class ApproachPilot extends Pilot {
    * Represents plane height at the current second
    */
   private int height;
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.saveFieldItems(this, "stages", ApproachStage.class, elm);
+    ctx.saver.saveFieldItems(this, "gaRouteCommands", ICommand.class, elm);
+    ctx.saver.saveRemainingFields(this, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
+  }
 
   //TODO this should be done via @XmlConstructor
   private ApproachPilot(Airplane airplane) {
@@ -228,8 +244,8 @@ public class ApproachPilot extends Pilot {
       return;
     }
 
-    ApproachErrorCondition err = stage.getErrorConditions().tryGetFirst(q->isConditionTrue(q.getCondition()), null);
-    if (err != null){
+    ApproachErrorCondition err = stage.getErrorConditions().tryGetFirst(q -> isConditionTrue(q.getCondition()), null);
+    if (err != null) {
       goAround(err.getGoAroundReason());
       return;
     }
@@ -254,7 +270,7 @@ public class ApproachPilot extends Pilot {
         goAround(GoingAroundNotification.GoAroundReason.unstabilizedAltitude);
         return;
       }
-      if (Coordinates.getDistanceToRadialInKm(rdr.getCoordinate(), threshold.getCoordinate(), threshold.getCourse()) > 0.1){
+      if (Coordinates.getDistanceToRadialInKm(rdr.getCoordinate(), threshold.getCoordinate(), threshold.getCourse()) > 0.1) {
         goAround(GoingAroundNotification.GoAroundReason.unstabilizedRadial);
         return;
       }

@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
@@ -12,8 +13,10 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
+import exml.ISimPersistable;
+import exml.XContext;
 
-public class AirplanesController {
+public class AirplanesController implements ISimPersistable {
 
   private final AirplaneList<Airplane> planes = new AirplaneList<>(
           q -> q.getReader().getCallsign(),
@@ -58,6 +61,17 @@ public class AirplanesController {
     this.publicPlanes.add(airplane.getReader());
 
     return airplane.getReader();
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.saveField(this, "planes", elm);
+
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+//    ctx.loader.loadField(this, "planes", elm);
   }
 
   public void throwEmergency() {

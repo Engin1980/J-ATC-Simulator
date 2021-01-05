@@ -8,19 +8,16 @@ import eng.jAtcSim.newLib.weather.WeatherProvider;
 import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class WeatherUserSource extends WeatherSource {
-  private WeatherProvider content;
   private final Weather initialWeather;
 
   @XmlConstructor
   public WeatherUserSource() {
     this.initialWeather = null;
     PostContracts.register(this, () -> initialWeather != null, "initialWeather");
-    PostContracts.register(this, () -> content != null, "content");
   }
 
   WeatherUserSource(Weather weather) {
     EAssert.Argument.isNotNull(weather, "weather");
-
     this.initialWeather = weather;
   }
 
@@ -30,12 +27,7 @@ public class WeatherUserSource extends WeatherSource {
 
   @Override
   protected void _init() {
-    this.content = new StaticWeatherProvider(this.initialWeather);
-    super.setInitialized();
-  }
-
-  @Override
-  protected WeatherProvider _getContent() {
-    return content;
+    WeatherProvider content = new StaticWeatherProvider(this.initialWeather);
+    super.setContent(content);
   }
 }

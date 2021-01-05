@@ -22,5 +22,7 @@
     <orderEntry type="module" module-name="StatsLib" />
     <orderEntry type="module" module-name="XmlUtilsLib" />
     <orderEntry type="module" module-name="NewXmlUtils" />
+    <orderEntry type="module" module-name="AnotherXml" />
+    <orderEntry type="module" module-name="AnotherXml" />
   </component>
 </module>

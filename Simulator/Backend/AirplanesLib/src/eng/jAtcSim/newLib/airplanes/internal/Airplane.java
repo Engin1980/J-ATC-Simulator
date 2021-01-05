@@ -4,6 +4,7 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
@@ -47,10 +48,12 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertingNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.ISimPersistable;
+import exml.XContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class Airplane {
+public class Airplane implements ISimPersistable {
 
   public class AirplaneShaImpl implements IAirplaneSHA {
     @Override
@@ -151,7 +154,7 @@ public class Airplane {
     @Override
     public boolean isGoingToFlightOverNavaid(Navaid n) {
       boolean ret = false;
-      if (Airplane.this.sha.getNavigator() instanceof ToCoordinateNavigator){
+      if (Airplane.this.sha.getNavigator() instanceof ToCoordinateNavigator) {
         ToCoordinateNavigator toCoordinateNavigator = (ToCoordinateNavigator) Airplane.this.sha.getNavigator();
         ret = toCoordinateNavigator.getTargetCoordinate().equals(n.getCoordinate());
       }
@@ -646,6 +649,23 @@ public class Airplane {
     this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
     CommandQueueRecorder cqr = new CommandQueueRecorder(this.flightModule.getCallsign());
     this.routingModule.setCqr(cqr);
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.ignoreFields(this,
+            "cvr",
+            "fdr",
+            "rdr",
+            "wrt",
+            "speechCache"
+    );
+    ctx.saver.saveRemainingFields(this, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+
   }
 
   //TODEL

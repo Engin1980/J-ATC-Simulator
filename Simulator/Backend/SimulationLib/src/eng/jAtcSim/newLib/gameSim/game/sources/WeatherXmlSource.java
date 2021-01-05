@@ -6,9 +6,7 @@ import eng.jAtcSim.newLib.weather.WeatherProvider;
 import java.nio.file.Paths;
 
 public class WeatherXmlSource extends WeatherSource {
-
-  private WeatherProvider content;
-  private String fileName;
+  private final String fileName;
 
   WeatherXmlSource(String fileName) {
     EAssert.Argument.isNotNull(fileName, "xmlFileName");
@@ -22,12 +20,7 @@ public class WeatherXmlSource extends WeatherSource {
 
   @Override
   protected void _init() {
-    content = new PresetWeatherProvider(this.fileName);
-    super.setInitialized();
-  }
-
-  @Override
-  protected WeatherProvider _getContent() {
-    return content;
+    WeatherProvider content = new PresetWeatherProvider(this.fileName);
+    super.setContent(content);
   }
 }

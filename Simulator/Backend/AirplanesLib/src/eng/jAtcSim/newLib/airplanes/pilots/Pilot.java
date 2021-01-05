@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
@@ -11,10 +12,12 @@ import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.IAirplaneWriter;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.Restriction;
+import exml.ISimPersistable;
+import exml.XContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public abstract class Pilot {
+public abstract class Pilot implements ISimPersistable {
 
   protected final IAirplane rdr;
   protected final IAirplaneWriter wrt;
@@ -24,6 +27,16 @@ public abstract class Pilot {
     EAssert.Argument.isNotNull(plane, "plane");
     this.rdr = plane.getReader();
     this.wrt = plane.getWriter();
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.ignoreFields(this, "rdr", "wrt");
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+
   }
 
   public abstract boolean isDivertable();

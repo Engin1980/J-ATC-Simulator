@@ -1,11 +1,13 @@
 package eng.jAtcSim.newLib.airplanes.modules;
 
 
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
+import exml.XContext;
 
 public class DivertModule extends Module {
   private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
@@ -82,5 +84,16 @@ public class DivertModule extends Module {
     } else {
       return false;
     }
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.saveRemainingFields(this, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
   }
 }

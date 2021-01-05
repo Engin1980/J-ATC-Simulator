@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
@@ -14,6 +15,7 @@ import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.NavigatorResult;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
+import exml.XContext;
 
 public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
@@ -358,6 +360,17 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     }
 
     return ret;
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.saveRemainingFields(this, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
   }
 }
 

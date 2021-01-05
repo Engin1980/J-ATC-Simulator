@@ -11,5 +11,7 @@
     <orderEntry type="library" name="eng.eSystem (jAtcSim)" level="project" />
     <orderEntry type="module" module-name="MessagingLib" />
     <orderEntry type="module" module-name="NewXmlUtils" />
+    <orderEntry type="module" module-name="AnotherXml" />
+    <orderEntry type="module" module-name="AnotherXml" />
   </component>
 </module>

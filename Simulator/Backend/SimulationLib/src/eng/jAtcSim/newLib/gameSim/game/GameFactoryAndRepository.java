@@ -1,15 +1,20 @@
 package eng.jAtcSim.newLib.gameSim.game;
 
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
+import eng.eSystem.functionalInterfaces.Consumer2;
+import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplaneType.AirplaneTypesXmlContextInit;
+import eng.jAtcSim.newLib.airplanes.AirplaneList;
 import eng.jAtcSim.newLib.airplanes.AirplaneXmlContextInit;
+import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.AreaXmlContextInit;
+import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
@@ -19,15 +24,13 @@ import eng.jAtcSim.newLib.gameSim.simulation.SimulationSettings;
 import eng.jAtcSim.newLib.gameSim.simulation.SimulationXmlContextInit;
 import eng.jAtcSim.newLib.messaging.MessagingXmlContextInit;
 import eng.jAtcSim.newLib.mood.MoodXmlContextInit;
-import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.ContextManager;
-import eng.jAtcSim.newLib.shared.GID;
-import eng.jAtcSim.newLib.shared.PostContracts;
+import eng.jAtcSim.newLib.shared.*;
 import eng.jAtcSim.newLib.shared.context.ISharedAcc;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
+import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.traffic.TrafficXmlContextInit;
 import eng.jAtcSim.newLib.weather.Weather;
@@ -36,6 +39,7 @@ import eng.newXmlUtils.SDFFactory;
 import eng.newXmlUtils.XmlContext;
 import eng.newXmlUtils.implementations.ObjectDeserializer;
 import eng.newXmlUtils.implementations.ObjectSerializer;
+import exml.XContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -63,7 +67,7 @@ public class GameFactoryAndRepository {
             .withIgnoredFields("content", "initialized"));
 
     ctx.sdfManager.setFormatter(AirplaneTypesSource.class, q -> q.getFileName());
-    ctx.sdfManager.setDeserializer(AirplaneTypesSource.class, (e, c) ->  SourceFactory.createAirplaneTypesSource(e.getContent()));
+    ctx.sdfManager.setDeserializer(AirplaneTypesSource.class, (e, c) -> SourceFactory.createAirplaneTypesSource(e.getContent()));
 
     ctx.sdfManager.setFormatter(FleetsSource.class, q -> sf("%s;%s", q.getCompanyFileName(), q.getGeneralAviationFileName()));
     ctx.sdfManager.setDeserializer(FleetsSource.class, (e, c) -> {
@@ -279,7 +283,7 @@ public class GameFactoryAndRepository {
     return game;
   }
 
-  public void save(IGame game, IMap<String, Object> customData, String fileName) {
+  public void save_old(IGame game, IMap<String, Object> customData, String fileName) {
     XElement root = new XElement("game");
 
     XmlContext ctx = new XmlContext();
@@ -300,5 +304,81 @@ public class GameFactoryAndRepository {
     } catch (EXmlException e) {
       throw new EApplicationException("Failed to save simulation.", e);
     }
+  }
+
+  public void save(IGame game, IMap<String, Object> customData, String fileName) {
+    XElement root = new XElement("game");
+
+    XContext ctx = XContext.createSave();
+    initSavingContext(ctx);
+
+    try {
+      ctx.saver.saveObject(game, root);
+    } catch (Exception ex) {
+      System.out.println("Failed to save the whole save file");
+      ex.printStackTrace(System.out);
+    }
+
+    XDocument doc = new XDocument(root);
+    try {
+      doc.save(fileName);
+    } catch (EXmlException e) {
+      throw new EApplicationException("Failed to save simulation.", e);
+    }
+  }
+
+  private void initSavingContext(XContext ctx) {
+
+    ctx.saver.setFormatter(short.class, q -> q.toString());
+    ctx.saver.setFormatter(byte.class, q -> q.toString());
+    ctx.saver.setFormatter(int.class, q -> q.toString());
+    ctx.saver.setFormatter(long.class, q -> q.toString());
+    ctx.saver.setFormatter(float.class, q -> q.toString());
+    ctx.saver.setFormatter(double.class, q -> q.toString());
+    ctx.saver.setFormatter(boolean.class, q -> q.toString());
+    ctx.saver.setFormatter(char.class, q -> q.toString());
+    ctx.saver.setFormatter(Short.class, q -> q.toString());
+    ctx.saver.setFormatter(Byte.class, q -> q.toString());
+    ctx.saver.setFormatter(Integer.class, q -> q.toString());
+    ctx.saver.setFormatter(Long.class, q -> q.toString());
+    ctx.saver.setFormatter(Float.class, q -> q.toString());
+    ctx.saver.setFormatter(Double.class, q -> q.toString());
+    ctx.saver.setFormatter(Boolean.class, q -> q.toString());
+    ctx.saver.setFormatter(Character.class, q -> q.toString());
+    ctx.saver.setFormatter(String.class, v -> v);
+
+    // eSystem
+    ctx.saver.setSerializer(AirplaneList.class, getIterableConsumer(false, null, ctx));
+    ctx.saver.setSerializer(EList.class, getIterableConsumer(true, Object.class, ctx));
+    ctx.saver.setSerializer(EDistinctList.class, getIterableConsumer(true, Object.class, ctx));
+    ctx.saver.setSerializer(ESet.class, getIterableConsumer(true, Object.class, ctx));
+    ctx.saver.setFormatter(Coordinate.class, q -> q.getLatitude().toDecimalString(true) + ";" + q.getLongitude().toDecimalString(true));
+
+    // shared
+    ctx.saver.setFormatter(Callsign.class, q -> q.toString(true));
+    ctx.saver.setFormatter(Restriction.class, q -> q.direction.toString() + ";" + q.value);
+    ctx.saver.setFormatter(EDayTimeStamp.class, v -> v.toDayTimeString());
+    ctx.saver.setFormatter(Squawk.class, q -> q.toString());
+
+    // area
+    ctx.saver.setFormatter(Navaid.class, q -> q.getName());
+    ctx.saver.setFormatter(ActiveRunwayThreshold.class, q -> q.getName());
+
+    // airplane type
+    ctx.saver.setFormatter(AirplaneType.class, q -> q.name);
+
+    // atc
+    ctx.saver.setFormatter(AtcId.class, v -> v.getName());
+
+  }
+
+  private <T extends Iterable<?>> Consumer2<T, XElement> getIterableConsumer(boolean saveItemsType, Class<?> expectedItemType, XContext ctx) {
+    Consumer2<T, XElement> ret = (lst, e) -> {
+      if (saveItemsType)
+        e.setAttribute("__type", lst.getClass().getName());
+      ctx.saver.saveItems(lst, expectedItemType, e);
+    };
+
+    return ret;
   }
 }

@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.game.sources;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
@@ -8,15 +9,15 @@ import eng.jAtcSim.newLib.area.context.IAreaAcc;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.context.ISharedAcc;
 import eng.jAtcSim.newLib.shared.context.NonSimSharedAcc;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.xml.area.AreaXmlLoader;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.ISimPersistable;
+import exml.XContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class AreaSource extends Source<Area> {
+public class AreaSource extends Source<Area> implements ISimPersistable {
 
-  private Area content;
   private String fileName;
   private String icao;
 
@@ -30,14 +31,14 @@ public class AreaSource extends Source<Area> {
   }
 
   public Airport getActiveAirport() {
-    Airport ret = content.getAirports().tryGetFirst(q -> q.getIcao().equals(icao));
+    Airport ret = getContent().getAirports().tryGetFirst(q -> q.getIcao().equals(icao));
     if (ret == null)
       throw new EApplicationException("Unable to load airport {" + icao + "} from selected area file.");
     return ret;
   }
 
   public Area getArea() {
-    return content;
+    return getContent();
   }
 
   public String getFileName() {
@@ -54,7 +55,8 @@ public class AreaSource extends Source<Area> {
 
   public void init() {
     try {
-      this.content = AreaXmlLoader.load(this.fileName);
+      Area area = AreaXmlLoader.load(this.fileName);
+      super.setContent(area);
     } catch (Exception e) {
       throw new EApplicationException(sf("Failed to load xml-area-file from '%s'", this.fileName), e);
     }
@@ -66,12 +68,5 @@ public class AreaSource extends Source<Area> {
             this.getActiveAirport().getIcao(),
             this.getActiveAirport().getAtcTemplates().select(q -> q.toAtcId()));
     ContextManager.setContext(ISharedAcc.class, sharedAcc);
-
-    super.setInitialized();
-  }
-
-  @Override
-  protected Area _getContent() {
-    return content;
   }
 }

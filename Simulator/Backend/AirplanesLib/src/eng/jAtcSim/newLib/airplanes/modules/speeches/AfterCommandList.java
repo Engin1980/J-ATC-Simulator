@@ -5,6 +5,7 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
@@ -19,10 +20,13 @@ import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IPlainObjectSimPersistable;
+import exml.ISimPersistable;
+import exml.XContext;
 
 import java.util.function.Predicate;
 
-public class AfterCommandList {
+public class AfterCommandList implements ISimPersistable {
 
   public enum Type {
     route,
@@ -314,6 +318,17 @@ public class AfterCommandList {
     return this.rt.isEmpty();
   }
 
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.saveFieldItems(this, "ex", AFItem.class, elm);
+    ctx.saver.saveFieldItems(this, "rt", AFItem.class, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+
+  }
+
   public String toLogString() {
     EStringBuilder sb = new EStringBuilder();
 
@@ -343,7 +358,7 @@ public class AfterCommandList {
   }
 }
 
-class AFItem {
+class AFItem implements IPlainObjectSimPersistable {
   public final AfterCommand antecedent;
   public final ICommand consequent;
 

@@ -3,6 +3,7 @@ module JAtcSim.Modules.Backend.MoodLib {
   requires eng.eSystem;
   requires JAtcSim.Modules.Backend.SharedLib;
   requires eng.newXmlUtils;
+  requires AnotherXml;
   exports eng.jAtcSim.newLib.mood.context to
       JAtcSim.Modules.Backend.SimulationLib;
 }

@@ -2,16 +2,30 @@ package eng.jAtcSim.newLib.airplanes.modules.sha;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Headings;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import eng.newXmlUtils.annotations.XmlConstructorParameter;
+import exml.ISimPersistable;
+import exml.XContext;
 
-class HeadingInertialValue {
+class HeadingInertialValue implements ISimPersistable {
   private final double maxInertia;
   private final double maxInertiaChange;
   protected double value;
   private IList<Double> thresholds = new EList<>();
   private int inertiaStep = 0;
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.saveFieldItems(this, "thresholds", Double.class,  elm);
+    ctx.saver.saveRemainingFields(this, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+
+  }
 
   @XmlConstructor
   @XmlConstructorParameter(index = 1, valueString = "10")

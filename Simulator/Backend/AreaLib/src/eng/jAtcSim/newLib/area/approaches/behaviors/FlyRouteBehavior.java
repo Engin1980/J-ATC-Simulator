@@ -10,12 +10,6 @@ import eng.newXmlUtils.annotations.XmlConstructor;
 public class FlyRouteBehavior implements IApproachBehavior {
   private final IList<ICommand> commands;
   private boolean applied = false;
-  private String tag;
-
-  public FlyRouteBehavior withTag(String value){
-    this.tag = value;
-    return this;
-  }
 
   @XmlConstructor
   protected FlyRouteBehavior(){

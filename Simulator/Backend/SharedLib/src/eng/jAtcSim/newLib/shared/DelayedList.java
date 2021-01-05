@@ -5,14 +5,15 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IPlainObjectSimPersistable;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.function.Predicate;
 
-public class DelayedList<T> {
+public class DelayedList<T> implements IPlainObjectSimPersistable {
 
-  private static class DelayedItem<T> {
+  private static class DelayedItem<T> implements IPlainObjectSimPersistable {
     public final T item;
     public int delayLeft;
 

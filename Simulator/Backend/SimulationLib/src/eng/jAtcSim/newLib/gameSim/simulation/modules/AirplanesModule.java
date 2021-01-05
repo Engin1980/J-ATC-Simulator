@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.gameSim.simulation.modules;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
@@ -39,6 +40,9 @@ import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.ISimPersistable;
+import exml.XContext;
+import exml.annotations.XConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -54,12 +58,22 @@ public class AirplanesModule extends SimulationModule {
 
   @XmlConstructor
   private AirplanesModule() {
-    super(null);
+    super((Simulation) null);
     this.airplanesController = null;
     this.airproxController = null;
     this.emergencyAppearanceController = null;
     this.moodManager = null;
     this.mrvaController = null;
+  }
+
+  @XConstructor
+  private AirplanesModule(XContext ctx, AirplanesController airplanesController, AirproxController airproxController, EmergencyAppearanceController emergencyAppearanceController, MoodManager moodManager, MrvaController mrvaController) {
+    super(ctx);
+    this.airplanesController = airplanesController;
+    this.airproxController = airproxController;
+    this.emergencyAppearanceController = emergencyAppearanceController;
+    this.moodManager = moodManager;
+    this.mrvaController = mrvaController;
   }
 
   public AirplanesModule(Simulation parent, AirplanesController airplanesController, AirproxController airproxController, MrvaController mrvaController, EmergencyAppearanceController emergencyAppearanceController, MoodManager moodManager) {
@@ -166,6 +180,25 @@ public class AirplanesModule extends SimulationModule {
     this.moodManager.unregisterCallsign(callsign);
     this.airplanesController.unregisterPlane(callsign);
     Context.getMessaging().getMessenger().unregisterListener(Participant.createAirplane(callsign));
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.ignoreFields(this,
+            "airproxController",
+            "emergencyAppearanceController",
+            "moodManager",
+            "mrvaController");
+    ctx.saver.ignoreFields(this,
+            "planes4public",
+            "planesPrepared");
+    ctx.saver.saveRemainingFields(this, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
   }
 
   private FinishedPlaneStats buildFinishedAirplaneStats(IAirplane airplane) {

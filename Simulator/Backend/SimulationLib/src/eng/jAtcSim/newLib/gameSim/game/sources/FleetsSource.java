@@ -19,7 +19,6 @@ public class FleetsSource extends Source<FleetsSource.Fleets> {
     }
   }
 
-  private FleetsSource.Fleets content;
   private final String generalAviationFileName;
   private final String companyFileName;
 
@@ -51,13 +50,7 @@ public class FleetsSource extends Source<FleetsSource.Fleets> {
       throw new EApplicationException(sf("Failed to load company xml-fleets-file from '%s'", this.companyFileName), e);
     }
 
-    this.content = new Fleets(gaFleets, companyFleets);
-
-    super.setInitialized();
-  }
-
-  @Override
-  protected Fleets _getContent() {
-    return content;
+    Fleets fleets = new Fleets(gaFleets, companyFleets);
+    super.setContent(fleets);
   }
 }

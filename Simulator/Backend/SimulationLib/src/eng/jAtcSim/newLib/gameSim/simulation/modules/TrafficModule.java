@@ -43,7 +43,7 @@ public class TrafficModule extends SimulationModule {
 
   @XmlConstructor
   private TrafficModule() {
-    super(null);
+    super((Simulation) null);
     this.trafficProvider = null;
     this.callsignFactory = null;
     this.delayStep = 0;

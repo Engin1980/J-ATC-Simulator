@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -13,6 +14,7 @@ import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import exml.XContext;
 
 public class HoldPilot extends Pilot {
 
@@ -41,6 +43,17 @@ public class HoldPilot extends Pilot {
   public eHoldPhase phase;
   public EDayTimeStamp secondTurnTime;
   public LeftRight turn;
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.saveRemainingFields(this, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
+  }
 
   private HoldPilot(Airplane plane) {
     super(plane);

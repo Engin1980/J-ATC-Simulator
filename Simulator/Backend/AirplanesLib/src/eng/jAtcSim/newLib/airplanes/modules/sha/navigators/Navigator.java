@@ -3,8 +3,9 @@ package eng.jAtcSim.newLib.airplanes.modules.sha.navigators;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
+import exml.IPlainObjectSimPersistable;
 
-public abstract class Navigator {
+public abstract class Navigator implements IPlainObjectSimPersistable {
   public abstract NavigatorResult navigate(IAirplane plane);
 
   public static LeftRight getBetterDirectionToTurn(double current, double target) {

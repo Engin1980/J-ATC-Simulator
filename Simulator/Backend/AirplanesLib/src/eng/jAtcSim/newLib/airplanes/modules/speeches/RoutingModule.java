@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes.modules.speeches;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.utilites.ConversionUtils;
@@ -29,6 +30,7 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.RequestRadarContactNoti
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
+import exml.XContext;
 
 public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
@@ -56,6 +58,19 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private final DelayedList<ICommand> queue = new DelayedList<>(2, 7); //Min/max item delay
   private ActiveRunwayThreshold runwayThreshold;
   private CommandQueueRecorder cqr;
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.ignoreFields(this,
+            "cqr");
+    ctx.saver.saveRemainingFields(this, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
+  }
 
   public RoutingModule(Airplane plane, Navaid entryExitPoint) {
     super(plane);

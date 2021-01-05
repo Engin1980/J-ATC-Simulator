@@ -1,8 +1,9 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha;
 
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IPlainObjectSimPersistable;
 
-class InertialValue {
+class InertialValue implements IPlainObjectSimPersistable {
   private final double maxPositiveInertiaChange;
   private final double maxNegativeInertiaChange;
   protected double value;

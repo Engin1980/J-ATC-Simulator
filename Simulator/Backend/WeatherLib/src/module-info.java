@@ -4,6 +4,7 @@ module JAtcSim.Modules.Backend.WeatherLib {
   requires JAtcSim.Modules.Backend.SharedLib;
   requires eng.eSystem;
   requires eng.newXmlUtils;
+  requires AnotherXml;
   exports eng.jAtcSim.newLib.weather.context to
       JAtcSim.modules.backend.TextProcessingLib,
       JAtcSim.Modules.Backend.AirplanesLib,

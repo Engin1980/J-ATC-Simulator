@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -11,10 +12,22 @@ import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PassingClearanceLimitNotification;
+import exml.XContext;
 
 public abstract class BasicPilot extends Pilot {
 
   private boolean clearanceLimitWarningSent = false;
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.saveField(this, "clearanceLimitWarningSent", elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
+  }
 
   public BasicPilot(Airplane plane) {
     super(plane);

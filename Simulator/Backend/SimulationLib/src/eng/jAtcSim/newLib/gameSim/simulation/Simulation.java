@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.gameSim.simulation;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
@@ -43,8 +44,10 @@ import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.ISimPersistable;
+import exml.XContext;
 
-public class Simulation {
+public class Simulation implements ISimPersistable {
 
   public class MySimulation implements ISimulation {
 
@@ -250,7 +253,7 @@ public class Simulation {
     this.timerModule = new TimerModule(this, simulationSettings.simulationSettings.secondLengthInMs);
   }
 
-  public void init(){
+  public void init() {
     SharedAcc sharedContext = new SharedAcc(
             this.worldModule.getActiveAirport().getIcao(),
             this.worldModule.getActiveAirport().getAtcTemplates().select(q -> q.toAtcId()),
@@ -310,6 +313,27 @@ public class Simulation {
             Context.getShared().getSimLog()
     );
     ContextManager.setContext(ISharedAcc.class, sharedContext);
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.ignoreFields(this,
+            "atcModule",
+            "ioModule",
+            "isElapseSecondCalculationRunning",
+            "isim",
+            "now",
+            "statsModule",
+            "timerModule",
+            "trafficModule",
+            "weatherModule",
+            "worldModule");
+    ctx.saver.saveRemainingFields(this, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    ctx.parent.set(this);
   }
 
   private void elapseSecond() {

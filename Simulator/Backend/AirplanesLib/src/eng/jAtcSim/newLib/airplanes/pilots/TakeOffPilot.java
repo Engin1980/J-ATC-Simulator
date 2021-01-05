@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
@@ -7,10 +8,22 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
+import exml.XContext;
 
 public class TakeOffPilot extends Pilot {
   //TODO add to airport config the acceleration altitude and use it here
   private final ActiveRunwayThreshold takeOffThreshold;
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.saveRemainingFields(this, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
+  }
 
   public TakeOffPilot(Airplane plane) {
     super(plane);

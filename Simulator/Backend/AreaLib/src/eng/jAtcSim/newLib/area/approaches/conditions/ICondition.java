@@ -1,4 +1,6 @@
 package eng.jAtcSim.newLib.area.approaches.conditions;
 
-public interface ICondition {
+import exml.IPlainObjectSimPersistable;
+
+public interface ICondition extends IPlainObjectSimPersistable {
 }

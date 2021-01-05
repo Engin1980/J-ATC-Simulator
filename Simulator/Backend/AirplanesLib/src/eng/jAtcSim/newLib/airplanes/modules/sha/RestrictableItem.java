@@ -3,8 +3,9 @@ package eng.jAtcSim.newLib.airplanes.modules.sha;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IPlainObjectSimPersistable;
 
-class RestrictableItem {
+class RestrictableItem implements IPlainObjectSimPersistable {
   /**
    * Ordered value is what has been ordered without respect to the restriction.
    */
