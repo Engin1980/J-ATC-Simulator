@@ -8,7 +8,7 @@ import eng.eSystem.eXml.XElement;
 
 public class SimSave {
 
-  private IMap<Object, ISet<String>> usedFields = new EMap<>();
+  private final IMap<Object, ISet<String>> usedFields = new EMap<>();
 
   public void saveRemainingFields(ISimPersistable o, XElement elm, XmlContext ctx) {
     ISet<String> remainingFields = FieldUtils.getRemainingFields(o, usedFields.tryGet(o));
@@ -17,5 +17,9 @@ public class SimSave {
       FieldUtils.saveField(o, remainingField, elm, ctx);
     }
     usedFields.getOrSet(o, new ESet<>()).addMany(remainingFields);
+  }
+
+  public void ignoreFields(ISimPersistable obj, String... fieldNames) {
+    this.usedFields.getOrSet(obj, new ESet<>()).addMany(fieldNames);
   }
 }
