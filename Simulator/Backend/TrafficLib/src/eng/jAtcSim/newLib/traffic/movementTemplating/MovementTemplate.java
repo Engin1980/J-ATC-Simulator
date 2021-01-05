@@ -4,8 +4,9 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 
-public abstract class MovementTemplate {
+public abstract class MovementTemplate implements IXPersistable {
   public enum eKind {
     arrival,
     departure

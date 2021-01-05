@@ -6,20 +6,20 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Headings;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import eng.newXmlUtils.annotations.XmlConstructorParameter;
-import exml.ISimPersistable;
+import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XIgnored;
 
-class HeadingInertialValue implements ISimPersistable {
+class HeadingInertialValue implements IXPersistable {
   private final double maxInertia;
   private final double maxInertiaChange;
   protected double value;
-  private IList<Double> thresholds = new EList<>();
+  @XIgnored private IList<Double> thresholds = new EList<>();
   private int inertiaStep = 0;
 
   @Override
   public void save(XElement elm, XContext ctx) {
     ctx.saver.saveFieldItems(this, "thresholds", Double.class,  elm);
-    ctx.saver.saveRemainingFields(this, elm);
   }
 
   @Override

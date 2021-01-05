@@ -8,10 +8,11 @@ import eng.jAtcSim.newLib.area.approaches.behaviors.IApproachBehavior;
 import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
-import exml.ISimPersistable;
+import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XIgnored;
 
-public class ApproachStage implements ISimPersistable {
+public class ApproachStage implements IXPersistable {
   public static ApproachStage create(String name, IApproachBehavior behavior, ICondition exitCondition, ApproachErrorCondition... errorCondition) {
     ESet<ApproachErrorCondition> set = new ESet<>(errorCondition);
     return new ApproachStage(behavior, exitCondition, set, name);
@@ -22,6 +23,7 @@ public class ApproachStage implements ISimPersistable {
   }
 
   private final ICondition exitCondition;
+  @XIgnored
   private final ISet<ApproachErrorCondition> errorConditions;
   private final IApproachBehavior behavior;
   private final String name;
@@ -69,7 +71,6 @@ public class ApproachStage implements ISimPersistable {
   public void save(XElement elm, XContext ctx) {
     ctx.saver.saveFieldItems(this, "errorConditions",
             ApproachErrorCondition.class, elm);
-    ctx.saver.saveRemainingFields(this, elm);
   }
 
   @Override

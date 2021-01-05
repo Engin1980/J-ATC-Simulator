@@ -1,8 +1,9 @@
 package eng.jAtcSim.newLib.stats.model;
 
 import eng.jAtcSim.newLib.stats.properties.CounterProperty;
+import exml.IXPersistable;
 
-public class ErrorsModel {
+public class ErrorsModel implements IXPersistable {
   private CounterProperty mrvaErros;
   private CounterProperty airproxErros;
 

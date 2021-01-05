@@ -1,8 +1,9 @@
 package eng.jAtcSim.newLib.atcs.internal.tower;
 
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
+import exml.IXPersistable;
 
-public class RunwaysInUseInfo {
+public class RunwaysInUseInfo implements IXPersistable {
   // TODO make private
   public SchedulerForAdvice scheduler;
   public RunwayConfiguration current;

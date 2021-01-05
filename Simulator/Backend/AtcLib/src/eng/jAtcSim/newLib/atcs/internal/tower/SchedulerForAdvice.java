@@ -4,8 +4,9 @@ import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 
-public class SchedulerForAdvice {
+public class SchedulerForAdvice implements IXPersistable {
 
 //                      <checkIntervals __item_type="int" __type="eng.eSystem.collections.EList">
 //                      <item __type="java.lang.Integer">1800</item>

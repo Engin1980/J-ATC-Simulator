@@ -5,10 +5,10 @@ public class XContext {
     return new XContext();
   }
 
-  public final SimSave saver;
+  public final Saver saver;
   public final XParent parent = new XParent();
 
   public XContext() {
-    this.saver = new SimSave(this);
+    this.saver = new Saver(this);
   }
 }

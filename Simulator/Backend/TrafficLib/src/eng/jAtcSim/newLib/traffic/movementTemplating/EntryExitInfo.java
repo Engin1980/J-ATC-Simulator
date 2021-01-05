@@ -5,9 +5,10 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.traffic.contextLocal.Context;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 
 //TODO rewrite to separate classes NavaidEntryExitInfo, RadialEntryExitInfo or CoordinateEntryExitInfo
-public class EntryExitInfo {
+public class EntryExitInfo implements IXPersistable {
   public static EntryExitInfo getRandom() {
     int radial = Context.getApp().getRnd().nextInt(0, 360);
     EntryExitInfo ret = new EntryExitInfo(radial);

@@ -20,13 +20,13 @@ import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
 import eng.newXmlUtils.annotations.XmlConstructor;
-import exml.IPlainObjectSimPersistable;
-import exml.ISimPersistable;
+import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XIgnored;
 
 import java.util.function.Predicate;
 
-public class AfterCommandList implements ISimPersistable {
+public class AfterCommandList implements IXPersistable {
 
   public enum Type {
     route,
@@ -173,8 +173,8 @@ public class AfterCommandList implements ISimPersistable {
     return ret;
   }
 
-  private final IList<AFItem> rt = new EList<>();
-  private final IList<AFItem> ex = new EList<>();
+  @XIgnored private final IList<AFItem> rt = new EList<>();
+  @XIgnored private final IList<AFItem> ex = new EList<>();
 
   public void addExtension(AfterCommand afterCommand, ICommand consequent) {
     AFItem it = new AFItem(afterCommand, consequent);
@@ -358,7 +358,7 @@ public class AfterCommandList implements ISimPersistable {
   }
 }
 
-class AFItem implements IPlainObjectSimPersistable {
+class AFItem implements IXPersistable {
   public final AfterCommand antecedent;
   public final ICommand consequent;
 

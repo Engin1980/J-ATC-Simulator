@@ -31,6 +31,7 @@ import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.SharedXmlUtils;
 import eng.jAtcSim.newLib.traffic.TrafficXmlContextInit;
 import eng.jAtcSim.newLib.weather.Weather;
@@ -41,13 +42,13 @@ import eng.newXmlUtils.implementations.ObjectDeserializer;
 import eng.newXmlUtils.implementations.ObjectSerializer;
 import exml.XContext;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class GameFactoryAndRepository {
   private static void prepareXmlContextForSources(XmlContext ctx) {
-    ctx.sdfManager.setSerializer(GID.class, new ObjectSerializer());
-    ctx.sdfManager.setDeserializer(GID.class, new ObjectDeserializer<>());
-
     ctx.sdfManager.setSerializers(SDFFactory.getSimpleSerializers());
     ctx.sdfManager.setDeserializers(SDFFactory.getSimpleDeserializers());
 
@@ -104,9 +105,6 @@ public class GameFactoryAndRepository {
   }
 
   private static void prepareXmlContextForSimulation(XmlContext ctx) {
-    ctx.sdfManager.setSerializer(GID.class, new ObjectSerializer());
-    ctx.sdfManager.setDeserializer(GID.class, new ObjectDeserializer<>());
-
     ctx.sdfManager.setSerializers(SDFFactory.getSimpleSerializers());
     ctx.sdfManager.setDeserializers(SDFFactory.getSimpleDeserializers());
 
@@ -346,18 +344,22 @@ public class GameFactoryAndRepository {
     ctx.saver.setFormatter(Boolean.class, q -> q.toString());
     ctx.saver.setFormatter(Character.class, q -> q.toString());
     ctx.saver.setFormatter(String.class, v -> v);
+    ctx.saver.setSerializer(ArrayList.class, getItemsConsumer(true, Object.class, ctx));
 
     // eSystem
-    ctx.saver.setSerializer(AirplaneList.class, getIterableConsumer(false, null, ctx));
-    ctx.saver.setSerializer(EList.class, getIterableConsumer(true, Object.class, ctx));
-    ctx.saver.setSerializer(EDistinctList.class, getIterableConsumer(true, Object.class, ctx));
-    ctx.saver.setSerializer(ESet.class, getIterableConsumer(true, Object.class, ctx));
+    ctx.saver.setSerializer(AirplaneList.class, getItemsConsumer(false, null, ctx));
+    ctx.saver.setSerializer(EList.class, getItemsConsumer(true, Object.class, ctx));
+    ctx.saver.setSerializer(EDistinctList.class, getItemsConsumer(true, Object.class, ctx));
+    ctx.saver.setSerializer(ESet.class, getItemsConsumer(true, Object.class, ctx));
+    ctx.saver.setSerializer(EMap.class, getEntriesConsumer(true, Object.class, Object.class, ctx));
     ctx.saver.setFormatter(Coordinate.class, q -> q.getLatitude().toDecimalString(true) + ";" + q.getLongitude().toDecimalString(true));
 
     // shared
     ctx.saver.setFormatter(Callsign.class, q -> q.toString(true));
     ctx.saver.setFormatter(Restriction.class, q -> q.direction.toString() + ";" + q.value);
     ctx.saver.setFormatter(EDayTimeStamp.class, v -> v.toDayTimeString());
+    ctx.saver.setFormatter(EDayTimeRun.class, v -> v.toDayTimeString());
+    ctx.saver.setFormatter(ETimeStamp.class, v->v.toTimeString());
     ctx.saver.setFormatter(Squawk.class, q -> q.toString());
 
     // area
@@ -370,13 +372,25 @@ public class GameFactoryAndRepository {
     // atc
     ctx.saver.setFormatter(AtcId.class, v -> v.getName());
 
+    // airplane
+
   }
 
-  private <T extends Iterable<?>> Consumer2<T, XElement> getIterableConsumer(boolean saveItemsType, Class<?> expectedItemType, XContext ctx) {
+  private <T extends Iterable<?>> Consumer2<T, XElement> getItemsConsumer(boolean saveItemsType, Class<?> expectedItemType, XContext ctx) {
     Consumer2<T, XElement> ret = (lst, e) -> {
       if (saveItemsType)
         e.setAttribute("__type", lst.getClass().getName());
       ctx.saver.saveItems(lst, expectedItemType, e);
+    };
+
+    return ret;
+  }
+
+  private <T extends Iterable<Map.Entry<?,?>>> Consumer2<T, XElement> getEntriesConsumer(boolean saveItemsType, Class<?> expectedKeyType, Class<?> expectedValueType, XContext ctx) {
+    Consumer2<T, XElement> ret = (lst, e) -> {
+      if (saveItemsType)
+        e.setAttribute("__type", lst.getClass().getName());
+      ctx.saver.saveEntries(lst, expectedKeyType, expectedValueType, e);
     };
 
     return ret;

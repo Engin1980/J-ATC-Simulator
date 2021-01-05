@@ -10,8 +10,9 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 
-public class CallsignFactory {
+public class CallsignFactory implements IXPersistable {
   public enum Type {
     NXX,
     NNX,

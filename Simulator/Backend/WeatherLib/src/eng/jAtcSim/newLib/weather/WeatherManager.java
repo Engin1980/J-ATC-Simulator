@@ -5,12 +5,14 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.weather.contextLocal.Context;
 import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
+import exml.annotations.XIgnored;
 
-public class WeatherManager {
+public class WeatherManager implements IXPersistable {
 
   private Weather currentWeather;
   private boolean newWeatherFlag;
-  private final WeatherProvider provider;
+  @XIgnored private final WeatherProvider provider;
 
   @XmlConstructor
   private WeatherManager() {

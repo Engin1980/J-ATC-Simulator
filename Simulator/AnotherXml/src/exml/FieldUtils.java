@@ -1,16 +1,37 @@
 package exml;
 
+import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.ReflectionUtils;
+import exml.annotations.XIgnored;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Map;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class FieldUtils {
-  public static void saveFieldItems(Object obj, String itemsFieldName,  Class<?> itemType, XElement elm, XContext ctx) {
+
+  public static void saveFieldEntries(Object obj, String entriesFieldName, Class<?> keyType, Class<?> valueType, XElement elm, XContext ctx) {
+    Field field = getField(obj.getClass(), entriesFieldName);
+    Object tmp = getFieldValue(obj, field);
+    Iterable<Map.Entry<?, ?>> entries;
+    if (tmp instanceof Map) {
+      Map map = (Map) tmp;
+      entries = map.entrySet();
+    } else if (tmp instanceof IMap) {
+      IMap map = (IMap) tmp;
+      entries = map.getEntries();
+    } else
+      throw new SimPersistenceExeption("Unsupported map type to save entries: " + tmp.getClass());
+
+    XElement itemsElement = ctx.saver.saveEntries(entries, keyType, valueType, entriesFieldName);
+    elm.addElement(itemsElement);
+  }
+
+  public static void saveFieldItems(Object obj, String itemsFieldName, Class<?> itemType, XElement elm, XContext ctx) {
     Field field = getField(obj.getClass(), itemsFieldName);
     Object tmp = getFieldValue(obj, field);
     Iterable<?> items = (Iterable<?>) tmp;
@@ -65,6 +86,8 @@ public class FieldUtils {
   private static ISet<String> getAllFieldsToPersist(Class<?> cls) {
     ISet<String> ret = ReflectionUtils.ClassUtils.getFields(cls)
             .where(q -> Modifier.isStatic(q.getModifiers()) == false)
+            .where(q -> q.getAnnotationsByType(XIgnored.class).length == 0)
+            .where(q -> q.getName().equals("this$0") == false)
             .select(q -> q.getName())
             .toSet();
     return ret;

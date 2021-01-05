@@ -40,7 +40,6 @@ import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
 import eng.newXmlUtils.annotations.XmlConstructor;
-import exml.ISimPersistable;
 import exml.XContext;
 import exml.annotations.XConstructor;
 

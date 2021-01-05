@@ -3,8 +3,9 @@ package eng.jAtcSim.newLib.stats.model;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 
-public class ArrivalDepartureModel<T> {
+public class ArrivalDepartureModel<T> implements IXPersistable {
   private T arrivals;
   private T departures;
 

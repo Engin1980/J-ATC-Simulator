@@ -3,23 +3,13 @@ package eng.jAtcSim.newLib.gameSim.game.sources;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
-import exml.ISimPersistable;
+import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XIgnored;
 
-public abstract class Source<T> implements ISimPersistable {
-  private boolean initialized = false;
-  private T content;
-
-  @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.ignoreFields(this, "initialized", "content");
-    ctx.saver.saveRemainingFields(this, elm);
-  }
-
-  @Override
-  public void load(XElement elm, XContext ctx) {
-
-  }
+public abstract class Source<T> implements IXPersistable {
+  @XIgnored private boolean initialized = false;
+  @XIgnored private T content;
 
   protected void setContent(T content){
     EAssert.Argument.isNotNull(content, "content");

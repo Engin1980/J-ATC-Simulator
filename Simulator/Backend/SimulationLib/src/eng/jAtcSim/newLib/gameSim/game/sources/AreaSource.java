@@ -1,6 +1,5 @@
 package eng.jAtcSim.newLib.gameSim.game.sources;
 
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
@@ -11,12 +10,11 @@ import eng.jAtcSim.newLib.shared.context.ISharedAcc;
 import eng.jAtcSim.newLib.shared.context.NonSimSharedAcc;
 import eng.jAtcSim.newLib.xml.area.AreaXmlLoader;
 import eng.newXmlUtils.annotations.XmlConstructor;
-import exml.ISimPersistable;
-import exml.XContext;
+import exml.IXPersistable;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class AreaSource extends Source<Area> implements ISimPersistable {
+public class AreaSource extends Source<Area> {
 
   private String fileName;
   private String icao;

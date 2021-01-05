@@ -1,16 +1,13 @@
 package eng.jAtcSim.newLib.airplanes.modules;
 
 
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import exml.IPlainObjectSimPersistable;
-import exml.ISimPersistable;
-import exml.XContext;
+import exml.IXPersistable;
 
-public class AirplaneFlightModule implements IPlainObjectSimPersistable {
+public class AirplaneFlightModule implements IXPersistable {
   private final Callsign callsign;
   private final int entryDelay;
   private final EDayTimeStamp expectedExitTime;

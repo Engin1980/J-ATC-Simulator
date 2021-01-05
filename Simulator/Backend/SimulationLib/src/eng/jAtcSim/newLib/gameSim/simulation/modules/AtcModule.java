@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.events.EventAnonymousSimple;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.CacheUsingProducer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
@@ -15,10 +15,13 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
+import exml.XContext;
+import exml.annotations.XIgnored;
 
-public class AtcModule {
+public class AtcModule implements IXPersistable {
   private final AtcProvider atcProvider;
-  private final CacheUsingProducer<IReadOnlyList<AtcId>> userAtcsCache = new CacheUsingProducer<>(this::evaluateUserAtcs);
+  @XIgnored private final CacheUsingProducer<IReadOnlyList<AtcId>> userAtcsCache = new CacheUsingProducer<>(this::evaluateUserAtcs);
 
   public AtcModule(AtcProvider atcProvider) {
     EAssert.Argument.isNotNull(atcProvider, "atcProvider");

@@ -18,17 +18,6 @@ public abstract class BasicPilot extends Pilot {
 
   private boolean clearanceLimitWarningSent = false;
 
-  @Override
-  public void save(XElement elm, XContext ctx) {
-    super.save(elm, ctx);
-    ctx.saver.saveField(this, "clearanceLimitWarningSent", elm);
-  }
-
-  @Override
-  public void load(XElement elm, XContext ctx) {
-    super.load(elm, ctx);
-  }
-
   public BasicPilot(Airplane plane) {
     super(plane);
   }

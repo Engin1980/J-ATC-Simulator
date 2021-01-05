@@ -1,8 +1,11 @@
 package eng.jAtcSim.newLib.stats.properties;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
+import exml.IXPersistable;
+import exml.XContext;
 
-public class CounterProperty {
+public class CounterProperty implements IXPersistable {
   private int count = 0;
 
   public void add() {
@@ -16,5 +19,15 @@ public class CounterProperty {
 
   public int getCount() {
     return count;
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.saveObject(this.count, elm);
   }
 }

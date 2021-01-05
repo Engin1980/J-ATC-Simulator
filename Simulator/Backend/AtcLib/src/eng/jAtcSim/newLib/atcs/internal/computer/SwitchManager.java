@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.atcs.internal.computer;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
@@ -24,16 +25,19 @@ import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
+import exml.XContext;
+import exml.annotations.XIgnored;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-class SwitchManager {
+class SwitchManager implements IXPersistable {
 
   private static final int SECONDS_BEFORE_REPEAT_SWITCH_REQUEST = 30;
-  private IAtcSwitchManagerInterface parent;
+  @XIgnored private IAtcSwitchManagerInterface parent;
   private final ISet<Squawk> incomingPlanes = new ESet<>();
   private final IMap<Squawk, SwitchInfo> outgoingPlanes = new EMap<>();
-  private Producer<IReadOnlyList<Message>> delayedMessagesProducer;
+  @XIgnored private Producer<IReadOnlyList<Message>> delayedMessagesProducer;
 
   @XmlConstructor
   SwitchManager() {

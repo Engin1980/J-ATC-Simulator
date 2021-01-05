@@ -34,6 +34,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ThenCommand;
 import exml.XContext;
+import exml.annotations.XIgnored;
 
 public class ApproachPilot extends Pilot {
 
@@ -51,8 +52,8 @@ public class ApproachPilot extends Pilot {
 
   //TODEL probably unused
   private ApproachType type;
-  private final IList<ApproachStage> stages;
-  private final IList<ICommand> gaRouteCommands;
+  @XIgnored private final IList<ApproachStage> stages;
+  @XIgnored private final IList<ICommand> gaRouteCommands;
   private final ActiveRunwayThreshold threshold;
   private final int initialAltitude;
   private boolean switchToTowerRequested = false;
@@ -66,7 +67,6 @@ public class ApproachPilot extends Pilot {
     super.save(elm, ctx);
     ctx.saver.saveFieldItems(this, "stages", ApproachStage.class, elm);
     ctx.saver.saveFieldItems(this, "gaRouteCommands", ICommand.class, elm);
-    ctx.saver.saveRemainingFields(this, elm);
   }
 
   @Override

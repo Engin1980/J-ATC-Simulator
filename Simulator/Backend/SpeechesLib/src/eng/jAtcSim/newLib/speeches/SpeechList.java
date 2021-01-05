@@ -7,8 +7,9 @@ import eng.eSystem.exceptions.NullArgumentException;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.speeches.base.ISpeech;
 import eng.jAtcSim.newLib.speeches.base.Rejection;
+import exml.IXPersistable;
 
-public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageContent {
+public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageContent, IXPersistable {
 
   @Override
   public boolean isRejection() {

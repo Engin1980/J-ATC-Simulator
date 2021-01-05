@@ -3,9 +3,9 @@ package eng.jAtcSim.newLib.shared;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.CoordinateValue;
 import eng.eSystem.geo.Headings;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.*;
 
 class RadialCalculatorTest {
 

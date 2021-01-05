@@ -10,8 +10,9 @@ import eng.jAtcSim.newLib.stats.model.ErrorsModel;
 import eng.jAtcSim.newLib.stats.properties.CounterProperty;
 import eng.jAtcSim.newLib.stats.properties.StatisticProperty;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 
-public class Collector {
+public class Collector implements IXPersistable {
   private final EDayTimeStamp fromTime;
   private final EDayTimeStamp toTime;
   private final StatisticProperty busyCounter;

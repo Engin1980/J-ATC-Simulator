@@ -3,8 +3,9 @@ package eng.jAtcSim.newLib.messaging;
 import eng.eSystem.validation.EAssert;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import eng.newXmlUtils.annotations.XmlConstructorParameter;
+import exml.IXPersistable;
 
-public class Message {
+public class Message implements IXPersistable {
 
   private final Participant source;
   private final Participant target;

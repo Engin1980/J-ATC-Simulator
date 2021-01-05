@@ -12,31 +12,22 @@ import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.IAirplaneWriter;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.Restriction;
-import exml.ISimPersistable;
+import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XIgnored;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public abstract class Pilot implements ISimPersistable {
+public abstract class Pilot implements IXPersistable {
 
-  protected final IAirplane rdr;
-  protected final IAirplaneWriter wrt;
+  @XIgnored protected final IAirplane rdr;
+  @XIgnored protected final IAirplaneWriter wrt;
   private boolean isFirstElapseSecond = true;
 
   public Pilot(Airplane plane) {
     EAssert.Argument.isNotNull(plane, "plane");
     this.rdr = plane.getReader();
     this.wrt = plane.getWriter();
-  }
-
-  @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.ignoreFields(this, "rdr", "wrt");
-  }
-
-  @Override
-  public void load(XElement elm, XContext ctx) {
-
   }
 
   public abstract boolean isDivertable();

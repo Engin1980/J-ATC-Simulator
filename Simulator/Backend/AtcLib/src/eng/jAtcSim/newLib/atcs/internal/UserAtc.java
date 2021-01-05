@@ -8,6 +8,7 @@ package eng.jAtcSim.newLib.atcs.internal;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.atcs.IUserAtcInterface;
@@ -29,6 +30,8 @@ import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.XContext;
+import exml.annotations.XIgnored;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -50,7 +53,19 @@ public class UserAtc extends Atc implements IUserAtcInterface {
   }
 
   private final IList<IAirplane> planes = new EList<>();
+  @XIgnored
   private IReadOnlyList<Message> thisSecondMessages = new EList<>();
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.ignoreFields(this,"thisSecondMessages");
+  }
 
   @XmlConstructor
   private UserAtc() {

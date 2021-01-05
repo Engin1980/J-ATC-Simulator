@@ -2,9 +2,9 @@ package eng.jAtcSim.newLib.airplanes.modules;
 
 
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import exml.IPlainObjectSimPersistable;
+import exml.IXPersistable;
 
-public class EmergencyModule implements IPlainObjectSimPersistable {
+public class EmergencyModule implements IXPersistable {
   private EDayTimeStamp emergencyWanishTime = null;
 
   //TODO narvat emergency generating here s pomocí static items

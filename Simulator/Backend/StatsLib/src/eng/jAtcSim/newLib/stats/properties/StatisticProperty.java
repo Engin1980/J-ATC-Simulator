@@ -1,8 +1,9 @@
 package eng.jAtcSim.newLib.stats.properties;
 
 import eng.eSystem.validation.EAssert;
+import exml.IXPersistable;
 
-public class StatisticProperty {
+public class StatisticProperty implements IXPersistable {
 
   private double minimum;
   private double maximum;

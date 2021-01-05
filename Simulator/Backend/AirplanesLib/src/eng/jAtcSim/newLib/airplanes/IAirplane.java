@@ -1,13 +1,15 @@
 package eng.jAtcSim.newLib.airplanes;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
+import exml.IXPersistable;
+import exml.XContext;
 
-public interface IAirplane {
-
+public interface IAirplane extends IXPersistable {
   IAirplaneAtc getAtc();
 
   Callsign getCallsign();
@@ -30,11 +32,21 @@ public interface IAirplane {
 
   boolean isArrival();
 
+  boolean isEmergency();
+
+  GoingAroundNotification.GoAroundReason pullLastGoAroundReasonIfAny();
+
   default boolean isDeparture() {
     return !isArrival();
   }
 
-  boolean isEmergency();
+  @Override
+  default void load(XElement elm, XContext ctx) {
 
-  GoingAroundNotification.GoAroundReason pullLastGoAroundReasonIfAny();
+  }
+
+  @Override
+  default void save(XElement elm, XContext ctx) {
+    elm.setContent(this.getCallsign().toString(true));
+  }
 }

@@ -5,10 +5,11 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 
 import java.util.Objects;
 
-public class Participant {
+public class Participant implements IXPersistable {
   public enum eType {
     atc,
     airplane,

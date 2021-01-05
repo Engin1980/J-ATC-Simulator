@@ -48,12 +48,13 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertingNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.newXmlUtils.annotations.XmlConstructor;
-import exml.ISimPersistable;
+import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XIgnored;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class Airplane implements ISimPersistable {
+public class Airplane implements IXPersistable {
 
   public class AirplaneShaImpl implements IAirplaneSHA {
     @Override
@@ -189,10 +190,10 @@ public class Airplane implements ISimPersistable {
   }
 
   public class AirplaneImpl implements IAirplane {
-    private final IAirplaneAtc atc = Airplane.this.new AirplaneAtcImpl();
-    private final IAirplaneFlight flight = Airplane.this.new AirplaneFlightImpl();
-    private final IAirplaneRouting routing = Airplane.this.new AirplaneRoutingImpl();
-    private final IAirplaneSHA sha = Airplane.this.new AirplaneShaImpl();
+    @XIgnored private final IAirplaneAtc atc = Airplane.this.new AirplaneAtcImpl();
+    @XIgnored private final IAirplaneFlight flight = Airplane.this.new AirplaneFlightImpl();
+    @XIgnored private final IAirplaneRouting routing = Airplane.this.new AirplaneRoutingImpl();
+    @XIgnored private final IAirplaneSHA sha = Airplane.this.new AirplaneShaImpl();
 
     @Override
     public IAirplaneAtc getAtc() {
@@ -551,21 +552,21 @@ public class Airplane implements ISimPersistable {
   private final AirplaneType airplaneType;
   private final AtcModule atcModule;
   private Coordinate coordinate;
-  private CockpitVoiceRecorder cvr;
+  @XIgnored  private CockpitVoiceRecorder cvr;
   private final DivertModule divertModule;
   private final EmergencyModule emergencyModule;
-  private FlightDataRecorder fdr;
+  @XIgnored private FlightDataRecorder fdr;
   private final AirplaneFlightModule flightModule;
   private final Mood mood;
   private Pilot pilot;
-  private final IAirplane rdr = new AirplaneImpl();
+  @XIgnored private final IAirplane rdr = new AirplaneImpl();
   private final RoutingModule routingModule;
   private final ShaModule sha;
   private final Squawk squawk;
   private AirplaneState state;
-  private final IAirplaneWriter wrt = new AirplaneWriterImpl();
+  @XIgnored private final IAirplaneWriter wrt = new AirplaneWriterImpl();
   private GoingAroundNotification.GoAroundReason lastGoAroundReasonIfAny = null;
-  private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> speechCache = new EMap<>();
+  @XIgnored private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> speechCache = new EMap<>();
 
   @XmlConstructor
   private Airplane() {
@@ -649,23 +650,6 @@ public class Airplane implements ISimPersistable {
     this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
     CommandQueueRecorder cqr = new CommandQueueRecorder(this.flightModule.getCallsign());
     this.routingModule.setCqr(cqr);
-  }
-
-  @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.ignoreFields(this,
-            "cvr",
-            "fdr",
-            "rdr",
-            "wrt",
-            "speechCache"
-    );
-    ctx.saver.saveRemainingFields(this, elm);
-  }
-
-  @Override
-  public void load(XElement elm, XContext ctx) {
-
   }
 
   //TODEL

@@ -19,13 +19,17 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToRouteCommand;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
+import exml.annotations.XIgnored;
 
 import java.util.function.Consumer;
 
 // region Inner
-class DepartureManager {
+class DepartureManager implements IXPersistable {
 
+  @XIgnored
   private TowerAtc parent;
+  @XIgnored
   private Consumer<Message> messageSenderConsumer;
   private final IList<IAirplane> holdingPointNotAssigned = new EDistinctList<>(EDistinctList.Behavior.exception);
   private final IList<IAirplane> holdingPointWaitingForAppSwitchConfirmation = new EDistinctList<>(EDistinctList.Behavior.exception);

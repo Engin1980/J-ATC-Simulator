@@ -5,12 +5,11 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
-import eng.jAtcSim.newLib.shared.GID;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
-import eng.jAtcSim.newLib.shared.WithGID;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 
-public class RunwayConfiguration implements WithGID {
+public class RunwayConfiguration implements IXPersistable {
 
   public static RunwayConfiguration createForThresholds(IReadOnlyList<ActiveRunwayThreshold> rts) {
     IList<RunwayThresholdConfiguration> lst;
@@ -53,7 +52,6 @@ public class RunwayConfiguration implements WithGID {
             (float) b.getThresholdB().getCoordinate().getLongitude().get());
     return ret;
   }
-  private final GID gid;
   private final IList<RunwayThresholdConfiguration> arrivals;
   private IList<ISet<ActiveRunwayThreshold>> crossedThresholdSets = null;
   private final IList<RunwayThresholdConfiguration> departures;
@@ -64,7 +62,6 @@ public class RunwayConfiguration implements WithGID {
 
   @XmlConstructor
   public RunwayConfiguration() {
-    gid = null;
     arrivals = null;
     departures = null;
     windFrom = 0;
@@ -76,7 +73,6 @@ public class RunwayConfiguration implements WithGID {
   public RunwayConfiguration(int windFrom, int windTo, int windSpeedFrom, int windSpeedTo,
                              IList<RunwayThresholdConfiguration> arrivals,
                              IList<RunwayThresholdConfiguration> departures) {
-    this.gid = GID.create();
     this.windFrom = windFrom;
     this.windTo = windTo;
     this.windSpeedFrom = windSpeedFrom;
@@ -108,11 +104,6 @@ public class RunwayConfiguration implements WithGID {
 
   public IReadOnlyList<RunwayThresholdConfiguration> getDepartures() {
     return departures;
-  }
-
-  @Override
-  public GID getGID() {
-    return this.gid;
   }
 
   public int getWindFrom() {

@@ -3,8 +3,9 @@ package eng.jAtcSim.newLib.shared;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 
-public class PlaneCategoryDefinitions {
+public class PlaneCategoryDefinitions implements IXPersistable {
   private final static PlaneCategoryDefinitions ALL = new PlaneCategoryDefinitions("ABCD");
   private IReadOnlyList<Character> inner;
 

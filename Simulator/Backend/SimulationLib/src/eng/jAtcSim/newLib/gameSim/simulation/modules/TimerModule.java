@@ -12,15 +12,16 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
+import exml.annotations.XIgnored;
 
 import java.util.TimerTask;
 
 public class TimerModule extends SimulationModule {
 
-  private java.util.Timer tmr = null;
-  private final EventSimple<TimerModule> tickEvent = new EventSimple<>(this);
+  @XIgnored private java.util.Timer tmr = null;
+  @XIgnored private final EventSimple<TimerModule> tickEvent = new EventSimple<>(this);
   private int tickInterval;
-  private boolean tickIntervalChanged = false;
+  @XIgnored private boolean tickIntervalChanged = false;
 
   public TimerModule(Simulation parent, int tickInterval) {
     super(parent);

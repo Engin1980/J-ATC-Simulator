@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.atcs.internal;
 
 import eng.eSystem.collections.IList;
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
@@ -8,13 +9,17 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
+import exml.XContext;
+import exml.annotations.XIgnored;
 
-public abstract class Atc {
+public abstract class Atc implements IXPersistable {
 
   private AtcId atcId = null;
   private int acceptAltitude = 0;
   private int releaseAltitude = 0;
   private int orderedAltitude = 0;
+  @XIgnored
   private AtcRecorder recorder = null;
 
   @XmlConstructor

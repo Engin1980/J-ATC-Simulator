@@ -9,6 +9,7 @@ module JAtcSim.Modules.Backend.AtcLib {
   requires JAtcSim.Modules.Backend.WeatherLib;
   requires JAtcSim.Modules.Backend.StatsLib;
   requires eng.newXmlUtils;
+  requires AnotherXml;
   exports eng.jAtcSim.newLib.atcs;
   exports eng.jAtcSim.newLib.atcs.context to
       JAtcSim.Modules.Backend.SimulationLib;

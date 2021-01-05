@@ -32,6 +32,7 @@ import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XIgnored;
 
 public class CenterAtc extends ComputerAtc {
 
@@ -184,6 +185,7 @@ public class CenterAtc extends ComputerAtc {
   private final IList<IAirplane> farArrivals = new EList<>();
   private final IList<IAirplane> middleArrivals = new EList<>();
   private final ISet<IAirplane> departures = new ESet<>();
+  @XIgnored
   private final SwitchManagerInterface switchManagerInterface = new SwitchManagerInterface();
 
   @XmlConstructor

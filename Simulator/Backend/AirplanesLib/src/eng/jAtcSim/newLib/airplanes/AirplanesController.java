@@ -13,19 +13,20 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
-import exml.ISimPersistable;
+import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XIgnored;
 
-public class AirplanesController implements ISimPersistable {
+public class AirplanesController implements IXPersistable {
 
-  private final AirplaneList<Airplane> planes = new AirplaneList<>(
+  @XIgnored private final AirplaneList<Airplane> planes = new AirplaneList<>(
           q -> q.getReader().getCallsign(),
           q -> q.getReader().getSqwk());
-  private final AirplaneList<IAirplane> publicPlanes = new AirplaneList<>(
+  @XIgnored private final AirplaneList<IAirplane> publicPlanes = new AirplaneList<>(
           q -> q.getCallsign(),
           q -> q.getSqwk());
-  private AtcId departureInitialAtcId;
-  private AtcId arrivalInitialAtId;
+  @XIgnored private AtcId departureInitialAtcId;
+  @XIgnored private AtcId arrivalInitialAtId;
 
   public AirplanesController() {
     PostContracts.register(this, () -> planes.size() == publicPlanes.size(), "Planes vs. publicPlanes does not match.");
@@ -65,8 +66,7 @@ public class AirplanesController implements ISimPersistable {
 
   @Override
   public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveField(this, "planes", elm);
-
+    ctx.saver.saveFieldItems(this, "planes", Airplane.class, elm);
   }
 
   @Override

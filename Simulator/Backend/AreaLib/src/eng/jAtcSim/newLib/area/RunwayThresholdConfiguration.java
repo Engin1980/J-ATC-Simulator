@@ -2,10 +2,11 @@ package eng.jAtcSim.newLib.area;
 
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 
 import java.util.Objects;
 
-public class RunwayThresholdConfiguration {
+public class RunwayThresholdConfiguration implements IXPersistable {
 
   private final PlaneCategoryDefinitions categories;
   private final boolean primary;

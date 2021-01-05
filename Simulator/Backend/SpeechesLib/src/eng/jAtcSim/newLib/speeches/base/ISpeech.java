@@ -1,4 +1,6 @@
 package eng.jAtcSim.newLib.speeches.base;
 
-public interface ISpeech {
+import exml.IXPersistable;
+
+public interface ISpeech extends IXPersistable {
 }

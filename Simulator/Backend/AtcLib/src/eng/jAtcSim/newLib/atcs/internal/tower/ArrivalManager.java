@@ -12,10 +12,13 @@ import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
+import exml.annotations.XIgnored;
 
-class ArrivalManager {
+class ArrivalManager implements IXPersistable {
   private final IList<IAirplane> goAroundedPlanesToSwitchList = new EDistinctList<>(EDistinctList.Behavior.exception);
   private final IList<IAirplane> landingPlanesList = new EDistinctList<>(EDistinctList.Behavior.exception);
+  @XIgnored
   private TowerAtc parent;
 
   @XmlConstructor

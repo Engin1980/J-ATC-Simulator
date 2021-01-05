@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.atcs;
 import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.CacheUsingProducer;
 import eng.eSystem.utilites.NumberUtils;
@@ -19,14 +20,27 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
+import exml.XContext;
+import exml.annotations.XIgnored;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class AtcProvider {
+public class AtcProvider implements IXPersistable {
 
   private final AtcList<Atc> atcs;
-  private final CacheUsingProducer<AtcList<AtcId>> atcIdsCache = new CacheUsingProducer<>(this::evaluateAtcIdsCache);
-  private final CacheUsingProducer<AtcList<AtcId>> userAtcIdsCache = new CacheUsingProducer<>(this::evaluateUserAtcIdsCache);
+  @XIgnored private final CacheUsingProducer<AtcList<AtcId>> atcIdsCache = new CacheUsingProducer<>(this::evaluateAtcIdsCache);
+  @XIgnored private final CacheUsingProducer<AtcList<AtcId>> userAtcIdsCache = new CacheUsingProducer<>(this::evaluateUserAtcIdsCache);
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.saveFieldItems(this, "atcs", Atc.class, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+
+  }
 
   @XmlConstructor
   private AtcProvider() {

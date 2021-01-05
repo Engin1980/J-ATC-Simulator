@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.area.approaches.behaviors;
 
-import exml.IPlainObjectSimPersistable;
+import exml.IXPersistable;
 
-public interface IApproachBehavior extends IPlainObjectSimPersistable {
+public interface IApproachBehavior extends IXPersistable {
 }

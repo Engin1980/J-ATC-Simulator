@@ -6,13 +6,13 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.mood.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import exml.IPlainObjectSimPersistable;
-import exml.ISimPersistable;
+import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XIgnored;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class Mood implements ISimPersistable {
+public class Mood implements IXPersistable {
 
   public enum ArrivalExperience {
     shortcutToIafAbove100,
@@ -41,7 +41,7 @@ public class Mood implements ISimPersistable {
     prohibitedAreaViolation
   }
 
-  private static class Experience<T> implements IPlainObjectSimPersistable {
+  private static class Experience<T> implements IXPersistable {
     public final EDayTimeStamp time;
     public final T type;
 
@@ -73,9 +73,9 @@ public class Mood implements ISimPersistable {
     return Context.getShared().getNow().toStamp();
   }
 
-  private final IList<Experience<ArrivalExperience>> arrivalExperiences;
-  private final IList<Experience<DepartureExperience>> departureExperiences;
-  private final IList<Experience<SharedExperience>> sharedExperiences;
+  @XIgnored private final IList<Experience<ArrivalExperience>> arrivalExperiences;
+  @XIgnored private final IList<Experience<DepartureExperience>> departureExperiences;
+  @XIgnored private final IList<Experience<SharedExperience>> sharedExperiences;
 
   private Mood(IList<Experience<ArrivalExperience>> arrivalExperiences, IList<Experience<DepartureExperience>> departureExperiences, IList<Experience<SharedExperience>> sharedExperiences) {
     this.arrivalExperiences = arrivalExperiences;

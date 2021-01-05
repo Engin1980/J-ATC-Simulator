@@ -4,8 +4,9 @@ import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 
-public class RunwayCheckInfo {
+public class RunwayCheckInfo implements IXPersistable {
   private static final int[] RWY_CHECK_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5};
 
   private static final int MIN_NORMAL_MAINTENANCE_INTERVAL = 200;

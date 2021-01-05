@@ -44,10 +44,11 @@ import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
 import eng.newXmlUtils.annotations.XmlConstructor;
-import exml.ISimPersistable;
+import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XIgnored;
 
-public class Simulation implements ISimPersistable {
+public class Simulation implements IXPersistable {
 
   public class MySimulation implements ISimulation {
 
@@ -172,17 +173,18 @@ public class Simulation implements ISimPersistable {
 
   private static final boolean DEBUG_STYLE_TIMER = false;
 
+  //TODEL rem unecessary
   private final AirplanesModule airplanesModule;
   private final AtcModule atcModule;
-  private final IOModule ioModule;
-  private boolean isElapseSecondCalculationRunning = false;
-  public ISimulation isim = this.new MySimulation();
+  @XIgnored private final IOModule ioModule;
+  @XIgnored private boolean isElapseSecondCalculationRunning = false;
+  @XIgnored public ISimulation isim = this.new MySimulation();
   private final EDayTimeRun now;
   private final StatsModule statsModule;
   private final TimerModule timerModule;
   private final TrafficModule trafficModule;
   private final WeatherModule weatherModule;
-  private final WorldModule worldModule;
+  @XIgnored private final WorldModule worldModule;
 
   @XmlConstructor
   private Simulation() {
@@ -317,17 +319,6 @@ public class Simulation implements ISimPersistable {
 
   @Override
   public void save(XElement elm, XContext ctx) {
-    ctx.saver.ignoreFields(this,
-            "atcModule",
-            "ioModule",
-            "isElapseSecondCalculationRunning",
-            "isim",
-            "now",
-            "statsModule",
-            "timerModule",
-            "trafficModule",
-            "weatherModule",
-            "worldModule");
     ctx.saver.saveRemainingFields(this, elm);
   }
 

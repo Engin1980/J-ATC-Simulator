@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.atcs.internal.tower;
 
 
 import eng.eSystem.collections.*;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinates;
@@ -34,6 +35,8 @@ import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.XContext;
+import exml.annotations.XIgnored;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -190,6 +193,7 @@ public class TowerAtc extends ComputerAtc {
     return rt;
   }
 
+  @XIgnored
   private final SwitchManagerInterface switchManagerInterface = new SwitchManagerInterface();
   private final DepartureManager departureManager;
   private final ArrivalManager arrivalManager;
