@@ -80,8 +80,8 @@
                 <group note="04">
                     <group note="sid">
                         <route type="sid" name="HLV5H" mapping="04">
-                            <proceedDirect fix="MT701"/>
                             <speed restriction="above" value="230"/>
+                            <proceedDirect fix="MT701"/>
                             <then/>
                             <speed restriction="clear"/>
                             <proceedDirect fix="MT715"/>

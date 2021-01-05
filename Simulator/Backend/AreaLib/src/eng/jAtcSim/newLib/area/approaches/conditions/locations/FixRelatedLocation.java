@@ -4,6 +4,8 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.PostContracts;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class FixRelatedLocation implements ILocation {
 
@@ -19,6 +21,17 @@ public class FixRelatedLocation implements ILocation {
   private final Integer fromRadial;
   private final Integer toRadial;
   private final double maximalDistance;
+
+  @XmlConstructor
+  private FixRelatedLocation() {
+    coordinate = null;
+    fromRadial = null;
+    toRadial = null;
+    maximalDistance = -1;
+
+    PostContracts.register(this, () -> coordinate != null);
+    PostContracts.register(this, () -> maximalDistance != -1);
+  }
 
   private FixRelatedLocation(Coordinate coordinate, Integer fromRadial, Integer toRadial, double maximalDistance) {
     EAssert.Argument.isNotNull(coordinate, "coordinate");

@@ -3,7 +3,9 @@ package eng.jAtcSim.newLib.area.approaches;
 import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.ISet;
 import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
+import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
+import eng.newXmlUtils.annotations.XmlConstructor;
 
 public class ApproachErrorCondition {
   public static ApproachErrorCondition create(ICondition condition, GoingAroundNotification.GoAroundReason goAroundReason) {
@@ -50,8 +52,19 @@ public class ApproachErrorCondition {
     ret.add(new ApproachErrorCondition(condition3, goAroundReason3));
     return ret;
   }
+
   private final ICondition condition;
   private final GoingAroundNotification.GoAroundReason goAroundReason;
+
+
+  @XmlConstructor
+  public ApproachErrorCondition() {
+    this.condition = null;
+    this.goAroundReason = null;
+
+    PostContracts.register(this, () -> this.condition != null);
+    PostContracts.register(this, () -> this.goAroundReason != null);
+  }
 
   public ApproachErrorCondition(ICondition condition, GoingAroundNotification.GoAroundReason goAroundReason) {
     this.condition = condition;

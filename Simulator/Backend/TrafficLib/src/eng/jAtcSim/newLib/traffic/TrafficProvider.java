@@ -54,7 +54,7 @@ public class TrafficProvider {
   public void init() {
     if (movementsForDay.getKeys().isEmpty()) {
       prepareTrafficForDay(0);
-      //movementsForDay.get(0).remove(q->q.getAppearanceTime().isBefore(Context.getShared().getNow().getTime()));
+      movementsForDay.get(0).remove(q->q.getAppearanceTime().isBefore(Context.getShared().getNow().getTime()));
     }
   }
 
