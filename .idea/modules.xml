@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/AirplaneTypeLib/AirplaneTypeLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/AirplaneTypeLib/AirplaneTypeLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/AirplaneTypeXmlLoaderLib/AirplaneTypeXmlLoaderLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/AirplaneTypeXmlLoaderLib/AirplaneTypeXmlLoaderLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/AirplanesLib/AirplanesLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/AirplanesLib/AirplanesLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Simulator/AnotherXml/AnotherXml.iml" filepath="$PROJECT_DIR$/Simulator/AnotherXml/AnotherXml.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/AreaLib/AreaLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/AreaLib/AreaLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/AreaXmlLoaderLib/AreaXmlLoaderLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/AreaXmlLoaderLib/AreaXmlLoaderLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/AtcLib/AtcLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/AtcLib/AtcLib.iml" />

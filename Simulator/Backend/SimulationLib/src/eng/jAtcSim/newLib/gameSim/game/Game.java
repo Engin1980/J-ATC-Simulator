@@ -1,24 +1,14 @@
 package eng.jAtcSim.newLib.gameSim.game;
 
-import eng.jAtcSim.newLib.area.context.AreaAcc;
-import eng.jAtcSim.newLib.area.context.IAreaAcc;
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
-import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.ContextManager;
-import eng.jAtcSim.newLib.shared.context.ISharedAcc;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
-import eng.jAtcSim.newLib.shared.logging.SimulationLog;
-import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
-import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.implementations.ObjectDeserializer;
-import eng.newXmlUtils.implementations.ObjectSerializer;
+import exml.ISimPersistable;
+import exml.XmlContext;
 
-import static eng.eSystem.utilites.FunctionShortcuts.sf;
-
-public class Game implements IGame {
+public class Game implements IGame, ISimPersistable {
 
   private AreaSource areaSource;
   private AirplaneTypesSource airplaneTypesSource;
@@ -44,4 +34,13 @@ public class Game implements IGame {
     return this.simulation.isim;
   }
 
+  @Override
+  public void save(XElement elm, XmlContext ctx) {
+    ctx.simSave.saveRemainingFields(this, elm, ctx);
+  }
+
+  @Override
+  public void load(XElement elm, XmlContext ctx) {
+
+  }
 }
