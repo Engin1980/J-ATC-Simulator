@@ -6,12 +6,14 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class FlyRouteBehavior implements IApproachBehavior {
   private final IList<ICommand> commands;
   private boolean applied = false;
 
   @XmlConstructor
+  @XConstructor
   protected FlyRouteBehavior(){
     this.commands = null;
 

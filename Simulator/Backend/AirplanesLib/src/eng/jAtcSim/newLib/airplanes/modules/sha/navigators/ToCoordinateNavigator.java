@@ -6,11 +6,14 @@ import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class ToCoordinateNavigator extends Navigator {
   private final Coordinate coordinate;
 
-  @XmlConstructor ToCoordinateNavigator(){
+  @XmlConstructor
+  @XConstructor
+  ToCoordinateNavigator(){
     coordinate = null;
     PostContracts.register(this, () -> coordinate != null);
   }

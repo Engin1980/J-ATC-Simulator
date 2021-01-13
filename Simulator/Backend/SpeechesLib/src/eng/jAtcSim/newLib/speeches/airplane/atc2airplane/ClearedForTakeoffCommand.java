@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 /**
  * @author Marek
@@ -13,6 +14,7 @@ public class ClearedForTakeoffCommand implements ICommand {
     this.runwayThresholdName = runwayThresholdName;
   }
 
+  @XConstructor
   @XmlConstructor
   private ClearedForTakeoffCommand() {
     runwayThresholdName = null;

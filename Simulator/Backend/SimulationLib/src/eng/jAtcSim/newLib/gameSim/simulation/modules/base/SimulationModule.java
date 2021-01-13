@@ -14,6 +14,6 @@ public abstract class SimulationModule implements IXPersistable {
   }
 
   protected SimulationModule(XContext ctx) {
-    this.parent = ctx.parent.get(Simulation.class);
+    this.parent = ctx.loader.parents.get(Simulation.class);
   }
 }

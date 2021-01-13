@@ -6,14 +6,14 @@ import eng.jAtcSim.newLib.weather.StaticWeatherProvider;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.weather.WeatherProvider;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class WeatherUserSource extends WeatherSource {
   private final Weather initialWeather;
 
-  @XmlConstructor
-  public WeatherUserSource() {
-    this.initialWeather = null;
-    PostContracts.register(this, () -> initialWeather != null, "initialWeather");
+  @XConstructor
+  private WeatherUserSource() {
+    initialWeather = null;
   }
 
   WeatherUserSource(Weather weather) {

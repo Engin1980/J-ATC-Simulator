@@ -32,6 +32,7 @@ import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 public class CenterAtc extends ComputerAtc {
@@ -188,6 +189,7 @@ public class CenterAtc extends ComputerAtc {
   @XIgnored
   private final SwitchManagerInterface switchManagerInterface = new SwitchManagerInterface();
 
+  @XConstructor
   @XmlConstructor
   private CenterAtc() {
   }

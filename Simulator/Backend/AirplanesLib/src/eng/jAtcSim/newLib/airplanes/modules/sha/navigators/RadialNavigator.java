@@ -7,6 +7,7 @@ import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class RadialNavigator extends Navigator {
   public enum AggresivityMode {
@@ -52,6 +53,7 @@ public class RadialNavigator extends Navigator {
   private final AggresivityMode mode;
 
   @XmlConstructor
+  @XConstructor
   public RadialNavigator(Coordinate coordinate, int inboundRadial, AggresivityMode mode) {
     this.coordinate = coordinate;
     this.inboundRadial = inboundRadial;

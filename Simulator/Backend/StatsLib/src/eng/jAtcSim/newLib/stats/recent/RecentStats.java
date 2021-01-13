@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.stats.recent;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
@@ -9,8 +10,11 @@ import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
 import eng.jAtcSim.newLib.stats.contextLocal.Context;
 import eng.jAtcSim.newLib.stats.model.ElapsedSecondDurationModel;
 import eng.jAtcSim.newLib.stats.properties.TimedValue;
+import exml.IXPersistable;
+import exml.XContext;
+import exml.annotations.XIgnored;
 
-public class RecentStats {
+public class RecentStats implements IXPersistable {
 
   public class Errors {
     public double getAirproxErrorsPromile() {
@@ -132,12 +136,12 @@ public class RecentStats {
 
   private int recentSecondsElapsed;
   private ElapsedSecondDurationModel elapsedSecondDuration = new ElapsedSecondDurationModel();
-  private final Errors clsErrors = new Errors();
-  private final Delays clsDelays = new Delays();
-  private final HoldingPoint clsHP = new HoldingPoint();
-  private final MovementsPerHour clsMovements = new MovementsPerHour();
-  private final CurrentPlanesCount clsCurrent = new CurrentPlanesCount();
-  private final FinishedPlanes clsFinished = new FinishedPlanes();
+  @XIgnored private final Errors clsErrors = new Errors();
+  @XIgnored private final Delays clsDelays = new Delays();
+  @XIgnored private final HoldingPoint clsHP = new HoldingPoint();
+  @XIgnored private final MovementsPerHour clsMovements = new MovementsPerHour();
+  @XIgnored private final CurrentPlanesCount clsCurrent = new CurrentPlanesCount();
+  @XIgnored private final FinishedPlanes clsFinished = new FinishedPlanes();
   private IList<TimedValue<Integer>> airproxErrors = new EList<>();
   private IList<TimedValue<Integer>> mrvaErrors = new EList<>();
   private IList<TimedValue<Integer>> planeDelays = new EList<>();
@@ -158,6 +162,21 @@ public class RecentStats {
   private IList<TimedValue<Integer>> maximumPlanesUnderApp = new EList<>();
   private int finishedArrivals;
   private int finishedDepartures;
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.saveFieldItems(this, "mrvaErrors", TimedValue.class, elm);
+    ctx.saver.saveFieldItems(this, "airproxErrors", TimedValue.class, elm);
+    ctx.saver.saveFieldItems(this, "planeDelays", TimedValue.class, elm);
+    ctx.saver.saveFieldItems(this, "holdingPointMaximalCount", TimedValue.class, elm);
+    ctx.saver.saveFieldItems(this, "holdingPointDelays", TimedValue.class, elm);
+    ctx.saver.saveFieldItems(this, "maximumArrivals", TimedValue.class, elm);
+    ctx.saver.saveFieldItems(this, "maximumDepartures", TimedValue.class, elm);
+    ctx.saver.saveFieldItems(this, "maximumPlanes", TimedValue.class, elm);
+    ctx.saver.saveFieldItems(this, "maximumArrivalsUnderApp", TimedValue.class, elm);
+    ctx.saver.saveFieldItems(this, "maximumDeparturesUnderApp", TimedValue.class, elm);
+    ctx.saver.saveFieldItems(this, "maximumPlanesUnderApp", TimedValue.class, elm);
+  }
 
   public void elapseSecond(AnalysedPlanes analysedPlanes) {
     if (recentSecondsElapsed < RECENT_INTERVAL_IN_SECONDS)

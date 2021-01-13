@@ -10,14 +10,23 @@ import eng.jAtcSim.newLib.weather.WeatherManager;
 import eng.jAtcSim.newLib.weather.context.IWeatherAcc;
 import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.XContext;
+import exml.annotations.XConstructor;
 
 public class WeatherModule extends SimulationModule {
   private final WeatherManager weatherManager;
 
+  @XConstructor
   @XmlConstructor
   private WeatherModule(){
     super((Simulation) null);
     weatherManager = null;
+  }
+
+  @XConstructor
+  public WeatherModule(XContext ctx) {
+    super(ctx);
+    this.weatherManager = null;
   }
 
   public WeatherModule(Simulation parent, WeatherManager weatherManager) {

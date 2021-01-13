@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.area.approaches;
 import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class ApproachEntryCondition {
 
@@ -18,6 +19,7 @@ public class ApproachEntryCondition {
   private final ApproachRejectionReason rejectionReason;
 
   @XmlConstructor
+  @XConstructor
   private ApproachEntryCondition() {
     entryCondition = null;
     rejectionReason = null;

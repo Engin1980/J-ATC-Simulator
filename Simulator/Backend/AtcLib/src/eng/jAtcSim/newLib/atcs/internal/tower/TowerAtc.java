@@ -36,6 +36,7 @@ import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.XContext;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -207,6 +208,7 @@ public class TowerAtc extends ComputerAtc {
     this.arrivalManager = new ArrivalManager();
   }
 
+  @XConstructor
   @XmlConstructor
   private TowerAtc() {
     this.departureManager = null;

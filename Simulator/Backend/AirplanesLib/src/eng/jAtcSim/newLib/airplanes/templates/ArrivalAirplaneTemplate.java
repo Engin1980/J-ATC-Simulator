@@ -7,6 +7,7 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class ArrivalAirplaneTemplate extends AirplaneTemplate {
   private final Coordinate coordinate;
@@ -15,6 +16,7 @@ public class ArrivalAirplaneTemplate extends AirplaneTemplate {
   private final int speed;
 
   @XmlConstructor
+  @XConstructor
   public ArrivalAirplaneTemplate() {
     super();
 

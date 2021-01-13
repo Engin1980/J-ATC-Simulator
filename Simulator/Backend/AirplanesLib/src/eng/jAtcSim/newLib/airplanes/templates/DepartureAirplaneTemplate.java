@@ -5,10 +5,12 @@ import eng.jAtcSim.newLib.area.EntryExitPoint;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public final class DepartureAirplaneTemplate extends AirplaneTemplate {
 
   @XmlConstructor
+  @XConstructor
   private DepartureAirplaneTemplate() {
     super();
   }

@@ -13,6 +13,7 @@ import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 class ArrivalManager implements IXPersistable {
@@ -21,6 +22,7 @@ class ArrivalManager implements IXPersistable {
   @XIgnored
   private TowerAtc parent;
 
+  @XConstructor
   @XmlConstructor
   ArrivalManager() {
     PostContracts.register(this, () -> parent != null);

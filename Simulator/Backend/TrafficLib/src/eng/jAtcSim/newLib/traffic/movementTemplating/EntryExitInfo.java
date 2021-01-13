@@ -6,6 +6,7 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.traffic.contextLocal.Context;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 
 //TODO rewrite to separate classes NavaidEntryExitInfo, RadialEntryExitInfo or CoordinateEntryExitInfo
 public class EntryExitInfo implements IXPersistable {
@@ -19,6 +20,7 @@ public class EntryExitInfo implements IXPersistable {
   private final Integer radial;
   private final Coordinate otherAirportCoordinate;
 
+  @XConstructor
   @XmlConstructor
   private EntryExitInfo() {
     this.navaid = null;

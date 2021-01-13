@@ -1,14 +1,15 @@
 package eng.jAtcSim.newLib.airplanes.context;
 
-import eng.jAtcSim.newLib.airplanes.AirplaneList;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
-import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.airplanes.IAirplaneList;
 
 public interface IAirplaneAcc {
-  default AirplaneList<IAirplane> getAirplanes() {
+  AirplanesController getAirplanesController();
+
+  default IAirplaneList getAirplanes() {
     return getAirplanesController().getPlanes();
   }
-  AirplanesController getAirplanesController();
+
   default boolean isSomeActiveEmergency() {
     return getAirplanes().isAny(q -> q.isEmergency());
   }

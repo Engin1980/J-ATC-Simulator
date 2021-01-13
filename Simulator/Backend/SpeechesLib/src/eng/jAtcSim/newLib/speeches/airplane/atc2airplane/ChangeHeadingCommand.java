@@ -4,6 +4,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -19,6 +20,7 @@ public class ChangeHeadingCommand implements ICommand {
     return ret;
   }
 
+  @XConstructor
   @XmlConstructor
   private ChangeHeadingCommand(){
     this.heading = 0;

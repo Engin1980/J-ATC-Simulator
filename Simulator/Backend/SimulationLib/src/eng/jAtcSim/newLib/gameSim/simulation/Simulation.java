@@ -10,7 +10,6 @@ import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
-import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
 import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
@@ -25,6 +24,7 @@ import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.mood.MoodManager;
 import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.AtcIdList;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.context.IAppAcc;
@@ -46,6 +46,7 @@ import eng.jAtcSim.newLib.weather.WeatherManager;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 public class Simulation implements IXPersistable {
@@ -68,7 +69,7 @@ public class Simulation implements IXPersistable {
     }
 
     @Override
-    public AtcList<AtcId> getAtcs() {
+    public AtcIdList getAtcs() {
       return Simulation.this.getAtcModule().getAtcs();
     }
 
@@ -176,18 +177,23 @@ public class Simulation implements IXPersistable {
   //TODEL rem unecessary
   private final AirplanesModule airplanesModule;
   private final AtcModule atcModule;
-  @XIgnored private final IOModule ioModule;
-  @XIgnored private boolean isElapseSecondCalculationRunning = false;
-  @XIgnored public ISimulation isim = this.new MySimulation();
+  @XIgnored
+  private final IOModule ioModule;
+  @XIgnored
+  private boolean isElapseSecondCalculationRunning = false;
+  @XIgnored
+  public ISimulation isim = this.new MySimulation();
   private final EDayTimeRun now;
   private final StatsModule statsModule;
   private final TimerModule timerModule;
   private final TrafficModule trafficModule;
   private final WeatherModule weatherModule;
-  @XIgnored private final WorldModule worldModule;
+  @XIgnored
+  private final WorldModule worldModule;
 
+  @XConstructor
   @XmlConstructor
-  private Simulation() {
+  private Simulation(XContext ctx) {
     this.now = new EDayTimeRun(0);
     SharedAcc sharedContext = new SharedAcc(
             Context.getShared().getAirportIcao(),
@@ -255,26 +261,6 @@ public class Simulation implements IXPersistable {
     this.timerModule = new TimerModule(this, simulationSettings.simulationSettings.secondLengthInMs);
   }
 
-  public void init() {
-    SharedAcc sharedContext = new SharedAcc(
-            this.worldModule.getActiveAirport().getIcao(),
-            this.worldModule.getActiveAirport().getAtcTemplates().select(q -> q.toAtcId()),
-            this.now,
-            new SimulationLog()
-    );
-    ContextManager.setContext(ISharedAcc.class, sharedContext);
-
-    this.worldModule.init();
-    this.weatherModule.init();
-    this.ioModule.init();
-    this.statsModule.init();
-    this.atcModule.init();
-    this.trafficModule.init();
-    this.airplanesModule.init();
-
-    this.timerModule.registerOnTickListener(this::timerTicked);
-  }
-
   public AirplanesModule getAirplanesModule() {
     return airplanesModule;
   }
@@ -307,6 +293,31 @@ public class Simulation implements IXPersistable {
     return worldModule;
   }
 
+  public void init() {
+    SharedAcc sharedContext = new SharedAcc(
+            this.worldModule.getActiveAirport().getIcao(),
+            this.worldModule.getActiveAirport().getAtcTemplates().select(q -> q.toAtcId()),
+            this.now,
+            new SimulationLog()
+    );
+    ContextManager.setContext(ISharedAcc.class, sharedContext);
+
+    this.worldModule.init();
+    this.weatherModule.init();
+    this.ioModule.init();
+    this.statsModule.init();
+    this.atcModule.init();
+    this.trafficModule.init();
+    this.airplanesModule.init();
+
+    this.timerModule.registerOnTickListener(this::timerTicked);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    ctx.loader.parents.set(this);
+  }
+
   public void reinitAfterLoad() {
     SharedAcc sharedContext = new SharedAcc(
             Context.getShared().getAirportIcao(),
@@ -320,11 +331,6 @@ public class Simulation implements IXPersistable {
   @Override
   public void save(XElement elm, XContext ctx) {
     ctx.saver.saveRemainingFields(this, elm);
-  }
-
-  @Override
-  public void load(XElement elm, XContext ctx) {
-    ctx.parent.set(this);
   }
 
   private void elapseSecond() {

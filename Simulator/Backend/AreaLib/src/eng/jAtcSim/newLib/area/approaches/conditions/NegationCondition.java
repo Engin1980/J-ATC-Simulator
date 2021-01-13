@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.area.approaches.conditions;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class NegationCondition implements ICondition {
 
@@ -12,6 +13,7 @@ public class NegationCondition implements ICondition {
 
   private final ICondition condition;
 
+  @XConstructor
   @XmlConstructor
   private NegationCondition(){
     this.condition = null;

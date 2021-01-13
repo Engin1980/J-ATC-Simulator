@@ -6,6 +6,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eXmlSerialization.annotations.XmlConstructor;
 import eng.eXmlSerialization.annotations.XmlOptional;
+import exml.annotations.XConstructor;
 
 public class AirlineInfo {
   private final String name;
@@ -18,6 +19,7 @@ public class AirlineInfo {
   @XmlOptional
   private boolean decoded = false;
 
+  @XConstructor
   @XmlConstructor
   private AirlineInfo() {
     name = null;

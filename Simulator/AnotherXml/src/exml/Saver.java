@@ -14,7 +14,6 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class Saver {
 
-  private static final String NULL = "(null)";
   public final XContext ctx;
   public final IMap<Class<?>, Consumer2<?, XElement>> serializers = new EMap<>();
   public final ISet<Object> processedObjects = new ESet<>();
@@ -38,16 +37,16 @@ public class Saver {
   public void saveEntries(Iterable<Map.Entry<?, ?>> entries, Class<?> keyType, Class<?> valueType, XElement elm) {
     for (Map.Entry entry : entries) {
       Object key = entry.getKey();
-      XElement keyElement = ctx.saver.saveObject(key, "key");
+      XElement keyElement = ctx.saver.saveObject(key, Constants.KEY_ELEMENT);
       if (key != null && keyType != null && TypeUtils.isTypeSame(key.getClass(), keyType) == false)
-        keyElement.setAttribute("__type", key.getClass().getName());
+        keyElement.setAttribute(Constants.TYPE_ATTRIBUTE, key.getClass().getName());
 
       Object value = entry.getValue();
-      XElement valueElement = ctx.saver.saveObject(value, "value");
+      XElement valueElement = ctx.saver.saveObject(value, Constants.VALUE_ELEMENT);
       if (value != null && valueType != null && TypeUtils.isTypeSame(value.getClass(), valueType) == false)
-        valueElement.setAttribute("__type", value.getClass().getName());
+        valueElement.setAttribute(Constants.TYPE_ATTRIBUTE, value.getClass().getName());
 
-      XElement entryElement = new XElement("entry");
+      XElement entryElement = new XElement(Constants.ENTRY_ELEMENT);
       entryElement.addElement(keyElement);
       entryElement.addElement(valueElement);
 
@@ -86,9 +85,9 @@ public class Saver {
 
   public void saveItems(Iterable<?> items, Class<?> itemType, XElement elm) {
     for (Object item : items) {
-      XElement itemElement = ctx.saver.saveObject(item, "item");
+      XElement itemElement = ctx.saver.saveObject(item, Constants.ITEM_ELEMENT);
       if (item != null && itemType != null && TypeUtils.isTypeSame(item.getClass(), itemType) == false)
-        itemElement.setAttribute("__type", item.getClass().getName());
+        itemElement.setAttribute(Constants.TYPE_ATTRIBUTE, item.getClass().getName());
       elm.addElement(itemElement);
     }
   }
@@ -120,7 +119,7 @@ public class Saver {
     indent++;
 
     if (obj == null) {
-      elm.setContent(NULL);
+      elm.setContent(Constants.NULL);
     } else if (serializers.containsKey(obj.getClass())) {
       Consumer2<Object, XElement> serializer = (Consumer2<Object, XElement>) serializers.get(obj.getClass());
       serializer.invoke(obj, elm);
@@ -168,6 +167,10 @@ public class Saver {
 
   public <T> void setFormatter(Class<T> cls, Selector<T, String> formatter) {
     this.serializers.set(cls, (T o, XElement e) -> e.setContent(formatter.invoke(o)));
+  }
+
+  public void setIgnoredFields(Object obj, String... fieldNames) {
+    this.usedFields.getOrSet(obj, () -> new ESet<>()).addMany(fieldNames);
   }
 
   public <T> void setSerializer(Class<T> cls, Consumer2<T, XElement> serializer) {

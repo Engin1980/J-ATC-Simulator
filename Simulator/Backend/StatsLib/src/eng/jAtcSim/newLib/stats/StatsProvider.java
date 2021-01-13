@@ -11,6 +11,7 @@ import eng.jAtcSim.newLib.stats.properties.CounterProperty;
 import eng.jAtcSim.newLib.stats.recent.RecentStats;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 public class StatsProvider implements IXPersistable {
@@ -48,6 +49,7 @@ public class StatsProvider implements IXPersistable {
   private final int statsSnapshotDistanceInMinutes;
   @XIgnored private final MyStatsProvider myStatsProvider = this.new MyStatsProvider();
 
+  @XConstructor
   @XmlConstructor
   public StatsProvider(int statsSnapshotDistanceInMinutes) {
     this.statsSnapshotDistanceInMinutes = statsSnapshotDistanceInMinutes;

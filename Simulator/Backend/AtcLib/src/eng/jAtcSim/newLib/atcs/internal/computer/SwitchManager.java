@@ -27,6 +27,7 @@ import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -39,6 +40,7 @@ class SwitchManager implements IXPersistable {
   private final IMap<Squawk, SwitchInfo> outgoingPlanes = new EMap<>();
   @XIgnored private Producer<IReadOnlyList<Message>> delayedMessagesProducer;
 
+  @XConstructor
   @XmlConstructor
   SwitchManager() {
     PostContracts.register(this, () -> parent != null);

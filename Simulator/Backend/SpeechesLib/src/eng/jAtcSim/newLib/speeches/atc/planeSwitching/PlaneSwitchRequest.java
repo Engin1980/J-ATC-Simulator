@@ -5,6 +5,7 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class PlaneSwitchRequest implements IAtcSpeech {
   private final PlaneSwitchRequestRouting routing;
@@ -22,6 +23,7 @@ public class PlaneSwitchRequest implements IAtcSpeech {
     return sb.toString();
   }
 
+  @XConstructor
   @XmlConstructor
   private PlaneSwitchRequest() {
     this.routing = null;

@@ -14,6 +14,8 @@ import eng.jAtcSim.newLib.gameSim.game.SimulationStartupContext;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 import eng.jAtcSim.newLib.shared.ContextManager;
+import exml.XContext;
+import exml.annotations.XConstructor;
 
 public class WorldModule extends SimulationModule {
   private final Area area;

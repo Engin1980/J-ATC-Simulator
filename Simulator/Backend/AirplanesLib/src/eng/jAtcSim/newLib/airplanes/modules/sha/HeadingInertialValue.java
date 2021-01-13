@@ -8,6 +8,7 @@ import eng.newXmlUtils.annotations.XmlConstructor;
 import eng.newXmlUtils.annotations.XmlConstructorParameter;
 import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 class HeadingInertialValue implements IXPersistable {
@@ -28,6 +29,7 @@ class HeadingInertialValue implements IXPersistable {
   }
 
   @XmlConstructor
+  @XConstructor
   @XmlConstructorParameter(index = 1, valueString = "10")
   @XmlConstructorParameter(index = 2, valueString = "2")
   HeadingInertialValue(double value,

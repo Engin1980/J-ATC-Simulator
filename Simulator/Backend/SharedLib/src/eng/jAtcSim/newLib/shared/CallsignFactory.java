@@ -11,6 +11,7 @@ import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 
 public class CallsignFactory implements IXPersistable {
   public enum Type {
@@ -97,6 +98,7 @@ public class CallsignFactory implements IXPersistable {
     numericalChars = tmp.toArray(Character.class);
   }
 
+  @XConstructor
   @XmlConstructor
   public CallsignFactory(boolean useExtendedCallsigns) {
     this.useExtendedCallsigns = useExtendedCallsigns;

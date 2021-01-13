@@ -5,6 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class AggregatingCondition implements ICondition {
   public enum eConditionAggregator {
@@ -19,6 +20,7 @@ public class AggregatingCondition implements ICondition {
   private final IList<ICondition> conditions;
   private final eConditionAggregator aggregator;
 
+  @XConstructor
   @XmlConstructor
   private AggregatingCondition() {
     this.conditions = null;

@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.area.approaches.behaviors;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class FlyToPointBehavior implements IApproachBehavior {
   public static FlyToPointBehavior create(Coordinate coordinate) {
@@ -11,6 +12,7 @@ public class FlyToPointBehavior implements IApproachBehavior {
   private final Coordinate coordinate;
 
   @XmlConstructor
+  @XConstructor
   protected FlyToPointBehavior() {
     this.coordinate = null;
     PostContracts.register(this, () -> coordinate != null);

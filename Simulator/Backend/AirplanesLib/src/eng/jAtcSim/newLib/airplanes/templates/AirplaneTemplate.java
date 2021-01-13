@@ -7,6 +7,7 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public abstract class AirplaneTemplate {
   private final Callsign callsign;
@@ -17,6 +18,7 @@ public abstract class AirplaneTemplate {
   private final int entryDelay;
 
   @XmlConstructor
+  @XConstructor
   protected AirplaneTemplate() {
     this.callsign = null;
     this.airplaneType = null;

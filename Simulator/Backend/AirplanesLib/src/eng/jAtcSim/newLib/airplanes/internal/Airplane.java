@@ -50,6 +50,7 @@ import eng.jAtcSim.newLib.weather.Weather;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -569,7 +570,8 @@ public class Airplane implements IXPersistable {
   @XIgnored private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> speechCache = new EMap<>();
 
   @XmlConstructor
-  private Airplane() {
+  @XConstructor
+  private Airplane(XContext ctx) {
     this.airplaneType = null;
     this.atcModule = null;
     this.divertModule = null;
@@ -579,6 +581,8 @@ public class Airplane implements IXPersistable {
     this.routingModule = null;
     this.sha = null;
     this.squawk = null;
+
+    ctx.loader.parents.set(this);
   }
 
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk squawk, AirplaneType airplaneType,

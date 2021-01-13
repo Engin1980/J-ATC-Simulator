@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.area.approaches.perCategoryValues;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -20,6 +21,7 @@ public class IntegerPerCategoryValue {
     return new IntegerPerCategoryValue(value, value, value, value);
   }
 
+  @XConstructor
   @XmlConstructor
   private IntegerPerCategoryValue(int a, int b, int c, int d) {
     this.a = a;

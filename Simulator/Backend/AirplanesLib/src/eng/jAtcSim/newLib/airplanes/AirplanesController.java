@@ -19,12 +19,8 @@ import exml.annotations.XIgnored;
 
 public class AirplanesController implements IXPersistable {
 
-  @XIgnored private final AirplaneList<Airplane> planes = new AirplaneList<>(
-          q -> q.getReader().getCallsign(),
-          q -> q.getReader().getSqwk());
-  @XIgnored private final AirplaneList<IAirplane> publicPlanes = new AirplaneList<>(
-          q -> q.getCallsign(),
-          q -> q.getSqwk());
+  @XIgnored private final AirplaneList planes = new AirplaneList();
+  @XIgnored private final IAirplaneList publicPlanes = new IAirplaneList();
   @XIgnored private AtcId departureInitialAtcId;
   @XIgnored private AtcId arrivalInitialAtId;
 
@@ -32,7 +28,7 @@ public class AirplanesController implements IXPersistable {
     PostContracts.register(this, () -> planes.size() == publicPlanes.size(), "Planes vs. publicPlanes does not match.");
   }
 
-  public AirplaneList<IAirplane> getPlanes() {
+  public IAirplaneList getPlanes() {
     return publicPlanes;
   }
 

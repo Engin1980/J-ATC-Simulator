@@ -4,6 +4,7 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 
 public class PlaneCategoryDefinitions implements IXPersistable {
   private final static PlaneCategoryDefinitions ALL = new PlaneCategoryDefinitions("ABCD");
@@ -13,6 +14,7 @@ public class PlaneCategoryDefinitions implements IXPersistable {
     return ALL;
   }
 
+  @XConstructor
   @XmlConstructor
   private PlaneCategoryDefinitions() {
   }

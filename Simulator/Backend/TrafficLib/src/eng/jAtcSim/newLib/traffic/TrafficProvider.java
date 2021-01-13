@@ -8,6 +8,7 @@ import eng.jAtcSim.newLib.traffic.contextLocal.Context;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 import java.io.DataInput;
@@ -19,6 +20,7 @@ public class TrafficProvider implements IXPersistable {
   @XIgnored private final ITrafficModel trafficModel;
   private final IMap<Integer, IList<MovementTemplate>> movementsForDay = new EMap<>();
 
+  @XConstructor
   @XmlConstructor
   private TrafficProvider() {
     this.trafficModel = null;

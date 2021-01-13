@@ -6,6 +6,7 @@ import eng.jAtcSim.newLib.weather.contextLocal.Context;
 import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 public class WeatherManager implements IXPersistable {
@@ -14,6 +15,7 @@ public class WeatherManager implements IXPersistable {
   private boolean newWeatherFlag;
   @XIgnored private final WeatherProvider provider;
 
+  @XConstructor
   @XmlConstructor
   private WeatherManager() {
     provider = null;

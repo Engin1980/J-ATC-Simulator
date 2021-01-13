@@ -1,31 +1,43 @@
 package eng.jAtcSim.newLib.atcs;
 
 import eng.eSystem.collections.EDistinctList;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.functionalInterfaces.Selector;
+import eng.eSystem.eXml.XElement;
+import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.enums.AtcType;
+import exml.IXPersistable;
+import exml.XContext;
+import exml.annotations.XConstructor;
+import exml.annotations.XIgnored;
 
-public class AtcList<T> extends EDistinctList<T> {
+public class AtcList extends EDistinctList<Atc> implements IXPersistable {
+  @XIgnored
+  private Atc lastGot = null;
 
-  private final Selector<T, AtcId> atcIdSelector;
-  private T lastGot = null;
-
-  AtcList(Selector<T, AtcId> atcIdSelector, Behavior onDuplicateBehavior) {
-    super(q -> atcIdSelector.invoke(q), onDuplicateBehavior);
-    this.atcIdSelector = atcIdSelector;
+  @XConstructor
+  AtcList() {
+    super(q -> q.getAtcId().getName(), Behavior.exception);
   }
 
-  public T get(AtcId atcId) {
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.setIgnoredFields(this, "selector", "onDuplicateBehavior");
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    ctx.loader.setIgnoredFields(this, "selector", "onDuplicateBehavior");
+  }
+
+  Atc get(AtcId atcId) {
     return this.get(atcId.getName());
   }
 
-  public T get(String atcName) {
-    T ret;
-    if (lastGot != null && atcIdSelector.invoke(lastGot).getName().equals(atcName))
+  Atc get(String atcName) {
+    Atc ret;
+    if (lastGot != null && lastGot.getAtcId().getName().equals(atcName))
       ret = lastGot;
     else {
-      ret = this.tryGetFirst(q -> atcIdSelector.invoke(q).getName().equals(atcName));
+      ret = this.tryGetFirst(q -> q.getAtcId().getName().equals(atcName));
       if (ret != null) lastGot = ret;
     }
     return ret;

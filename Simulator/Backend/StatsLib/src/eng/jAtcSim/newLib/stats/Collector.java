@@ -11,6 +11,7 @@ import eng.jAtcSim.newLib.stats.properties.CounterProperty;
 import eng.jAtcSim.newLib.stats.properties.StatisticProperty;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 
 public class Collector implements IXPersistable {
   private final EDayTimeStamp fromTime;
@@ -25,6 +26,7 @@ public class Collector implements IXPersistable {
   private final StatisticProperty holdingPointDelayStats;
   private int holdingPointMaximumCount = 0;
 
+  @XConstructor
   @XmlConstructor
   private Collector(){
     fromTime = null;

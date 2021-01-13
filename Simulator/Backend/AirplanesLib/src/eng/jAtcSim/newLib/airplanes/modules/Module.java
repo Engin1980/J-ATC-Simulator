@@ -7,6 +7,7 @@ import eng.jAtcSim.newLib.airplanes.IAirplaneWriter;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 public abstract class Module implements IXPersistable {
@@ -14,6 +15,11 @@ public abstract class Module implements IXPersistable {
   @XIgnored protected final Airplane plane;
   @XIgnored protected final IAirplane rdr;
   @XIgnored protected final IAirplaneWriter wrt;
+
+  @XConstructor
+  protected Module(XContext ctx){
+    this(ctx.loader.parents.get(Airplane.class));
+  }
 
   protected Module(Airplane plane) {
     EAssert.Argument.isNotNull(plane, "plane");

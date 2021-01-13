@@ -7,6 +7,7 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.XContext;
+import exml.annotations.XConstructor;
 
 public class AtcModule extends Module {
   private static final int REPEATED_RADAR_CONTACT_REQUEST_SECONDS = 45;
@@ -14,8 +15,9 @@ public class AtcModule extends Module {
   private int secondsWithoutRadarContact = 0;
 
   @XmlConstructor
-  private AtcModule() {
-    super(null);
+  @XConstructor
+  private AtcModule(XContext ctx) {
+    super(ctx);
   }
 
   public AtcModule(Airplane plane, AtcId initialAtcId) {

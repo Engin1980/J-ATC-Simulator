@@ -6,6 +6,7 @@ import eng.jAtcSim.newLib.airplaneType.context.AirplaneTypeAcc;
 import eng.jAtcSim.newLib.airplaneType.context.IAirplaneTypeAcc;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.xml.airplaneTypes.AirplaneTypesXmlLoader;
+import exml.annotations.XConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -13,12 +14,17 @@ public class AirplaneTypesSource extends Source<AirplaneTypes> {
 
   private final String fileName;
 
-  public String getFileName() {
-    return fileName;
+  @XConstructor
+  private AirplaneTypesSource() {
+    fileName = null;
   }
 
   AirplaneTypesSource(String xmlFile) {
     this.fileName = xmlFile;
+  }
+
+  public String getFileName() {
+    return fileName;
   }
 
   public void init() {

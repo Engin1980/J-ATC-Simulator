@@ -1,9 +1,11 @@
 package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class ProceedDirectCommand extends ToNavaidCommand {
 
+  @XConstructor
   @XmlConstructor
   private ProceedDirectCommand(){
     super("?");

@@ -5,6 +5,7 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 
 public abstract class MovementTemplate implements IXPersistable {
   public enum eKind {
@@ -16,6 +17,7 @@ public abstract class MovementTemplate implements IXPersistable {
   private final ETimeStamp appearanceTime;
   private final EntryExitInfo entryExitInfo;
 
+  @XConstructor
   @XmlConstructor
   protected MovementTemplate() {
     kind = eKind.arrival;

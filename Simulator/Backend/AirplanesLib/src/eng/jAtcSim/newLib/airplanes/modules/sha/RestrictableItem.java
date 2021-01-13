@@ -4,6 +4,7 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 
 class RestrictableItem implements IXPersistable {
   /**
@@ -20,6 +21,7 @@ class RestrictableItem implements IXPersistable {
   private int targetValue;
 
   @XmlConstructor
+  @XConstructor
   RestrictableItem(int targetValue) {
     setTargetValue(targetValue);
   }
@@ -33,8 +35,18 @@ class RestrictableItem implements IXPersistable {
     return restrictedValue;
   }
 
+  final void setRestriction(Restriction restriction) {
+    this.restrictedValue = restriction;
+    this.refresh();
+  }
+
   int getTargetValue() {
     return this.targetValue;
+  }
+
+  final void setTargetValue(int value) {
+    this.orderedValue = value;
+    this.refresh();
   }
 
   private void refresh() {
@@ -55,15 +67,5 @@ class RestrictableItem implements IXPersistable {
           throw new EEnumValueUnsupportedException(restrictedValue.direction);
       }
     }
-  }
-
-  final void setRestriction(Restriction restriction) {
-    this.restrictedValue = restriction;
-    this.refresh();
-  }
-
-  final void setTargetValue(int value) {
-    this.orderedValue = value;
-    this.refresh();
   }
 }

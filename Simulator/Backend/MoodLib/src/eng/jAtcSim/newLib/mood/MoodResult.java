@@ -6,12 +6,14 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class MoodResult {
   private EDayTimeStamp time;
   private Callsign callsing;
   private IList<MoodExperienceResult> experiences;
 
+  @XConstructor
   @XmlConstructor private MoodResult(){
     PostContracts.register(this, () -> time != null && callsing != null);
   }

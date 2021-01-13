@@ -1,10 +1,12 @@
 package eng.jAtcSim.newLib.atcs.internal.tower;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.airplanes.IAirplaneList;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
@@ -12,6 +14,7 @@ import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
@@ -20,6 +23,8 @@ import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToRouteCommand;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.XContext;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 import java.util.function.Consumer;
@@ -31,15 +36,20 @@ class DepartureManager implements IXPersistable {
   private TowerAtc parent;
   @XIgnored
   private Consumer<Message> messageSenderConsumer;
+  @XIgnored
   private final IList<IAirplane> holdingPointNotAssigned = new EDistinctList<>(EDistinctList.Behavior.exception);
+  @XIgnored
   private final IList<IAirplane> holdingPointWaitingForAppSwitchConfirmation = new EDistinctList<>(EDistinctList.Behavior.exception);
+  @XIgnored
   private final IList<IAirplane> holdingPointReady = new EDistinctList<>(EDistinctList.Behavior.exception);
+  @XIgnored
   private final IList<IAirplane> departing = new EList<>();
   private final IMap<IAirplane, Double> departureSwitchAltitude = new EMap<>();
   private final IMap<IAirplane, EDayTimeStamp> holdingPointWaitingTimeMap = new EMap<>();
   private final IMap<ActiveRunwayThreshold, IAirplane> lastDepartingPlane = new EMap<>();
   private final IMap<ActiveRunwayThreshold, EDayTimeStamp> lastDeparturesTime = new EMap<>();
 
+  @XConstructor
   @XmlConstructor
   DepartureManager() {
     PostContracts.register(this, () -> parent != null);
@@ -141,6 +151,26 @@ class DepartureManager implements IXPersistable {
     return false;
   }
 
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    IAirplaneList planes = ctx.loader.values.get(IAirplaneList.class);
+    Iterable<String> tmp;
+
+    tmp = ctx.loader.loadItems(elm.getChild("holdingPointNotAssigned"), String.class);
+    tmp.forEach(q -> this.holdingPointNotAssigned.add(planes.get(new Callsign(q))));
+
+    tmp = ctx.loader.loadItems(elm.getChild("holdingPointWaitingForAppSwitchConfirmation"), String.class);
+    tmp.forEach(q -> this.holdingPointWaitingForAppSwitchConfirmation.add(planes.get(new Callsign(q))));
+
+    tmp = ctx.loader.loadItems(elm.getChild("holdingPointReady"), String.class);
+    tmp.forEach(q -> this.holdingPointReady.add(planes.get(new Callsign(q))));
+
+    tmp = ctx.loader.loadItems(elm.getChild("departing"), String.class);
+    tmp.forEach(q -> this.departing.add(planes.get(new Callsign(q))));
+
+    tady dopsat načítání mapy
+  }
+
   public void movePlanesToHoldingPoint() {
     for (IAirplane plane : holdingPointNotAssigned.where(q -> q.getRouting().getAssignedRunwayThreshold() != null)) {
       this.holdingPointNotAssigned.remove(plane);
@@ -158,6 +188,14 @@ class DepartureManager implements IXPersistable {
             Participant.createAirplane(plane.getCallsign()),
             new SpeechList<ICommand>(ClearedToRouteCommand.create(r.getName(), r.getType(), runwayThreshold.getName())));
     this.messageSenderConsumer.accept(m);
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.saveItems(holdingPointNotAssigned.select(q -> q.getCallsign()), String.class, elm, "holdingPointNotAssigned");
+    ctx.saver.saveItems(holdingPointWaitingForAppSwitchConfirmation.select(q -> q.getCallsign()), String.class, elm, "holdingPointWaitingForAppSwitchConfirmation");
+    ctx.saver.saveItems(holdingPointReady.select(q -> q.getCallsign()), String.class, elm, "holdingPointReady");
+    ctx.saver.saveItems(departing.select(q -> q.getCallsign()), String.class, elm, "departing");
   }
 
   public IAirplane tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {

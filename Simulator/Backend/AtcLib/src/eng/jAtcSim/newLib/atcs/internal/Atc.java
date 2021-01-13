@@ -11,6 +11,7 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 public abstract class Atc implements IXPersistable {
@@ -22,6 +23,7 @@ public abstract class Atc implements IXPersistable {
   @XIgnored
   private AtcRecorder recorder = null;
 
+  @XConstructor
   @XmlConstructor
   protected Atc() {
     PostContracts.register(this, () -> atcId != null);

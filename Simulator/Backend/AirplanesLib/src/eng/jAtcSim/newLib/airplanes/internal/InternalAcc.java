@@ -4,16 +4,15 @@ import eng.eSystem.functionalInterfaces.Producer;
 import eng.jAtcSim.newLib.airplanes.AirplaneList;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.PublishedHold;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ToNavaidCommand;
 
 public class InternalAcc {
-  private static Producer<AirplaneList<Airplane>> airplanesProducer = null;
+  private static Producer<AirplaneList> airplanesProducer = null;
 
-  public static AirplaneList<Airplane> getAirplanes() {
+  public static AirplaneList getAirplanes() {
     return airplanesProducer.invoke();
   }
 
@@ -21,7 +20,7 @@ public class InternalAcc {
     return Context.getArea().getNavaids().get(toNavaidCommand.getNavaidName());
   }
 
-  public static void setAirplaneListProducer(Producer<AirplaneList<Airplane>> airplanesProducer) {
+  public static void setAirplaneListProducer(Producer<AirplaneList> airplanesProducer) {
     InternalAcc.airplanesProducer = airplanesProducer;
   }
 

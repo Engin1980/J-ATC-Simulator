@@ -7,6 +7,7 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 
 public class ApproachErrorCondition implements IXPersistable {
   public static ApproachErrorCondition create(ICondition condition, GoingAroundNotification.GoAroundReason goAroundReason) {
@@ -59,6 +60,7 @@ public class ApproachErrorCondition implements IXPersistable {
 
 
   @XmlConstructor
+  @XConstructor
   public ApproachErrorCondition() {
     this.condition = null;
     this.goAroundReason = null;

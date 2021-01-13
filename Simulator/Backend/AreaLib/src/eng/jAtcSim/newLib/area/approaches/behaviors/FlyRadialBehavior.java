@@ -4,6 +4,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class FlyRadialBehavior implements IApproachBehavior {
   private final Coordinate coordinate;
@@ -12,6 +13,7 @@ public class FlyRadialBehavior implements IApproachBehavior {
   private String tag;
 
   @XmlConstructor
+  @XConstructor
   protected FlyRadialBehavior() {
     this.coordinate = null;
     this.inboundRadialWithDeclination = 0;

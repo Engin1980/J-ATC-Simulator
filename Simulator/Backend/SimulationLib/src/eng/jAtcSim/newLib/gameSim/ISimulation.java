@@ -11,6 +11,7 @@ import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.AtcIdList;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
@@ -27,7 +28,7 @@ public interface ISimulation {
 
   Area getArea();
 
-  AtcList<AtcId> getAtcs();
+  AtcIdList getAtcs();
 
   IList<Message> getMessages(Object key);
 

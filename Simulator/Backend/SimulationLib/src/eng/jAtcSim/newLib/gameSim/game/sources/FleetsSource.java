@@ -4,6 +4,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.fleet.airliners.AirlinesFleets;
 import eng.jAtcSim.newLib.fleet.generalAviation.GeneralAviationFleets;
 import eng.jAtcSim.newLib.xml.fleets.FleetsXmlLoader;
+import exml.annotations.XConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -30,6 +31,7 @@ public class FleetsSource extends Source<FleetsSource.Fleets> {
     return companyFileName;
   }
 
+  @XConstructor
   FleetsSource(String generalAviationFileName, String companyFileName) {
     this.generalAviationFileName = generalAviationFileName;
     this.companyFileName = companyFileName;

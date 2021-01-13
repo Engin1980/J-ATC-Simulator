@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.gameSim.game.sources;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.xml.traffic.TrafficXmlLoader;
+import exml.annotations.XConstructor;
 
 public class TrafficXmlSource extends TrafficSource {
 
@@ -12,6 +13,7 @@ public class TrafficXmlSource extends TrafficSource {
     return fileName;
   }
 
+  @XConstructor
   TrafficXmlSource(String fileName) {
     this.fileName = fileName;
   }

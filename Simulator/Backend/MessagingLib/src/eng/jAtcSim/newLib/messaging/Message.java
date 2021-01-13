@@ -4,6 +4,7 @@ import eng.eSystem.validation.EAssert;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import eng.newXmlUtils.annotations.XmlConstructorParameter;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 
 public class Message implements IXPersistable {
 
@@ -11,6 +12,7 @@ public class Message implements IXPersistable {
   private final Participant target;
   private final IMessageContent content;
 
+  @XConstructor
   @XmlConstructor
   private Message(){
     this.source = null;
@@ -18,6 +20,7 @@ public class Message implements IXPersistable {
     this.content = null;
   }
 
+  @XConstructor
   @XmlConstructor
   public Message(Participant source, Participant target, IMessageContent content) {
     EAssert.Argument.isNotNull(source, "source");

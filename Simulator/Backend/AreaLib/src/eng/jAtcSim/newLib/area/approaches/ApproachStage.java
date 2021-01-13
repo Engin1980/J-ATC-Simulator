@@ -10,6 +10,7 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 public class ApproachStage implements IXPersistable {
@@ -29,6 +30,7 @@ public class ApproachStage implements IXPersistable {
   private final String name;
 
   @XmlConstructor
+  @XConstructor
   private ApproachStage() {
     this.exitCondition = null;
     this.errorConditions = null;

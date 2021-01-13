@@ -4,6 +4,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
   private String tag;
@@ -24,6 +25,7 @@ public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
   private final double slope;
 
   @XmlConstructor
+  @XConstructor
   private FlyRadialWithDescentBehavior(){
     super();
     this.altitudeFixCoordinate= null;

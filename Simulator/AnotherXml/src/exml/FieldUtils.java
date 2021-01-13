@@ -1,5 +1,6 @@
 package exml;
 
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XElement;
@@ -40,6 +41,39 @@ public class FieldUtils {
     elm.addElement(itemsElement);
   }
 
+  public static void loadField(Object obj, String fieldName, XElement elm, XContext ctx) {
+    Field field = getField(obj.getClass(), fieldName);
+    XElement fieldElement = elm.getChild(fieldName);
+
+    Object value = ctx.loader.loadObject(fieldElement, field.getType());
+
+    field.setAccessible(true);
+    try {
+      field.set(obj, value);
+    } catch (IllegalAccessException e) {
+      throw new SimPersistenceExeption(sf("Unable to set field '%s.%s'.", obj.getClass().getName(), fieldName), e);
+    }
+    field.setAccessible(false);
+  }
+
+  public static void loadFieldItems(Object obj, String itemsFieldName, Object itemsContainer, Class<?> itemType, XElement elm, XContext ctx) {
+    Field field = getField(obj.getClass(), itemsFieldName);
+    XElement itemsElement = elm.getChild(itemsFieldName);
+
+    ctx.loader.loadItems(itemsElement, itemsContainer, itemType);
+    setFieldValue(obj, field, itemsContainer);
+  }
+
+  private static void setFieldValue(Object obj, Field field, Object val) {
+    try {
+      field.setAccessible(true);
+      field.set(obj, val);
+      field.setAccessible(false);
+    } catch (IllegalAccessException e) {
+      throw new SimPersistenceExeption(sf("Failed to set value '%s' into '%s.%s'.", val, obj.getClass().getName(), field.getName()), e);
+    }
+  }
+
   static ISet<String> getRemainingFields(Class<?> cls, ISet<String> usedFields) {
     ISet<String> ret = getAllFieldsToPersist(cls);
     ret.tryRemoveMany(usedFields);
@@ -58,7 +92,7 @@ public class FieldUtils {
     XElement fieldElement = new XElement(field.getName());
     ctx.saver.saveObject(value, fieldElement);
     if (value != null && TypeUtils.isTypeSame(value.getClass(), field.getType()) == false)
-      fieldElement.setAttribute("__type", value.getClass().getName());
+      fieldElement.setAttribute(Constants.TYPE_ATTRIBUTE, value.getClass().getName());
     return fieldElement;
   }
 
@@ -87,7 +121,7 @@ public class FieldUtils {
     ISet<String> ret = ReflectionUtils.ClassUtils.getFields(cls)
             .where(q -> Modifier.isStatic(q.getModifiers()) == false)
             .where(q -> q.getAnnotationsByType(XIgnored.class).length == 0)
-            .where(q -> q.getName().equals("this$0") == false)
+            .where(q -> q.getName().equals(Constants.INNER_CLASS_REFERENCE_FIELD_NAME) == false)
             .select(q -> q.getName())
             .toSet();
     return ret;

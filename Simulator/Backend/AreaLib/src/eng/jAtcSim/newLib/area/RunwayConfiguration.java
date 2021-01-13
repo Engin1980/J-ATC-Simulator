@@ -8,6 +8,8 @@ import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.XContext;
+import exml.annotations.XConstructor;
 
 public class RunwayConfiguration implements IXPersistable {
 
@@ -61,13 +63,16 @@ public class RunwayConfiguration implements IXPersistable {
   private final int windTo;
 
   @XmlConstructor
-  public RunwayConfiguration() {
+  @XConstructor
+  public RunwayConfiguration(XContext ctx) {
     arrivals = null;
     departures = null;
     windFrom = 0;
     windSpeedFrom = 0;
     windSpeedTo = 0;
     windTo = 0;
+
+    ctx.loader.parents.set(this);
   }
 
   public RunwayConfiguration(int windFrom, int windTo, int windSpeedFrom, int windSpeedTo,

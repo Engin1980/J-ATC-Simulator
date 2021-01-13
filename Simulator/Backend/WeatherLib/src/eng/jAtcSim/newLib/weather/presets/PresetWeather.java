@@ -5,6 +5,7 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -31,6 +32,7 @@ public class PresetWeather extends Weather {
 
   private LocalTime time;
 
+  @XConstructor
   @XmlConstructor
   private PresetWeather() {
     PostContracts.register(this, () -> this.time != null);

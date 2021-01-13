@@ -6,6 +6,7 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 
 import java.util.Objects;
 
@@ -46,6 +47,7 @@ public class Participant implements IXPersistable {
   private final eType type;
   private final String id;
 
+  @XConstructor
   @XmlConstructor
   private Participant(eType type, String id) {
     this.type = type;

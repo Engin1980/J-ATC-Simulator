@@ -6,9 +6,11 @@ import eng.jAtcSim.newLib.speeches.airplane.IPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.base.Confirmation;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import eng.newXmlUtils.annotations.XmlConstructorParameter;
+import exml.annotations.XConstructor;
 
 public class PlaneConfirmation extends Confirmation<ICommand> implements IFromPlaneSpeech {
 
+  @XConstructor
   @XmlConstructor
   public PlaneConfirmation(ICommand origin) {
     super(origin);

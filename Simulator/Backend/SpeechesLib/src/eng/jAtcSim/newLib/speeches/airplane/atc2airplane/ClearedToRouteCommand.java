@@ -4,6 +4,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class ClearedToRouteCommand implements ICommand {
 
@@ -23,6 +24,7 @@ public class ClearedToRouteCommand implements ICommand {
     this.routeType = routeType;
   }
 
+  @XConstructor
   @XmlConstructor
   private ClearedToRouteCommand() {
     routeName = null;

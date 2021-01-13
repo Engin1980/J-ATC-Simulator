@@ -51,7 +51,7 @@ public class AirplaneXmlContextInit {
                     .withCustomFieldDeserialization(
                             "planes",
                             new ItemsDeserializer().withInstanceFactory(c ->
-                                    new AirplaneList<Airplane>(q -> q.getReader().getCallsign(), q -> q.getReader().getSqwk()))));
+                                    new AirplaneList())));
 
     ctx.sdfManager.setFormatter(Airplane.AirplaneImpl.class, q -> q.getCallsign().toString());
     ctx.sdfManager.setParser(Airplane.AirplaneImpl.class, (q, c) -> {

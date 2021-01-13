@@ -4,6 +4,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 import java.time.LocalTime;
 import java.util.regex.Matcher;
@@ -37,6 +38,7 @@ public class ETimeStamp implements ITime, ITimeComparable<ETimeStamp> {
   }
   private final int value;
 
+  @XConstructor
   @XmlConstructor
   private ETimeStamp() {
     this.value = 0;

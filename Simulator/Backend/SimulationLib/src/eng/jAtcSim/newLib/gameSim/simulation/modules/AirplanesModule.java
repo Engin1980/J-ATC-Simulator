@@ -55,6 +55,7 @@ public class AirplanesModule extends SimulationModule {
   private final IList<IAirplaneInfo> planes4public = new EList<>();
   private final IList<AirplaneTemplate> planesPrepared = new EList<>();
 
+  @XConstructor
   @XmlConstructor
   private AirplanesModule() {
     super((Simulation) null);

@@ -22,6 +22,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 import java.util.function.Predicate;
@@ -363,6 +364,7 @@ class AFItem implements IXPersistable {
   public final ICommand consequent;
 
   @XmlConstructor
+  @XConstructor
   private AFItem() {
     antecedent = null;
     consequent = null;

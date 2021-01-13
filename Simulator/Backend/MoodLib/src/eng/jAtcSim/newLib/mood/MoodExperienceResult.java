@@ -4,6 +4,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 import java.util.Comparator;
 
@@ -23,6 +24,7 @@ public class MoodExperienceResult {
   private String description;
   private int points;
 
+  @XConstructor
   @XmlConstructor
   private MoodExperienceResult() {
     PostContracts.register(this, () -> time != null);

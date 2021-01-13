@@ -1,8 +1,6 @@
 package eng.jAtcSim.newLib.atcs;
 
-import eng.eSystem.collections.EDistinctList;
 import eng.jAtcSim.newLib.area.context.IAreaAcc;
-import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.atcs.internal.UserAtc;
 import eng.jAtcSim.newLib.atcs.internal.center.CenterAtc;
 import eng.jAtcSim.newLib.atcs.internal.tower.RunwayCheckInfo;
@@ -26,7 +24,7 @@ public class AtcXmlContextInit {
     ctx.sdfManager.setDeserializer(AtcProvider.class, new ObjectDeserializer<AtcProvider>()
             .withIgnoredFields("atcIdsCache", "userAtcIdsCache")
             .withCustomFieldDeserialization("atcs", new ItemsDeserializer().withInstanceFactory(c ->
-                    new AtcList<Atc>(q -> q.getAtcId(), EDistinctList.Behavior.exception))));
+                    new AtcList())));
 //            .withAfterLoadAction((q, c) -> q.init())); //TODEL
 
     ctx.sdfManager.setSerializer(AtcList.class, new ItemsSerializer());

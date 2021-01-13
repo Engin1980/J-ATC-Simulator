@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.stats.properties;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class MMM {
   public static MMM createMerge(IReadOnlyList<MMM> set) {
@@ -17,6 +18,7 @@ public class MMM {
   private final double maximum;
   private final double mean;
 
+  @XConstructor
   @XmlConstructor
   private MMM() {
     minimum = Double.NaN;

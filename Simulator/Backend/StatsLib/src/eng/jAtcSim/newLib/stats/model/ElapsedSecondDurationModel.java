@@ -1,6 +1,8 @@
 package eng.jAtcSim.newLib.stats.model;
 
-public class ElapsedSecondDurationModel {
+import exml.IXPersistable;
+
+public class ElapsedSecondDurationModel implements IXPersistable {
   private static int HISTORY_LENGTH_IN_SECONDS = 60 * 10;
   private static double MEAN_INERTIA = .8;
   private int count = 0;

@@ -6,12 +6,14 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class FlightMovementTemplate extends MovementTemplate {
 
   private final Callsign callsign;
   private final String airplaneTypeName;
 
+  @XConstructor
   @XmlConstructor
   private FlightMovementTemplate(){
     super();

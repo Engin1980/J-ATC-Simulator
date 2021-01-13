@@ -5,12 +5,14 @@ import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.annotations.XConstructor;
 
 public class GenericCommercialMovementTemplate extends MovementTemplate {
   private String companyIcao;
   private Character category;
 
   @XmlConstructor
+  @XConstructor
   private GenericCommercialMovementTemplate() {
   }
 

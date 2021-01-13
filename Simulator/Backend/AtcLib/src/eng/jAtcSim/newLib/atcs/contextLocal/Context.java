@@ -23,7 +23,7 @@ public class Context {
 
   public static class Internal {
     private static Atc app;
-    private static AtcList<Atc> atcs;
+    private static AtcList atcs;
 
     public static Atc getApp() {
       EAssert.isNotNull(app);
@@ -45,7 +45,7 @@ public class Context {
       return ret;
     }
 
-    public static AtcList<Atc> getAtcs() {
+    public static AtcList getAtcs() {
       return atcs;
     }
 
@@ -65,7 +65,7 @@ public class Context {
       return Context.getArea().getAirport().getRunways().getFirst(q -> q.getName().equals(rwyName));
     }
 
-    public static void init(AtcList<Atc> atcs, Atc app) {
+    public static void init(AtcList atcs, Atc app) {
       EAssert.Argument.isNotNull(atcs, "atcs");
       EAssert.Argument.isNotNull(app, "app");
 
