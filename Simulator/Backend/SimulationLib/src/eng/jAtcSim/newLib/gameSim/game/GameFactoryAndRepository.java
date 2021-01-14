@@ -17,8 +17,9 @@ import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.airplaneType.AirplaneTypesXmlContextInit;
 import eng.jAtcSim.newLib.airplanes.AirplaneList;
 import eng.jAtcSim.newLib.airplanes.AirplaneXmlContextInit;
+import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.airplanes.IAirplaneList;
 import eng.jAtcSim.newLib.area.*;
-import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
@@ -270,7 +271,6 @@ public class GameFactoryAndRepository {
             new SimulationLog()
     );
     ContextManager.setContext(ISharedAcc.class, sharedContext);
-
 
 
     Simulation simulation = ctx.loader.loadObject(root.getChild("simulation"), Simulation.class);
@@ -583,7 +583,7 @@ public class GameFactoryAndRepository {
     return ret;
   }
 
-  private <T extends Iterable<Map.Entry<?, ?>>> Consumer2<T, XElement> getEntriesConsumer(boolean saveItemsType, Class<?> expectedKeyType, Class<?> expectedValueType, XContext ctx) {
+  private <K, V, T extends Iterable<Map.Entry<K, V>>> Consumer2<T, XElement> getEntriesConsumer(boolean saveItemsType, Class<K> expectedKeyType, Class<V> expectedValueType, XContext ctx) {
     Consumer2<T, XElement> ret = (lst, e) -> {
       if (saveItemsType)
         e.setAttribute("__type", lst.getClass().getName());

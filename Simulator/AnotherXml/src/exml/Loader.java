@@ -45,12 +45,27 @@ public class Loader {
     usedFields.getOrSet(obj, () -> new ESet<>()).add(itemsFieldName);
   }
 
-  public <T> Iterable<T> loadItems(XElement elm, Class<? extends T> expectedItemType) {
+  public <T> IList<T> loadItems(XElement elm, Class<? extends T> expectedItemType) {
     IList<T> ret = new EList<>();
     for (XElement childElement : elm.getChildren(Constants.ITEM_ELEMENT)) {
-      Object item = this.loadObject(childElement, expectedItemType);
-      ret.add((T) item);
+      T item = this.loadObject(childElement, expectedItemType);
+      ret.add(item);
     }
+    return ret;
+  }
+
+  public <K, V> IMap<K,V> loadEntries(XElement elm, Class<K> expectedKeyType, Class<V> expectedValueType){
+    IMap<K,V> ret = new EMap<>();
+    for (XElement childElement : elm.getChildren(Constants.ENTRY_ELEMENT)){
+      XElement keyElement = childElement.getChild(Constants.KEY_ELEMENT);
+      K key = this.loadObject(keyElement, expectedKeyType);
+
+      XElement valueElement = childElement.getChild(Constants.VALUE_ELEMENT);
+      V value = this.loadObject(valueElement, expectedValueType);
+
+      ret.set(key, value);
+    }
+
     return ret;
   }
 

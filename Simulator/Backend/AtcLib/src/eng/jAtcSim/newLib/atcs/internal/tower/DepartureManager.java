@@ -9,6 +9,7 @@ import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.IAirplaneList;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
@@ -44,8 +45,11 @@ class DepartureManager implements IXPersistable {
   private final IList<IAirplane> holdingPointReady = new EDistinctList<>(EDistinctList.Behavior.exception);
   @XIgnored
   private final IList<IAirplane> departing = new EList<>();
+  @XIgnored
   private final IMap<IAirplane, Double> departureSwitchAltitude = new EMap<>();
+  @XIgnored
   private final IMap<IAirplane, EDayTimeStamp> holdingPointWaitingTimeMap = new EMap<>();
+  @XIgnored
   private final IMap<ActiveRunwayThreshold, IAirplane> lastDepartingPlane = new EMap<>();
   private final IMap<ActiveRunwayThreshold, EDayTimeStamp> lastDeparturesTime = new EMap<>();
 
@@ -154,21 +158,52 @@ class DepartureManager implements IXPersistable {
   @Override
   public void load(XElement elm, XContext ctx) {
     IAirplaneList planes = ctx.loader.values.get(IAirplaneList.class);
-    Iterable<String> tmp;
+    tady nekde nastavit at se to ulozi
 
-    tmp = ctx.loader.loadItems(elm.getChild("holdingPointNotAssigned"), String.class);
-    tmp.forEach(q -> this.holdingPointNotAssigned.add(planes.get(new Callsign(q))));
+    ctx.loader
+            .loadItems(elm.getChild("holdingPointNotAssigned"), String.class)
+            .forEach(q -> this.holdingPointNotAssigned.add(planes.get(new Callsign(q))));
 
-    tmp = ctx.loader.loadItems(elm.getChild("holdingPointWaitingForAppSwitchConfirmation"), String.class);
-    tmp.forEach(q -> this.holdingPointWaitingForAppSwitchConfirmation.add(planes.get(new Callsign(q))));
+    ctx.loader
+            .loadItems(elm.getChild("holdingPointWaitingForAppSwitchConfirmation"), String.class)
+            .forEach(q -> this.holdingPointWaitingForAppSwitchConfirmation.add(planes.get(new Callsign(q))));
 
-    tmp = ctx.loader.loadItems(elm.getChild("holdingPointReady"), String.class);
-    tmp.forEach(q -> this.holdingPointReady.add(planes.get(new Callsign(q))));
+    ctx.loader
+            .loadItems(elm.getChild("holdingPointReady"), String.class)
+            .forEach(q -> this.holdingPointReady.add(planes.get(new Callsign(q))));
 
-    tmp = ctx.loader.loadItems(elm.getChild("departing"), String.class);
-    tmp.forEach(q -> this.departing.add(planes.get(new Callsign(q))));
+    ctx.loader
+            .loadItems(elm.getChild("departing"), String.class)
+            .forEach(q -> this.departing.add(planes.get(new Callsign(q))));
 
-    tady dopsat načítání mapy
+    ctx.loader
+            .loadEntries(elm.getChild("lastDepartingPlane"), String.class, Callsign.class)
+            .forEach(q -> {
+              ActiveRunwayThreshold k = ctx.loader.parents.get(Airport.class).getRunwayThreshold(q.getKey());
+              IAirplane v = ctx.loader.values.get(IAirplaneList.class).get(q.getValue());
+              this.lastDepartingPlane.set(k, v);
+            });
+
+    ctx.loader
+            .loadEntries(elm.getChild("holdingPointWaitingTimeMap"), Callsign.class, EDayTimeStamp.class)
+            .forEach(q -> {
+              IAirplane k = ctx.loader.values.get(IAirplaneList.class).get(q.getKey());
+              this.holdingPointWaitingTimeMap.set(k, q.getValue());
+            });
+
+    ctx.loader
+            .loadEntries(elm.getChild("departureSwitchAltitude"), Callsign.class, Double.class)
+            .forEach(q -> {
+              IAirplane k = ctx.loader.values.get(IAirplaneList.class).get(q.getKey());
+              this.departureSwitchAltitude.set(k, q.getValue());
+            });
+
+    ctx.loader
+            .loadEntries(elm.getChild("holdingPointWaitingTimeMap"), Callsign.class, EDayTimeStamp.class)
+            .forEach(q -> {
+              IAirplane k = ctx.loader.values.get(IAirplaneList.class).get(q.getKey());
+              this.holdingPointWaitingTimeMap.set(k, q.getValue());
+            });
   }
 
   public void movePlanesToHoldingPoint() {
@@ -192,10 +227,19 @@ class DepartureManager implements IXPersistable {
 
   @Override
   public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveItems(holdingPointNotAssigned.select(q -> q.getCallsign()), String.class, elm, "holdingPointNotAssigned");
-    ctx.saver.saveItems(holdingPointWaitingForAppSwitchConfirmation.select(q -> q.getCallsign()), String.class, elm, "holdingPointWaitingForAppSwitchConfirmation");
-    ctx.saver.saveItems(holdingPointReady.select(q -> q.getCallsign()), String.class, elm, "holdingPointReady");
-    ctx.saver.saveItems(departing.select(q -> q.getCallsign()), String.class, elm, "departing");
+    ctx.saver.saveItems(holdingPointNotAssigned.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointNotAssigned");
+    ctx.saver.saveItems(holdingPointWaitingForAppSwitchConfirmation.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointWaitingForAppSwitchConfirmation");
+    ctx.saver.saveItems(holdingPointReady.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointReady");
+    ctx.saver.saveItems(departing.select(q -> q.getCallsign()), Callsign.class, elm, "departing");
+
+    ctx.saver.saveEntries(this.lastDepartingPlane.select(q -> q.getName(), q -> q.getCallsign()),
+            String.class, Callsign.class, elm, "lastDepartingPlane");
+    ctx.saver.saveEntries(this.holdingPointWaitingTimeMap.select(q -> q.getCallsign(), q -> q),
+            Callsign.class, EDayTimeStamp.class, elm, "holdingPointWaitingTimeMap");
+    ctx.saver.saveEntries(this.departureSwitchAltitude.select(q -> q.getCallsign(), q -> q),
+            Callsign.class, Double.class, elm, "departureSwitchAltitude");
+    ctx.saver.saveEntries(this.holdingPointWaitingTimeMap.select(q -> q.getCallsign(), q -> q),
+            Callsign.class, EDayTimeStamp.class, elm, "holdingPointWaitingTimeMap");
   }
 
   public IAirplane tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {

@@ -1,6 +1,5 @@
 package exml;
 
-import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XElement;
@@ -15,15 +14,15 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class FieldUtils {
 
-  public static void saveFieldEntries(Object obj, String entriesFieldName, Class<?> keyType, Class<?> valueType, XElement elm, XContext ctx) {
+  public static <K, V> void saveFieldEntries(Object obj, String entriesFieldName, Class<K> keyType, Class<V> valueType, XElement elm, XContext ctx) {
     Field field = getField(obj.getClass(), entriesFieldName);
     Object tmp = getFieldValue(obj, field);
-    Iterable<Map.Entry<?, ?>> entries;
+    Iterable<Map.Entry<K, V>> entries;
     if (tmp instanceof Map) {
-      Map map = (Map) tmp;
+      Map<K, V> map = (Map<K, V>) tmp;
       entries = map.entrySet();
     } else if (tmp instanceof IMap) {
-      IMap map = (IMap) tmp;
+      IMap<K,V> map = (IMap<K,V>) tmp;
       entries = map.getEntries();
     } else
       throw new SimPersistenceExeption("Unsupported map type to save entries: " + tmp.getClass());

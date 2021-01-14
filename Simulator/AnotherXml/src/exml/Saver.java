@@ -29,19 +29,47 @@ public class Saver {
     this.usedFields.getOrSet(obj, new ESet<>()).addMany(fieldNames);
   }
 
-  public void saveEntries(Iterable<Map.Entry<?, ?>> entries, Class<?> keyType, Class<?> valueType, XElement parentElement, String itemsElementName) {
+
+  //TODEL
+//  public void saveEntries(Iterable<Map.Entry<?, ?>> entries, Class<?> keyType, Class<?> valueType, XElement parentElement, String itemsElementName) {
+//    XElement elm = saveEntries(entries, keyType, valueType, itemsElementName);
+//    parentElement.addElement(elm);
+//  }
+
+  public <K, V> void saveEntries(Iterable<Map.Entry<K, V>> entries, Class<K> keyType, Class<V> valueType, XElement parentElement, String itemsElementName) {
     XElement elm = saveEntries(entries, keyType, valueType, itemsElementName);
     parentElement.addElement(elm);
   }
 
-  public void saveEntries(Iterable<Map.Entry<?, ?>> entries, Class<?> keyType, Class<?> valueType, XElement elm) {
-    for (Map.Entry entry : entries) {
-      Object key = entry.getKey();
+  //TODEL
+//  public void saveEntries(Iterable<Map.Entry<?, ?>> entries, Class<?> keyType, Class<?> valueType, XElement elm) {
+//    for (Map.Entry entry : entries) {
+//      Object key = entry.getKey();
+//      XElement keyElement = ctx.saver.saveObject(key, Constants.KEY_ELEMENT);
+//      if (key != null && keyType != null && TypeUtils.isTypeSame(key.getClass(), keyType) == false)
+//        keyElement.setAttribute(Constants.TYPE_ATTRIBUTE, key.getClass().getName());
+//
+//      Object value = entry.getValue();
+//      XElement valueElement = ctx.saver.saveObject(value, Constants.VALUE_ELEMENT);
+//      if (value != null && valueType != null && TypeUtils.isTypeSame(value.getClass(), valueType) == false)
+//        valueElement.setAttribute(Constants.TYPE_ATTRIBUTE, value.getClass().getName());
+//
+//      XElement entryElement = new XElement(Constants.ENTRY_ELEMENT);
+//      entryElement.addElement(keyElement);
+//      entryElement.addElement(valueElement);
+//
+//      elm.addElement(entryElement);
+//    }
+//  }
+
+  public <K, V> void saveEntries(Iterable<Map.Entry<K, V>> entries, Class<K> keyType, Class<V> valueType, XElement elm) {
+    for (Map.Entry<K, V> entry : entries) {
+      K key = entry.getKey();
       XElement keyElement = ctx.saver.saveObject(key, Constants.KEY_ELEMENT);
       if (key != null && keyType != null && TypeUtils.isTypeSame(key.getClass(), keyType) == false)
         keyElement.setAttribute(Constants.TYPE_ATTRIBUTE, key.getClass().getName());
 
-      Object value = entry.getValue();
+      V value = entry.getValue();
       XElement valueElement = ctx.saver.saveObject(value, Constants.VALUE_ELEMENT);
       if (value != null && valueType != null && TypeUtils.isTypeSame(value.getClass(), valueType) == false)
         valueElement.setAttribute(Constants.TYPE_ATTRIBUTE, value.getClass().getName());
@@ -54,7 +82,14 @@ public class Saver {
     }
   }
 
-  public XElement saveEntries(Iterable<Map.Entry<?, ?>> entries, Class<?> keyType, Class<?> valueType, String entriesElementName) {
+  //TODEL
+//  public XElement saveEntries(Iterable<Map.Entry<?, ?>> entries, Class<?> keyType, Class<?> valueType, String entriesElementName) {
+//    XElement elm = new XElement(entriesElementName);
+//    this.saveEntries(entries, keyType, valueType, elm);
+//    return elm;
+//  }
+
+  public <K, V> XElement saveEntries(Iterable<Map.Entry<K, V>> entries, Class<K> keyType, Class<V> valueType, String entriesElementName) {
     XElement elm = new XElement(entriesElementName);
     this.saveEntries(entries, keyType, valueType, elm);
     return elm;
