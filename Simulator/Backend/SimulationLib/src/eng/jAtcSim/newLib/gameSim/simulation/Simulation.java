@@ -6,6 +6,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
+import eng.jAtcSim.newLib.airplanes.IAirplaneList;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.Border;
@@ -316,6 +317,11 @@ public class Simulation implements IXPersistable {
   @Override
   public void load(XElement elm, XContext ctx) {
     ctx.loader.parents.set(this);
+
+    ctx.loader.loadField(this, "airplanesModule", elm);
+    IAirplaneList lst = new IAirplaneList();
+    lst.addMany(this.airplanesModule.getPlanes());
+    ctx.loader.values.set(lst);
   }
 
   public void reinitAfterLoad() {

@@ -16,6 +16,7 @@ import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.ToCoordinateNavigator
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import exml.XContext;
+import exml.annotations.XConstructor;
 
 public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
@@ -92,6 +93,19 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private int targetHeading;
   private LeftRight targetHeadingTurn;
   private final RestrictableItem targetSpeed;
+
+  @XConstructor
+  private ShaModule(XContext ctx,
+                    InertialValue altitude, HeadingInertialValue heading,
+                    InertialValue speed, RestrictableItem targetAltitude,
+                    RestrictableItem targetSpeed) {
+    super(ctx);
+    this.altitude = altitude;
+    this.heading = heading;
+    this.speed = speed;
+    this.targetAltitude = targetAltitude;
+    this.targetSpeed = targetSpeed;
+  }
 
   public ShaModule(Airplane plane, int heading, int altitude, int speed, AirplaneType planeType, int airportAltitude) {
     super(plane);

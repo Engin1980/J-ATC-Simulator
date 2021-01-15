@@ -152,19 +152,19 @@ public class AirplaneXmlContextInit {
               .withInstanceFactory(c -> new TakeOffPilot(c.values.get(Airplane.class))));
 
       ctx.sdfManager.setSerializer(ApproachPilot.class, new ObjectSerializer().withIgnoredFields("rdr", "wrt"));
-      ctx.sdfManager.setDeserializer(ApproachPilot.class, new ObjectDeserializer<ApproachPilot>()
-              .withIgnoredFields("rdr", "wrt")
-              .withInstanceFactory(c -> ApproachPilot.createEmptyToLoad(c.values.get(Airplane.class))));
-      {
-        ctx.sdfManager.setSerializer(IafRoute.class, new ObjectSerializer());
-        ctx.sdfManager.setDeserializer(IafRoute.class, new ObjectDeserializer<IafRoute>());
-
-        ctx.sdfManager.setSerializer(GaRoute.class, new ObjectSerializer());
-        ctx.sdfManager.setDeserializer(GaRoute.class, new ObjectDeserializer<GaRoute>());
-
-        ctx.sdfManager.setSerializer(PlaneCategoryDefinitions.class, new ObjectSerializer());
-        ctx.sdfManager.setDeserializer(PlaneCategoryDefinitions.class, new ObjectDeserializer<PlaneCategoryDefinitions>());
-      }
+//      ctx.sdfManager.setDeserializer(ApproachPilot.class, new ObjectDeserializer<ApproachPilot>()
+//              .withIgnoredFields("rdr", "wrt")
+//              .withInstanceFactory(c -> ApproachPilot.createEmptyToLoad(c.values.get(Airplane.class))));
+//      {
+//        ctx.sdfManager.setSerializer(IafRoute.class, new ObjectSerializer());
+//        ctx.sdfManager.setDeserializer(IafRoute.class, new ObjectDeserializer<IafRoute>());
+//
+//        ctx.sdfManager.setSerializer(GaRoute.class, new ObjectSerializer());
+//        ctx.sdfManager.setDeserializer(GaRoute.class, new ObjectDeserializer<GaRoute>());
+//
+//        ctx.sdfManager.setSerializer(PlaneCategoryDefinitions.class, new ObjectSerializer());
+//        ctx.sdfManager.setDeserializer(PlaneCategoryDefinitions.class, new ObjectDeserializer<PlaneCategoryDefinitions>());
+//      }
 
       ctx.sdfManager.setSerializer(ArrivalPilot.class, new ObjectSerializer().withIgnoredFields("rdr", "wrt"));
       ctx.sdfManager.setDeserializer(ArrivalPilot.class, new ObjectDeserializer<ArrivalPilot>()
@@ -177,9 +177,9 @@ public class AirplaneXmlContextInit {
               .withInstanceFactory(c -> new HoldingPointPilot(c.values.get(Airplane.class))));
 
       ctx.sdfManager.setSerializer(HoldPilot.class, new ObjectSerializer().withIgnoredFields("rdr", "wrt"));
-      ctx.sdfManager.setDeserializer(HoldPilot.class, new ObjectDeserializer<HoldPilot>()
-              .withIgnoredFields("rdr", "wrt")
-              .withInstanceFactory(c -> HoldPilot.createForLoad(c.values.get(Airplane.class))));
+//      ctx.sdfManager.setDeserializer(HoldPilot.class, new ObjectDeserializer<HoldPilot>()
+//              .withIgnoredFields("rdr", "wrt")
+//              .withInstanceFactory(c -> HoldPilot.createForLoad(c.values.get(Airplane.class))));
 
       ctx.sdfManager.setSerializer(DeparturePilot.class, new ObjectSerializer().withIgnoredFields("rdr", "wrt"));
       ctx.sdfManager.setDeserializer(DeparturePilot.class, new ObjectDeserializer<DeparturePilot>()

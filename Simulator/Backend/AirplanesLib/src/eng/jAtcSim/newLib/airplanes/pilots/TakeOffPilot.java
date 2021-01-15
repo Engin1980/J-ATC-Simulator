@@ -9,20 +9,16 @@ import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import exml.XContext;
+import exml.annotations.XConstructor;
 
 public class TakeOffPilot extends Pilot {
   //TODO add to airport config the acceleration altitude and use it here
   private final ActiveRunwayThreshold takeOffThreshold;
 
-  @Override
-  public void save(XElement elm, XContext ctx) {
-    super.save(elm, ctx);
-    ctx.saver.saveRemainingFields(this, elm);
-  }
-
-  @Override
-  public void load(XElement elm, XContext ctx) {
-    super.load(elm, ctx);
+  @XConstructor
+  public TakeOffPilot(XContext ctx) {
+    super(ctx);
+    this.takeOffThreshold = super.rdr.getRouting().getAssignedRunwayThreshold();
   }
 
   public TakeOffPilot(Airplane plane) {
@@ -68,6 +64,17 @@ public class TakeOffPilot extends Pilot {
   @Override
   public boolean isDivertable() {
     return false;
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.saveRemainingFields(this, elm);
   }
 
   @Override

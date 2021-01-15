@@ -4,9 +4,10 @@ import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.time.EDayTime;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
-public class EmergencyAppearanceController {
+public class EmergencyAppearanceController implements IXPersistable {
   private EDayTimeStamp nextEmergencyTime;
   private final double emergencyPerDayProbability;
 

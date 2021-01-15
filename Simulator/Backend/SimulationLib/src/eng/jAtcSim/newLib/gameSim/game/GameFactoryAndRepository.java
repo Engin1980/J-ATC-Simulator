@@ -262,9 +262,13 @@ public class GameFactoryAndRepository {
 
     AtcIdList atcIdList = new AtcIdList();
     atcIdList.addMany(gsi.areaSource.getActiveAirport().getAtcTemplates().select(qq -> qq.toAtcId()));
+
     ctx.loader.values.set(atcIdList);
+    ctx.loader.values.set(gsi.areaSource.getArea().getNavaids());
+    ctx.loader.values.set(gsi.airplaneTypesSource.getContent());
 
     SharedAcc sharedContext = new SharedAcc(
+
             gsi.areaSource.getActiveAirport().getIcao(),
             atcIdList,
             new EDayTimeRun(0),
@@ -523,7 +527,7 @@ public class GameFactoryAndRepository {
 
     // area
     ctx.loader.setParser(Navaid.class, v -> ctx.loader.values.get(NavaidList.class).get(v));
-    ctx.loader.setParser(ActiveRunwayThreshold.class, v -> ctx.loader.values.get(Airport.class).getRunwayThreshold(v));
+    ctx.loader.setParser(ActiveRunwayThreshold.class, v -> ctx.loader.parents.get(Airport.class).getRunwayThreshold(v));
 
     // airplane type
     ctx.loader.setParser(AirplaneType.class, v -> ctx.loader.values.get(AirplaneTypes.class).getByName(v));

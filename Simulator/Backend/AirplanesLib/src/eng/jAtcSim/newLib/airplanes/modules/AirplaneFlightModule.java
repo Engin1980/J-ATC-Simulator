@@ -6,6 +6,7 @@ import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import exml.IXPersistable;
+import exml.annotations.XConstructor;
 
 public class AirplaneFlightModule implements IXPersistable {
   private final Callsign callsign;
@@ -14,6 +15,7 @@ public class AirplaneFlightModule implements IXPersistable {
   private EDayTimeStamp exitTime = null;
   private boolean departure;
 
+  @XConstructor
   public AirplaneFlightModule(Callsign callsign, int entryDelay, EDayTimeStamp expectedExitTime, boolean departure) {
     this.callsign = callsign;
     this.entryDelay = entryDelay;

@@ -12,8 +12,9 @@ import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
+import exml.IXPersistable;
 
-public class AirproxController {
+public class AirproxController implements IXPersistable {
   private static final double AIRPROX_STANDARD_DISTANCE = 5;
   private static final double AIRPROX_WARNING_DISTANCE = 7.5;
   private static final double AIRPROX_APPROACH_DISTANCE = 2.5;

@@ -31,6 +31,7 @@ import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.XContext;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -56,18 +57,8 @@ public class UserAtc extends Atc implements IUserAtcInterface {
   @XIgnored
   private IReadOnlyList<Message> thisSecondMessages = new EList<>();
 
-  @Override
-  public void load(XElement elm, XContext ctx) {
-    super.load(elm, ctx);
-  }
-
-  @Override
-  public void save(XElement elm, XContext ctx) {
-    super.save(elm, ctx);
-    ctx.saver.ignoreFields(this,"thisSecondMessages");
-  }
-
   @XmlConstructor
+  @XConstructor
   private UserAtc() {
   }
 
@@ -120,8 +111,19 @@ public class UserAtc extends Atc implements IUserAtcInterface {
   }
 
   @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
+  }
+
+  @Override
   public void registerNewPlaneInGame(Callsign callsign, boolean finalRegistration) {
     throw new UnsupportedOperationException(sf("This operation is not supported by UserAtc %s.", getAtcId()));
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.ignoreFields(this, "thisSecondMessages");
   }
 
   @Override

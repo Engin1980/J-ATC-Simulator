@@ -4,6 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Headings;
+import eng.eSystem.validation.EAssert;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import eng.newXmlUtils.annotations.XmlConstructorParameter;
 import exml.IXPersistable;
@@ -15,23 +16,10 @@ class HeadingInertialValue implements IXPersistable {
   private final double maxInertia;
   private final double maxInertiaChange;
   protected double value;
-  @XIgnored private IList<Double> thresholds = new EList<>();
+  @XIgnored
+  private final IList<Double> thresholds = new EList<>();
   private int inertiaStep = 0;
 
-  @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveFieldItems(this, "thresholds", Double.class,  elm);
-  }
-
-  @Override
-  public void load(XElement elm, XContext ctx) {
-
-  }
-
-  @XmlConstructor
-  @XConstructor
-  @XmlConstructorParameter(index = 1, valueString = "10")
-  @XmlConstructorParameter(index = 2, valueString = "2")
   HeadingInertialValue(double value,
                        double maxInertia,
                        double maxInertiaChange) {
@@ -39,6 +27,12 @@ class HeadingInertialValue implements IXPersistable {
     this.maxInertia = maxInertia;
     this.maxInertiaChange = maxInertiaChange;
     buildHashMap();
+  }
+
+  @XConstructor
+  private HeadingInertialValue(double maxInertia, double maxInertiaChange) {
+    this.maxInertia = maxInertia;
+    this.maxInertiaChange = maxInertiaChange;
   }
 
   public void add(double val) {
@@ -82,8 +76,20 @@ class HeadingInertialValue implements IXPersistable {
     this.inertiaStep = 0;
   }
 
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.saveFieldItems(this, "thresholds", Double.class, elm);
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    ctx.loader.loadFieldItems(this, "thresholds", this.thresholds, Double.class, elm);
+  }
+
   private void buildHashMap() {
-    IList<Double> tmp = new EList<>();
+    EAssert.isTrue(this.thresholds.isEmpty());
+
+    IList<Double> tmp = this.thresholds;
     int index = 1;
     int cumIndex = 1;
     double maxThr = maxInertia / maxInertiaChange + 1;
@@ -94,10 +100,7 @@ class HeadingInertialValue implements IXPersistable {
       index++;
       cumIndex += index;
     }
-
     tmp.removeAt(0);
-
-    this.thresholds = tmp;
   }
 
   private int getFromHashMap(double val) {

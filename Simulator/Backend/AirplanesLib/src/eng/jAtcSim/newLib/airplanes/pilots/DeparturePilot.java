@@ -1,11 +1,17 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
-import eng.eSystem.collections.IMap;
-import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
+import exml.XContext;
+import exml.annotations.XConstructor;
 
 public class DeparturePilot extends BasicPilot {
+
+  @XConstructor
+  private DeparturePilot(XContext ctx) {
+    super(ctx);
+  }
+
   public DeparturePilot(Airplane plane) {
     super(plane);
   }

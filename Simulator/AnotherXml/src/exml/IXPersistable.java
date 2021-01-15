@@ -10,4 +10,8 @@ public interface IXPersistable {
   default void save(XElement elm, XContext ctx) {
     // intentionally blank, can be overridden/implemented
   }
+
+  default void afterLoad(XContext ctx) {
+    // intentionally blank, can be overriden/implemented
+  }
 }

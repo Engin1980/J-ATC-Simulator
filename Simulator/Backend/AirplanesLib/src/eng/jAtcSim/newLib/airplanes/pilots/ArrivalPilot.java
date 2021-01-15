@@ -4,6 +4,8 @@ import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
+import exml.XContext;
+import exml.annotations.XConstructor;
 
 public class ArrivalPilot extends BasicPilot {
 
@@ -12,6 +14,11 @@ public class ArrivalPilot extends BasicPilot {
 
   public ArrivalPilot(Airplane plane) {
     super(plane);
+  }
+
+  @XConstructor
+  private ArrivalPilot(XContext ctx) {
+    super(ctx);
   }
 
   @Override

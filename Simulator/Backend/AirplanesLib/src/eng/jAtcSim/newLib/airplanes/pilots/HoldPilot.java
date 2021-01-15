@@ -15,6 +15,7 @@ import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import exml.XContext;
+import exml.annotations.XConstructor;
 
 public class HoldPilot extends Pilot {
 
@@ -33,10 +34,6 @@ public class HoldPilot extends Pilot {
 
   private static final double NEAR_FIX_DISTANCE = 0.5;
 
-  public static HoldPilot createForLoad(Airplane plane) {
-    return new HoldPilot(plane);
-  }
-
   //TODO Make all fields private
   public Navaid navaid;
   public int inboundRadial;
@@ -44,19 +41,9 @@ public class HoldPilot extends Pilot {
   public EDayTimeStamp secondTurnTime;
   public LeftRight turn;
 
-  @Override
-  public void save(XElement elm, XContext ctx) {
-    super.save(elm, ctx);
-    ctx.saver.saveRemainingFields(this, elm);
-  }
-
-  @Override
-  public void load(XElement elm, XContext ctx) {
-    super.load(elm, ctx);
-  }
-
-  private HoldPilot(Airplane plane) {
-    super(plane);
+  @XConstructor
+  private HoldPilot(XContext ctx) {
+    super(ctx.loader.parents.get(Airplane.class));
   }
 
   public HoldPilot(Airplane plane, Navaid navaid, int inboundRadial, LeftRight turn) {
@@ -191,6 +178,17 @@ public class HoldPilot extends Pilot {
   @Override
   public boolean isDivertable() {
     return true;
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.saveRemainingFields(this, elm);
   }
 
   private int getAfterSecondTurnHeading() {

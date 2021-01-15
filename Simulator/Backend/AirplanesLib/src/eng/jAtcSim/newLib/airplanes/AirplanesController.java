@@ -36,9 +36,8 @@ public class AirplanesController implements IXPersistable {
     this.arrivalInitialAtId = Context.getShared().getAtcs().getFirst(q -> q.getType() == AtcType.ctr);
     this.departureInitialAtcId = Context.getShared().getAtcs().getFirst(q -> q.getType() == AtcType.twr);
 
+    //TODO move this to load()?
     for (Airplane plane : planes) {
-      this.publicPlanes.add(plane.getReader());
-
       Context.getMessaging().getMessenger().registerListener(
               Participant.createAirplane(plane.getReader().getCallsign()));
     }
@@ -67,7 +66,8 @@ public class AirplanesController implements IXPersistable {
 
   @Override
   public void load(XElement elm, XContext ctx) {
-//    ctx.loader.loadField(this, "planes", elm);
+    ctx.loader.loadFieldItems(this, "planes", this.planes, Airplane.class, elm);
+    this.publicPlanes.addMany(this.planes.select(q->q.getReader()));
   }
 
   public void throwEmergency() {

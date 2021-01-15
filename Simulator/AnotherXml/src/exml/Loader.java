@@ -32,6 +32,25 @@ public class Loader {
     this.ctx = ctx;
   }
 
+  public void ignoreFields(Object obj, String... fieldNames) {
+    this.usedFields.getOrSet(obj, () -> new ESet<>()).addMany(fieldNames);
+  }
+
+  public <K, V> IMap<K, V> loadEntries(XElement elm, Class<K> expectedKeyType, Class<V> expectedValueType) {
+    IMap<K, V> ret = new EMap<>();
+    for (XElement childElement : elm.getChildren(Constants.ENTRY_ELEMENT)) {
+      XElement keyElement = childElement.getChild(Constants.KEY_ELEMENT);
+      K key = this.loadObject(keyElement, expectedKeyType);
+
+      XElement valueElement = childElement.getChild(Constants.VALUE_ELEMENT);
+      V value = this.loadObject(valueElement, expectedValueType);
+
+      ret.set(key, value);
+    }
+
+    return ret;
+  }
+
   public void loadField(Object obj, String fieldName, XElement elm) {
     log("." + fieldName);
     indent++;
@@ -51,21 +70,6 @@ public class Loader {
       T item = this.loadObject(childElement, expectedItemType);
       ret.add(item);
     }
-    return ret;
-  }
-
-  public <K, V> IMap<K,V> loadEntries(XElement elm, Class<K> expectedKeyType, Class<V> expectedValueType){
-    IMap<K,V> ret = new EMap<>();
-    for (XElement childElement : elm.getChildren(Constants.ENTRY_ELEMENT)){
-      XElement keyElement = childElement.getChild(Constants.KEY_ELEMENT);
-      K key = this.loadObject(keyElement, expectedKeyType);
-
-      XElement valueElement = childElement.getChild(Constants.VALUE_ELEMENT);
-      V value = this.loadObject(valueElement, expectedValueType);
-
-      ret.set(key, value);
-    }
-
     return ret;
   }
 
@@ -107,7 +111,7 @@ public class Loader {
     } else if (type.isEnum()) {
       ret = loadEnum(elm, type);
     } else if (type.isArray()) {
-      IList<Object> lst = loadObject(elm, EList.class);
+      IList<Object> lst = loadItems(elm, type.getComponentType());
       ret = convertListToArray(lst, type);
     } else if (IXPersistable.class.isAssignableFrom(type)) {
       ret = loadPersistable(elm, type);
@@ -283,6 +287,14 @@ public class Loader {
       ret = Float.MIN_VALUE;
     else if (type.equals(double.class) || type.equals(Double.class))
       ret = Double.MIN_VALUE;
+    else if (type.equals(boolean.class))
+      ret = false;
+    else if (type.equals(Boolean.class))
+      ret = null;
+    else if (type.equals(char.class))
+      ret = 0;
+    else if (type.equals(Character.class))
+      ret = null;
     else if (type.equals(XContext.class))
       ret = this.ctx;
     else

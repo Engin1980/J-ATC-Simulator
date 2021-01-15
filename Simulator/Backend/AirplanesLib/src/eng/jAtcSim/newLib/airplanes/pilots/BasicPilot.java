@@ -1,26 +1,29 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
-import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
-import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PassingClearanceLimitNotification;
 import exml.XContext;
+import exml.annotations.XConstructor;
 
 public abstract class BasicPilot extends Pilot {
 
   private boolean clearanceLimitWarningSent = false;
 
-  public BasicPilot(Airplane plane) {
+  protected BasicPilot(Airplane plane) {
     super(plane);
   }
+
+  @XConstructor
+  protected BasicPilot(XContext ctx) {
+    super(ctx);
+  }
+
+  protected abstract void elapseSecondInternalBasic();
 
   @Override
   public final void elapseSecondInternal() {
@@ -32,10 +35,10 @@ public abstract class BasicPilot extends Pilot {
 
       double dist = Coordinates.getDistanceInNM(rdr.getCoordinate(), targetCoordinate);
       if (!clearanceLimitWarningSent
-          && dist < warningDistance
-          && !rdr.getRouting().hasLateralDirectionAfterCoordinate()) {
+              && dist < warningDistance
+              && !rdr.getRouting().hasLateralDirectionAfterCoordinate()) {
         wrt.sendMessage(
-            new PassingClearanceLimitNotification());
+                new PassingClearanceLimitNotification());
         clearanceLimitWarningSent = true;
       } else if (dist < overNavaidDistance) {
         if (rdr.isArrival() == false) {
@@ -68,7 +71,5 @@ public abstract class BasicPilot extends Pilot {
   public final boolean isDivertable() {
     return true;
   }
-
-  protected abstract void elapseSecondInternalBasic();
 
 }

@@ -4,10 +4,17 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
+import exml.XContext;
+import exml.annotations.XConstructor;
 
 public class HoldingPointPilot extends Pilot {
   public HoldingPointPilot(Airplane plane) {
     super(plane);
+  }
+
+  @XConstructor
+  private HoldingPointPilot(XContext ctx) {
+    super(ctx);
   }
 
   @Override

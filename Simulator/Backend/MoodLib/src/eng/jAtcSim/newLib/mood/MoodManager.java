@@ -4,10 +4,11 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
+import exml.IXPersistable;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class MoodManager {
+public class MoodManager implements IXPersistable {
 
   private final IMap<Callsign, Mood> inner = new EMap<>();
 

@@ -31,6 +31,7 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCo
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
 import exml.XContext;
+import exml.annotations.XConstructor;
 
 public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
@@ -41,17 +42,6 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     extension
   }
 
-  //  private final static AirplaneState[] FLYING_ROUTE_STATES = {
-//          AirplaneState.arrivingHigh,
-//          AirplaneState.arrivingLow,
-//          AirplaneState.arrivingCloseFaf,
-//          AirplaneState.flyingIaf2Faf,
-//          AirplaneState.approachEntry,
-//          AirplaneState.approachDescend,
-//          AirplaneState.longFinal,
-//          AirplaneState.departingHigh,
-//          AirplaneState.departingLow,
-//  };
   private final AfterCommandList afterCommands = new AfterCommandList();
   private String assignedDARouteName = null;
   private Navaid entryExitPoint;
@@ -59,17 +49,9 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private ActiveRunwayThreshold runwayThreshold;
   private CommandQueueRecorder cqr;
 
-  @Override
-  public void save(XElement elm, XContext ctx) {
-    super.save(elm, ctx);
-    ctx.saver.ignoreFields(this,
-            "cqr");
-    ctx.saver.saveRemainingFields(this, elm);
-  }
-
-  @Override
-  public void load(XElement elm, XContext ctx) {
-    super.load(elm, ctx);
+  @XConstructor
+  private RoutingModule(XContext ctx) {
+    super(ctx);
   }
 
   public RoutingModule(Airplane plane, Navaid entryExitPoint) {
@@ -137,6 +119,20 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
   public boolean isRoutingEmpty() {
     return this.afterCommands.isRouteEmpty();
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
+    ctx.loader.ignoreFields(this,
+            "cqr");
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.ignoreFields(this,
+            "cqr");
   }
 
   public void setCqr(CommandQueueRecorder commandQueueRecorder) {

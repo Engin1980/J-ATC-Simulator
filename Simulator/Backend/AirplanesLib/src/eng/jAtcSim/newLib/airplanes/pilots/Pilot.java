@@ -14,6 +14,7 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.Restriction;
 import exml.IXPersistable;
 import exml.XContext;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -23,6 +24,11 @@ public abstract class Pilot implements IXPersistable {
   @XIgnored protected final IAirplane rdr;
   @XIgnored protected final IAirplaneWriter wrt;
   private boolean isFirstElapseSecond = true;
+
+  @XConstructor
+  protected Pilot(XContext ctx){
+    this(ctx.loader.parents.get(Airplane.class));
+  }
 
   public Pilot(Airplane plane) {
     EAssert.Argument.isNotNull(plane, "plane");

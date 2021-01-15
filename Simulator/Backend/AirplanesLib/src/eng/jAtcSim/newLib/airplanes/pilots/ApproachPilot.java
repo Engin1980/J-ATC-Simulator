@@ -34,6 +34,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ThenCommand;
 import exml.XContext;
+import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 public class ApproachPilot extends Pilot {
@@ -46,14 +47,12 @@ public class ApproachPilot extends Pilot {
   private static final int LONG_FINAL_DISTANCE = 6;
   private static final int TOUCHDOWN_SIMULATED_HEIGHT = 20;
 
-  public static ApproachPilot createEmptyToLoad(Airplane airplane) {
-    return new ApproachPilot(airplane);
-  }
-
   //TODEL probably unused
   private ApproachType type;
-  @XIgnored private final IList<ApproachStage> stages;
-  @XIgnored private final IList<ICommand> gaRouteCommands;
+  @XIgnored
+  private final IList<ApproachStage> stages;
+  @XIgnored
+  private final IList<ICommand> gaRouteCommands;
   private final ActiveRunwayThreshold threshold;
   private final int initialAltitude;
   private boolean switchToTowerRequested = false;
@@ -62,21 +61,9 @@ public class ApproachPilot extends Pilot {
    */
   private int height;
 
-  @Override
-  public void save(XElement elm, XContext ctx) {
-    super.save(elm, ctx);
-    ctx.saver.saveFieldItems(this, "stages", ApproachStage.class, elm);
-    ctx.saver.saveFieldItems(this, "gaRouteCommands", ICommand.class, elm);
-  }
-
-  @Override
-  public void load(XElement elm, XContext ctx) {
-    super.load(elm, ctx);
-  }
-
-  //TODO this should be done via @XmlConstructor
-  private ApproachPilot(Airplane airplane) {
-    super(airplane);
+  @XConstructor
+  private ApproachPilot(XContext ctx) {
+    super(ctx.loader.parents.get(Airplane.class));
     this.stages = null;
     this.gaRouteCommands = null;
     this.threshold = null;
@@ -149,6 +136,18 @@ public class ApproachPilot extends Pilot {
   @Override
   public boolean isDivertable() {
     return rdr.getState() != AirplaneState.approachDescend;
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.saveFieldItems(this, "stages", ApproachStage.class, elm);
+    ctx.saver.saveFieldItems(this, "gaRouteCommands", ICommand.class, elm);
   }
 
   @Override

@@ -4,19 +4,30 @@ import eng.eSystem.collections.*;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
+import exml.IXPersistable;
+import exml.XContext;
+import exml.annotations.XConstructor;
+import exml.annotations.XIgnored;
 
-public class MrvaController {
-  private final IReadOnlyList<Border> mrvas;
-  private final IMap<IAirplane, Border> mrvaMaps = new EMap<>();
+public class MrvaController implements IXPersistable {
+  @XIgnored private final IReadOnlyList<Border> mrvas;
+  @XIgnored private final IMap<IAirplane, Border> mrvaMaps = new EMap<>();
   private final IList<Callsign> mrvaViolatingPlanes = new EList<>();
 
   public MrvaController(IReadOnlyList<Border> mrvas) {
     assert mrvas.isAll(q -> q.getType() == Border.eType.mrva);
     assert mrvas.isAll(q -> q.isEnclosed());
     this.mrvas = mrvas;
+  }
+
+  @XConstructor
+  private MrvaController(XContext ctx) {
+    this.mrvas = ctx.loader.parents.get(Area.class).getBorders()
+            .where(q->q.getType() == Border.eType.mrva);
   }
 
   public void evaluateMrvaFails(IReadOnlyList<IAirplane> planes) {

@@ -158,7 +158,6 @@ class DepartureManager implements IXPersistable {
   @Override
   public void load(XElement elm, XContext ctx) {
     IAirplaneList planes = ctx.loader.values.get(IAirplaneList.class);
-    tady nekde nastavit at se to ulozi
 
     ctx.loader
             .loadItems(elm.getChild("holdingPointNotAssigned"), String.class)
@@ -182,13 +181,6 @@ class DepartureManager implements IXPersistable {
               ActiveRunwayThreshold k = ctx.loader.parents.get(Airport.class).getRunwayThreshold(q.getKey());
               IAirplane v = ctx.loader.values.get(IAirplaneList.class).get(q.getValue());
               this.lastDepartingPlane.set(k, v);
-            });
-
-    ctx.loader
-            .loadEntries(elm.getChild("holdingPointWaitingTimeMap"), Callsign.class, EDayTimeStamp.class)
-            .forEach(q -> {
-              IAirplane k = ctx.loader.values.get(IAirplaneList.class).get(q.getKey());
-              this.holdingPointWaitingTimeMap.set(k, q.getValue());
             });
 
     ctx.loader
@@ -238,8 +230,6 @@ class DepartureManager implements IXPersistable {
             Callsign.class, EDayTimeStamp.class, elm, "holdingPointWaitingTimeMap");
     ctx.saver.saveEntries(this.departureSwitchAltitude.select(q -> q.getCallsign(), q -> q),
             Callsign.class, Double.class, elm, "departureSwitchAltitude");
-    ctx.saver.saveEntries(this.holdingPointWaitingTimeMap.select(q -> q.getCallsign(), q -> q),
-            Callsign.class, EDayTimeStamp.class, elm, "holdingPointWaitingTimeMap");
   }
 
   public IAirplane tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {

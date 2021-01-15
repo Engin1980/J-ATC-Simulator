@@ -167,6 +167,7 @@ public class Saver {
       IXPersistable persistable = (IXPersistable) obj;
       persistable.save(elm, this.ctx); // calls custom overload
       this.saveRemainingFields(persistable, elm); // calls global save
+      this.usedFields.tryRemove(persistable);
     } else {
       throw new SimPersistenceExeption(sf("Don't know how to save instance of '%s'.", obj.getClass()));
     }
@@ -186,7 +187,7 @@ public class Saver {
       this.saveField(obj, remainingField, elm);
     }
 
-    usedFields.getOrSet(obj, new ESet<>()).addMany(remainingFields);
+    usedFields.getOrSet(obj, () -> new ESet<>()).addMany(remainingFields);
   }
 
   public void saveValue(Object obj, String elementName, XElement elm) {

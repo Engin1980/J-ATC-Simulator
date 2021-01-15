@@ -186,19 +186,20 @@ public class AirplanesModule extends SimulationModule {
   public void save(XElement elm, XContext ctx) {
     super.save(elm, ctx);
     ctx.saver.ignoreFields(this,
-            "airproxController",
-            "emergencyAppearanceController",
-            "moodManager",
-            "mrvaController");
-    ctx.saver.ignoreFields(this,
             "planes4public",
             "planesPrepared");
-    ctx.saver.saveRemainingFields(this, elm);
+
+    //TODEL not required
+    // ctx.saver.saveRemainingFields(this, elm);
   }
 
   @Override
   public void load(XElement elm, XContext ctx) {
     super.load(elm, ctx);
+
+    ctx.loader.ignoreFields(this,
+            "planes4public",
+            "planesPrepared");
   }
 
   private FinishedPlaneStats buildFinishedAirplaneStats(IAirplane airplane) {
