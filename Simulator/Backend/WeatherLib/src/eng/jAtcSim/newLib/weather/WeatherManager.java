@@ -24,7 +24,6 @@ public class WeatherManager implements IXPersistable {
 
   public WeatherManager(WeatherProvider provider) {
     EAssert.Argument.isNotNull(provider);
-
     this.provider = provider;
     this.newWeatherFlag = true;
   }

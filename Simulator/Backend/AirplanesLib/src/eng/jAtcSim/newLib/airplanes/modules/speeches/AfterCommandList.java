@@ -327,7 +327,8 @@ public class AfterCommandList implements IXPersistable {
 
   @Override
   public void load(XElement elm, XContext ctx) {
-
+    ctx.loader.loadFieldItems(this, "ex", this.ex, AFItem.class, elm);
+    ctx.loader.loadFieldItems(this, "rt", this.rt, AFItem.class, elm);
   }
 
   public String toLogString() {
