@@ -153,6 +153,7 @@ public class Loader {
     ret = (IXPersistable) provideInstance(type);
     ret.load(elm, this.ctx);
     fillInstance(ret, elm);
+    ret.postLoad(ctx);
     return (T) ret;
   }
 
@@ -167,7 +168,8 @@ public class Loader {
   }
 
   private <T> Object loadEnum(XElement elm, Class<T> type) {
-    return null;
+    Object ret = Enum.valueOf((Class<Enum>) type, elm.getContent());
+    return ret;
   }
 
   private Optional<Class<?>> tryLoadTypeFromElement(XElement elm) {

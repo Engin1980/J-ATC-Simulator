@@ -11,7 +11,7 @@ public interface IXPersistable {
     // intentionally blank, can be overridden/implemented
   }
 
-  default void afterLoad(XContext ctx) {
+  default void postLoad(XContext ctx) {
     // intentionally blank, can be overriden/implemented
   }
 }

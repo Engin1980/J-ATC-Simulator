@@ -5,6 +5,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.airplanes.IAirplaneList;
 import eng.jAtcSim.newLib.area.Airport;
@@ -12,6 +13,8 @@ import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
+import eng.jAtcSim.newLib.fleet.airliners.AirlinesFleets;
+import eng.jAtcSim.newLib.fleet.generalAviation.GeneralAviationFleets;
 import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
@@ -44,6 +47,7 @@ import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
+import eng.jAtcSim.newLib.weather.WeatherProvider;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
 import exml.XContext;
@@ -216,7 +220,13 @@ public class Simulation implements IXPersistable {
     this.timerModule = null;
     this.trafficModule = null;
     this.weatherModule = null;
-    this.worldModule = null;
+
+    this.worldModule = new WorldModule(this,
+            ctx.loader.parents.get(Area.class),
+            ctx.loader.parents.get(Airport.class),
+            ctx.loader.values.get(AirplaneTypes.class),
+            ctx.loader.values.get(AirlinesFleets.class),
+            ctx.loader.values.get(GeneralAviationFleets.class));
   }
 
   public Simulation(
@@ -324,15 +334,16 @@ public class Simulation implements IXPersistable {
     ctx.loader.values.set(lst);
   }
 
-  public void reinitAfterLoad() {
-    SharedAcc sharedContext = new SharedAcc(
-            Context.getShared().getAirportIcao(),
-            Context.getShared().getAtcs(),
-            this.now,
-            Context.getShared().getSimLog()
-    );
-    ContextManager.setContext(ISharedAcc.class, sharedContext);
-  }
+  //TODEL
+//  public void reinitAfterLoad() {
+//    SharedAcc sharedContext = new SharedAcc(
+//            Context.getShared().getAirportIcao(),
+//            Context.getShared().getAtcs(),
+//            this.now,
+//            Context.getShared().getSimLog()
+//    );
+//    ContextManager.setContext(ISharedAcc.class, sharedContext);
+//  }
 
   @Override
   public void save(XElement elm, XContext ctx) {

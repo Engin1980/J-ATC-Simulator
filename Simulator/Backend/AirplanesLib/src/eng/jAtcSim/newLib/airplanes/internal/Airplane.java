@@ -619,6 +619,11 @@ public class Airplane implements IXPersistable {
     initRecorders();
   }
 
+  @Override
+  public void postLoad(XContext ctx) {
+    initRecorders();
+  }
+
   public void elapseSecond() {
 
     this.routingModule.elapseSecond(); // here messages are processed

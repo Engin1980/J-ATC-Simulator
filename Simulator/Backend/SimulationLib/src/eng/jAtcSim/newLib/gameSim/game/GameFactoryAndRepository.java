@@ -254,11 +254,6 @@ public class GameFactoryAndRepository {
 
     ctx.loader.parents.set(gsi.areaSource.getArea());
     ctx.loader.parents.set(gsi.areaSource.getActiveAirport());
-    ctx.loader.parents.set(gsi.airplaneTypesSource.getContent());
-    ctx.loader.parents.set(gsi.fleetsSource.getContent().companyFleets);
-    ctx.loader.parents.set(gsi.fleetsSource.getContent().gaFleets);
-    ctx.loader.parents.set(ITrafficModel.class, gsi.trafficSource.getClass());
-    ctx.loader.parents.set(gsi.weatherSource.getContent());
 
     AtcIdList atcIdList = new AtcIdList();
     atcIdList.addMany(gsi.areaSource.getActiveAirport().getAtcTemplates().select(qq -> qq.toAtcId()));
@@ -266,9 +261,12 @@ public class GameFactoryAndRepository {
     ctx.loader.values.set(atcIdList);
     ctx.loader.values.set(gsi.areaSource.getArea().getNavaids());
     ctx.loader.values.set(gsi.airplaneTypesSource.getContent());
+    ctx.loader.values.set(gsi.fleetsSource.getContent().companyFleets);
+    ctx.loader.values.set(gsi.fleetsSource.getContent().gaFleets);
+    ctx.loader.values.set(ITrafficModel.class, gsi.trafficSource.getClass());
+    ctx.loader.values.set(WeatherProvider.class, gsi.weatherSource.getContent());
 
     SharedAcc sharedContext = new SharedAcc(
-
             gsi.areaSource.getActiveAirport().getIcao(),
             atcIdList,
             new EDayTimeRun(0),
@@ -276,35 +274,21 @@ public class GameFactoryAndRepository {
     );
     ContextManager.setContext(ISharedAcc.class, sharedContext);
 
-
     Simulation simulation = ctx.loader.loadObject(root.getChild("simulation"), Simulation.class);
+    simulation.init();
 
-    throw new ToDoException();
-//    XmlContext ctx = new XmlContext();
-//    prepareXmlContextForSources(ctx);
-//    prepareXmlContextForSimulation(ctx);
-//
-//    // prepares data for sim load
-//    ???? TODO co tohle?
-//    ctx.sdfManager.setParser(AtcId.class, (qq, cc) -> gsi.areaSource.getActiveAirport().getAtcTemplates().select(qqq -> qqq.toAtcId()).getFirst(qqq -> qqq.getName().equals(qq)));
-//
+    PostContracts.checkAndClear();
 
-//
-//    Simulation simulation = XmlContext.deserialize(root.getChild("simulation"), ctx, Simulation.class);
-//    simulation.init();
-//
-//    PostContracts.checkAndClear();
-//
-//    Game game = new Game(
-//            gsi.areaSource,
-//            gsi.airplaneTypesSource,
-//            gsi.fleetsSource,
-//            gsi.trafficSource,
-//            gsi.weatherSource,
-//            simulation
-//    );
-//
-//    return game;
+    Game game = new Game(
+        gsi.areaSource,
+        gsi.airplaneTypesSource,
+        gsi.fleetsSource,
+        gsi.trafficSource,
+        gsi.weatherSource,
+        simulation
+    );
+
+    return game;
   }
 
   public Game load_old(String fileName) {

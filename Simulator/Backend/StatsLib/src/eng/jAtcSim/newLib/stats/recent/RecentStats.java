@@ -178,6 +178,21 @@ public class RecentStats implements IXPersistable {
     ctx.saver.saveFieldItems(this, "maximumPlanesUnderApp", TimedValue.class, elm);
   }
 
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    ctx.loader.loadFieldItems(this, "mrvaErrors", this.mrvaErrors, TimedValue.class, elm);
+    ctx.loader.loadFieldItems(this, "airproxErrors", this.airproxErrors, TimedValue.class, elm);
+    ctx.loader.loadFieldItems(this, "planeDelays", this.planeDelays, TimedValue.class, elm);
+    ctx.loader.loadFieldItems(this, "holdingPointMaximalCount", this.holdingPointMaximalCount, TimedValue.class, elm);
+    ctx.loader.loadFieldItems(this, "holdingPointDelays", this.holdingPointDelays, TimedValue.class, elm);
+    ctx.loader.loadFieldItems(this, "maximumArrivals", this.maximumArrivals, TimedValue.class, elm);
+    ctx.loader.loadFieldItems(this, "maximumDepartures", this.maximumDepartures, TimedValue.class, elm);
+    ctx.loader.loadFieldItems(this, "maximumPlanes", this.maximumPlanes, TimedValue.class, elm);
+    ctx.loader.loadFieldItems(this, "maximumArrivalsUnderApp", this.maximumArrivalsUnderApp, TimedValue.class, elm);
+    ctx.loader.loadFieldItems(this, "maximumDeparturesUnderApp", this.maximumDeparturesUnderApp, TimedValue.class, elm);
+    ctx.loader.loadFieldItems(this, "maximumPlanesUnderApp", this.maximumPlanesUnderApp, TimedValue.class, elm);
+  }
+
   public void elapseSecond(AnalysedPlanes analysedPlanes) {
     if (recentSecondsElapsed < RECENT_INTERVAL_IN_SECONDS)
       recentSecondsElapsed++;
