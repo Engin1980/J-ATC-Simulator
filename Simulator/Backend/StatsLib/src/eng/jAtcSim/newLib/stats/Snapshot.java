@@ -8,8 +8,9 @@ import eng.jAtcSim.newLib.stats.model.ArrivalDepartureModel;
 import eng.jAtcSim.newLib.stats.model.ArrivalDepartureTotalModel;
 import eng.jAtcSim.newLib.stats.properties.MMM;
 import eng.jAtcSim.newLib.stats.properties.StatisticProperty;
+import exml.IXPersistable;
 
-public class Snapshot {
+public class Snapshot implements IXPersistable {
   public static Snapshot createMerge(IReadOnlyList<Snapshot> snapshots) {
     Snapshot ret = new Snapshot();
     ret.time = mergeTime(snapshots.select(q -> q.time));

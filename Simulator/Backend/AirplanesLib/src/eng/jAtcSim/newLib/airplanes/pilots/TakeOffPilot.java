@@ -18,7 +18,7 @@ public class TakeOffPilot extends Pilot {
   @XConstructor
   public TakeOffPilot(XContext ctx) {
     super(ctx);
-    this.takeOffThreshold = super.rdr.getRouting().getAssignedRunwayThreshold();
+    this.takeOffThreshold = null;
   }
 
   public TakeOffPilot(Airplane plane) {

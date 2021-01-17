@@ -487,8 +487,11 @@ public class GameFactoryAndRepository {
       NumberFormat nf = new DecimalFormat("00.00000");
       double lat, lng;
       try {
-        lat = (double) nf.parse(pts[0]);
-        lng = (double) nf.parse(pts[1]);
+        Number num;
+        num = nf.parse(pts[0]);
+        lat = num instanceof Long ? (double)(long)(num) : (double) num;
+        num = nf.parse(pts[1]);
+        lng = num instanceof Long ? (double)(long)(num):(double) num;
       } catch (ParseException e) {
         throw new EApplicationException(sf("Failed to parse %s to latitude/longitude coordinate.", q));
       }

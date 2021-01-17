@@ -2,11 +2,13 @@ package eng.jAtcSim.newLib.atcs.internal.center;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.airplanes.IAirplaneList;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
@@ -26,12 +28,12 @@ import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterDistanceCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterNavaidCommand;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.XContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -180,11 +182,15 @@ public class CenterAtc extends ComputerAtc {
     }
   }
 
-  private final IList<IAirplane> closeArrivals = new EList<>();
+  @XIgnored
+  private final ISet<IAirplane> closeArrivals = new ESet<>();
   private int ctrAcceptDistance = 40;
   private int ctrNavaidAcceptDistance = 15;
-  private final IList<IAirplane> farArrivals = new EList<>();
-  private final IList<IAirplane> middleArrivals = new EList<>();
+  @XIgnored
+  private final ISet<IAirplane> farArrivals = new ESet<>();
+  @XIgnored
+  private final ISet<IAirplane> middleArrivals = new ESet<>();
+  @XIgnored
   private final ISet<IAirplane> departures = new ESet<>();
   @XIgnored
   private final SwitchManagerInterface switchManagerInterface = new SwitchManagerInterface();
@@ -211,10 +217,43 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
+  public void load(XElement elm, XContext ctx) {
+    IAirplaneList planes = ctx.loader.values.get(IAirplaneList.class);
+
+    ctx.loader
+            .loadItems(elm.getChild("closeArrivals"), Callsign.class)
+            .select(q -> planes.get(q))
+            .forEach(q -> this.closeArrivals.add(q));
+
+    ctx.loader
+            .loadItems(elm.getChild("farArrivals"), Callsign.class)
+            .select(q -> planes.get(q))
+            .forEach(q -> this.farArrivals.add(q));
+
+    ctx.loader
+            .loadItems(elm.getChild("middleArrivals"), Callsign.class)
+            .select(q -> planes.get(q))
+            .forEach(q -> this.middleArrivals.add(q));
+
+    ctx.loader
+            .loadItems(elm.getChild("departures"), Callsign.class)
+            .select(q -> planes.get(q))
+            .forEach(q -> this.departures.add(q));
+  }
+
+  @Override
   public void registerNewPlaneInGame(Callsign callsign, boolean finalRegistration) {
     IAirplane plane = Context.Internal.getPlane(callsign);
     if (plane.isArrival())
       farArrivals.add(plane);
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.saveItems(this.closeArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "closeArrivals");
+    ctx.saver.saveItems(this.farArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "farArrivals");
+    ctx.saver.saveItems(this.middleArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "middleArrivals");
+    ctx.saver.saveItems(this.departures.select(q -> q.getCallsign()), Callsign.class, elm, "closeArrivals");
   }
 
   @Override
@@ -239,7 +278,7 @@ public class CenterAtc extends ComputerAtc {
     if (Context.getShared().getNow().getValue() % 16 == 0) {
       double dist;
 
-      IList<IAirplane> tmp = new EList<>();
+      ISet<IAirplane> tmp = new ESet<>();
 
       for (IAirplane plane : middleArrivals) {
         try {
@@ -290,7 +329,7 @@ public class CenterAtc extends ComputerAtc {
             new AtcRejection(origin, "Unable.")));
   }
 
-  private void evaluateMiddleArrivalsForCloseArrivals(IList<IAirplane> tmp, IAirplane plane) {
+  private void evaluateMiddleArrivalsForCloseArrivals(ISet<IAirplane> tmp, IAirplane plane) {
     double dist;
     dist = Coordinates.getDistanceInNM(plane.getRouting().getEntryExitPoint().getCoordinate(), plane.getCoordinate());
     if (dist < 27) {
