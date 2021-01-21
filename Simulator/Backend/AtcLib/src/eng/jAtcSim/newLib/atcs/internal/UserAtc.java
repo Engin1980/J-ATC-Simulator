@@ -11,6 +11,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.airplanes.IAirplaneList;
 import eng.jAtcSim.newLib.atcs.IUserAtcInterface;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.Message;
@@ -53,6 +54,7 @@ public class UserAtc extends Atc implements IUserAtcInterface {
       return null;
   }
 
+  @XIgnored
   private final IList<IAirplane> planes = new EList<>();
   @XIgnored
   private IReadOnlyList<Message> thisSecondMessages = new EList<>();
@@ -113,6 +115,13 @@ public class UserAtc extends Atc implements IUserAtcInterface {
   @Override
   public void load(XElement elm, XContext ctx) {
     super.load(elm, ctx);
+
+    IAirplaneList planes = ctx.loader.values.get(IAirplaneList.class);
+
+    ctx.loader
+            .loadItems(elm.getChild("planes"), Callsign.class)
+            .select(q -> planes.get(q))
+            .forEach(q -> this.planes.add(q));
   }
 
   @Override
@@ -123,7 +132,7 @@ public class UserAtc extends Atc implements IUserAtcInterface {
   @Override
   public void save(XElement elm, XContext ctx) {
     super.save(elm, ctx);
-    ctx.saver.ignoreFields(this, "thisSecondMessages");
+    ctx.saver.saveItems(this.planes.select(q -> q.getCallsign()), Callsign.class, elm, "planes");
   }
 
   @Override

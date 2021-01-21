@@ -250,6 +250,12 @@ public class TowerAtc extends ComputerAtc {
     Context.getWeather().onWeatherUpdated().add(() -> this.isUpdatedWeather = true);
   }
 
+  @Override
+  public void postLoad(XContext ctx) {
+    Context.getArea().setCurrentRunwayConfiguration(this.inUseInfo.current);
+    Context.getArea().setScheduledRunwayConfiguration(this.inUseInfo.scheduled);
+  }
+
   public boolean isRunwayThresholdUnderMaintenance(ActiveRunwayThreshold threshold) {
     boolean ret = runwayChecks.get(threshold.getParent().getName()).isActive() == false;
     return ret;

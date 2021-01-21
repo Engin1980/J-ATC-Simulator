@@ -8,6 +8,7 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
 import exml.XContext;
+import exml.annotations.XConstructor;
 
 public class DivertModule extends Module {
   private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
@@ -24,6 +25,14 @@ public class DivertModule extends Module {
   private final EDayTimeStamp divertTime;
   private int lastAnnouncedMinute = Integer.MAX_VALUE;
   private boolean possible = true;
+
+  @XConstructor
+  private DivertModule(XContext ctx, EDayTimeStamp divertTime, int lastAnnouncedMinute, boolean possible) {
+    super(ctx);
+    this.divertTime = divertTime;
+    this.lastAnnouncedMinute = lastAnnouncedMinute;
+    this.possible = possible;
+  }
 
   public DivertModule(Airplane plane) {
     super(plane);
@@ -45,6 +54,17 @@ public class DivertModule extends Module {
 
   public boolean isPossible() {
     return possible;
+  }
+
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    super.load(elm, ctx);
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    super.save(elm, ctx);
+    ctx.saver.saveRemainingFields(this, elm);
   }
 
   private void checkForDivert() {
@@ -84,16 +104,5 @@ public class DivertModule extends Module {
     } else {
       return false;
     }
-  }
-
-  @Override
-  public void save(XElement elm, XContext ctx) {
-    super.save(elm, ctx);
-    ctx.saver.saveRemainingFields(this, elm);
-  }
-
-  @Override
-  public void load(XElement elm, XContext ctx) {
-    super.load(elm, ctx);
   }
 }

@@ -253,7 +253,7 @@ public class CenterAtc extends ComputerAtc {
     ctx.saver.saveItems(this.closeArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "closeArrivals");
     ctx.saver.saveItems(this.farArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "farArrivals");
     ctx.saver.saveItems(this.middleArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "middleArrivals");
-    ctx.saver.saveItems(this.departures.select(q -> q.getCallsign()), Callsign.class, elm, "closeArrivals");
+    ctx.saver.saveItems(this.departures.select(q -> q.getCallsign()), Callsign.class, elm, "departures");
   }
 
   @Override

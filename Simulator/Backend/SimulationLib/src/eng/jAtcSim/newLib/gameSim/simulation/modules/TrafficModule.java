@@ -43,15 +43,15 @@ public class TrafficModule extends SimulationModule {
   private final int delayStep;
   private final double delayStepProbability;
 
-  @XConstructor
-  @XmlConstructor
-  private TrafficModule() {
-    super((Simulation) null);
-    this.trafficProvider = null;
-    this.callsignFactory = null;
-    this.delayStep = 0;
-    this.delayStepProbability = 0;
-  }
+//  @XConstructor
+//  @XmlConstructor
+//  private TrafficModule() {
+//    super((Simulation) null);
+//    this.trafficProvider = null;
+//    this.callsignFactory = null;
+//    this.delayStep = 0;
+//    this.delayStepProbability = 0;
+//  }
 
   @XConstructor
   public TrafficModule(XContext ctx) {

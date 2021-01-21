@@ -2,11 +2,12 @@ package eng.jAtcSim.newLib.area.approaches.perCategoryValues;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class IntegerPerCategoryValue {
+public class IntegerPerCategoryValue implements IXPersistable {
 
   private final int a;
   private final int b;

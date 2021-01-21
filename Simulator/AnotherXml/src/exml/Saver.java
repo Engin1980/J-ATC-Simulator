@@ -8,6 +8,7 @@ import eng.eSystem.utilites.ReflectionUtils;
 import eng.eSystem.validation.EAssert;
 
 import java.lang.reflect.Array;
+import java.util.Enumeration;
 import java.util.Map;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;

@@ -3,9 +3,10 @@ package eng.jAtcSim.newLib.stats.properties;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
-public class MMM {
+public class MMM implements IXPersistable {
   public static MMM createMerge(IReadOnlyList<MMM> set) {
     MMM ret = new MMM(
             set.minDouble(q -> q.minimum),

@@ -7,10 +7,7 @@ import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.validation.EAssert;
 import exml.annotations.XConstructor;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -168,7 +165,22 @@ public class Loader {
   }
 
   private <T> Object loadEnum(XElement elm, Class<T> type) {
-    Object ret = Enum.valueOf((Class<Enum>) type, elm.getContent());
+    Method parseMethod;
+    Object ret;
+    ISet<Method> methods = new ESet<>(type.getDeclaredMethods());
+    parseMethod = methods
+            .where(q -> q.getName().equals("parse"))
+            .where(q -> Modifier.isPublic(q.getModifiers()) && Modifier.isStatic(q.getModifiers()))
+            .where(q -> q.getParameterCount() == 1 && q.getParameters()[0].getType().equals(String.class))
+            .tryGetFirst();
+    if (parseMethod != null) {
+      try {
+        ret = parseMethod.invoke(null, elm.getContent());
+      } catch (IllegalAccessException | InvocationTargetException e) {
+        throw new SimPersistenceExeption(sf("Failed to 'parse' Enum type '%s' from value '%s'", type.getName(), elm.getContent()), e);
+      }
+    } else
+      ret = Enum.valueOf((Class<Enum>) type, elm.getContent());
     return ret;
   }
 

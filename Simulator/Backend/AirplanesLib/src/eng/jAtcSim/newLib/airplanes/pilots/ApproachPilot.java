@@ -69,9 +69,9 @@ public class ApproachPilot extends Pilot {
     this.threshold = null;
     this.initialAltitude = 0;
 
-    PostContracts.register(this, () -> stages != null);
-    PostContracts.register(this, () -> gaRouteCommands != null);
-    PostContracts.register(this, () -> threshold != null);
+    PostContracts.register(this, () -> stages != null, "Stages are null");
+    PostContracts.register(this, () -> gaRouteCommands != null, "Ga-routes are null");
+    PostContracts.register(this, () -> threshold != null, "Threshold is null");
   }
 
   public ApproachPilot(Airplane plane, Approach approach, ApproachEntry entry) {
@@ -141,6 +141,9 @@ public class ApproachPilot extends Pilot {
   @Override
   public void load(XElement elm, XContext ctx) {
     super.load(elm, ctx);
+
+    ctx.loader.loadFieldItems(this, "stages", new EList<>(), ApproachStage.class, elm);
+    ctx.loader.loadFieldItems(this, "gaRouteCommands", new EList<>(), ICommand.class, elm);
   }
 
   @Override

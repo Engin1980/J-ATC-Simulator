@@ -4,11 +4,12 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.newXmlUtils.annotations.XmlConstructor;
+import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
 import java.util.Comparator;
 
-public class MoodExperienceResult {
+public class MoodExperienceResult implements IXPersistable {
 
   public static class ByTimeComparer implements Comparator<MoodExperienceResult> {
 

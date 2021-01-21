@@ -94,7 +94,7 @@ public class SharedXmlUtils {
       parsers.set(Coordinate.class, coordinateParser);
       parsers.set(Callsign.class, callsignParser);
       parsers.set(ETimeStamp.class, timeStampParser);
-      parsers.set(ApproachType.class, (q, c) -> ApproachType.parse(q));
+//      parsers.set(ApproachType.class, (q, c) -> ApproachType.parse(q));
       parsers.set(Restriction.class, restrictionParser);
     }
   }
