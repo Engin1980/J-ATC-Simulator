@@ -4,15 +4,19 @@ import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.airplanes.IAirplaneList;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
+import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
+import exml.XContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -93,6 +97,19 @@ class ArrivalManager implements IXPersistable {
     return ret;
   }
 
+  @Override
+  public void load(XElement elm, XContext ctx) {
+    IAirplaneList planes = ctx.loader.values.get(IAirplaneList.class);
+
+    ctx.loader
+            .loadItems(elm.getChild("goAroundedPlanesToSwitchList"), String.class)
+            .forEach(q -> this.goAroundedPlanesToSwitchList.add(planes.get(new Callsign(q))));
+
+    ctx.loader
+            .loadItems(elm.getChild("landingPlanesList"), String.class)
+            .forEach(q -> this.landingPlanesList.add(planes.get(new Callsign(q))));
+  }
+
   public void registerNewArrival(IAirplane plane) {
     if (plane == null) {
       throw new IllegalArgumentException("Value of {plane} cannot not be null.");
@@ -104,6 +121,12 @@ class ArrivalManager implements IXPersistable {
       this.landingPlanesList.add(plane);
     else
       this.goAroundedPlanesToSwitchList.add(plane);
+  }
+
+  @Override
+  public void save(XElement elm, XContext ctx) {
+    ctx.saver.saveItems(goAroundedPlanesToSwitchList.select(q -> q.getCallsign()), Callsign.class, elm, "goAroundedPlanesToSwitchList");
+    ctx.saver.saveItems(landingPlanesList.select(q -> q.getCallsign()), Callsign.class, elm, "landingPlanesList");
   }
 
   public void unregisterFinishedArrival(IAirplane plane) {
