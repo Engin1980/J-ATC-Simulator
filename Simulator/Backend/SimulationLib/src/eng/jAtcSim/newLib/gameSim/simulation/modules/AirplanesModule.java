@@ -146,6 +146,13 @@ public class AirplanesModule extends SimulationModule {
     }
     mrvaErrors = this.mrvaController.getMrvaViolatingPlanes().count();
     airproxErrors = this.airproxController.getAirproxViolatingPlanes().count();
+
+    //TODEL
+    //FIXME
+    if (parent.getAtcModule() == null){
+      System.out.println("Pauza - proč je to null???");
+    }
+
     planesAtHoldingPoint = parent.getAtcModule().getPlanesCountAtHoldingPoint();
 
     AnalysedPlanes ret = new AnalysedPlanes(arrivals, departures, appArrivals, appDepartures, mrvaErrors, airproxErrors, planesAtHoldingPoint);

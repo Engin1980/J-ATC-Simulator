@@ -4,7 +4,6 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
@@ -191,10 +190,14 @@ public class Airplane implements IXPersistable {
   }
 
   public class AirplaneImpl implements IAirplane {
-    @XIgnored private final IAirplaneAtc atc = Airplane.this.new AirplaneAtcImpl();
-    @XIgnored private final IAirplaneFlight flight = Airplane.this.new AirplaneFlightImpl();
-    @XIgnored private final IAirplaneRouting routing = Airplane.this.new AirplaneRoutingImpl();
-    @XIgnored private final IAirplaneSHA sha = Airplane.this.new AirplaneShaImpl();
+    @XIgnored
+    private final IAirplaneAtc atc = Airplane.this.new AirplaneAtcImpl();
+    @XIgnored
+    private final IAirplaneFlight flight = Airplane.this.new AirplaneFlightImpl();
+    @XIgnored
+    private final IAirplaneRouting routing = Airplane.this.new AirplaneRoutingImpl();
+    @XIgnored
+    private final IAirplaneSHA sha = Airplane.this.new AirplaneShaImpl();
 
     @Override
     public IAirplaneAtc getAtc() {
@@ -358,9 +361,12 @@ public class Airplane implements IXPersistable {
       SpeechList<ICommand> gas = prevPilot.getGoAroundRouting();
       setRouting(gas);
 
+      po g/a letadlo neoslovi ridiciho
+
       setPilotAndState(
-              new TakeOffPilot(Airplane.this),
-              AirplaneState.takeOffGoAround);
+              new ArrivalPilot(Airplane.this),
+              AirplaneState.arrivingCloseFaf
+      );
     }
 
     @Override
@@ -553,21 +559,26 @@ public class Airplane implements IXPersistable {
   private final AirplaneType airplaneType;
   private final AtcModule atcModule;
   private Coordinate coordinate;
-  @XIgnored  private CockpitVoiceRecorder cvr;
+  @XIgnored
+  private CockpitVoiceRecorder cvr;
   private final DivertModule divertModule;
   private final EmergencyModule emergencyModule;
-  @XIgnored private FlightDataRecorder fdr;
+  @XIgnored
+  private FlightDataRecorder fdr;
   private final AirplaneFlightModule flightModule;
   private final Mood mood;
   private Pilot pilot;
-  @XIgnored private final IAirplane rdr = new AirplaneImpl();
+  @XIgnored
+  private final IAirplane rdr = new AirplaneImpl();
   private final RoutingModule routingModule;
   private final ShaModule sha;
   private final Squawk squawk;
   private AirplaneState state;
-  @XIgnored private final IAirplaneWriter wrt = new AirplaneWriterImpl();
+  @XIgnored
+  private final IAirplaneWriter wrt = new AirplaneWriterImpl();
   private GoingAroundNotification.GoAroundReason lastGoAroundReasonIfAny = null;
-  @XIgnored private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> speechCache = new EMap<>();
+  @XIgnored
+  private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> speechCache = new EMap<>();
 
   @XmlConstructor
   @XConstructor
@@ -619,11 +630,6 @@ public class Airplane implements IXPersistable {
     initRecorders();
   }
 
-  @Override
-  public void postLoad(XContext ctx) {
-    initRecorders();
-  }
-
   public void elapseSecond() {
 
     this.routingModule.elapseSecond(); // here messages are processed
@@ -659,6 +665,11 @@ public class Airplane implements IXPersistable {
     this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
     CommandQueueRecorder cqr = new CommandQueueRecorder(this.flightModule.getCallsign());
     this.routingModule.setCqr(cqr);
+  }
+
+  @Override
+  public void postLoad(XContext ctx) {
+    initRecorders();
   }
 
   //TODEL

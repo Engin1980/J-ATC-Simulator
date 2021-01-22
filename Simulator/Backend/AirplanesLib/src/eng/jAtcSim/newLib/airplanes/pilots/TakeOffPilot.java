@@ -45,6 +45,8 @@ public class TakeOffPilot extends Pilot {
         }
         break;
       case takeOffGoAround:
+//        tady to je posrate až do hrnca
+//              g/a pošle letadlo to takeoffpilota, a naplni mu ga routu, ale
         // keeps last heading
         // altitude already set
         // speed set
