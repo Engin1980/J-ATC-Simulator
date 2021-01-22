@@ -140,7 +140,7 @@ public class TowerAtc extends ComputerAtc {
       if (plane.isDeparture()) {
         departureManager.confirmedByApproach(plane);
       } else {
-        arrivalManager.goAroundPlane(plane);
+        arrivalManager.confirmedByApproach(plane);
       }
     }
 

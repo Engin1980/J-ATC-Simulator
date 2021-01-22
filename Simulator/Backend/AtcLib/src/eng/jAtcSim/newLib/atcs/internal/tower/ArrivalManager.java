@@ -21,8 +21,8 @@ import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 class ArrivalManager implements IXPersistable {
-  private final IList<IAirplane> goAroundedPlanesToSwitchList = new EDistinctList<>(EDistinctList.Behavior.exception);
-  private final IList<IAirplane> landingPlanesList = new EDistinctList<>(EDistinctList.Behavior.exception);
+  @XIgnored private final IList<IAirplane> goAroundedPlanesToSwitchList = new EDistinctList<>(EDistinctList.Behavior.exception);
+  @XIgnored private final IList<IAirplane> landingPlanesList = new EDistinctList<>(EDistinctList.Behavior.exception);
   @XIgnored
   private TowerAtc parent;
 
@@ -37,11 +37,16 @@ class ArrivalManager implements IXPersistable {
   }
 
   public boolean checkIfPlaneIsReadyToSwitchAndRemoveIt(IAirplane plane) {
-    if (goAroundedPlanesToSwitchList.contains(plane)) {
-      goAroundedPlanesToSwitchList.remove(plane);
-      return true;
-    } else
-      return false;
+    return this.goAroundedPlanesToSwitchList.contains(plane);
+//    if (goAroundedPlanesToSwitchList.contains(plane)) {
+//      goAroundedPlanesToSwitchList.remove(plane);
+//      return true;
+//    } else
+//      return false;
+  }
+
+  public void confirmedByApproach(IAirplane plane) {
+    this.goAroundedPlanesToSwitchList.remove(plane);
   }
 
   public void deletePlane(IAirplane plane) {
@@ -102,12 +107,12 @@ class ArrivalManager implements IXPersistable {
     IAirplaneList planes = ctx.loader.values.get(IAirplaneList.class);
 
     ctx.loader
-            .loadItems(elm.getChild("goAroundedPlanesToSwitchList"), String.class)
-            .forEach(q -> this.goAroundedPlanesToSwitchList.add(planes.get(new Callsign(q))));
+            .loadItems(elm.getChild("goAroundedPlanesToSwitchList"), Callsign.class)
+            .forEach(q -> this.goAroundedPlanesToSwitchList.add(planes.get(q)));
 
     ctx.loader
-            .loadItems(elm.getChild("landingPlanesList"), String.class)
-            .forEach(q -> this.landingPlanesList.add(planes.get(new Callsign(q))));
+            .loadItems(elm.getChild("landingPlanesList"), Callsign.class)
+            .forEach(q -> this.landingPlanesList.add(planes.get(q)));
   }
 
   public void registerNewArrival(IAirplane plane) {

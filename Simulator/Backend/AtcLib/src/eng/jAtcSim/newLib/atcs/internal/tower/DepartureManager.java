@@ -160,20 +160,20 @@ class DepartureManager implements IXPersistable {
     IAirplaneList planes = ctx.loader.values.get(IAirplaneList.class);
 
     ctx.loader
-            .loadItems(elm.getChild("holdingPointNotAssigned"), String.class)
-            .forEach(q -> this.holdingPointNotAssigned.add(planes.get(new Callsign(q))));
+            .loadItems(elm.getChild("holdingPointNotAssigned"), Callsign.class)
+            .forEach(q -> this.holdingPointNotAssigned.add(planes.get(q)));
 
     ctx.loader
-            .loadItems(elm.getChild("holdingPointWaitingForAppSwitchConfirmation"), String.class)
-            .forEach(q -> this.holdingPointWaitingForAppSwitchConfirmation.add(planes.get(new Callsign(q))));
+            .loadItems(elm.getChild("holdingPointWaitingForAppSwitchConfirmation"), Callsign.class)
+            .forEach(q -> this.holdingPointWaitingForAppSwitchConfirmation.add(planes.get(q)));
 
     ctx.loader
-            .loadItems(elm.getChild("holdingPointReady"), String.class)
-            .forEach(q -> this.holdingPointReady.add(planes.get(new Callsign(q))));
+            .loadItems(elm.getChild("holdingPointReady"), Callsign.class)
+            .forEach(q -> this.holdingPointReady.add(planes.get(q)));
 
     ctx.loader
-            .loadItems(elm.getChild("departing"), String.class)
-            .forEach(q -> this.departing.add(planes.get(new Callsign(q))));
+            .loadItems(elm.getChild("departing"), Callsign.class)
+            .forEach(q -> this.departing.add(planes.get(q)));
 
     ctx.loader
             .loadEntries(elm.getChild("lastDepartingPlane"), String.class, Callsign.class)

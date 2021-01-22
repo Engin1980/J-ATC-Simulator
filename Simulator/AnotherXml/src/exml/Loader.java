@@ -88,7 +88,7 @@ public class Loader {
   public <T> T loadObject(XElement elm, Class<T> type) {
     Object ret;
 
-    log("%s", elm);
+    log("%s (%s)", elm, type == null ? "?" : type.getSimpleName());
     indent++;
 
     Optional<Class<?>> tmp = tryLoadTypeFromElement(elm);
