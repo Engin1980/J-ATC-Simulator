@@ -173,7 +173,7 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     if (this.getParent() == null || this.getParent().getParent() == null)
       return "???? " + this.name;
     else
-      return this.getParent().getParent().getName() + " " + this.name;
+      return this.getParent().getParent().getIcao() + " " + this.name;
   }
 
   public Approach tryGetHighestApproachExceptVisuals() {

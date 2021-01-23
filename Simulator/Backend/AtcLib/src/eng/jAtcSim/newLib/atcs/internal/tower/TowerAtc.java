@@ -141,6 +141,12 @@ public class TowerAtc extends ComputerAtc {
         departureManager.confirmedByApproach(plane);
       } else {
         arrivalManager.confirmedByApproach(plane);
+        Message msg = new Message(
+                Participant.createAtc(this.getAtcId()),
+                Participant.createAirplane(plane.getCallsign()),
+                new SpeechList<>(
+                        new ContactCommand(this.getAtcIdWhereIAmSwitchingPlanes())));
+        this.sendMessage(msg);
       }
     }
 

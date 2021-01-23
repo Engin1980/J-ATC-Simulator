@@ -361,8 +361,6 @@ public class Airplane implements IXPersistable {
       SpeechList<ICommand> gas = prevPilot.getGoAroundRouting();
       setRouting(gas);
 
-      po g/a letadlo neoslovi ridiciho
-
       setPilotAndState(
               new ArrivalPilot(Airplane.this),
               AirplaneState.arrivingCloseFaf
