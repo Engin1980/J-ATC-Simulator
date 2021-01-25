@@ -74,7 +74,7 @@ public class ClearedToRouteApplication extends CommandApplication<ClearedToRoute
             AirplaneState.longFinal,
             AirplaneState.shortFinal,
             AirplaneState.takeOffRoll,
-            AirplaneState.takeOffGoAround,
+            AirplaneState.takeOff,
             AirplaneState.departingLow,
             AirplaneState.departingHigh,
             AirplaneState.landed

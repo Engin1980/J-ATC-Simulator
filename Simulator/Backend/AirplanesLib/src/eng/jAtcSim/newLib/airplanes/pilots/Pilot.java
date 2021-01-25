@@ -76,7 +76,7 @@ public abstract class Pilot implements IXPersistable {
         ts = 0;
         break;
       case takeOffRoll:
-      case takeOffGoAround:
+      case takeOff:
         ts = rdr.getType().vR + 10;
         break;
       case departingLow:

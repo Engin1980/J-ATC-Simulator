@@ -49,7 +49,7 @@ public class MrvaController implements IXPersistable {
     if (airplane.getState().is(
             AirplaneState.holdingPoint,
             AirplaneState.takeOffRoll,
-            AirplaneState.takeOffGoAround,
+            AirplaneState.takeOff,
             AirplaneState.flyingIaf2Faf,
             AirplaneState.approachEntry,
             AirplaneState.approachDescend,

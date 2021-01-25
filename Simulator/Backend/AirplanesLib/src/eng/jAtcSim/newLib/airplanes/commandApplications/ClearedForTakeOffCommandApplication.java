@@ -17,7 +17,7 @@ public class ClearedForTakeOffCommandApplication extends CommandApplication<Clea
   protected AirplaneState[] getInvalidStates() {
     return new AirplaneState[]{
             AirplaneState.takeOffRoll,
-            AirplaneState.takeOffGoAround,
+            AirplaneState.takeOff,
             AirplaneState.departingLow,
             AirplaneState.departingHigh,
             AirplaneState.arrivingHigh,

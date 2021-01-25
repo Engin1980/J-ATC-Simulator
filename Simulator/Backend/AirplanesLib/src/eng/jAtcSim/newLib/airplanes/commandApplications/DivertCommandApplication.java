@@ -27,7 +27,7 @@ public class DivertCommandApplication extends CommandApplication<DivertCommand> 
         AirplaneState.longFinal,
         AirplaneState.shortFinal,
         AirplaneState.landed,
-        AirplaneState.takeOffGoAround
+        AirplaneState.takeOff
     };
   }
 

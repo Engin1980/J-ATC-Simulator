@@ -524,7 +524,7 @@ public class Airplane implements IXPersistable {
 
     private void updateFlightExitTimeIfRequired() {
       if (Airplane.this.flightModule.getExitTime() == null) {
-        if (Airplane.this.flightModule.isDeparture() && Airplane.this.state == AirplaneState.takeOffGoAround)
+        if (Airplane.this.flightModule.isDeparture() && Airplane.this.state == AirplaneState.takeOff)
           Airplane.this.flightModule.setExitTimeNow();
         else if (Airplane.this.flightModule.isArrival() && Airplane.this.state == AirplaneState.landed)
           Airplane.this.flightModule.setExitTimeNow();

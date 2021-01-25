@@ -1,12 +1,10 @@
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.CacheUsingProducer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
-import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
 import eng.jAtcSim.newLib.atcs.IUserAtcInterface;
 import eng.jAtcSim.newLib.atcs.context.AtcAcc;
@@ -17,13 +15,13 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
-import exml.XContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
 public class AtcModule implements IXPersistable {
   private final AtcProvider atcProvider;
-  @XIgnored private final CacheUsingProducer<IReadOnlyList<AtcId>> userAtcsCache = new CacheUsingProducer<>(this::evaluateUserAtcs);
+  @XIgnored
+  private final CacheUsingProducer<IReadOnlyList<AtcId>> userAtcsCache = new CacheUsingProducer<>(this::evaluateUserAtcs);
 
   public AtcModule(AtcProvider atcProvider) {
     EAssert.Argument.isNotNull(atcProvider, "atcProvider");
@@ -77,12 +75,12 @@ public class AtcModule implements IXPersistable {
     this.atcProvider.registerNewPlane(tmp.getAtc().getTunedAtc(), tmp.getCallsign());
   }
 
-  public void unregisterPlane(Callsign callsign, boolean isForced){
-    this.atcProvider.unregisterPlane(callsign, isForced);
-  }
-
   public RunwayConfiguration tryGetSchedulerRunwayConfiguration() {
     return this.atcProvider.tryGetSchedulerRunwayConfiguration();
+  }
+
+  public void unregisterPlane(Callsign callsign, boolean isForced) {
+    this.atcProvider.unregisterPlane(callsign, isForced);
   }
 
   private IReadOnlyList<AtcId> evaluateUserAtcs() {

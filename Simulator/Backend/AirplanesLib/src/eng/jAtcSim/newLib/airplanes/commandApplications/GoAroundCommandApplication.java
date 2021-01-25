@@ -14,7 +14,7 @@ public class GoAroundCommandApplication extends CommandApplication<GoAroundComma
     return new AirplaneState[]{
         AirplaneState.holdingPoint,
         AirplaneState.takeOffRoll,
-        AirplaneState.takeOffGoAround,
+        AirplaneState.takeOff,
         AirplaneState.departingLow,
         AirplaneState.departingHigh,
         AirplaneState.arrivingHigh,

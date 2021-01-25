@@ -109,7 +109,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     return new AirplaneState[]{
             AirplaneState.holdingPoint,
             AirplaneState.takeOffRoll,
-            AirplaneState.takeOffGoAround,
+            AirplaneState.takeOff,
             AirplaneState.departingLow,
             AirplaneState.departingHigh,
             AirplaneState.flyingIaf2Faf,

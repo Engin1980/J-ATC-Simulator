@@ -41,7 +41,6 @@ public enum AirplaneState {
    * Landed, breaking to zero
    */
   landed,
-
   /**
    * Waiting for take-off clearance
    */
@@ -53,7 +52,7 @@ public enum AirplaneState {
   /**
    * Take-off airborne or go-around until acceleration altitude
    */
-  takeOffGoAround,
+  takeOff,
   /**
    * Departure below FL100
    */

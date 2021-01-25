@@ -41,15 +41,10 @@ public class TakeOffPilot extends Pilot {
         wrt.setTargetHeading(new HeadingNavigator(targetHeading, LeftRightAny.any));
 
         if (rdr.getSha().getSpeed() > rdr.getType().vR) {
-          wrt.setState(AirplaneState.takeOffGoAround);
+          wrt.setState(AirplaneState.takeOff);
         }
         break;
-      case takeOffGoAround:
-//        tady to je posrate až do hrnca
-//              g/a pošle letadlo to takeoffpilota, a naplni mu ga routu, ale
-        // keeps last heading
-        // altitude already set
-        // speed set
+      case takeOff:
         if (rdr.getSha().getAltitude() > this.takeOffThreshold.getAccelerationAltitude())
           if (rdr.isArrival()) {
             // antecedent G/A
@@ -82,16 +77,14 @@ public class TakeOffPilot extends Pilot {
   @Override
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
-            AirplaneState.holdingPoint,
-            AirplaneState.takeOffGoAround
+            AirplaneState.holdingPoint
     };
   }
 
   @Override
   protected AirplaneState[] getValidStates() {
     return new AirplaneState[]{
-            AirplaneState.takeOffRoll,
-            AirplaneState.takeOffGoAround
+            AirplaneState.takeOff
     };
   }
 }

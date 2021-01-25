@@ -40,7 +40,7 @@ public class HoldCommandApplication extends CommandApplication<HoldCommand> {
     return new AirplaneState[]{
         AirplaneState.holdingPoint,
         AirplaneState.takeOffRoll,
-        AirplaneState.takeOffGoAround,
+        AirplaneState.takeOff,
         AirplaneState.flyingIaf2Faf,
         AirplaneState.approachEntry,
         AirplaneState.approachDescend,

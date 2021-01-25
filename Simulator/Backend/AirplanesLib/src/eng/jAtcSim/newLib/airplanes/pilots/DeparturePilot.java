@@ -19,7 +19,7 @@ public class DeparturePilot extends BasicPilot {
   @Override
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
-            AirplaneState.takeOffGoAround,
+            AirplaneState.takeOff,
             AirplaneState.departingLow,
             AirplaneState.departingHigh
     };

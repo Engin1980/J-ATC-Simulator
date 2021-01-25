@@ -73,7 +73,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
             AirplaneState.landed,
             AirplaneState.holdingPoint,
             AirplaneState.takeOffRoll,
-            AirplaneState.takeOffGoAround,
+            AirplaneState.takeOff,
             AirplaneState.shortFinal
     ) == false)
       processAfterSpeeches();
@@ -300,7 +300,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
             AirplaneState.shortFinal,
             AirplaneState.landed,
             AirplaneState.takeOffRoll,
-            AirplaneState.takeOffGoAround
+            AirplaneState.takeOff
     };
 
     AfterCommand af = (AfterCommand) queue.get(0);
@@ -324,7 +324,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
         break;
       else {
         assert sp instanceof ICommand : "Instance of " + sp.getClass().getName() + " is not ICommand";
-        ICommand cmd = (ICommand) sp;
+        ICommand cmd = sp;
 
         queue.removeAt(0);
         cres = ApplicationManager.confirm(plane, cmd, true, false);

@@ -26,7 +26,7 @@ public class AirproxController implements IXPersistable {
           AirplaneState.shortFinal,
           AirplaneState.landed,
           AirplaneState.takeOffRoll,
-          AirplaneState.takeOffGoAround
+          AirplaneState.takeOff
   };
 
   private static AirproxType getAirproxLevel(IAirplane a, IAirplane b) {

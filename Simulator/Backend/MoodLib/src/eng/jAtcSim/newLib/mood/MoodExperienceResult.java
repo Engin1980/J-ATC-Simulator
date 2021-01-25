@@ -28,12 +28,9 @@ public class MoodExperienceResult implements IXPersistable {
   @XConstructor
   @XmlConstructor
   private MoodExperienceResult() {
-    PostContracts.register(this, () -> time != null);
   }
 
   MoodExperienceResult(EDayTimeStamp time, String description, int points) {
-    EAssert.Argument.isNotNull(time, "time");
-
     this.time = time;
     this.description = description;
     this.points = points;

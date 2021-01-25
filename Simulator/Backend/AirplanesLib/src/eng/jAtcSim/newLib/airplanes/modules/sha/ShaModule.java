@@ -145,7 +145,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   public void elapseSecond() {
     // TODO here is && or || ???
     boolean isSpeedPreffered = rdr.getState().is(
-            AirplaneState.takeOffGoAround, AirplaneState.takeOffRoll);
+            AirplaneState.takeOff, AirplaneState.takeOffRoll);
 
 
     if (this.getTargetAltitude() != this.getAltitude()
