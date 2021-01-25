@@ -1,7 +1,6 @@
 package eng.jAtcSim.newLib.atcs.internal.computer;
 
 import eng.eSystem.collections.*;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
@@ -26,7 +25,6 @@ import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
-import exml.XContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -35,10 +33,12 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 class SwitchManager implements IXPersistable {
 
   private static final int SECONDS_BEFORE_REPEAT_SWITCH_REQUEST = 30;
-  @XIgnored private IAtcSwitchManagerInterface parent;
+  @XIgnored
+  private IAtcSwitchManagerInterface parent;
   private final ISet<Squawk> incomingPlanes = new ESet<>();
   private final IMap<Squawk, SwitchInfo> outgoingPlanes = new EMap<>();
-  @XIgnored private Producer<IReadOnlyList<Message>> delayedMessagesProducer;
+  @XIgnored
+  private Producer<IReadOnlyList<Message>> delayedMessagesProducer;
 
   @XConstructor
   @XmlConstructor
@@ -158,14 +158,13 @@ class SwitchManager implements IXPersistable {
     if (speech instanceof AtcConfirmation) {
       parent.onOutgoingPlaneSwitchCompleted(psr.getSquawk());
       this.outgoingPlanes.remove(psr.getSquawk());
-    }
-
-    parent.sendMessage(
-            new Message(
-                    Participant.createAtc(parent.getAtcId()),
-                    Participant.createAtc(sender),
-                    speech
-            ));
+    } else
+      parent.sendMessage(
+              new Message(
+                      Participant.createAtc(parent.getAtcId()),
+                      Participant.createAtc(sender),
+                      speech
+              ));
   }
 
   private void processIncomingPlaneSwitchMessage(PlaneSwitchRequest planeSwitchRequest, AtcId sender) {
