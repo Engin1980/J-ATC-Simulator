@@ -6,7 +6,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eXmlSerialization.XmlSerializer;
-import eng.jAtcSim.AppSettings;
+import eng.jAtcSim.settings.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.abstractRadar.RadarViewPort;
 import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
@@ -105,7 +105,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     this.aip = sim.getAirport();
     this.appSettings = appSettings;
 
-    String fileName = appSettings.radar.styleSettingsFile.toString();
+    String fileName = appSettings.appRadarSettings.styleSettingsFile.toString();
     this.radarStyleSettings = XmlLoadHelper.loadNewDisplaySettings(fileName);
 
     this.dynamicPlaneFormatter = loadDynamicPlaneFormatter(appSettings.speechFormatterFile);

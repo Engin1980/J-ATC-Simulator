@@ -4,17 +4,20 @@ import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
-import eng.eXmlSerialization.XmlSerializer;
+import eng.eSystem.functionalInterfaces.Selector;
 import eng.eXmlSerialization.annotations.XmlIgnored;
 import eng.jAtcSim.abstractRadar.global.Color;
 import eng.jAtcSim.abstractRadar.global.Font;
+import exml.IXPersistable;
+import exml.XContext;
+import exml.annotations.XIgnored;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class RadarStyleSettings {
+public class RadarStyleSettings implements IXPersistable {
 
   ///region Inner classes
-  public static class ColorWidthSettings {
+  public static class ColorWidthSettings implements IXPersistable {
     private Color color;
     private int width;
 
@@ -33,6 +36,8 @@ public class RadarStyleSettings {
     public void setWidth(int width) {
       this.width = width;
     }
+
+    tady dopsat overload na načítání z atributů
   }
 
   public static class ColorWidthFontSettings extends ColorWidthSettings {
@@ -181,7 +186,8 @@ public class RadarStyleSettings {
     }
   }
 
-  public static class TextSettings {
+  public static class TextSettings implements IXPersistable {
+    @XIgnored
     private Color color;
     private Font font;
 
@@ -200,6 +206,11 @@ public class RadarStyleSettings {
     public void setFont(Font font) {
       this.font = font;
     }
+
+    @Override
+    public void load(XElement elm, XContext ctx) {
+      this.color = Color.fromHex(elm.getAttribute("color"));
+    }
   }
   ///end region
 
@@ -208,11 +219,27 @@ public class RadarStyleSettings {
     try {
       XDocument doc = XDocument.load(fileName);
       XElement root = doc.getRoot();
-      XmlSerializer ser = new XmlSerializer();
-      ret = ser.deserialize(root, RadarStyleSettings.class);
+
+      XContext ctx = new XContext();
+      initContext(ctx);
+      ret = ctx.loader.loadObject(root, RadarStyleSettings.class);
     } catch (EXmlException e) {
       throw new EApplicationException(sf("Unable to load radar style settings from '%s'.", fileName), e);
     }
+    return ret;
+  }
+
+  private static void initContext(XContext ctx) {
+    ctx.loader.setDeserializer(Color.class, e -> Color.fromHex(e.getContent()));
+  }
+
+
+  private static <T> Selector<XElement, T> getSimpleObjectDeserializer(Class<T> type, XContext ctx) {
+    Selector<XElement, T> ret = e -> {
+      T tmp = ctx.loader.loadObject(e, type);
+      return tmp;
+    };
+
     return ret;
   }
 

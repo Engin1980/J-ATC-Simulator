@@ -23,7 +23,6 @@ import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
 import eng.jAtcSim.recording.Recording;
 import eng.jAtcSim.recording.Settings;
 import eng.jAtcSim.shared.MessageBox;
-import eng.newXmlUtils.XmlContext;
 
 import javax.swing.*;
 import java.awt.*;
@@ -289,7 +288,7 @@ public class FrmMain extends JFrame {
 
     InitialPosition initPos = srpRadar.getRadar().getPosition();
 
-    RadarDisplaySettings ds = this.parent.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
+    RadarDisplaySettings ds = this.parent.getAppSettings().appRadarSettings.displaySettings.toRadarDisplaySettings();
     recording = new Recording(q,
             this.parent.getSim(), this.parent.getArea(),
             this.parent.getSim().getUserAtcIds().getFirst(),
@@ -321,13 +320,13 @@ public class FrmMain extends JFrame {
 
   void init(Pack pack) {
 
-    LayoutManager.setFixedWidth(pnlLeft, pack.getAppSettings().getLoadedFlightStripSettings().flightStripSize.width);
-    LayoutManager.setFixedWidth(pnlRight, pack.getAppSettings().getLoadedFlightStripSettings().flightStripSize.width);
+    LayoutManager.setFixedWidth(pnlLeft, pack.getAppSettings().getFlightStripSettings().flightStripSize.width);
+    LayoutManager.setFixedWidth(pnlRight, pack.getAppSettings().getFlightStripSettings().flightStripSize.width);
 
     this.parent = pack;
 
     RadarBehaviorSettings behSett = new RadarBehaviorSettings(true);
-    RadarDisplaySettings dispSett = pack.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
+    RadarDisplaySettings dispSett = pack.getAppSettings().appRadarSettings.displaySettings.toRadarDisplaySettings();
 
     this.srpRadar = new SwingRadarPanel();
     this.srpRadar.init(

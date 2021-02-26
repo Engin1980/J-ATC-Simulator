@@ -1,4 +1,4 @@
-package eng.jAtcSim.frmPacks.shared;
+package eng.jAtcSim.settings;
 
 import java.awt.*;
 

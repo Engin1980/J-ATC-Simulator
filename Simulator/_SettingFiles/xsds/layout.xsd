@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/layout">
+
+    <xs:element name="windows" type="windows"/>
+
+    <xs:complexType name="windows">
+        <xs:sequence>
+            <xs:element name="window" type="window" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="window">
+        <xs:sequence>
+            <xs:element name="position" type="position" minOccurs="1" maxOccurs="1"/>
+            <xs:choice>
+                <xs:element name="row" type="row" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element name="column" type="column" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element name="panel" type="panel" minOccurs="1" maxOccurs="1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="title" type="nonemptyString" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="row">
+        <xs:choice>
+            <xs:element name="panel" type="panel" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="column" type="column" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:choice>
+        <xs:attribute name="height" type="wildValueString" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="column">
+        <xs:choice>
+            <xs:element name="panel" type="panel" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="row" type="row" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:choice>
+        <xs:attribute name="width" type="wildValueString" use="required"/>
+    </xs:complexType>
+
+
+    <xs:complexType name="position">
+        <xs:attribute name="x" type="valueString" use="required"/>
+        <xs:attribute name="y" type="valueString" use="required"/>
+        <xs:attribute name="width" type="valueString" use="required"/>
+        <xs:attribute name="height" type="valueString" use="required"/>
+        <xs:attribute name="monitor" type="xs:positiveInteger" use="optional" default="1"/>
+    </xs:complexType>
+
+    <xs:complexType name="panel">
+        <xs:attribute name="view" type="xs:string" use="required"/>
+        <xs:attribute name="id" type="nonemptyString" use="optional"/>
+    </xs:complexType>
+
+    <xs:simpleType name="valueString">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d+(px|%)"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="wildValueString">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(\d+(px|%))|\*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="nonemptyString">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z].+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

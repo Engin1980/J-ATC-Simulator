@@ -1,6 +1,6 @@
 package eng.jAtcSim.frmPacks.mdi;
 
-import eng.jAtcSim.AppSettings;
+import eng.jAtcSim.settings.AppSettings;
 import eng.jAtcSim.frmPacks.shared.ScheduledFlightListPanel;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 

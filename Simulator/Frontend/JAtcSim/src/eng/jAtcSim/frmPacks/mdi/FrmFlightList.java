@@ -5,7 +5,7 @@
  */
 package eng.jAtcSim.frmPacks.mdi;
 
-import eng.jAtcSim.AppSettings;
+import eng.jAtcSim.settings.AppSettings;
 import eng.jAtcSim.frmPacks.shared.FlightListPanel;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 

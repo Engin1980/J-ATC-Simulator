@@ -1,19 +1,19 @@
-package eng.jAtcSim.frmPacks.shared;
+package eng.jAtcSim.newPacks.views;
 
 import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.settings.AppSettings;
 import eng.eSystem.swing.LayoutManager;
+import eng.jAtcSim.settings.AppSettings;
+import eng.jAtcSim.settings.FlightStripSettings;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
-import eng.jAtcSim.settings.FlightStripSettings;
+import eng.jAtcSim.newPacks.IView;
 
 import javax.swing.*;
 import java.awt.*;
 
-@Deprecated
-public class ScheduledFlightListPanel extends JPanel {
+public class ScheduledListView implements IView {
 
   private JPanel pnlContent;
   private JScrollPane pnlScroll;
@@ -21,11 +21,13 @@ public class ScheduledFlightListPanel extends JPanel {
   private Callsign firstItemCallsign = null;
   private Callsign lastItemCallsign = null;
   private Integer itemCount = null;
+  private JPanel parent;
 
 
-  public void init(ISimulation sim, AppSettings appSettings) {
+  public void init(JPanel panel, ISimulation sim, AppSettings appSettings) {
+    this.parent = panel;
     this.sim = sim;
-    ScheduledFlightStripPanel.setStripSettings(appSettings.getFlightStripSettings());
+    ScheduledFlightStripPanel2.setStripSettings(appSettings.getFlightStripSettings());
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
     pnlContent.setName("ScheduledFlightListPanel_ContentPanel");
@@ -33,9 +35,9 @@ public class ScheduledFlightListPanel extends JPanel {
     pnlScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     pnlScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-    this.setLayout(new BorderLayout());
-    this.add(pnlScroll);
-    this.setDoubleBuffered(true);
+    this.parent.setLayout(new BorderLayout());
+    this.parent.add(pnlScroll);
+    this.parent.setDoubleBuffered(true);
 
     pnlContent.setBackground(new Color(50, 50, 50));
 
@@ -45,10 +47,10 @@ public class ScheduledFlightListPanel extends JPanel {
   private void updateList() {
     if (refreshNeeded()) {
       IReadOnlyList<IScheduledMovement> movements =
-          this.sim.getScheduledMovements().orderBy(q -> q.getAppExpectedTime().getValue());
+              this.sim.getScheduledMovements().orderBy(q -> q.getAppExpectedTime().getValue());
 
       pnlContent.removeAll();
-      ScheduledFlightStripPanel.resetIndex();
+      ScheduledFlightStripPanel2.resetIndex();
       for (IScheduledMovement mvm : movements) {
         JPanel pnlItem = createMovementStrip(mvm);
         pnlItem.setName("MovementStrip_" + mvm.getCallsign().toString());
@@ -64,8 +66,8 @@ public class ScheduledFlightListPanel extends JPanel {
         this.lastItemCallsign = this.sim.getScheduledMovements().getLast().getCallsign();
       }
 
-      this.revalidate();
-      this.repaint();
+      this.parent.revalidate();
+      this.parent.repaint();
     }
   }
 
@@ -82,13 +84,13 @@ public class ScheduledFlightListPanel extends JPanel {
   }
 
   private JPanel createMovementStrip(IScheduledMovement mvm) {
-    JPanel ret = new ScheduledFlightStripPanel(mvm);
+    JPanel ret = new ScheduledFlightStripPanel2(mvm);
     return ret;
   }
 
 }
 
-class ScheduledFlightStripPanel extends JPanel {
+class ScheduledFlightStripPanel2 extends JPanel {
   private static final Dimension CALLSIGN_DIMENSION = new Dimension(75, 15);
   private static final Dimension FLAG_DIMENSION = new Dimension(25, 15);
   private static final Dimension TIME_DIMENSION = new Dimension(75, 15);
@@ -99,7 +101,7 @@ class ScheduledFlightStripPanel extends JPanel {
   private static Font boldFont;
 
   public static void setStripSettings(FlightStripSettings stripSettings) {
-    ScheduledFlightStripPanel.stripSettings = stripSettings;
+    ScheduledFlightStripPanel2.stripSettings = stripSettings;
 
     normalFont = new Font(stripSettings.font.getName(), 0, stripSettings.font.getSize());
     boldFont = new Font(stripSettings.font.getName(), Font.BOLD, stripSettings.font.getSize());
@@ -121,13 +123,13 @@ class ScheduledFlightStripPanel extends JPanel {
     return ret;
   }
 
-  public ScheduledFlightStripPanel(IScheduledMovement mvm) {
+  public ScheduledFlightStripPanel2(IScheduledMovement mvm) {
 
     this.setLayout(new BorderLayout());
 
     LayoutManager.setFixedSize(this, stripSettings.scheduledFlightStripSize);
 
-    Color color = ScheduledFlightStripPanel.getColor(mvm);
+    Color color = ScheduledFlightStripPanel2.getColor(mvm);
     this.setBackground(color);
     this.setForeground(stripSettings.textColor);
 
@@ -159,25 +161,6 @@ class ScheduledFlightStripPanel extends JPanel {
 
     lblCallsign.setFont(boldFont);
     this.add(pnl);
-
-//    JPanel firstLine = LayoutManager.createFlowPanel(
-//        LayoutManager.eVerticalAlign.middle, 0, lblCallsign, lblTypeName, lblDepartureArrival);
-//    JPanel secondLine = LayoutManager.createFlowPanel(
-//        LayoutManager.eVerticalAlign.middle, 0, lblTime, lblDelay);
-//    JPanel pnl = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0, firstLine, secondLine);
-//
-//    adjustComponentStyle(bgColor, frColor, normalFont,
-//        firstLine, secondLine);
-//
-//    adjustComponentStyle(bgColor, frColor, normalFont,
-//        lblCallsign, lblTypeName, lblDepartureArrival, lblTime, lblDelay);
-//
-//    lblCallsign.setFont(boldFont);
-//
-//    pnl.setBackground(bgColor);
-//    pnl = LayoutManager.createBorderedPanel(4, pnl);
-//    pnl.setBackground(bgColor);
-//    this.add(pnl);
   }
 
   private void setLabelFixedSize(JLabel lbl, Dimension dimension) {

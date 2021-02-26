@@ -7,6 +7,7 @@ import eng.eXmlSerialization.XmlException;
 import eng.eXmlSerialization.XmlSerializer;
 import eng.eXmlSerialization.serializers.AttributeSerializer;
 import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
+import eng.jAtcSim.settings.AppSettings;
 import eng.jAtcSim.xmlLoading.XmlSerialization;
 import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
 

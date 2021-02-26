@@ -39,7 +39,7 @@ public class FrmView extends JFrame {
     this.parent = pack;
 
     RadarBehaviorSettings behSett = new RadarBehaviorSettings(false);
-    RadarDisplaySettings ds = pack.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
+    RadarDisplaySettings ds = pack.getAppSettings().appRadarSettings.displaySettings.toRadarDisplaySettings();
 
     SwingRadarPanel srp = new SwingRadarPanel();
     srp.init(this.parent.getSim().getAirport().getInitialPosition(),

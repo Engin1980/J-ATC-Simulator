@@ -7,7 +7,7 @@ import eng.eSystem.validation.EAssert;
 import javax.swing.*;
 import java.awt.*;
 
-public class JFrameFactory<T> {
+public class JFrameFactory {
 
   public static class JFrameInfo {
     private final JFrame frame;
@@ -30,7 +30,7 @@ public class JFrameFactory<T> {
     }
   }
 
-  private static class JPanelInfo {
+  public static class JPanelInfo {
     private final JPanel panel;
     private final String viewName;
 

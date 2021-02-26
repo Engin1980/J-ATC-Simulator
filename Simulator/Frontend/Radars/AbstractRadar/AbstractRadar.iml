@@ -17,5 +17,8 @@
     <orderEntry type="library" name="eng.eXmlSerialization (jAtcSim)" level="project" />
     <orderEntry type="module" module-name="SpeechesLib" />
     <orderEntry type="module" module-name="TextProcessingLib" />
+    <orderEntry type="module" module-name="AnotherXml" />
+    <orderEntry type="module" module-name="NewXmlUtils" />
+    <orderEntry type="module" module-name="NewXmlUtils" />
   </component>
 </module>

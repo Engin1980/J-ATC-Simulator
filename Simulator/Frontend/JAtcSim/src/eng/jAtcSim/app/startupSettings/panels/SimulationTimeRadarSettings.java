@@ -29,14 +29,14 @@ public class SimulationTimeRadarSettings extends JStartupPanel {
   public void fillBySettings(StartupSettings settings) {
     this.nudSecondLength.setValue(settings.simulation.secondLengthInMs);
     this.tmeTime.setTime(settings.recent.time);
-    this.cmbRadarClass.setSelectedItem(new DisplayItem<>("-", settings.radar.packClass));
+    //this.cmbRadarClass.setSelectedItem(new DisplayItem<>("-", settings.radar.packClass));
   }
 
   @Override
   public void fillSettingsBy(StartupSettings settings) {
     settings.simulation.secondLengthInMs = this.nudSecondLength.getValue();
     settings.recent.time = this.tmeTime.getTime();
-    settings.radar.packClass = this.cmbRadarClass.getSelectedItem() == null ? null : this.cmbRadarClass.getSelectedItem().value;
+    //settings.radar.packClass = this.cmbRadarClass.getSelectedItem() == null ? null : this.cmbRadarClass.getSelectedItem().value;
   }
 
   private void initComponents() {

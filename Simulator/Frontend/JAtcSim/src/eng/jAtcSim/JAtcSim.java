@@ -17,6 +17,8 @@ import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.frmPacks.shared.FrmLog;
+import eng.jAtcSim.layouting.Layout;
+import eng.jAtcSim.layouting.LayoutFactory;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.game.Game;
 import eng.jAtcSim.newLib.gameSim.game.GameFactoryAndRepository;
@@ -31,6 +33,8 @@ import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 import eng.jAtcSim.newLib.weather.Weather;
+import eng.jAtcSim.newPacks.NewPack;
+import eng.jAtcSim.settings.AppSettings;
 import eng.jAtcSim.xmlLoading.XmlSerialization;
 import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
 
@@ -91,12 +95,15 @@ public class JAtcSim {
     }
 
     // starting pack & simulation
-    String packType = startupSettings.radar.packClass;
-    Pack simPack = createPackInstance(packType);
-    simPack.initPack(g, appSettings);
-    simPack.startPack();
+    String layoutFile = startupSettings.layout.layoutXmlFile;
+    Layout layout = new LayoutFactory().loadFromXml(layoutFile);
+    NewPack pack = new NewPack();
+    pack.init(g, layout, appSettings);
 
-    simPack.applyStoredData(map);
+    g.getSimulation().start();
+
+    System.out.println("!! TODO apply stored data");
+    //simPack.applyStoredData(map);
 
   }
 
@@ -267,12 +274,14 @@ public class JAtcSim {
 
       Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Starting a GUI");
       // starting pack & simulation
-      String packType = startupSettings.radar.packClass;
-      Pack simPack
-          = createPackInstance(packType);
 
-      simPack.initPack(g, appSettings);
-      simPack.startPack();
+      String layoutFile = startupSettings.layout.layoutXmlFile;
+      Layout layout = new LayoutFactory().loadFromXml(layoutFile);
+      NewPack pack = new NewPack();
+      pack.init(g, layout, appSettings);
+
+      g.getSimulation().start();
+
     } catch (Exception ex) {
       throw ex;
     } finally {

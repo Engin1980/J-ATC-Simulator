@@ -113,7 +113,7 @@ public class Loader {
     } else if (IXPersistable.class.isAssignableFrom(type)) {
       ret = loadPersistable(elm, type);
     } else {
-      throw new SimPersistenceExeption(sf("Don't know how to load instance of '%s' from '%s'.", type, elm.toXPath()));
+      throw new SimPersistenceExeption(sf("No deserializer specified to load an instance of of '%s' from '%s'.", type, elm.toXPath()));
     }
 
     indent--;

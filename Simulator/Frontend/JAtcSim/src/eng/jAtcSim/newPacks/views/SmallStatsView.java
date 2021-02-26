@@ -1,18 +1,18 @@
-package eng.jAtcSim.frmPacks.shared;
+package eng.jAtcSim.newPacks.views;
 
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.recent.RecentStats;
+import eng.jAtcSim.newPacks.IView;
+import eng.jAtcSim.settings.AppSettings;
 
 import javax.swing.*;
 import java.awt.*;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-@Deprecated
-public class StatsPanel extends JPanel {
-
+public class SmallStatsView implements IView {
   private static final Color bgColor = new Color(50, 50, 50);
   private static final Color frColor = new Color(200, 200, 200);
 
@@ -58,20 +58,24 @@ public class StatsPanel extends JPanel {
   private final JLabel lvlMovementsGame = new JLabel("-");
   private IStatsProvider stats;
 
-  public StatsPanel() {
-    initComponents();
-  }
+  private JPanel parent;
 
   public void init(ISimulation sim) {
     this.stats = sim.getStats();
     sim.registerOnSecondElapsed(s -> update());
   }
 
+  @Override
+  public void init(JPanel panel, ISimulation simulation, AppSettings settings) {
+    this.parent = panel;
+    this.initComponents();
+  }
+
   private void initComponents() {
-    this.setPreferredSize(
+    this.parent.setPreferredSize(
             new Dimension(200, 200)
     );
-    this.setBackground(
+    this.parent.setBackground(
             new Color(50, 50, 50)
     );
 
@@ -79,7 +83,7 @@ public class StatsPanel extends JPanel {
     JLabel lbl = new JLabel("Stats:");
     lbl.setForeground(Color.white);
 
-    JPanel pnlLabels = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0,
+    JPanel pnlLabels = eng.eSystem.swing.LayoutManager.createBoxPanel(eng.eSystem.swing.LayoutManager.eHorizontalAlign.left, 0,
             lblElapsed,
             lblBusyDuration,
             lblFinished,
@@ -94,7 +98,7 @@ public class StatsPanel extends JPanel {
             lblHpTime
     );
 
-    JPanel pnlValues = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0,
+    JPanel pnlValues = eng.eSystem.swing.LayoutManager.createBoxPanel(eng.eSystem.swing.LayoutManager.eHorizontalAlign.left, 0,
             lvlElapsed,
             lvlBusyDuration,
             lvlFinished,
@@ -109,13 +113,13 @@ public class StatsPanel extends JPanel {
             lvlHpTime
     );
 
-    JPanel pnlStats = LayoutManager.createBorderedPanel(null, null, pnlLabels, pnlValues, null);
+    JPanel pnlStats = eng.eSystem.swing.LayoutManager.createBorderedPanel(null, null, pnlLabels, pnlValues, null);
 
-    LayoutManager.fillBorderedPanel(this, 4, pnlStats);
+    LayoutManager.fillBorderedPanel(this.parent, 4, pnlStats);
 
-    this.add(pnlStats);
+    this.parent.add(pnlStats);
 
-    setDarkTheme(this);
+    setDarkTheme(this.parent);
   }
 
   private void setDarkTheme(Component c) {
@@ -199,7 +203,6 @@ public class StatsPanel extends JPanel {
     sb.append(":").append(sf("%02d", sec));
     return sb.toString();
   }
-
 
   private void updateFinished(RecentStats view) {
     int a = view.getFinishedPlanes().getArrivals();

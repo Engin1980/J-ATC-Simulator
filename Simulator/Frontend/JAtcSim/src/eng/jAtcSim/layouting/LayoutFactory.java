@@ -4,7 +4,10 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
+import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.validation.EAssert;
 
 public class LayoutFactory {
@@ -21,14 +24,28 @@ public class LayoutFactory {
     return ret;
   }
 
+  public Layout loadFromXml(String fileName){
+    XElement root;
+    try {
+      XDocument doc = XDocument.load(fileName);
+      root = doc.getRoot();
+    } catch (EXmlException e) {
+      throw new EApplicationException("Failed to load layout xml file " + fileName + ".",e);
+    }
+
+    Layout ret = loadFromXml(root);
+    return ret;
+  }
+
   private Window loadWindow(XElement elm) {
     EAssert.Argument.isTrue(elm.getName().equals("window"));
     Window ret;
     Position position = loadPosition(elm.getChild("position"));
     String title = elm.getAttribute("title");
+    boolean withMenu = elm.tryGetAttribute("menu", "0").equals("1");
     Block content = loadAnyBlock(elm);
 
-    ret = new Window(position, content, title);
+    ret = new Window(position, content, title, withMenu);
 
     return ret;
   }

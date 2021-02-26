@@ -8,7 +8,7 @@ package eng.jAtcSim.frmPacks;
 
 import eng.eSystem.collections.IMap;
 import eng.eSystem.events.EventSimple;
-import eng.jAtcSim.AppSettings;
+import eng.jAtcSim.settings.AppSettings;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 

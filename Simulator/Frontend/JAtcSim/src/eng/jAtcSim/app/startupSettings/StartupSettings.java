@@ -156,8 +156,8 @@ public class StartupSettings {
     }
   }
 
-  public static class Radar {
-    public String packClass = null;
+  public static class Layout {
+    public String layoutXmlFile = null;
   }
 
   public static class Simulation {
@@ -165,7 +165,7 @@ public class StartupSettings {
   }
 
   public final Files files;
-  public final Radar radar;
+  public final Layout layout;
   public final Recent recent;
   public final Simulation simulation;
   public final Traffic traffic;
@@ -173,10 +173,10 @@ public class StartupSettings {
 
   public StartupSettings() {
     this.files = new Files();
+    this.layout = new Layout();
     this.recent = new Recent();
     this.weather = new Weather();
     this.traffic = new Traffic();
     this.simulation = new Simulation();
-    this.radar = new Radar();
   }
 }

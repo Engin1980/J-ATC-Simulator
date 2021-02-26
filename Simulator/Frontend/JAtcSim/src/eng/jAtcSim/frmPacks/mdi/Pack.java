@@ -12,7 +12,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eXmlSerialization.XmlSerializer;
-import eng.jAtcSim.AppSettings;
+import eng.jAtcSim.settings.AppSettings;
 import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.gameSim.IGame;
@@ -72,7 +72,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   @Override
   public void initPack(IGame game, AppSettings appSettings) {
 
-    String fileName = appSettings.radar.styleSettingsFile.toString();
+    String fileName = appSettings.appRadarSettings.styleSettingsFile.toString();
     this.displaySettings = RadarStyleSettings.load(fileName); // XmlLoadHelper.loadNewDisplaySettings(fileName);
     this.appSettings = appSettings;
 
