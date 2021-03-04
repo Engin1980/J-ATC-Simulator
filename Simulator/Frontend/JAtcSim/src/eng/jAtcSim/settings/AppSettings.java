@@ -8,6 +8,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eXmlSerialization.XmlSerializer;
 import eng.eXmlSerialization.annotations.XmlIgnored;
+import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
 import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
@@ -147,12 +148,20 @@ public class AppSettings {
   public Path startupSettingsFile;
   public AppStatsSettings stats = new AppStatsSettings();
   private Path stripSettingsFile;
-  @XmlIgnored
-  private RadarStyleSettings displaySettings;
+  private RadarDisplaySettings radarDisplaySettings;
   @XmlIgnored
   private RadarStyleSettings radarStyleSettings;
   @XmlIgnored
   private DynamicPlaneFormatter dynamicPlaneFormatter;
+
+
+  public RadarDisplaySettings getRadarDisplaySettings() {
+    return radarDisplaySettings;
+  }
+
+  public RadarStyleSettings getRadarStyleSettings() {
+    return radarStyleSettings;
+  }
 
   private AppSettings() {
     if (!initialized)

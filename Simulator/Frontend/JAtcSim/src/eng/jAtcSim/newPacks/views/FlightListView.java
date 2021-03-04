@@ -14,7 +14,6 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Format;
 import eng.jAtcSim.newPacks.ICanSelectCallsign;
 import eng.jAtcSim.newPacks.IView;
-import eng.jAtcSim.settings.AppSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,10 +47,10 @@ public class FlightListView implements IView, ICanSelectCallsign {
     }
   }
 
-  public void init(JPanel panel, ISimulation sim, AppSettings settings) {
+  public void init(JPanel panel, ViewInitInfo initInfo) {
     this.parent = panel;
-    this.sim = sim;
-    FlightStripPanel2.setStripSettings(settings.getFlightStripSettings());
+    this.sim = initInfo.getSimulation();
+    FlightStripPanel.setStripSettings(initInfo.getSettings().getFlightStripSettings());
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
     pnlContent.setName("FlightListPanel_ContentPanel");
@@ -84,9 +83,9 @@ public class FlightListView implements IView, ICanSelectCallsign {
     }
 
     pnlContent.removeAll();
-    FlightStripPanel2.resetIndex();
+    FlightStripPanel.resetIndex();
     for (IAirplaneInfo pln : plns) {
-      FlightStripPanel2 pnlItem = createFlightStrip(pln);
+      FlightStripPanel pnlItem = createFlightStrip(pln);
       pnlItem.setName("FlightStrip_" + pln.callsign());
       pnlContent.add(pnlItem);
       pnlItem.getClickEvent().add((sender, callsign) -> {
@@ -101,14 +100,14 @@ public class FlightListView implements IView, ICanSelectCallsign {
     this.parent.repaint();
   }
 
-  private FlightStripPanel2 createFlightStrip(IAirplaneInfo ai) {
-    FlightStripPanel2 ret = new FlightStripPanel2(this, ai);
+  private FlightStripPanel createFlightStrip(IAirplaneInfo ai) {
+    FlightStripPanel ret = new FlightStripPanel(this, ai);
     return ret;
   }
 
 }
 
-class FlightStripPanel2 extends JPanel {
+class FlightStripPanel extends JPanel {
 
   private static FlightStripSettings stripSettings;
   private static int index = 0;
@@ -116,7 +115,7 @@ class FlightStripPanel2 extends JPanel {
   private static Font boldFont;
 
   public static void setStripSettings(FlightStripSettings stripSettings) {
-    FlightStripPanel2.stripSettings = stripSettings;
+    FlightStripPanel.stripSettings = stripSettings;
 
     normalFont = new Font(stripSettings.font.getName(), 0, stripSettings.font.getSize());
     boldFont = new Font(stripSettings.font.getName(), Font.BOLD, stripSettings.font.getSize());
@@ -125,11 +124,11 @@ class FlightStripPanel2 extends JPanel {
   public static void resetIndex() {
     index = 0;
   }
-  private final Event<FlightStripPanel2, Callsign> clickEvent = new Event<>(this);
+  private final Event<FlightStripPanel, Callsign> clickEvent = new Event<>(this);
   private Callsign callsign;
   private FlightListView parent;
 
-  public FlightStripPanel2(FlightListView parent, IAirplaneInfo ai) {
+  public FlightStripPanel(FlightListView parent, IAirplaneInfo ai) {
 
     this.parent = parent;
     this.callsign = ai.callsign();
@@ -147,12 +146,12 @@ class FlightStripPanel2 extends JPanel {
     this.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        clickEvent.raise(FlightStripPanel2.this.callsign);
+        clickEvent.raise(FlightStripPanel.this.callsign);
       }
     });
   }
 
-  public Event<FlightStripPanel2, Callsign> getClickEvent() {
+  public Event<FlightStripPanel, Callsign> getClickEvent() {
     return clickEvent;
   }
 

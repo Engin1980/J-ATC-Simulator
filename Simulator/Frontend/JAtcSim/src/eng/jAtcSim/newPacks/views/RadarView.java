@@ -21,19 +21,9 @@ import eng.jAtcSim.newLib.area.InitialPosition;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
-import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParsersSet;
 import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.speeches.SpeechList;
-import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
-import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
-import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
-import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.AtcParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
-import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.PlaneParser;
-import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.SystemParser;
 import eng.jAtcSim.newPacks.IView;
-import eng.jAtcSim.settings.AppSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -131,12 +121,11 @@ public class RadarView implements IView {
     }
   }
 
-  private RadarStyleSettings radarStyleSettings;
   private JPanel parent;
   private Area area;
   private AtcId userAtcId;
-  private RadarBehaviorSettings behaviorSettings;
-  private final IList<ButtonBinding> bndgs = new EList();
+  private final RadarBehaviorSettings behaviorSettings = new RadarBehaviorSettings();
+  private final IList<ButtonBinding> bndgs = new EList<>();
   private RadarDisplaySettings displaySettings;
   private final JButtonExtender extBtn = new JButtonExtender(
           new Color(0, 0, 0),
@@ -148,11 +137,14 @@ public class RadarView implements IView {
   private Radar radar;
   private ISimulation sim;
   private final IMap<Integer, RadarViewPort> storedRadarPositions = new EMap<>();
-  private RadarStyleSettings styleSettings;
+  private RadarStyleSettings radarStyleSettings;
   private AdjustSelectionPanelWrapper<Approach> wrpApproaches;
   private AdjustSelectionPanelWrapper<DARoute> wrpRoutes;
   private DynamicPlaneFormatter dynamicPlaneFormatter;
-  private CommandInputTextFieldExtender commandInputTextFieldExtender;
+
+  public RadarBehaviorSettings getBehaviorSettings() {
+    return behaviorSettings;
+  }
 
   public Radar getRadar() {
     return this.radar;
@@ -169,24 +161,16 @@ public class RadarView implements IView {
   }
 
   @Override
-  public void init(JPanel panel, ISimulation simulation, AppSettings settings) {
+  public void init(JPanel panel, ViewInitInfo initInfo) {
     this.parent = panel;
-  }
 
-  public void init(InitialPosition initialPosition,
-                   ISimulation sim, Area area, AtcId userAtcId,
-                   RadarStyleSettings styleSett,
-                   RadarDisplaySettings displaySett,
-                   RadarBehaviorSettings behSett,
-                   DynamicPlaneFormatter dynamicPlaneFormatter) {
-    this.sim = sim;
-    this.area = area;
-    this.userAtcId = userAtcId;
-    this.initialPosition = initialPosition;
-    this.styleSettings = styleSett;
-    this.displaySettings = displaySett;
-    this.behaviorSettings = behSett;
-    this.dynamicPlaneFormatter = dynamicPlaneFormatter;
+    this.sim = initInfo.getSimulation();
+    this.area = initInfo.getSimulation().getArea();
+    this.userAtcId = initInfo.getUserAtcId();
+    this.initialPosition = initInfo.getAirport().getInitialPosition();
+    this.radarStyleSettings = initInfo.getSettings().getRadarStyleSettings();
+    this.displaySettings = initInfo.getSettings().getRadarDisplaySettings();
+    this.dynamicPlaneFormatter = initInfo.getDynamicAirplaneSpeechFormatter();
 
     this.parent.setLayout(new BorderLayout());
 
@@ -195,11 +179,6 @@ public class RadarView implements IView {
 
     this.parent.add(pnlContent, BorderLayout.CENTER);
     this.parent.add(pnlTop, BorderLayout.PAGE_START);
-
-    if (this.behaviorSettings.isPaintMessages()) {
-      JPanel pnlBottom = this.buildTextPanel();
-      this.parent.add(pnlBottom, BorderLayout.PAGE_END);
-    }
 
     // TODO solve somehow key presses
 //    this.parent.addFocusListener(new FocusAdapter() {
@@ -245,7 +224,7 @@ public class RadarView implements IView {
             canvas,
             this.initialPosition,
             this.sim, this.area, this.userAtcId,
-            this.styleSettings,
+            this.radarStyleSettings,
             this.displaySettings,
             this.behaviorSettings,
             this.dynamicPlaneFormatter);
@@ -256,91 +235,6 @@ public class RadarView implements IView {
     // TODO this redirects text events to jtextfield. However not working now.
 //    canvas.getGuiControl().addKeyListener(new MyKeyListener(this.txtInput));
     return ret;
-  }
-
-  private JPanel buildTextPanel() {
-    JTextField txtInput = new JTextField();
-    Font font = new Font("Courier New", Font.PLAIN, txtInput.getFont().getSize());
-    txtInput.setFont(font);
-    JPanel ret = eng.eSystem.swing.LayoutManager.createFlowPanel(eng.eSystem.swing.LayoutManager.eVerticalAlign.middle,
-            3,
-            txtInput);
-
-    this.commandInputTextFieldExtender = new CommandInputTextFieldExtender(txtInput,
-            this.buildParsers(),
-            () -> this.sim.getAtcs(),
-            () -> this.sim.getPlanesToDisplay().select(q -> q.callsign()));
-    this.commandInputTextFieldExtender.onAtcCommand.add(this::sendAtcCommand);
-    this.commandInputTextFieldExtender.onSystemCommand.add(this::sendSystemCommand);
-    this.commandInputTextFieldExtender.onPlaneCommand.add(this::sendPlaneCommand);
-    this.commandInputTextFieldExtender.onSpecialCommand.add(this::processSpecialCommand);
-    this.commandInputTextFieldExtender.onError.add(this::processError);
-
-    return ret;
-  }
-
-  private void processError(CommandInputTextFieldExtender commandInputTextFieldExtender, CommandInputTextFieldExtender.ErrorEventArgs e) {
-    String s = convertErrorToString(e.error, e.arguments);
-    this.radar.showMessageOnScreen(s);
-  }
-
-  private String convertErrorToString(CommandInputTextFieldExtender.ErrorType errorType, IReadOnlyMap<String, Object> arguments) {
-    EStringBuilder sb = new EStringBuilder();
-
-    switch (errorType) {
-      case atcUnableDecide:
-        sb.appendFormat("Unable to decide target ATC from '%s'.", arguments.get("command"));
-        break;
-      case atcUnableParse:
-        sb.appendFormat("Unable to parse ATC command from '%s'.", arguments.get("command"));
-        break;
-      case planeMultipleCallsignMatches:
-        sb.appendFormat("Multiple planes matches callsign shortcut from '%s'.", arguments.get("callsign"));
-        break;
-      case planeNoneCallsignMatch:
-        sb.appendFormat("No plane matches callsign/shortcut '%s'.", arguments.get("callsign"));
-        break;
-      case planeUnableParse:
-        sb.appendFormat("Unable to parse plane command for plane '%s' from '%s'.", arguments.get("callsign"), arguments.get("command"));
-        break;
-      case systemUnableParse:
-        sb.appendFormat("Unable to parse system command from '%s.", arguments.get("command"));
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(errorType);
-    }
-
-    return sb.toString();
-  }
-
-  private void sendPlaneCommand(CommandInputTextFieldExtender commandInputTextFieldExtender, CommandInputTextFieldExtender.CommandEventArgs<Callsign, SpeechList<IForPlaneSpeech>> e) {
-    this.sim.sendPlaneCommands(this.userAtcId, e.target, e.command);
-  }
-
-  private void processSpecialCommand(CommandInputTextFieldExtender commandInputTextFieldExtender, CommandInputTextFieldExtender.SpecialCommandEventArgs e) {
-    switch (e.specialCommand) {
-      case recallRadarPosition:
-        this.recallRadarPosition((int) e.attributes.get("bank"));
-        break;
-      case storeRadarPosition:
-        this.storeRadarPosition((int) e.attributes.get("bank"));
-        break;
-      case toggleSimulatorRun:
-        this.sim.pauseUnpauseSim();
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(e.specialCommand);
-    }
-  }
-
-  private void sendSystemCommand(CommandInputTextFieldExtender commandInputTextFieldExtender, CommandInputTextFieldExtender.CommandEventArgs<Object, ISystemSpeech> e) {
-    this.sim.sendSystemCommand(this.userAtcId, e.command);
-  }
-
-  private void sendAtcCommand(
-          CommandInputTextFieldExtender commandInputTextFieldExtender,
-          CommandInputTextFieldExtender.CommandEventArgs<AtcId, IAtcSpeech> e) {
-    this.sim.sendAtcCommand(this.userAtcId, e.target, e.command);
   }
 
 
@@ -439,13 +333,6 @@ public class RadarView implements IView {
     if (rp != null) {
       radar.setViewPort(rp);
     }
-  }
-
-  private ParsersSet buildParsers() {
-    return new ParsersSet(
-            new PlaneParser(),
-            new AtcParser(),
-            new SystemParser());
   }
 
   private void storeRadarPosition(int index) {

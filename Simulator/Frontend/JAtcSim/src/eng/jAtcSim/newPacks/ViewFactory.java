@@ -16,10 +16,14 @@ public class ViewFactory {
     viewMap.set("flightListView", () -> new FlightListView());
     viewMap.set("radarView+", () -> {
       RadarView ret = new RadarView();
-      ret.set že má vidět labely;
+      ret.getBehaviorSettings().setPaintMessages(true);
       return ret;
     });
-    viewMap.set("radarView", () -> new RadarView());
+    viewMap.set("radarView", () -> {
+      RadarView ret = new RadarView();
+      ret.getBehaviorSettings().setPaintMessages(false);
+      return ret;
+    });
     viewMap.set("textInputView", () -> new TextInputView());
     viewMap.set("scheduledListView", () -> new ScheduledListView());
     viewMap.set("smallStatsView", () -> new SmallStatsView());

@@ -2,7 +2,6 @@ package eng.jAtcSim.newPacks.views;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.swing.LayoutManager;
-import eng.jAtcSim.settings.AppSettings;
 import eng.jAtcSim.settings.FlightStripSettings;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
@@ -24,10 +23,10 @@ public class ScheduledListView implements IView {
   private JPanel parent;
 
 
-  public void init(JPanel panel, ISimulation sim, AppSettings appSettings) {
+  public void init(JPanel panel, ViewInitInfo initInfo) {
     this.parent = panel;
-    this.sim = sim;
-    ScheduledFlightStripPanel2.setStripSettings(appSettings.getFlightStripSettings());
+    this.sim = initInfo.getSimulation();
+    ScheduledFlightStripPanel.setStripSettings(initInfo.getSettings().getFlightStripSettings());
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
     pnlContent.setName("ScheduledFlightListPanel_ContentPanel");
@@ -50,7 +49,7 @@ public class ScheduledListView implements IView {
               this.sim.getScheduledMovements().orderBy(q -> q.getAppExpectedTime().getValue());
 
       pnlContent.removeAll();
-      ScheduledFlightStripPanel2.resetIndex();
+      ScheduledFlightStripPanel.resetIndex();
       for (IScheduledMovement mvm : movements) {
         JPanel pnlItem = createMovementStrip(mvm);
         pnlItem.setName("MovementStrip_" + mvm.getCallsign().toString());
@@ -84,13 +83,13 @@ public class ScheduledListView implements IView {
   }
 
   private JPanel createMovementStrip(IScheduledMovement mvm) {
-    JPanel ret = new ScheduledFlightStripPanel2(mvm);
+    JPanel ret = new ScheduledFlightStripPanel(mvm);
     return ret;
   }
 
 }
 
-class ScheduledFlightStripPanel2 extends JPanel {
+class ScheduledFlightStripPanel extends JPanel {
   private static final Dimension CALLSIGN_DIMENSION = new Dimension(75, 15);
   private static final Dimension FLAG_DIMENSION = new Dimension(25, 15);
   private static final Dimension TIME_DIMENSION = new Dimension(75, 15);
@@ -101,7 +100,7 @@ class ScheduledFlightStripPanel2 extends JPanel {
   private static Font boldFont;
 
   public static void setStripSettings(FlightStripSettings stripSettings) {
-    ScheduledFlightStripPanel2.stripSettings = stripSettings;
+    ScheduledFlightStripPanel.stripSettings = stripSettings;
 
     normalFont = new Font(stripSettings.font.getName(), 0, stripSettings.font.getSize());
     boldFont = new Font(stripSettings.font.getName(), Font.BOLD, stripSettings.font.getSize());
@@ -123,13 +122,13 @@ class ScheduledFlightStripPanel2 extends JPanel {
     return ret;
   }
 
-  public ScheduledFlightStripPanel2(IScheduledMovement mvm) {
+  public ScheduledFlightStripPanel(IScheduledMovement mvm) {
 
     this.setLayout(new BorderLayout());
 
     LayoutManager.setFixedSize(this, stripSettings.scheduledFlightStripSize);
 
-    Color color = ScheduledFlightStripPanel2.getColor(mvm);
+    Color color = ScheduledFlightStripPanel.getColor(mvm);
     this.setBackground(color);
     this.setForeground(stripSettings.textColor);
 

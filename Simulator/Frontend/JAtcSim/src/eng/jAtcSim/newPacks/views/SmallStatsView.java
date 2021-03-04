@@ -1,11 +1,9 @@
 package eng.jAtcSim.newPacks.views;
 
 import eng.eSystem.swing.LayoutManager;
-import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.recent.RecentStats;
 import eng.jAtcSim.newPacks.IView;
-import eng.jAtcSim.settings.AppSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,11 +59,11 @@ public class SmallStatsView implements IView {
   private JPanel parent;
 
   @Override
-  public void init(JPanel panel, ISimulation simulation, AppSettings settings) {
+  public void init(JPanel panel, ViewInitInfo initInfo) {
     this.parent = panel;
     this.initComponents();
-    this.stats = simulation.getStats();
-    simulation.registerOnSecondElapsed(s -> update());
+    this.stats = initInfo.getSimulation().getStats();
+    initInfo.getSimulation().registerOnSecondElapsed(s -> update());
   }
 
   private void initComponents() {
