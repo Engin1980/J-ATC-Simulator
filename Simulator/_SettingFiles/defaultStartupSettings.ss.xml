@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><startupSettings>
   <files areaXmlFile="_SettingFiles/airports/LKMT_only.ar.xml" companiesFleetsXmlFile="_SettingFiles/airlinesFleets.afl.xml" generalAviationFleetsXmlFile="_SettingFiles/countriesFleets.cfl.xml" planesXmlFile="_SettingFiles/planeTypes.tp.xml" trafficXmlFile="_SettingFiles/traffic/test_oneArrival.tr.xml" weatherXmlFile="_SettingFiles/developers/testWindChange.we.xml"/>
-  <layout layoutXmlFile="eng.jAtcSim.frmPacks.sdi.Pack"/>
+  <layout layoutXmlFile="_SettingFiles/layouts/simple.xml"/>
   <recent icao="LKMT" time="07:00"/>
   <simulation secondLengthInMs="1000"/>
   <traffic allowDelays="false" densityPercentage="0.0" emergencyPerDayProbability="0.14285714285714285" maxPlanes="0" type="xml">
@@ -46,5 +46,5 @@
       </movementsForHours>
     </customTraffic>
   </traffic>
-  <weather cloudBaseAltitudeFt="8000" cloudBaseProbability="0.75" snowState="intensive" type="online" visibilityInM="200" windDirection="281" windSpeed="31"/>
+  <weather cloudBaseAltitudeFt="8000" cloudBaseProbability="0.75" snowState="intensive" type="user" visibilityInM="200" windDirection="281" windSpeed="31"/>
 </startupSettings>

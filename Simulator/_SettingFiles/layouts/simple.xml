@@ -2,28 +2,30 @@
 <windows xmlns="https://github.com/Engin1980/J-ATC-Simulator/layout">
 
     <window title="Main SDI layout">
-        <position x="0" y="0" width="100%" height="100%"/>
-        <column width="225">
-            <panel view="flightListView" />
+        <position x="0px" y="0px" width="100%" height="100%"/>
+        <column width="225px">
+            <panel view="flightListView"/>
         </column>
         <column width="*">
             <row height="*">
-                <panel view="radarView+" />
+                <panel view="radarView+"/>
             </row>
             <row height="30px">
-                <panel view="textInputView" />
+                <panel view="textInputView"/>
             </row>
         </column>
-        <column width="225">
+        <column width="225px">
             <row height="*">
-                <panel view="scheduledListView" />
+                <panel view="scheduledListView"/>
             </row>
-            <row height="smallStatsView" />
+            <row height="140px">
+                <panel view="smallStatsView"/>
+            </row>
         </column>
     </window>
 
     <window title="Additional view">
-        <position x="100%" y="0" width="40px" height="40px"/>
-        <panel view="radarView" />
+        <position x="100%" y="0px" width="40px" height="40px"/>
+        <panel view="radarView"/>
     </window>
 </windows>
