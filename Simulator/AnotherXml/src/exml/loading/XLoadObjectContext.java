@@ -47,7 +47,7 @@ public class XLoadObjectContext {
       this.ctx.currentElement = pce;
     } else if (ctx.parsers.containsKey(type)) {
       Selector<String, T> parser = (Selector<String, T>) ctx.parsers.get(type);
-      ret = parser.invoke(this.ctx.currentElement.getContent());
+      ret = parser.invoke(elm.getContent());
     } else if (type.isEnum()) {
       ret = LoadUtils.loadEnum(elm.getContent(), type);
     } else if (type.isArray()) {

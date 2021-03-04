@@ -44,5 +44,25 @@ public class XLoadContext {
     this.parsers.set(type, parser);
   }
 
+  public void addDefaultParsers(){
+    this.setParser(short.class, q -> Short.valueOf(q));
+    this.setParser(byte.class, q -> Byte.valueOf(q));
+    this.setParser(int.class, q -> Integer.valueOf(q));
+    this.setParser(long.class, q -> Long.valueOf(q));
+    this.setParser(float.class, q -> Float.valueOf(q));
+    this.setParser(double.class, q -> Double.valueOf(q));
+    this.setParser(boolean.class, q -> Boolean.valueOf(q));
+    this.setParser(char.class, q -> q.charAt(0));
+    this.setParser(Short.class, q -> Short.valueOf(q));
+    this.setParser(Byte.class, q -> Byte.valueOf(q));
+    this.setParser(Integer.class, q -> Integer.valueOf(q));
+    this.setParser(Long.class, q -> Long.valueOf(q));
+    this.setParser(Float.class, q -> Float.valueOf(q));
+    this.setParser(Double.class, q -> Double.valueOf(q));
+    this.setParser(Boolean.class, q -> Boolean.valueOf(q));
+    this.setParser(Character.class, q -> q.charAt(0));
+    this.setParser(String.class, q -> q);
+  }
+
 
 }

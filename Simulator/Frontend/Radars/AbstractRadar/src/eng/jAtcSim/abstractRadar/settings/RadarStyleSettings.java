@@ -9,7 +9,6 @@ import eng.jAtcSim.abstractRadar.global.Color;
 import eng.jAtcSim.abstractRadar.global.Font;
 import exml.IXPersistable;
 import exml.annotations.XAttribute;
-import exml.annotations.XIgnored;
 import exml.annotations.XOptional;
 import exml.loading.XLoadContext;
 
@@ -235,36 +234,12 @@ public class RadarStyleSettings implements IXPersistable {
     }
     return ret;
   }
-
-  private static Color loadAttributeColor(XElement elm, String attributeName) {
-    return loadAttribute(elm, attributeName, s -> Color.fromHex(s));
-  }
-
-  private static int loadAttributeInt(XElement elm, String attributeName) {
-    return loadAttribute(elm, attributeName, s -> Integer.parseInt(s));
-  }
   ///end region
 
-  private static <T> T loadAttribute(XElement elm, String attributeName, Selector<String, T> selector) {
-    String s = elm.getAttribute(attributeName);
-    T ret = selector.invoke(s);
-    return ret;
-  }
-
   private static void initContext(XLoadContext ctx) {
-    ctx.setDeserializer(Color.class, e -> Color.fromHex(e.getContent()));
+    ctx.addDefaultParsers();
+    ctx.setParser(Color.class, s -> Color.fromHex(s));
   }
-
-  //TODEL
-//
-//  private static <T> Selector<XElement, T> getSimpleObjectDeserializer(Class<T> type, XLoadContext ctx) {
-//    Selector<XElement, T> ret = e -> {
-//      T tmp = ctx.loadObject(e, type);
-//      return tmp;
-//    };
-//
-//    return ret;
-//  }
 
   @XAttribute public int displayTextDelay;
   public ColorWidthFontSettings infoLine;

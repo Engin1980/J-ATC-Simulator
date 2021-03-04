@@ -8,7 +8,6 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eXmlSerialization.XmlSerializer;
 import eng.eXmlSerialization.annotations.XmlIgnored;
-import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
@@ -65,8 +64,6 @@ public class AppSettings {
       ret.appRadarSettings.styleSettingsFile = decodePath(tmp);
       ret.appRadarSettings.displayTextDelay = Integer.parseInt(radarElement.getChild("displayTextDelay").getContent());
       ret.appRadarSettings.displaySettings = AppRadarSettings.DisplaySettings.load(radarElement.getChild("displaySettings"));
-      //) new XmlSerializer().deserialize(
-      //    radarElement.getChild("displaySettings"), Radar.DisplaySettings.class);
 
       XElement autosaveElement = doc.getRoot().getChild("autosave");
       ret.autosave.intervalInSeconds = Integer.parseInt(autosaveElement.getAttribute("intervalInMinutes")) * 60;
@@ -174,7 +171,6 @@ public class AppSettings {
 
   public void load() {
     this.radarStyleSettings = RadarStyleSettings.load(this.appRadarSettings.styleSettingsFile.toString());
-    this.displaySettings = XmlLoadHelper.loadNewDisplaySettings(this.appRadarSettings.styleSettingsFile.toString());
     this.dynamicPlaneFormatter = loadDynamicPlaneFormatter(this.speechFormatterFile);
     this.flightStripSettings = loadFlightStripSettings();
   }
