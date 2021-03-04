@@ -5,7 +5,7 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -19,13 +19,13 @@ public class AtcList extends EDistinctList<Atc> implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.setIgnoredFields(this, "selector", "onDuplicateBehavior");
+  public void save(XElement elm, XSaveContext ctx) {
+    ctx.fields.ignoreFields(this, "selector", "onDuplicateBehavior");
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
-    ctx.loader.setIgnoredFields(this, "selector", "onDuplicateBehavior");
+  public void load(XElement elm, XLoadContext ctx) {
+    ctx.fields.ignoreFields(this, "selector", "onDuplicateBehavior");
   }
 
   Atc get(AtcId atcId) {

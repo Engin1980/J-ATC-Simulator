@@ -30,7 +30,7 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.RequestRadarContactNoti
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
 public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
@@ -50,7 +50,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private CommandQueueRecorder cqr;
 
   @XConstructor
-  private RoutingModule(XContext ctx) {
+  private RoutingModule(XLoadContext ctx) {
     super(ctx);
   }
 
@@ -122,16 +122,16 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
+  public void load(XElement elm, XLoadContext ctx) {
     super.load(elm, ctx);
-    ctx.loader.ignoreFields(this,
+    ctx.fields.ignoreFields(this,
             "cqr");
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
+  public void save(XElement elm, XSaveContext ctx) {
     super.save(elm, ctx);
-    ctx.saver.ignoreFields(this,
+    ctx.fields.ignoreFields(this,
             "cqr");
   }
 

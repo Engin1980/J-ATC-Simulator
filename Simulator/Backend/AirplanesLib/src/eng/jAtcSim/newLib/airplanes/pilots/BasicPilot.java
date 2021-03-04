@@ -7,7 +7,7 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PassingClearanceLimitNotification;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
 public abstract class BasicPilot extends Pilot {
@@ -19,7 +19,7 @@ public abstract class BasicPilot extends Pilot {
   }
 
   @XConstructor
-  protected BasicPilot(XContext ctx) {
+  protected BasicPilot(XLoadContext ctx) {
     super(ctx);
   }
 

@@ -31,7 +31,7 @@ import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
 import eng.newXmlUtils.annotations.XmlConstructor;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -113,12 +113,12 @@ public class UserAtc extends Atc implements IUserAtcInterface {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
+  public void load(XElement elm, XLoadContext ctx) {
     super.load(elm, ctx);
 
-    IAirplaneList planes = ctx.loader.values.get(IAirplaneList.class);
+    IAirplaneList planes = ctx.values.get(IAirplaneList.class);
 
-    ctx.loader
+    ctx.objects
             .loadItems(elm.getChild("planes"), Callsign.class)
             .select(q -> planes.get(q))
             .forEach(q -> this.planes.add(q));
@@ -130,9 +130,9 @@ public class UserAtc extends Atc implements IUserAtcInterface {
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
+  public void save(XElement elm, XSaveContext ctx) {
     super.save(elm, ctx);
-    ctx.saver.saveItems(this.planes.select(q -> q.getCallsign()), Callsign.class, elm, "planes");
+    ctx.objects.saveItems(this.planes.select(q -> q.getCallsign()), Callsign.class, elm, "planes");
   }
 
   @Override

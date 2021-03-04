@@ -5,7 +5,7 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.newXmlUtils.annotations.XmlConstructor;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -52,12 +52,12 @@ public class PresetWeather extends Weather {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
+  public void load(XElement elm, XLoadContext ctx) {
     this.time = LocalTime.parse(elm.getAttribute("localTime"), dtf);
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
+  public void save(XElement elm, XSaveContext ctx) {
     elm.setAttribute("localTime", time.format(dtf));
   }
 }

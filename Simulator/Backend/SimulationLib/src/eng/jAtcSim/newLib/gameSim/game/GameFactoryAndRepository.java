@@ -475,7 +475,7 @@ public class GameFactoryAndRepository {
 
     // eSystem
     //getItemsProducer(AirplaneList.createForAirplane()), null, ctx)
-    //ctx.loader.setDeserializer(AirplaneList.class, AirplaneList.getAirplaneListForAirplanesDeserializer());
+    //ctx.setDeserializer(AirplaneList.class, AirplaneList.getAirplaneListForAirplanesDeserializer());
     ctx.setDeserializer(EList.class, getItemsProducer(() -> new EList<>(), Object.class, ctx));
     ctx.setDeserializer(EDistinctList.class, getItemsProducer(() -> new EDistinctList<>(), Object.class, ctx));
     ctx.setDeserializer(ESet.class, getItemsProducer(() -> new ESet<>(), Object.class, ctx));
@@ -528,7 +528,7 @@ public class GameFactoryAndRepository {
     Consumer2<T, XElement> ret = (lst, e) -> {
       if (saveItemsType)
         e.setAttribute("__type", lst.getClass().getName());
-      ctx.saveItems(lst, expectedItemType, e);
+      ctx.objects.saveItems(lst, expectedItemType, e);
     };
 
     return ret;
@@ -576,7 +576,7 @@ public class GameFactoryAndRepository {
     Consumer2<T, XElement> ret = (lst, e) -> {
       if (saveItemsType)
         e.setAttribute("__type", lst.getClass().getName());
-      ctx.saveEntries(lst, expectedKeyType, expectedValueType, e);
+      ctx.objects.saveEntries(lst, expectedKeyType, expectedValueType, e);
     };
 
     return ret;

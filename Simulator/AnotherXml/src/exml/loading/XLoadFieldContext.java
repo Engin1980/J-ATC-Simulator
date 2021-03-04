@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-class XLoadFieldContext {
+public class XLoadFieldContext {
 
   private final XLoadContext ctx;
   private final UsedFieldEvidence usedFieldEvidence = new UsedFieldEvidence();

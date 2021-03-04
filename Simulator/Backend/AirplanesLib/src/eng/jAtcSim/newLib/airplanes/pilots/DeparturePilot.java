@@ -2,13 +2,13 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
 public class DeparturePilot extends BasicPilot {
 
   @XConstructor
-  private DeparturePilot(XContext ctx) {
+  private DeparturePilot(XLoadContext ctx) {
     super(ctx);
   }
 

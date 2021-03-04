@@ -15,7 +15,7 @@ import java.util.Map;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-class XSaveObjectContext {
+public class XSaveObjectContext {
   private final XSaveContext ctx;
   private final ISet<Object> processedObjects = new ESet<>();
 

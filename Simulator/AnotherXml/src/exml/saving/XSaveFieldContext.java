@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-class XSaveFieldContext {
+public class XSaveFieldContext {
   private static class ProcessFieldInfo {
     public static ProcessFieldInfo createSkipped() {
       ProcessFieldInfo ret = new ProcessFieldInfo();
@@ -57,6 +57,10 @@ class XSaveFieldContext {
       saveFieldToElement(obj, fieldName, elm);
 
     ctx.log.decreaseIndent();
+  }
+
+  public void ignoreFields(Object obj, String... fieldNames){
+    this.usedFieldEvidence.add(obj, fieldNames);
   }
 
   @Deprecated

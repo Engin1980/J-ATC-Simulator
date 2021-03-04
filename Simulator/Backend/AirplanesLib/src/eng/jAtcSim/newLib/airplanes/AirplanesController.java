@@ -14,7 +14,7 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XIgnored;
 
 public class AirplanesController implements IXPersistable {
@@ -60,13 +60,13 @@ public class AirplanesController implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveFieldItems(this, "planes", Airplane.class, elm);
+  public void save(XElement elm, XSaveContext ctx) {
+    ctx.saveFieldItems(this, "planes", Airplane.class, elm);
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
-    ctx.loader.loadFieldItems(this, "planes", this.planes, Airplane.class, elm);
+  public void load(XElement elm, XLoadContext ctx) {
+    ctx.fields.loadFieldItems(this, "planes", this.planes, Airplane.class, elm);
     this.publicPlanes.addMany(this.planes.select(q->q.getReader()));
   }
 

@@ -8,8 +8,10 @@ import eng.eSystem.functionalInterfaces.Selector;
 import eng.jAtcSim.abstractRadar.global.Color;
 import eng.jAtcSim.abstractRadar.global.Font;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.annotations.XAttribute;
 import exml.annotations.XIgnored;
+import exml.annotations.XOptional;
+import exml.loading.XLoadContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -17,9 +19,9 @@ public class RadarStyleSettings implements IXPersistable {
 
   ///region Inner classes
   public static class ColorWidthSettings implements IXPersistable {
-    @XIgnored
+    @XAttribute
     private Color color;
-    @XIgnored
+    @XAttribute
     private int width;
 
     public Color getColor() {
@@ -37,12 +39,6 @@ public class RadarStyleSettings implements IXPersistable {
     public void setWidth(int width) {
       this.width = width;
     }
-
-    @Override
-    public void load(XElement elm, XContext ctx) {
-      this.color = loadAttributeColor(elm, "color");
-      this.width = loadAttributeInt(elm, "width");
-    }
   }
 
   public static class ColorWidthFontSettings extends ColorWidthSettings {
@@ -58,7 +54,8 @@ public class RadarStyleSettings implements IXPersistable {
   }
 
   public static class ColorWidthLengthSettings extends ColorWidthSettings {
-    @XIgnored private double length;
+    @XAttribute
+    private double length;
 
     public double getLength() {
       return length;
@@ -67,17 +64,13 @@ public class RadarStyleSettings implements IXPersistable {
     public void setLength(double length) {
       this.length = length;
     }
-
-    @Override
-    public void load(XElement elm, XContext ctx) {
-      super.load(elm, ctx);
-      this.length = loadAttributeInt(elm, "length");
-    }
   }
 
   public static class ColorWidthBorderSettings extends ColorWidthSettings {
-    @XIgnored private int borderWidth;
-    @XIgnored private int borderDistance;
+    @XAttribute
+    private int borderWidth;
+    @XAttribute
+    private int borderDistance;
 
     public int getBorderDistance() {
       return borderDistance;
@@ -94,38 +87,32 @@ public class RadarStyleSettings implements IXPersistable {
     public void setBorderWidth(int borderWidth) {
       this.borderWidth = borderWidth;
     }
-
-    @Override
-    public void load(XElement elm, XContext ctx) {
-      super.load(elm, ctx);
-      this.borderDistance = loadAttributeInt(elm, "borderDistance");
-      this.borderWidth = loadAttributeInt(elm, "borderWidth");
-    }
   }
 
   public static class PlaneLabelSettings implements IXPersistable {
 
-    @XIgnored
+    @XOptional
+    @XAttribute
     private boolean visible = true;
-    @XIgnored
+    @XAttribute
     private Color color;
-    @XIgnored
+    @XAttribute
     private Color connectorColor;
-    @XIgnored
+    @XAttribute
     private int pointWidth;
-    @XIgnored
+    @XAttribute
     private int headingLineLength;
-    @XIgnored
+    @XAttribute
     private int historyDotCount;
-    @XIgnored
+    @XAttribute
     private int historyDotStep;
-    @XIgnored
+    @XAttribute
     private int separationRingRadius;
-    @XIgnored
+    @XAttribute
     private String firstLineFormat;
-    @XIgnored
+    @XAttribute
     private String secondLineFormat;
-    @XIgnored
+    @XAttribute
     private String thirdLineFormat;
 
     public Color getColor() {
@@ -211,28 +198,10 @@ public class RadarStyleSettings implements IXPersistable {
     public void setVisible(boolean visible) {
       this.visible = visible;
     }
-
-    @Override
-    public void load(XElement elm, XContext ctx) {
-      this.color = loadAttributeColor(elm, "color");
-      this.connectorColor = loadAttributeColor(elm, "connectorColor");
-      this.pointWidth = loadAttributeInt(elm, "pointWidth");
-      this.headingLineLength = loadAttributeInt(elm, "headingLineLength");
-      this.historyDotCount = loadAttributeInt(elm, "historyDotCount");
-      this.historyDotStep = loadAttributeInt(elm, "historyDotStep");
-      this.separationRingRadius = loadAttributeInt(elm, "separationRingRadius");
-      this.firstLineFormat = elm.getAttribute("firstLineFormat");
-      this.secondLineFormat = elm.getAttribute("secondLineFormat");
-      this.thirdLineFormat = elm.getAttribute("thirdLineFormat");
-      this.visible = elm.tryGetAttribute("visible", "true").equals("true");
-    }
-
-
   }
 
   public static class TextSettings implements IXPersistable {
-    @XIgnored
-    private Color color;
+    @XAttribute private Color color;
     private Font font;
 
     public Color getColor() {
@@ -250,11 +219,6 @@ public class RadarStyleSettings implements IXPersistable {
     public void setFont(Font font) {
       this.font = font;
     }
-
-    @Override
-    public void load(XElement elm, XContext ctx) {
-      this.color = Color.fromHex(elm.getAttribute("color"));
-    }
   }
 
   public static RadarStyleSettings load(String fileName) {
@@ -263,9 +227,9 @@ public class RadarStyleSettings implements IXPersistable {
       XDocument doc = XDocument.load(fileName);
       XElement root = doc.getRoot();
 
-      XContext ctx = new XContext();
+      XLoadContext ctx = new XLoadContext();
       initContext(ctx);
-      ret = ctx.loader.loadObject(root, RadarStyleSettings.class);
+      ret = ctx.loadObject(root, RadarStyleSettings.class);
     } catch (EXmlException e) {
       throw new EApplicationException(sf("Unable to load radar style settings from '%s'.", fileName), e);
     }
@@ -287,21 +251,22 @@ public class RadarStyleSettings implements IXPersistable {
     return ret;
   }
 
-  private static void initContext(XContext ctx) {
-    ctx.loader.setDeserializer(Color.class, e -> Color.fromHex(e.getContent()));
+  private static void initContext(XLoadContext ctx) {
+    ctx.setDeserializer(Color.class, e -> Color.fromHex(e.getContent()));
   }
 
+  //TODEL
+//
+//  private static <T> Selector<XElement, T> getSimpleObjectDeserializer(Class<T> type, XLoadContext ctx) {
+//    Selector<XElement, T> ret = e -> {
+//      T tmp = ctx.loadObject(e, type);
+//      return tmp;
+//    };
+//
+//    return ret;
+//  }
 
-  private static <T> Selector<XElement, T> getSimpleObjectDeserializer(Class<T> type, XContext ctx) {
-    Selector<XElement, T> ret = e -> {
-      T tmp = ctx.loader.loadObject(e, type);
-      return tmp;
-    };
-
-    return ret;
-  }
-
-  @XIgnored public int displayTextDelay;
+  @XAttribute public int displayTextDelay;
   public ColorWidthFontSettings infoLine;
   // runways
   public ColorWidthSettings activeRunway;
@@ -350,9 +315,4 @@ public class RadarStyleSettings implements IXPersistable {
   public Color airproxPartial;
   public Color airproxWarning;
   public Color mrvaError;
-
-  @Override
-  public void load(XElement elm, XContext ctx) {
-    this.displayTextDelay = loadAttributeInt(elm, "displayTextDelay");
-  }
 }

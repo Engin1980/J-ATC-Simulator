@@ -16,7 +16,7 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -103,14 +103,14 @@ class ArrivalManager implements IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
-    IAirplaneList planes = ctx.loader.values.get(IAirplaneList.class);
+  public void load(XElement elm, XLoadContext ctx) {
+    IAirplaneList planes = ctx.values.get(IAirplaneList.class);
 
-    ctx.loader
+    ctx.objects
             .loadItems(elm.getChild("goAroundedPlanesToSwitchList"), Callsign.class)
             .forEach(q -> this.goAroundedPlanesToSwitchList.add(planes.get(q)));
 
-    ctx.loader
+    ctx.objects
             .loadItems(elm.getChild("landingPlanesList"), Callsign.class)
             .forEach(q -> this.landingPlanesList.add(planes.get(q)));
   }
@@ -129,9 +129,9 @@ class ArrivalManager implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveItems(goAroundedPlanesToSwitchList.select(q -> q.getCallsign()), Callsign.class, elm, "goAroundedPlanesToSwitchList");
-    ctx.saver.saveItems(landingPlanesList.select(q -> q.getCallsign()), Callsign.class, elm, "landingPlanesList");
+  public void save(XElement elm, XSaveContext ctx) {
+    ctx.objects.saveItems(goAroundedPlanesToSwitchList.select(q -> q.getCallsign()), Callsign.class, elm, "goAroundedPlanesToSwitchList");
+    ctx.objects.saveItems(landingPlanesList.select(q -> q.getCallsign()), Callsign.class, elm, "landingPlanesList");
   }
 
   public void unregisterFinishedArrival(IAirplane plane) {

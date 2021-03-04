@@ -9,7 +9,7 @@ import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -25,8 +25,8 @@ public class MrvaController implements IXPersistable {
   }
 
   @XConstructor
-  private MrvaController(XContext ctx) {
-    this.mrvas = ctx.loader.parents.get(Area.class).getBorders()
+  private MrvaController(XLoadContext ctx) {
+    this.mrvas = ctx.parents.get(Area.class).getBorders()
             .where(q->q.getType() == Border.eType.mrva);
   }
 
@@ -59,7 +59,7 @@ public class MrvaController implements IXPersistable {
     )) {
       mrvaMaps.tryRemove(airplane);
     } else {
-      Border m = mrvaMaps.tryGet(airplane, null);
+      Border m = mrvaMaps.tryGet(airplane);
       boolean findNewOne = false;
       if (m == null && airplane.getSha().getVerticalSpeed() <= 0)
         findNewOne = true;

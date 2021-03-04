@@ -48,7 +48,7 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -580,7 +580,7 @@ public class Airplane implements IXPersistable {
 
   @XmlConstructor
   @XConstructor
-  private Airplane(XContext ctx) {
+  private Airplane(XLoadContext ctx) {
     this.airplaneType = null;
     this.atcModule = null;
     this.divertModule = null;
@@ -591,7 +591,7 @@ public class Airplane implements IXPersistable {
     this.sha = null;
     this.squawk = null;
 
-    ctx.loader.parents.set(this);
+    ctx.parents.set(this);
   }
 
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk squawk, AirplaneType airplaneType,
@@ -666,7 +666,7 @@ public class Airplane implements IXPersistable {
   }
 
   @Override
-  public void postLoad(XContext ctx) {
+  public void postLoad(XLoadContext ctx) {
     initRecorders();
   }
 

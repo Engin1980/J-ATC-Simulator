@@ -40,7 +40,7 @@ import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
 import eng.newXmlUtils.annotations.XmlConstructor;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -67,7 +67,7 @@ public class AirplanesModule extends SimulationModule {
   }
 
   @XConstructor
-  private AirplanesModule(XContext ctx, AirplanesController airplanesController, AirproxController airproxController, EmergencyAppearanceController emergencyAppearanceController, MoodManager moodManager, MrvaController mrvaController) {
+  private AirplanesModule(XLoadContext ctx, AirplanesController airplanesController, AirproxController airproxController, EmergencyAppearanceController emergencyAppearanceController, MoodManager moodManager, MrvaController mrvaController) {
     super(ctx);
     this.airplanesController = airplanesController;
     this.airproxController = airproxController;
@@ -190,21 +190,21 @@ public class AirplanesModule extends SimulationModule {
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
+  public void save(XElement elm, XSaveContext ctx) {
     super.save(elm, ctx);
-    ctx.saver.ignoreFields(this,
+    ctx.fields.ignoreFields(this,
             "planes4public",
             "planesPrepared");
 
     //TODEL not required
-    // ctx.saver.saveRemainingFields(this, elm);
+    // ctx.saveRemainingFields(this, elm);
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
+  public void load(XElement elm, XLoadContext ctx) {
     super.load(elm, ctx);
 
-    ctx.loader.ignoreFields(this,
+    ctx.fields.ignoreFields(this,
             "planes4public",
             "planesPrepared");
   }

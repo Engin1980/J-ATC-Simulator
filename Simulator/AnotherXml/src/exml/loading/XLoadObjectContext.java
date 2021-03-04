@@ -15,7 +15,7 @@ import java.util.Set;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-class XLoadObjectContext {
+public class XLoadObjectContext {
   private final XLoadContext ctx;
 
   XLoadObjectContext(XLoadContext ctx) {

@@ -24,7 +24,7 @@ import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToRouteCommand;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -156,44 +156,44 @@ class DepartureManager implements IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
-    IAirplaneList planes = ctx.loader.values.get(IAirplaneList.class);
+  public void load(XElement elm, XLoadContext ctx) {
+    IAirplaneList planes = ctx.values.get(IAirplaneList.class);
 
-    ctx.loader
+    ctx.objects
             .loadItems(elm.getChild("holdingPointNotAssigned"), Callsign.class)
             .forEach(q -> this.holdingPointNotAssigned.add(planes.get(q)));
 
-    ctx.loader
+    ctx.objects
             .loadItems(elm.getChild("holdingPointWaitingForAppSwitchConfirmation"), Callsign.class)
             .forEach(q -> this.holdingPointWaitingForAppSwitchConfirmation.add(planes.get(q)));
 
-    ctx.loader
+    ctx.objects
             .loadItems(elm.getChild("holdingPointReady"), Callsign.class)
             .forEach(q -> this.holdingPointReady.add(planes.get(q)));
 
-    ctx.loader
+    ctx.objects
             .loadItems(elm.getChild("departing"), Callsign.class)
             .forEach(q -> this.departing.add(planes.get(q)));
 
-    ctx.loader
+    ctx.objects
             .loadEntries(elm.getChild("lastDepartingPlane"), String.class, Callsign.class)
             .forEach(q -> {
-              ActiveRunwayThreshold k = ctx.loader.parents.get(Airport.class).getRunwayThreshold(q.getKey());
-              IAirplane v = ctx.loader.values.get(IAirplaneList.class).get(q.getValue());
+              ActiveRunwayThreshold k = ctx.parents.get(Airport.class).getRunwayThreshold(q.getKey());
+              IAirplane v = ctx.values.get(IAirplaneList.class).get(q.getValue());
               this.lastDepartingPlane.set(k, v);
             });
 
-    ctx.loader
+    ctx.objects
             .loadEntries(elm.getChild("departureSwitchAltitude"), Callsign.class, Double.class)
             .forEach(q -> {
-              IAirplane k = ctx.loader.values.get(IAirplaneList.class).get(q.getKey());
+              IAirplane k = ctx.values.get(IAirplaneList.class).get(q.getKey());
               this.departureSwitchAltitude.set(k, q.getValue());
             });
 
-    ctx.loader
+    ctx.objects
             .loadEntries(elm.getChild("holdingPointWaitingTimeMap"), Callsign.class, EDayTimeStamp.class)
             .forEach(q -> {
-              IAirplane k = ctx.loader.values.get(IAirplaneList.class).get(q.getKey());
+              IAirplane k = ctx.values.get(IAirplaneList.class).get(q.getKey());
               this.holdingPointWaitingTimeMap.set(k, q.getValue());
             });
   }
@@ -218,17 +218,17 @@ class DepartureManager implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveItems(holdingPointNotAssigned.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointNotAssigned");
-    ctx.saver.saveItems(holdingPointWaitingForAppSwitchConfirmation.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointWaitingForAppSwitchConfirmation");
-    ctx.saver.saveItems(holdingPointReady.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointReady");
-    ctx.saver.saveItems(departing.select(q -> q.getCallsign()), Callsign.class, elm, "departing");
+  public void save(XElement elm, XSaveContext ctx) {
+    ctx.objects.saveItems(holdingPointNotAssigned.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointNotAssigned");
+    ctx.objects.saveItems(holdingPointWaitingForAppSwitchConfirmation.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointWaitingForAppSwitchConfirmation");
+    ctx.objects.saveItems(holdingPointReady.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointReady");
+    ctx.objects.saveItems(departing.select(q -> q.getCallsign()), Callsign.class, elm, "departing");
 
-    ctx.saver.saveEntries(this.lastDepartingPlane.select(q -> q.getName(), q -> q.getCallsign()),
+    ctx.objects.saveEntries(this.lastDepartingPlane.select(q -> q.getName(), q -> q.getCallsign()),
             String.class, Callsign.class, elm, "lastDepartingPlane");
-    ctx.saver.saveEntries(this.holdingPointWaitingTimeMap.select(q -> q.getCallsign(), q -> q),
+    ctx.objects.saveEntries(this.holdingPointWaitingTimeMap.select(q -> q.getCallsign(), q -> q),
             Callsign.class, EDayTimeStamp.class, elm, "holdingPointWaitingTimeMap");
-    ctx.saver.saveEntries(this.departureSwitchAltitude.select(q -> q.getCallsign(), q -> q),
+    ctx.objects.saveEntries(this.departureSwitchAltitude.select(q -> q.getCallsign(), q -> q),
             Callsign.class, Double.class, elm, "departureSwitchAltitude");
   }
 

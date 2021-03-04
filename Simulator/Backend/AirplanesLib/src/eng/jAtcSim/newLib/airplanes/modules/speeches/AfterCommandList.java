@@ -21,7 +21,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -320,15 +320,15 @@ public class AfterCommandList implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveFieldItems(this, "ex", AFItem.class, elm);
-    ctx.saver.saveFieldItems(this, "rt", AFItem.class, elm);
+  public void save(XElement elm, XSaveContext ctx) {
+    ctx.saveFieldItems(this, "ex", AFItem.class, elm);
+    ctx.saveFieldItems(this, "rt", AFItem.class, elm);
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
-    ctx.loader.loadFieldItems(this, "ex", this.ex, AFItem.class, elm);
-    ctx.loader.loadFieldItems(this, "rt", this.rt, AFItem.class, elm);
+  public void load(XElement elm, XLoadContext ctx) {
+    ctx.fields.loadFieldItems(this, "ex", this.ex, AFItem.class, elm);
+    ctx.fields.loadFieldItems(this, "rt", this.rt, AFItem.class, elm);
   }
 
   public String toLogString() {

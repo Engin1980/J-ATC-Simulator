@@ -9,7 +9,7 @@ import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.stats.context.IStatsAcc;
 import eng.jAtcSim.newLib.stats.context.StatsAcc;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
 public class StatsModule extends SimulationModule {
@@ -23,7 +23,7 @@ public class StatsModule extends SimulationModule {
   }
 
   @XConstructor
-  public StatsModule(XContext ctx) {
+  public StatsModule(XLoadContext ctx) {
     super(ctx);
     this.statsProvider = null;
   }

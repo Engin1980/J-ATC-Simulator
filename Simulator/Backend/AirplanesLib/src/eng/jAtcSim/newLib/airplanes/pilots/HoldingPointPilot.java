@@ -4,7 +4,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
 public class HoldingPointPilot extends Pilot {
@@ -13,7 +13,7 @@ public class HoldingPointPilot extends Pilot {
   }
 
   @XConstructor
-  private HoldingPointPilot(XContext ctx) {
+  private HoldingPointPilot(XLoadContext ctx) {
     super(ctx);
   }
 

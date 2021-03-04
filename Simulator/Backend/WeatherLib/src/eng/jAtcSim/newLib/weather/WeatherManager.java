@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.weather.contextLocal.Context;
 import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -18,8 +18,8 @@ public class WeatherManager implements IXPersistable {
 
   @XConstructor
   @XmlConstructor
-  private WeatherManager(XContext ctx) {
-    provider = ctx.loader.values.get(WeatherProvider.class);
+  private WeatherManager(XLoadContext ctx) {
+    provider = ctx.values.get(WeatherProvider.class);
   }
 
   public WeatherManager(WeatherProvider provider) {

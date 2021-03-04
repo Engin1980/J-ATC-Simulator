@@ -35,7 +35,7 @@ import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.newXmlUtils.annotations.XmlConstructor;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -257,7 +257,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void postLoad(XContext ctx) {
+  public void postLoad(XLoadContext ctx) {
     Context.getArea().setCurrentRunwayConfiguration(this.inUseInfo.current);
     Context.getArea().setScheduledRunwayConfiguration(this.inUseInfo.scheduled);
   }

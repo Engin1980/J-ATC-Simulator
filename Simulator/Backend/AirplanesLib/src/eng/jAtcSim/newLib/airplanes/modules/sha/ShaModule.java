@@ -15,7 +15,7 @@ import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.NavigatorResult;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
 public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
@@ -95,7 +95,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private final RestrictableItem targetSpeed;
 
   @XConstructor
-  private ShaModule(XContext ctx,
+  private ShaModule(XLoadContext ctx,
                     InertialValue altitude, HeadingInertialValue heading,
                     InertialValue speed, RestrictableItem targetAltitude,
                     RestrictableItem targetSpeed) {
@@ -377,13 +377,13 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
+  public void save(XElement elm, XSaveContext ctx) {
     super.save(elm, ctx);
-    ctx.saver.saveRemainingFields(this, elm);
+    ctx.fields.saveRemainingFields(this, elm);
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
+  public void load(XElement elm, XLoadContext ctx) {
     super.load(elm, ctx);
   }
 }

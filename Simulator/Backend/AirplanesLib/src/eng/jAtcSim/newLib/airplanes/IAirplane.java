@@ -7,7 +7,7 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 
 public interface IAirplane extends IXPersistable {
   IAirplaneAtc getAtc();
@@ -41,12 +41,12 @@ public interface IAirplane extends IXPersistable {
   }
 
   @Override
-  default void load(XElement elm, XContext ctx) {
+  default void load(XElement elm, XLoadContext ctx) {
 
   }
 
   @Override
-  default void save(XElement elm, XContext ctx) {
+  default void save(XElement elm, XSaveContext ctx) {
     elm.setContent(this.getCallsign().toString(true));
   }
 }

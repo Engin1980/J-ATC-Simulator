@@ -7,7 +7,7 @@ import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
 public class DivertModule extends Module {
@@ -27,7 +27,7 @@ public class DivertModule extends Module {
   private boolean possible = true;
 
   @XConstructor
-  private DivertModule(XContext ctx, EDayTimeStamp divertTime, int lastAnnouncedMinute, boolean possible) {
+  private DivertModule(XLoadContext ctx, EDayTimeStamp divertTime, int lastAnnouncedMinute, boolean possible) {
     super(ctx);
     this.divertTime = divertTime;
     this.lastAnnouncedMinute = lastAnnouncedMinute;
@@ -57,14 +57,14 @@ public class DivertModule extends Module {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
+  public void load(XElement elm, XLoadContext ctx) {
     super.load(elm, ctx);
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
+  public void save(XElement elm, XSaveContext ctx) {
     super.save(elm, ctx);
-    ctx.saver.saveRemainingFields(this, elm);
+    ctx.fields.saveRemainingFields(this, elm);
   }
 
   private void checkForDivert() {

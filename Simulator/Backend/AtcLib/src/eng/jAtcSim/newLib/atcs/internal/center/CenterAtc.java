@@ -33,7 +33,7 @@ import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 import eng.newXmlUtils.annotations.XmlConstructor;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -217,25 +217,25 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
-    IAirplaneList planes = ctx.loader.values.get(IAirplaneList.class);
+  public void load(XElement elm, XLoadContext ctx) {
+    IAirplaneList planes = ctx.values.get(IAirplaneList.class);
 
-    ctx.loader
+    ctx.objects
             .loadItems(elm.getChild("closeArrivals"), Callsign.class)
             .select(q -> planes.get(q))
             .forEach(q -> this.closeArrivals.add(q));
 
-    ctx.loader
+    ctx.objects
             .loadItems(elm.getChild("farArrivals"), Callsign.class)
             .select(q -> planes.get(q))
             .forEach(q -> this.farArrivals.add(q));
 
-    ctx.loader
+    ctx.objects
             .loadItems(elm.getChild("middleArrivals"), Callsign.class)
             .select(q -> planes.get(q))
             .forEach(q -> this.middleArrivals.add(q));
 
-    ctx.loader
+    ctx.objects
             .loadItems(elm.getChild("departures"), Callsign.class)
             .select(q -> planes.get(q))
             .forEach(q -> this.departures.add(q));
@@ -249,11 +249,11 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveItems(this.closeArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "closeArrivals");
-    ctx.saver.saveItems(this.farArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "farArrivals");
-    ctx.saver.saveItems(this.middleArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "middleArrivals");
-    ctx.saver.saveItems(this.departures.select(q -> q.getCallsign()), Callsign.class, elm, "departures");
+  public void save(XElement elm, XSaveContext ctx) {
+    ctx.objects.saveItems(this.closeArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "closeArrivals");
+    ctx.objects.saveItems(this.farArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "farArrivals");
+    ctx.objects.saveItems(this.middleArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "middleArrivals");
+    ctx.objects.saveItems(this.departures.select(q -> q.getCallsign()), Callsign.class, elm, "departures");
   }
 
   @Override

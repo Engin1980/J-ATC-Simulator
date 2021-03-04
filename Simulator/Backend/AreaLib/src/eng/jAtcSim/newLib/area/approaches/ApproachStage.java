@@ -9,7 +9,7 @@ import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -70,13 +70,13 @@ public class ApproachStage implements IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
-    ctx.loader.loadFieldItems(this, "errorConditions", new ESet<>(), ApproachErrorCondition.class, elm);
+  public void load(XElement elm, XLoadContext ctx) {
+    ctx.fields.loadFieldItems(this, "errorConditions", new ESet<>(), ApproachErrorCondition.class, elm);
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveFieldItems(this, "errorConditions",
+  public void save(XElement elm, XSaveContext ctx) {
+    ctx.saveFieldItems(this, "errorConditions",
             ApproachErrorCondition.class, elm);
   }
 }

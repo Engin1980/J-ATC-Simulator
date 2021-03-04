@@ -12,7 +12,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -26,7 +26,7 @@ public class TimerModule extends SimulationModule {
   @XIgnored private boolean tickIntervalChanged = false;
 
   @XConstructor
-  private TimerModule(XContext ctx) {
+  private TimerModule(XLoadContext ctx) {
     super(ctx);
   }
 

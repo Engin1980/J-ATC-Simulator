@@ -21,7 +21,7 @@ import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -103,8 +103,8 @@ public class AtcProvider implements IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
-    ctx.loader.loadFieldItems(this, "atcs", new AtcList(), Atc.class, elm);
+  public void load(XElement elm, XLoadContext ctx) {
+    ctx.fields.loadFieldItems(this, "atcs", new AtcList(), Atc.class, elm);
   }
 
   public void registerNewPlane(AtcId atcId, Callsign callsign) {
@@ -113,8 +113,8 @@ public class AtcProvider implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveFieldItems(this, "atcs", Atc.class, elm);
+  public void save(XElement elm, XSaveContext ctx) {
+    ctx.saveFieldItems(this, "atcs", Atc.class, elm);
   }
 
   public RunwayConfiguration tryGetSchedulerRunwayConfiguration() {

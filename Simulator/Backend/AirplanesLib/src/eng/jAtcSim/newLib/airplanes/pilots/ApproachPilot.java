@@ -33,7 +33,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ThenCommand;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -62,8 +62,8 @@ public class ApproachPilot extends Pilot {
   private int height;
 
   @XConstructor
-  private ApproachPilot(XContext ctx) {
-    super(ctx.loader.parents.get(Airplane.class));
+  private ApproachPilot(XLoadContext ctx) {
+    super(ctx.parents.get(Airplane.class));
     this.stages = null;
     this.gaRouteCommands = null;
     this.threshold = null;
@@ -139,18 +139,18 @@ public class ApproachPilot extends Pilot {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
+  public void load(XElement elm, XLoadContext ctx) {
     super.load(elm, ctx);
 
-    ctx.loader.loadFieldItems(this, "stages", new EList<>(), ApproachStage.class, elm);
-    ctx.loader.loadFieldItems(this, "gaRouteCommands", new EList<>(), ICommand.class, elm);
+    ctx.fields.loadFieldItems(this, "stages", new EList<>(), ApproachStage.class, elm);
+    ctx.fields.loadFieldItems(this, "gaRouteCommands", new EList<>(), ICommand.class, elm);
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
+  public void save(XElement elm, XSaveContext ctx) {
     super.save(elm, ctx);
-    ctx.saver.saveFieldItems(this, "stages", ApproachStage.class, elm);
-    ctx.saver.saveFieldItems(this, "gaRouteCommands", ICommand.class, elm);
+    ctx.saveFieldItems(this, "stages", ApproachStage.class, elm);
+    ctx.saveFieldItems(this, "gaRouteCommands", ICommand.class, elm);
   }
 
   @Override

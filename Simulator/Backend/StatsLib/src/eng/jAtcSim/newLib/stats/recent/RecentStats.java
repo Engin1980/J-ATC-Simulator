@@ -12,6 +12,8 @@ import eng.jAtcSim.newLib.stats.model.ElapsedSecondDurationModel;
 import eng.jAtcSim.newLib.stats.properties.TimedValue;
 import exml.IXPersistable;
 import exml.annotations.XIgnored;
+import exml.loading.XLoadContext;
+import exml.saving.XSaveContext;
 
 public class RecentStats implements IXPersistable {
 
@@ -163,33 +165,33 @@ public class RecentStats implements IXPersistable {
   private int finishedDepartures;
 
   @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveFieldItems(this, "mrvaErrors", TimedValue.class, elm);
-    ctx.saver.saveFieldItems(this, "airproxErrors", TimedValue.class, elm);
-    ctx.saver.saveFieldItems(this, "planeDelays", TimedValue.class, elm);
-    ctx.saver.saveFieldItems(this, "holdingPointMaximalCount", TimedValue.class, elm);
-    ctx.saver.saveFieldItems(this, "holdingPointDelays", TimedValue.class, elm);
-    ctx.saver.saveFieldItems(this, "maximumArrivals", TimedValue.class, elm);
-    ctx.saver.saveFieldItems(this, "maximumDepartures", TimedValue.class, elm);
-    ctx.saver.saveFieldItems(this, "maximumPlanes", TimedValue.class, elm);
-    ctx.saver.saveFieldItems(this, "maximumArrivalsUnderApp", TimedValue.class, elm);
-    ctx.saver.saveFieldItems(this, "maximumDeparturesUnderApp", TimedValue.class, elm);
-    ctx.saver.saveFieldItems(this, "maximumPlanesUnderApp", TimedValue.class, elm);
+  public void save(XElement elm, XSaveContext ctx) {
+    ctx.saveFieldItems(this, "mrvaErrors", TimedValue.class, elm);
+    ctx.saveFieldItems(this, "airproxErrors", TimedValue.class, elm);
+    ctx.saveFieldItems(this, "planeDelays", TimedValue.class, elm);
+    ctx.saveFieldItems(this, "holdingPointMaximalCount", TimedValue.class, elm);
+    ctx.saveFieldItems(this, "holdingPointDelays", TimedValue.class, elm);
+    ctx.saveFieldItems(this, "maximumArrivals", TimedValue.class, elm);
+    ctx.saveFieldItems(this, "maximumDepartures", TimedValue.class, elm);
+    ctx.saveFieldItems(this, "maximumPlanes", TimedValue.class, elm);
+    ctx.saveFieldItems(this, "maximumArrivalsUnderApp", TimedValue.class, elm);
+    ctx.saveFieldItems(this, "maximumDeparturesUnderApp", TimedValue.class, elm);
+    ctx.saveFieldItems(this, "maximumPlanesUnderApp", TimedValue.class, elm);
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
-    ctx.loader.loadFieldItems(this, "mrvaErrors", this.mrvaErrors, TimedValue.class, elm);
-    ctx.loader.loadFieldItems(this, "airproxErrors", this.airproxErrors, TimedValue.class, elm);
-    ctx.loader.loadFieldItems(this, "planeDelays", this.planeDelays, TimedValue.class, elm);
-    ctx.loader.loadFieldItems(this, "holdingPointMaximalCount", this.holdingPointMaximalCount, TimedValue.class, elm);
-    ctx.loader.loadFieldItems(this, "holdingPointDelays", this.holdingPointDelays, TimedValue.class, elm);
-    ctx.loader.loadFieldItems(this, "maximumArrivals", this.maximumArrivals, TimedValue.class, elm);
-    ctx.loader.loadFieldItems(this, "maximumDepartures", this.maximumDepartures, TimedValue.class, elm);
-    ctx.loader.loadFieldItems(this, "maximumPlanes", this.maximumPlanes, TimedValue.class, elm);
-    ctx.loader.loadFieldItems(this, "maximumArrivalsUnderApp", this.maximumArrivalsUnderApp, TimedValue.class, elm);
-    ctx.loader.loadFieldItems(this, "maximumDeparturesUnderApp", this.maximumDeparturesUnderApp, TimedValue.class, elm);
-    ctx.loader.loadFieldItems(this, "maximumPlanesUnderApp", this.maximumPlanesUnderApp, TimedValue.class, elm);
+  public void load(XElement elm, XLoadContext ctx) {
+    ctx.fields.loadFieldItems(this, "mrvaErrors", this.mrvaErrors, TimedValue.class, elm);
+    ctx.fields.loadFieldItems(this, "airproxErrors", this.airproxErrors, TimedValue.class, elm);
+    ctx.fields.loadFieldItems(this, "planeDelays", this.planeDelays, TimedValue.class, elm);
+    ctx.fields.loadFieldItems(this, "holdingPointMaximalCount", this.holdingPointMaximalCount, TimedValue.class, elm);
+    ctx.fields.loadFieldItems(this, "holdingPointDelays", this.holdingPointDelays, TimedValue.class, elm);
+    ctx.fields.loadFieldItems(this, "maximumArrivals", this.maximumArrivals, TimedValue.class, elm);
+    ctx.fields.loadFieldItems(this, "maximumDepartures", this.maximumDepartures, TimedValue.class, elm);
+    ctx.fields.loadFieldItems(this, "maximumPlanes", this.maximumPlanes, TimedValue.class, elm);
+    ctx.fields.loadFieldItems(this, "maximumArrivalsUnderApp", this.maximumArrivalsUnderApp, TimedValue.class, elm);
+    ctx.fields.loadFieldItems(this, "maximumDeparturesUnderApp", this.maximumDeparturesUnderApp, TimedValue.class, elm);
+    ctx.fields.loadFieldItems(this, "maximumPlanesUnderApp", this.maximumPlanesUnderApp, TimedValue.class, elm);
   }
 
   public void elapseSecond(AnalysedPlanes analysedPlanes) {

@@ -8,7 +8,7 @@ import eng.eSystem.validation.EAssert;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import eng.newXmlUtils.annotations.XmlConstructorParameter;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -77,13 +77,13 @@ class HeadingInertialValue implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveFieldItems(this, "thresholds", Double.class, elm);
+  public void save(XElement elm, XSaveContext ctx) {
+    ctx.saveFieldItems(this, "thresholds", Double.class, elm);
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
-    ctx.loader.loadFieldItems(this, "thresholds", this.thresholds, Double.class, elm);
+  public void load(XElement elm, XLoadContext ctx) {
+    ctx.fields.loadFieldItems(this, "thresholds", this.thresholds, Double.class, elm);
   }
 
   private void buildHashMap() {

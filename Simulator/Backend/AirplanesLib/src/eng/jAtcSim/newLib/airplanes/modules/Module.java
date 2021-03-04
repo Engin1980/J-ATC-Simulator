@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.IAirplaneWriter;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 
@@ -17,8 +17,8 @@ public abstract class Module implements IXPersistable {
   @XIgnored protected final IAirplaneWriter wrt;
 
   @XConstructor
-  protected Module(XContext ctx){
-    this(ctx.loader.parents.get(Airplane.class));
+  protected Module(XLoadContext ctx){
+    this(ctx.parents.get(Airplane.class));
   }
 
   protected Module(Airplane plane) {

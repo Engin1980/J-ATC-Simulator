@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.newXmlUtils.annotations.XmlConstructor;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
 public class AtcModule extends Module {
@@ -16,7 +16,7 @@ public class AtcModule extends Module {
 
   @XmlConstructor
   @XConstructor
-  private AtcModule(XContext ctx) {
+  private AtcModule(XLoadContext ctx) {
     super(ctx);
   }
 
@@ -69,13 +69,13 @@ public class AtcModule extends Module {
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
+  public void save(XElement elm, XSaveContext ctx) {
     super.save(elm, ctx);
-    ctx.saver.saveRemainingFields(this, elm);
+    ctx.fields.saveRemainingFields(this, elm);
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
+  public void load(XElement elm, XLoadContext ctx) {
     super.load(elm, ctx);
   }
 }

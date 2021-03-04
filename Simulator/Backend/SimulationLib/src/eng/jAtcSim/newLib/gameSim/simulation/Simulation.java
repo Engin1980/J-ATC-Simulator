@@ -47,12 +47,12 @@ import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
-import eng.jAtcSim.newLib.weather.WeatherProvider;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
-import exml.XContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
+import exml.loading.XLoadContext;
+import exml.saving.XSaveContext;
 
 public class Simulation implements IXPersistable {
 
@@ -198,7 +198,7 @@ public class Simulation implements IXPersistable {
 
   @XConstructor
   @XmlConstructor
-  private Simulation(XContext ctx) {
+  private Simulation(XLoadContext ctx) {
     this.now = new EDayTimeRun(0);
     SharedAcc sharedContext = new SharedAcc(
             Context.getShared().getAirportIcao(),
@@ -222,11 +222,11 @@ public class Simulation implements IXPersistable {
     this.weatherModule = null;
 
     this.worldModule = new WorldModule(this,
-            ctx.loader.parents.get(Area.class),
-            ctx.loader.parents.get(Airport.class),
-            ctx.loader.values.get(AirplaneTypes.class),
-            ctx.loader.values.get(AirlinesFleets.class),
-            ctx.loader.values.get(GeneralAviationFleets.class));
+            ctx.parents.get(Area.class),
+            ctx.parents.get(Airport.class),
+            ctx.values.get(AirplaneTypes.class),
+            ctx.values.get(AirlinesFleets.class),
+            ctx.values.get(GeneralAviationFleets.class));
   }
 
   public Simulation(
@@ -325,13 +325,13 @@ public class Simulation implements IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
-    ctx.loader.parents.set(this);
+  public void load(XElement elm, XLoadContext ctx) {
+    ctx.parents.set(this);
 
-    ctx.loader.loadField(this, "airplanesModule", elm);
+    ctx.fields.loadField(this, "airplanesModule", elm);
     IAirplaneList lst = new IAirplaneList();
     lst.addMany(this.airplanesModule.getPlanes());
-    ctx.loader.values.set(lst);
+    ctx.values.set(lst);
   }
 
   //TODEL
@@ -346,8 +346,8 @@ public class Simulation implements IXPersistable {
 //  }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveRemainingFields(this, elm);
+  public void save(XElement elm, XSaveContext ctx) {
+    ctx.fields.saveRemainingFields(this, elm);
   }
 
   private void elapseSecond() {

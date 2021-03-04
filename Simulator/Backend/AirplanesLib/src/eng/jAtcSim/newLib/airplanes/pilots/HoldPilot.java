@@ -14,7 +14,7 @@ import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
 public class HoldPilot extends Pilot {
@@ -42,8 +42,8 @@ public class HoldPilot extends Pilot {
   public LeftRight turn;
 
   @XConstructor
-  private HoldPilot(XContext ctx) {
-    super(ctx.loader.parents.get(Airplane.class));
+  private HoldPilot(XLoadContext ctx) {
+    super(ctx.parents.get(Airplane.class));
   }
 
   public HoldPilot(Airplane plane, Navaid navaid, int inboundRadial, LeftRight turn) {
@@ -181,14 +181,14 @@ public class HoldPilot extends Pilot {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
+  public void load(XElement elm, XLoadContext ctx) {
     super.load(elm, ctx);
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
+  public void save(XElement elm, XSaveContext ctx) {
     super.save(elm, ctx);
-    ctx.saver.saveRemainingFields(this, elm);
+    ctx.fields.saveRemainingFields(this, elm);
   }
 
   private int getAfterSecondTurnHeading() {

@@ -8,7 +8,7 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
 public class TakeOffPilot extends Pilot {
@@ -16,7 +16,7 @@ public class TakeOffPilot extends Pilot {
   private final ActiveRunwayThreshold takeOffThreshold;
 
   @XConstructor
-  public TakeOffPilot(XContext ctx) {
+  public TakeOffPilot(XLoadContext ctx) {
     super(ctx);
     this.takeOffThreshold = null;
   }
@@ -64,14 +64,14 @@ public class TakeOffPilot extends Pilot {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
+  public void load(XElement elm, XLoadContext ctx) {
     super.load(elm, ctx);
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
+  public void save(XElement elm, XSaveContext ctx) {
     super.save(elm, ctx);
-    ctx.saver.saveRemainingFields(this, elm);
+    ctx.fields.saveRemainingFields(this, elm);
   }
 
   @Override

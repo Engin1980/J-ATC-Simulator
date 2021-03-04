@@ -4,7 +4,7 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
 import java.util.Objects;
