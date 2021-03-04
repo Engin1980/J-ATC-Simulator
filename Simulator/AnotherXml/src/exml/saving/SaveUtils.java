@@ -1,10 +1,10 @@
-package exml;
+package exml.saving;
 
 import eng.eSystem.utilites.ReflectionUtils;
 
-public class TypeUtils {
+class SaveUtils {
 
-  static boolean isTypeSame(Class<?> a, Class<?> b) {
+  public static boolean isTypeSame(Class<?> a, Class<?> b) {
     if (a.isPrimitive())
       if (b.isPrimitive())
         return a.equals(b);

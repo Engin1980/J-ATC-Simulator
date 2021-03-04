@@ -3,12 +3,14 @@ package eng.jAtcSim.newLib.mood;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.newLib.mood.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import exml.IXPersistable;
-import exml.XContext;
 import exml.annotations.XIgnored;
+import exml.loading.XLoadContext;
+import exml.saving.XSaveContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -73,9 +75,12 @@ public class Mood implements IXPersistable {
     return Context.getShared().getNow().toStamp();
   }
 
-  @XIgnored private final IList<Experience<ArrivalExperience>> arrivalExperiences;
-  @XIgnored private final IList<Experience<DepartureExperience>> departureExperiences;
-  @XIgnored private final IList<Experience<SharedExperience>> sharedExperiences;
+  @XIgnored
+  private final IList<Experience<ArrivalExperience>> arrivalExperiences;
+  @XIgnored
+  private final IList<Experience<DepartureExperience>> departureExperiences;
+  @XIgnored
+  private final IList<Experience<SharedExperience>> sharedExperiences;
 
   private Mood(IList<Experience<ArrivalExperience>> arrivalExperiences, IList<Experience<DepartureExperience>> departureExperiences, IList<Experience<SharedExperience>> sharedExperiences) {
     this.arrivalExperiences = arrivalExperiences;
@@ -135,15 +140,15 @@ public class Mood implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XContext ctx) {
-    ctx.saver.saveFieldItems(this, "arrivalExperiences", Experience.class, elm);
-    ctx.saver.saveFieldItems(this, "departureExperiences", Experience.class, elm);
-    ctx.saver.saveFieldItems(this, "sharedExperiences", Experience.class, elm);
+  public void load(XElement elm, XLoadContext ctx) {
+    throw new ToDoException();
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
-
+  public void save(XElement elm, XSaveContext ctx) {
+    ctx.saveFieldItems(this, "arrivalExperiences", Experience.class, elm);
+    ctx.saveFieldItems(this, "departureExperiences", Experience.class, elm);
+    ctx.saveFieldItems(this, "sharedExperiences", Experience.class, elm);
   }
 
   private IList<MoodExperienceResult> evaluateArrivals(int delayInMinutes) {

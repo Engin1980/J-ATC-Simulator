@@ -6,7 +6,6 @@ import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.functionalInterfaces.Consumer2;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.functionalInterfaces.Selector;
@@ -17,8 +16,6 @@ import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.airplaneType.AirplaneTypesXmlContextInit;
 import eng.jAtcSim.newLib.airplanes.AirplaneList;
 import eng.jAtcSim.newLib.airplanes.AirplaneXmlContextInit;
-import eng.jAtcSim.newLib.airplanes.IAirplane;
-import eng.jAtcSim.newLib.airplanes.IAirplaneList;
 import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
@@ -48,7 +45,8 @@ import eng.newXmlUtils.XmlContext;
 import eng.newXmlUtils.implementations.ObjectDeserializer;
 import eng.newXmlUtils.implementations.ObjectSerializer;
 import exml.Constants;
-import exml.XContext;
+import exml.loading.XLoadContext;
+import exml.saving.XSaveContext;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -236,15 +234,15 @@ public class GameFactoryAndRepository {
 
     XElement root = doc.getRoot();
 
-    XContext ctx = new XContext();
+    XLoadContext ctx = new XLoadContext();
     initLoadingContext(ctx);
 
     GameStartupInfo gsi = new GameStartupInfo();
-    gsi.areaSource = ctx.loader.loadObject(root.getChild("areaSource"), AreaSource.class);
-    gsi.airplaneTypesSource = ctx.loader.loadObject(root.getChild("airplaneTypesSource"), AirplaneTypesSource.class);
-    gsi.fleetsSource = ctx.loader.loadObject(root.getChild("fleetsSource"), FleetsSource.class);
-    gsi.trafficSource = ctx.loader.loadObject(root.getChild("trafficSource"), null); // type derived by xml
-    gsi.weatherSource = ctx.loader.loadObject(root.getChild("weatherSource"), null); // type derived by xml
+    gsi.areaSource = ctx.loadObject(root.getChild("areaSource"), AreaSource.class);
+    gsi.airplaneTypesSource = ctx.loadObject(root.getChild("airplaneTypesSource"), AirplaneTypesSource.class);
+    gsi.fleetsSource = ctx.loadObject(root.getChild("fleetsSource"), FleetsSource.class);
+    gsi.trafficSource = ctx.loadObject(root.getChild("trafficSource"), null); // type derived by xml
+    gsi.weatherSource = ctx.loadObject(root.getChild("weatherSource"), null); // type derived by xml
 
     gsi.areaSource.init();
     gsi.airplaneTypesSource.init();
@@ -252,19 +250,19 @@ public class GameFactoryAndRepository {
     gsi.trafficSource.init();
     gsi.weatherSource.init();
 
-    ctx.loader.parents.set(gsi.areaSource.getArea());
-    ctx.loader.parents.set(gsi.areaSource.getActiveAirport());
+    ctx.parents.set(gsi.areaSource.getArea());
+    ctx.parents.set(gsi.areaSource.getActiveAirport());
 
     AtcIdList atcIdList = new AtcIdList();
     atcIdList.addMany(gsi.areaSource.getActiveAirport().getAtcTemplates().select(qq -> qq.toAtcId()));
 
-    ctx.loader.values.set(atcIdList);
-    ctx.loader.values.set(gsi.areaSource.getArea().getNavaids());
-    ctx.loader.values.set(gsi.airplaneTypesSource.getContent());
-    ctx.loader.values.set(gsi.fleetsSource.getContent().companyFleets);
-    ctx.loader.values.set(gsi.fleetsSource.getContent().gaFleets);
-    ctx.loader.values.set(ITrafficModel.class, gsi.trafficSource.getClass());
-    ctx.loader.values.set(WeatherProvider.class, gsi.weatherSource.getContent());
+    ctx.values.set(atcIdList);
+    ctx.values.set(gsi.areaSource.getArea().getNavaids());
+    ctx.values.set(gsi.airplaneTypesSource.getContent());
+    ctx.values.set(gsi.fleetsSource.getContent().companyFleets);
+    ctx.values.set(gsi.fleetsSource.getContent().gaFleets);
+    ctx.values.set(ITrafficModel.class, gsi.trafficSource.getClass());
+    ctx.values.set(WeatherProvider.class, gsi.weatherSource.getContent());
 
     SharedAcc sharedContext = new SharedAcc(
             gsi.areaSource.getActiveAirport().getIcao(),
@@ -274,18 +272,18 @@ public class GameFactoryAndRepository {
     );
     ContextManager.setContext(ISharedAcc.class, sharedContext);
 
-    Simulation simulation = ctx.loader.loadObject(root.getChild("simulation"), Simulation.class);
+    Simulation simulation = ctx.loadObject(root.getChild("simulation"), Simulation.class);
     simulation.init();
 
     PostContracts.checkAndClear();
 
     Game game = new Game(
-        gsi.areaSource,
-        gsi.airplaneTypesSource,
-        gsi.fleetsSource,
-        gsi.trafficSource,
-        gsi.weatherSource,
-        simulation
+            gsi.areaSource,
+            gsi.airplaneTypesSource,
+            gsi.fleetsSource,
+            gsi.trafficSource,
+            gsi.weatherSource,
+            simulation
     );
 
     return game;
@@ -363,11 +361,11 @@ public class GameFactoryAndRepository {
   public void save(IGame game, IMap<String, Object> customData, String fileName) {
     XElement root = new XElement("game");
 
-    XContext ctx = new XContext();
+    XSaveContext ctx = new XSaveContext();
     initSavingContext(ctx);
 
     try {
-      ctx.saver.saveObject(game, root);
+      ctx.saveObject(game, root);
     } catch (Exception ex) {
       System.out.println("Failed to save the whole save file");
       ex.printStackTrace(System.out);
@@ -404,94 +402,94 @@ public class GameFactoryAndRepository {
     }
   }
 
-  private void initSavingContext(XContext ctx) {
+  private void initSavingContext(XSaveContext ctx) {
 
-    ctx.saver.setFormatter(short.class, q -> q.toString());
-    ctx.saver.setFormatter(byte.class, q -> q.toString());
-    ctx.saver.setFormatter(int.class, q -> q.toString());
-    ctx.saver.setFormatter(long.class, q -> q.toString());
-    ctx.saver.setFormatter(float.class, q -> q.toString());
-    ctx.saver.setFormatter(double.class, q -> q.toString());
-    ctx.saver.setFormatter(boolean.class, q -> q.toString());
-    ctx.saver.setFormatter(char.class, q -> q.toString());
-    ctx.saver.setFormatter(Short.class, q -> q.toString());
-    ctx.saver.setFormatter(Byte.class, q -> q.toString());
-    ctx.saver.setFormatter(Integer.class, q -> q.toString());
-    ctx.saver.setFormatter(Long.class, q -> q.toString());
-    ctx.saver.setFormatter(Float.class, q -> q.toString());
-    ctx.saver.setFormatter(Double.class, q -> q.toString());
-    ctx.saver.setFormatter(Boolean.class, q -> q.toString());
-    ctx.saver.setFormatter(Character.class, q -> q.toString());
-    ctx.saver.setFormatter(String.class, v -> v);
-    ctx.saver.setSerializer(ArrayList.class, getItemsConsumer(true, Object.class, ctx));
+    ctx.setFormatter(short.class, q -> q.toString());
+    ctx.setFormatter(byte.class, q -> q.toString());
+    ctx.setFormatter(int.class, q -> q.toString());
+    ctx.setFormatter(long.class, q -> q.toString());
+    ctx.setFormatter(float.class, q -> q.toString());
+    ctx.setFormatter(double.class, q -> q.toString());
+    ctx.setFormatter(boolean.class, q -> q.toString());
+    ctx.setFormatter(char.class, q -> q.toString());
+    ctx.setFormatter(Short.class, q -> q.toString());
+    ctx.setFormatter(Byte.class, q -> q.toString());
+    ctx.setFormatter(Integer.class, q -> q.toString());
+    ctx.setFormatter(Long.class, q -> q.toString());
+    ctx.setFormatter(Float.class, q -> q.toString());
+    ctx.setFormatter(Double.class, q -> q.toString());
+    ctx.setFormatter(Boolean.class, q -> q.toString());
+    ctx.setFormatter(Character.class, q -> q.toString());
+    ctx.setFormatter(String.class, v -> v);
+    ctx.setSerializer(ArrayList.class, getItemsConsumer(true, Object.class, ctx));
 
     // eSystem
-    ctx.saver.setSerializer(AirplaneList.class, getItemsConsumer(false, null, ctx));
-    ctx.saver.setSerializer(EList.class, getItemsConsumer(true, Object.class, ctx));
-    ctx.saver.setSerializer(EDistinctList.class, getItemsConsumer(true, Object.class, ctx));
-    ctx.saver.setSerializer(ESet.class, getItemsConsumer(true, Object.class, ctx));
-    ctx.saver.setSerializer(EMap.class, getEntriesConsumer(true, Object.class, Object.class, ctx));
-    ctx.saver.setFormatter(Coordinate.class, q -> q.getLatitude().toDecimalString(true) + ";" + q.getLongitude().toDecimalString(true));
+    ctx.setSerializer(AirplaneList.class, getItemsConsumer(false, null, ctx));
+    ctx.setSerializer(EList.class, getItemsConsumer(true, Object.class, ctx));
+    ctx.setSerializer(EDistinctList.class, getItemsConsumer(true, Object.class, ctx));
+    ctx.setSerializer(ESet.class, getItemsConsumer(true, Object.class, ctx));
+    ctx.setSerializer(EMap.class, getEntriesConsumer(true, Object.class, Object.class, ctx));
+    ctx.setFormatter(Coordinate.class, q -> q.getLatitude().toDecimalString(true) + ";" + q.getLongitude().toDecimalString(true));
 
     // shared
-    ctx.saver.setFormatter(Callsign.class, q -> q.toString(true));
-    ctx.saver.setFormatter(Restriction.class, q -> q.direction.toString() + ";" + q.value);
-    ctx.saver.setFormatter(EDayTimeStamp.class, v -> v.toDayTimeString());
-    ctx.saver.setFormatter(EDayTimeRun.class, v -> v.toDayTimeString());
-    ctx.saver.setFormatter(ETimeStamp.class, v -> v.toTimeString());
-    ctx.saver.setFormatter(Squawk.class, q -> q.toString());
+    ctx.setFormatter(Callsign.class, q -> q.toString(true));
+    ctx.setFormatter(Restriction.class, q -> q.direction.toString() + ";" + q.value);
+    ctx.setFormatter(EDayTimeStamp.class, v -> v.toDayTimeString());
+    ctx.setFormatter(EDayTimeRun.class, v -> v.toDayTimeString());
+    ctx.setFormatter(ETimeStamp.class, v -> v.toTimeString());
+    ctx.setFormatter(Squawk.class, q -> q.toString());
 
     // area
-    ctx.saver.setFormatter(Navaid.class, q -> q.getName());
-    ctx.saver.setFormatter(ActiveRunwayThreshold.class, q -> q.getName());
+    ctx.setFormatter(Navaid.class, q -> q.getName());
+    ctx.setFormatter(ActiveRunwayThreshold.class, q -> q.getName());
 
     // airplane type
-    ctx.saver.setFormatter(AirplaneType.class, q -> q.name);
+    ctx.setFormatter(AirplaneType.class, q -> q.name);
 
     // atc
-    ctx.saver.setFormatter(AtcId.class, v -> v.getName());
+    ctx.setFormatter(AtcId.class, v -> v.getName());
 
     // airplane
 
   }
 
-  private void initLoadingContext(XContext ctx) {
-    ctx.loader.setParser(short.class, q -> Short.valueOf(q));
-    ctx.loader.setParser(byte.class, q -> Byte.valueOf(q));
-    ctx.loader.setParser(int.class, q -> Integer.valueOf(q));
-    ctx.loader.setParser(long.class, q -> Long.valueOf(q));
-    ctx.loader.setParser(float.class, q -> Float.valueOf(q));
-    ctx.loader.setParser(double.class, q -> Double.valueOf(q));
-    ctx.loader.setParser(boolean.class, q -> Boolean.valueOf(q));
-    ctx.loader.setParser(char.class, q -> q.charAt(0));
-    ctx.loader.setParser(Short.class, q -> Short.valueOf(q));
-    ctx.loader.setParser(Byte.class, q -> Byte.valueOf(q));
-    ctx.loader.setParser(Integer.class, q -> Integer.valueOf(q));
-    ctx.loader.setParser(Long.class, q -> Long.valueOf(q));
-    ctx.loader.setParser(Float.class, q -> Float.valueOf(q));
-    ctx.loader.setParser(Double.class, q -> Double.valueOf(q));
-    ctx.loader.setParser(Boolean.class, q -> Boolean.valueOf(q));
-    ctx.loader.setParser(Character.class, q -> q.charAt(0));
-    ctx.loader.setParser(String.class, q -> q);
-    ctx.loader.setDeserializer(ArrayList.class, getItemsProducer(() -> new ArrayList<>(), Object.class, ctx));
+  private void initLoadingContext(XLoadContext ctx) {
+    ctx.setParser(short.class, q -> Short.valueOf(q));
+    ctx.setParser(byte.class, q -> Byte.valueOf(q));
+    ctx.setParser(int.class, q -> Integer.valueOf(q));
+    ctx.setParser(long.class, q -> Long.valueOf(q));
+    ctx.setParser(float.class, q -> Float.valueOf(q));
+    ctx.setParser(double.class, q -> Double.valueOf(q));
+    ctx.setParser(boolean.class, q -> Boolean.valueOf(q));
+    ctx.setParser(char.class, q -> q.charAt(0));
+    ctx.setParser(Short.class, q -> Short.valueOf(q));
+    ctx.setParser(Byte.class, q -> Byte.valueOf(q));
+    ctx.setParser(Integer.class, q -> Integer.valueOf(q));
+    ctx.setParser(Long.class, q -> Long.valueOf(q));
+    ctx.setParser(Float.class, q -> Float.valueOf(q));
+    ctx.setParser(Double.class, q -> Double.valueOf(q));
+    ctx.setParser(Boolean.class, q -> Boolean.valueOf(q));
+    ctx.setParser(Character.class, q -> q.charAt(0));
+    ctx.setParser(String.class, q -> q);
+    ctx.setDeserializer(ArrayList.class, getItemsProducer(() -> new ArrayList<>(), Object.class, ctx));
 
     // eSystem
     //getItemsProducer(AirplaneList.createForAirplane()), null, ctx)
     //ctx.loader.setDeserializer(AirplaneList.class, AirplaneList.getAirplaneListForAirplanesDeserializer());
-    ctx.loader.setDeserializer(EList.class, getItemsProducer(() -> new EList<>(), Object.class, ctx));
-    ctx.loader.setDeserializer(EDistinctList.class, getItemsProducer(() -> new EDistinctList<>(), Object.class, ctx));
-    ctx.loader.setDeserializer(ESet.class, getItemsProducer(() -> new ESet<>(), Object.class, ctx));
-    ctx.loader.setDeserializer(EMap.class, getEntriesProducer(() -> new EMap<>(), Object.class, Object.class, ctx));
-    ctx.loader.setParser(Coordinate.class, q -> {
+    ctx.setDeserializer(EList.class, getItemsProducer(() -> new EList<>(), Object.class, ctx));
+    ctx.setDeserializer(EDistinctList.class, getItemsProducer(() -> new EDistinctList<>(), Object.class, ctx));
+    ctx.setDeserializer(ESet.class, getItemsProducer(() -> new ESet<>(), Object.class, ctx));
+    ctx.setDeserializer(EMap.class, getEntriesProducer(() -> new EMap<>(), Object.class, Object.class, ctx));
+    ctx.setParser(Coordinate.class, q -> {
       String[] pts = q.split(";");
       NumberFormat nf = new DecimalFormat("00.00000");
       double lat, lng;
       try {
         Number num;
         num = nf.parse(pts[0]);
-        lat = num instanceof Long ? (double)(long)(num) : (double) num;
+        lat = num instanceof Long ? (double) (long) (num) : (double) num;
         num = nf.parse(pts[1]);
-        lng = num instanceof Long ? (double)(long)(num):(double) num;
+        lng = num instanceof Long ? (double) (long) (num) : (double) num;
       } catch (ParseException e) {
         throw new EApplicationException(sf("Failed to parse %s to latitude/longitude coordinate.", q));
       }
@@ -500,61 +498,61 @@ public class GameFactoryAndRepository {
     });
 
     // shared
-    ctx.loader.setParser(Callsign.class, q -> new Callsign(q));
-    ctx.loader.setParser(Restriction.class, q -> {
+    ctx.setParser(Callsign.class, q -> new Callsign(q));
+    ctx.setParser(Restriction.class, q -> {
       String[] pts = q.split(";");
       AboveBelowExactly abe = Enum.valueOf(AboveBelowExactly.class, pts[0]);
       int val = Integer.parseInt(pts[1]);
       return new Restriction(abe, val);
     });
-    ctx.loader.setParser(EDayTimeStamp.class, v -> EDayTimeStamp.parse(v));
-    ctx.loader.setParser(EDayTimeRun.class, v -> EDayTimeRun.parse(v));
-    ctx.loader.setParser(ETimeStamp.class, v -> ETimeStamp.parse(v));
-    ctx.loader.setParser(Squawk.class, v -> Squawk.create(v.toCharArray()));
+    ctx.setParser(EDayTimeStamp.class, v -> EDayTimeStamp.parse(v));
+    ctx.setParser(EDayTimeRun.class, v -> EDayTimeRun.parse(v));
+    ctx.setParser(ETimeStamp.class, v -> ETimeStamp.parse(v));
+    ctx.setParser(Squawk.class, v -> Squawk.create(v.toCharArray()));
 
     // area
-    ctx.loader.setParser(Navaid.class, v -> ctx.loader.values.get(NavaidList.class).get(v));
-    ctx.loader.setParser(ActiveRunwayThreshold.class, v -> ctx.loader.parents.get(Airport.class).getRunwayThreshold(v));
+    ctx.setParser(Navaid.class, v -> ctx.values.get(NavaidList.class).get(v));
+    ctx.setParser(ActiveRunwayThreshold.class, v -> ctx.parents.get(Airport.class).getRunwayThreshold(v));
 
     // airplane type
-    ctx.loader.setParser(AirplaneType.class, v -> ctx.loader.values.get(AirplaneTypes.class).getByName(v));
+    ctx.setParser(AirplaneType.class, v -> ctx.values.get(AirplaneTypes.class).getByName(v));
 
     // atc
-    ctx.loader.setParser(AtcId.class, v -> {
-      AtcIdList atcIds = ctx.loader.values.get(AtcIdList.class);
+    ctx.setParser(AtcId.class, v -> {
+      AtcIdList atcIds = ctx.values.get(AtcIdList.class);
       return atcIds.getFirst(q -> q.getName().equals(v));
     });
   }
 
-  private <T extends Iterable<?>> Consumer2<T, XElement> getItemsConsumer(boolean saveItemsType, Class<?> expectedItemType, XContext ctx) {
+  private <T extends Iterable<?>> Consumer2<T, XElement> getItemsConsumer(boolean saveItemsType, Class<?> expectedItemType, XSaveContext ctx) {
     Consumer2<T, XElement> ret = (lst, e) -> {
       if (saveItemsType)
         e.setAttribute("__type", lst.getClass().getName());
-      ctx.saver.saveItems(lst, expectedItemType, e);
+      ctx.saveItems(lst, expectedItemType, e);
     };
 
     return ret;
   }
 
-  private <T> Selector<XElement, T> getItemsProducer(Producer<Object> listProducer, Class<?> expectedItemType, XContext ctx) {
+  private <T> Selector<XElement, T> getItemsProducer(Producer<Object> listProducer, Class<?> expectedItemType, XLoadContext ctx) {
     Selector<XElement, T> ret = e -> {
       Object target = listProducer.invoke();
-      ctx.loader.loadItems(e, target, expectedItemType);
+      ctx.loadItems(e, target, expectedItemType);
       return (T) target;
     };
 
     return ret;
   }
 
-  private <T> Selector<XElement, T> getEntriesProducer(Producer<Object> mapProducer, Class<?> expectedKeyType, Class<?> expectedValueType, XContext ctx) {
+  private <T> Selector<XElement, T> getEntriesProducer(Producer<Object> mapProducer, Class<?> expectedKeyType, Class<?> expectedValueType, XLoadContext ctx) {
     Selector<XElement, T> ret = e -> {
       ESet<Tuple<?, ?>> entries = new ESet<>();
 
       for (XElement entryElement : e.getChildren(Constants.ENTRY_ELEMENT)) {
         XElement keyElement = entryElement.getChild(Constants.KEY_ELEMENT);
         XElement valueElement = entryElement.getChild(Constants.VALUE_ELEMENT);
-        Object key = ctx.loader.loadObject(keyElement, expectedKeyType);
-        Object value = ctx.loader.loadObject(valueElement, expectedValueType);
+        Object key = ctx.loadObject(keyElement, expectedKeyType);
+        Object value = ctx.loadObject(valueElement, expectedValueType);
 
         entries.add(new Tuple<>(key, value));
       }
@@ -574,11 +572,11 @@ public class GameFactoryAndRepository {
     return ret;
   }
 
-  private <K, V, T extends Iterable<Map.Entry<K, V>>> Consumer2<T, XElement> getEntriesConsumer(boolean saveItemsType, Class<K> expectedKeyType, Class<V> expectedValueType, XContext ctx) {
+  private <K, V, T extends Iterable<Map.Entry<K, V>>> Consumer2<T, XElement> getEntriesConsumer(boolean saveItemsType, Class<K> expectedKeyType, Class<V> expectedValueType, XSaveContext ctx) {
     Consumer2<T, XElement> ret = (lst, e) -> {
       if (saveItemsType)
         e.setAttribute("__type", lst.getClass().getName());
-      ctx.saver.saveEntries(lst, expectedKeyType, expectedValueType, e);
+      ctx.saveEntries(lst, expectedKeyType, expectedValueType, e);
     };
 
     return ret;

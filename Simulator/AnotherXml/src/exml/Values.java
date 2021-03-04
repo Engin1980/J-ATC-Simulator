@@ -19,7 +19,7 @@ public class Values {
     try {
       ret = (T) typeInner.get(type);
     } catch (Exception e) {
-      throw new SimPersistenceExeption(sf("There is no value for type '%s'.", type.getName()), e);
+      throw new IllegalArgumentException(sf("There is no value for type '%s'.", type.getName()), e);
     }
     return ret;
   }

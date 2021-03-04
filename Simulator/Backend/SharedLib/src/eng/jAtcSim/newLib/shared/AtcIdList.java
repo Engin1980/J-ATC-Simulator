@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.shared;
 import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.eXml.XElement;
 import exml.IXPersistable;
-import exml.XContext;
+import exml.loading.XLoadContext;
 
 public class AtcIdList extends EDistinctList<AtcId> implements IXPersistable {
 
@@ -12,7 +12,7 @@ public class AtcIdList extends EDistinctList<AtcId> implements IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XContext ctx) {
-    ctx.loader.setIgnoredFields(this, "selector", "onDuplicateBehavior");
+  public void load(XElement elm, XLoadContext ctx) {
+    ctx.ingoreFields(this, "selector", "onDuplicateBehavior");
   }
 }
