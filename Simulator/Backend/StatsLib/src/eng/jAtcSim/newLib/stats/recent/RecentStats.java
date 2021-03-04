@@ -11,7 +11,6 @@ import eng.jAtcSim.newLib.stats.contextLocal.Context;
 import eng.jAtcSim.newLib.stats.model.ElapsedSecondDurationModel;
 import eng.jAtcSim.newLib.stats.properties.TimedValue;
 import exml.IXPersistable;
-import exml.XContext;
 import exml.annotations.XIgnored;
 
 public class RecentStats implements IXPersistable {

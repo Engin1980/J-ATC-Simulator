@@ -28,6 +28,7 @@ class XSaveFieldContext {
       ret.value = value;
       return ret;
     }
+
     public boolean processField;
     public Field field;
     public Object value;
@@ -35,6 +36,7 @@ class XSaveFieldContext {
     private ProcessFieldInfo() {
     }
   }
+
   private final XSaveContext ctx;
   private final UsedFieldEvidence usedFieldEvidence = new UsedFieldEvidence();
 
@@ -50,9 +52,9 @@ class XSaveFieldContext {
 
     FieldSource source = FieldSource.getFieldSource(field);
     if (source == FieldSource.attribute)
-      saveFieldToAttribute(obj, field, elm);
+      saveFieldToAttribute(obj, fieldName, elm);
     else
-      saveFieldToElement(obj, field, elm);
+      saveFieldToElement(obj, fieldName, elm);
 
     ctx.log.decreaseIndent();
   }
@@ -66,6 +68,41 @@ class XSaveFieldContext {
 
   public void saveFieldItems(Object obj, String itemsFieldName, Class<?> itemType, XElement elm) {
     ProcessFieldInfo pfi = prepareFieldToProcess(obj, itemsFieldName);
+    if (pfi.processField == false)
+      return;
+
+    XElement fieldElement = new XElement(pfi.field.getName());
+    ctx.objects.saveObject(pfi.value, fieldElement);
+    elm.addElement(fieldElement);
+  }
+
+  public void saveFieldToAttribute(Object obj, String fieldName, XElement elm) {
+    ProcessFieldInfo pfi = prepareFieldToProcess(obj, fieldName);
+    if (pfi.processField == false) return;
+
+    if (pfi.value == null) {
+      elm.setAttribute(pfi.field.getName(), Constants.NULL);
+    } else if (ctx.formatters.containsKey(obj.getClass())) {
+      Selector<Object, String> formatter = (Selector<Object, String>) ctx.formatters.get(obj.getClass());
+      String s = formatter.invoke(pfi.value);
+      elm.setAttribute(pfi.field.getName(), s);
+    } else if (pfi.value.getClass().isEnum()) {
+      String s = pfi.value.toString();
+      elm.setAttribute(pfi.field.getName(), s);
+    } else if (pfi.value.getClass().isArray()) {
+      IList<Object> lst = SharedUtils.convertArrayToList(pfi.value);
+      ctx.objects.saveItems(lst, pfi.value.getClass().getComponentType(), elm);
+    } else if (pfi.value instanceof IXPersistable) {
+      IXPersistable persistable = (IXPersistable) pfi.value;
+      persistable.save(elm, this.ctx); // calls custom overload
+      ctx.fields.saveRemainingFields(persistable, elm); // calls global save
+    } else {
+      throw new XSaveException(sf("Don't know how to save instance of '%s'.", pfi.value.getClass()), ctx);
+    }
+  }
+
+  public void saveFieldToElement(Object obj, String fieldName, XElement elm) {
+    ProcessFieldInfo pfi = prepareFieldToProcess(obj, fieldName);
     if (pfi.processField == false)
       return;
 
@@ -103,41 +140,6 @@ class XSaveFieldContext {
         ret = ProcessFieldInfo.createUsed(field, fieldValue);
     }
     return ret;
-  }
-
-  private void saveFieldToAttribute(Object obj, String fieldName, XElement elm) {
-    ProcessFieldInfo pfi = prepareFieldToProcess(obj, fieldName);
-    if (pfi.processField == false)return;
-
-    if (pfi.value == null) {
-      elm.setAttribute(pfi.field.getName(), Constants.NULL);
-    } else if (ctx.formatters.containsKey(obj.getClass())) {
-      Selector<Object, String> formatter = (Selector<Object, String>) ctx.formatters.get(obj.getClass());
-      String s = formatter.invoke(pfi.value);
-      elm.setAttribute(pfi.field.getName(), s);
-    } else if (pfi.value.getClass().isEnum()) {
-      String s = pfi.value.toString();
-      elm.setAttribute(pfi.field.getName(), s);
-    } else if (pfi.value.getClass().isArray()) {
-      IList<Object> lst = SharedUtils.convertArrayToList(pfi.value);
-      ctx.objects.saveItems(lst, pfi.value.getClass().getComponentType(), elm);
-    } else if (pfi.value instanceof IXPersistable) {
-      IXPersistable persistable = (IXPersistable) pfi.value;
-      persistable.save(elm, this.ctx); // calls custom overload
-      ctx.fields.saveRemainingFields(persistable, elm); // calls global save
-    } else {
-      throw new XSaveException(sf("Don't know how to save instance of '%s'.", pfi.value.getClass()), ctx);
-    }
-  }
-
-  private void saveFieldToElement(Object obj, String fieldName, XElement elm) {
-    ProcessFieldInfo pfi = prepareFieldToProcess(obj, fieldName);
-    if (pfi.processField == false)
-      return;
-
-    XElement fieldElement = new XElement(pfi.field.getName());
-    ctx.objects.saveObject(pfi.value, fieldElement);
-    elm.addElement(fieldElement);
   }
 
   private Object getFieldValue(Object obj, Field field) {
