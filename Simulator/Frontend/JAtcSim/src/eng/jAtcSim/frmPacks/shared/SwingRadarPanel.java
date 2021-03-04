@@ -471,122 +471,122 @@ public class SwingRadarPanel extends JPanel {
   }
 }
 
-class JButtonExtender {
-  public final Color backOff;
-  public final Color backOn;
-  public final Color foreOff;
-  public final Color foreOn;
+//class JButtonExtender {
+//  public final Color backOff;
+//  public final Color backOn;
+//  public final Color foreOff;
+//  public final Color foreOn;
+//
+//  public JButtonExtender(Color backOff, Color foreOff, Color backOn, Color foreOn) {
+//    this.backOff = backOff;
+//    this.backOn = backOn;
+//    this.foreOff = foreOff;
+//    this.foreOn = foreOn;
+//  }
+//
+//  public void set(JButton btn, boolean state) {
+//    if (state) {
+//      btn.setBackground(this.backOn);
+//      btn.setForeground(this.foreOn);
+//    } else {
+//      btn.setBackground(this.backOff);
+//      btn.setForeground(this.foreOff);
+//    }
+//  }
+//}
+//
+//class ButtonBinding {
+//  private static JButtonExtender ext;
+//
+//  public static void init(JButtonExtender ext) {
+//    ButtonBinding.ext = ext;
+//  }
+//
+//  private final JButton btn;
+//  private final String propertyName;
+//  private final Object target;
+//
+//  public ButtonBinding(Object target, String propertyName, JButton btn) {
+//    this.target = target;
+//    this.propertyName = propertyName;
+//    this.btn = btn;
+//
+//    btn.addActionListener(new AbstractAction() {
+//      @Override
+//      public void actionPerformed(ActionEvent e) {
+//        doSwitch();
+//      }
+//    });
+//
+//    boolean state = getStateValue();
+//    ext.set(this.btn, state);
+//  }
+//
+//  private void doSwitch() {
+//    boolean state = getStateValue();
+//    state = !state;
+//    setStateValue(state);
+//    ext.set(this.btn, state);
+//  }
+//
+//  private boolean getStateValue() {
+//    Class cls = this.target.getClass();
+//    Method mi;
+//    try {
+//      mi = cls.getMethod("is" + propertyName, new Class[0]);
+//    } catch (NoSuchMethodException e) {
+//      throw new EApplicationException("Unable to find property is" + propertyName + " over " + target + ".", e);
+//    }
+//    boolean val;
+//    try {
+//      val = (boolean) mi.invoke(target, (Object[]) null);
+//    } catch (IllegalAccessException | InvocationTargetException e) {
+//      throw new EApplicationException("Unable to read property is" + propertyName + " over " + target + ".", e);
+//    }
+//    return val;
+//  }
+//
+//  private void setStateValue(boolean val) {
+//    Class cls = this.target.getClass();
+//    Method mi;
+//    try {
+//      mi = cls.getMethod("set" + propertyName, new Class[]{boolean.class});
+//    } catch (NoSuchMethodException e) {
+//      throw new EApplicationException("Unable to find property set" + propertyName + " over " + target + ".", e);
+//    }
+//    try {
+//      mi.invoke(target, new Object[]{val});
+//    } catch (IllegalAccessException | InvocationTargetException e) {
+//      throw new EApplicationException("Unable to write property set" + propertyName + " over " + target + ".", e);
+//    }
+//  }
+//}
 
-  public JButtonExtender(Color backOff, Color foreOff, Color backOn, Color foreOn) {
-    this.backOff = backOff;
-    this.backOn = backOn;
-    this.foreOff = foreOff;
-    this.foreOn = foreOn;
-  }
-
-  public void set(JButton btn, boolean state) {
-    if (state) {
-      btn.setBackground(this.backOn);
-      btn.setForeground(this.foreOn);
-    } else {
-      btn.setBackground(this.backOff);
-      btn.setForeground(this.foreOff);
-    }
-  }
-}
-
-class ButtonBinding {
-  private static JButtonExtender ext;
-
-  public static void init(JButtonExtender ext) {
-    ButtonBinding.ext = ext;
-  }
-
-  private final JButton btn;
-  private final String propertyName;
-  private final Object target;
-
-  public ButtonBinding(Object target, String propertyName, JButton btn) {
-    this.target = target;
-    this.propertyName = propertyName;
-    this.btn = btn;
-
-    btn.addActionListener(new AbstractAction() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        doSwitch();
-      }
-    });
-
-    boolean state = getStateValue();
-    ext.set(this.btn, state);
-  }
-
-  private void doSwitch() {
-    boolean state = getStateValue();
-    state = !state;
-    setStateValue(state);
-    ext.set(this.btn, state);
-  }
-
-  private boolean getStateValue() {
-    Class cls = this.target.getClass();
-    Method mi;
-    try {
-      mi = cls.getMethod("is" + propertyName, new Class[0]);
-    } catch (NoSuchMethodException e) {
-      throw new EApplicationException("Unable to find property is" + propertyName + " over " + target + ".", e);
-    }
-    boolean val;
-    try {
-      val = (boolean) mi.invoke(target, (Object[]) null);
-    } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new EApplicationException("Unable to read property is" + propertyName + " over " + target + ".", e);
-    }
-    return val;
-  }
-
-  private void setStateValue(boolean val) {
-    Class cls = this.target.getClass();
-    Method mi;
-    try {
-      mi = cls.getMethod("set" + propertyName, new Class[]{boolean.class});
-    } catch (NoSuchMethodException e) {
-      throw new EApplicationException("Unable to find property set" + propertyName + " over " + target + ".", e);
-    }
-    try {
-      mi.invoke(target, new Object[]{val});
-    } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new EApplicationException("Unable to write property set" + propertyName + " over " + target + ".", e);
-    }
-  }
-}
-
-class RouteComparator implements Comparator<DARoute> {
-
-  private IMap<DARoute, IList<ActiveRunwayThreshold>> map;
-
-  public RouteComparator(IMap<DARoute, IList<ActiveRunwayThreshold>> map) {
-    this.map = map;
-  }
-
-  @Override
-  public int compare(DARoute a, DARoute b) {
-    int ret;
-
-    String sa;
-    String sb;
-    IList<ActiveRunwayThreshold> tmp;
-    tmp = map.get(a);
-    sa = tmp.isEmpty() ? "" : tmp.getFirst().getName();
-    tmp = map.get(b);
-    sb = tmp.isEmpty() ? "" : tmp.getFirst().getName();
-    ret = sa.compareTo(sb);
-    if (ret == 0) {
-      ret = a.getType().compareTo(b.getType());
-      if (ret == 0)
-        ret = a.getName().compareTo(b.getName());
-    }
-    return ret;
-  }
-}
+//class RouteComparator implements Comparator<DARoute> {
+//
+//  private IMap<DARoute, IList<ActiveRunwayThreshold>> map;
+//
+//  public RouteComparator(IMap<DARoute, IList<ActiveRunwayThreshold>> map) {
+//    this.map = map;
+//  }
+//
+//  @Override
+//  public int compare(DARoute a, DARoute b) {
+//    int ret;
+//
+//    String sa;
+//    String sb;
+//    IList<ActiveRunwayThreshold> tmp;
+//    tmp = map.get(a);
+//    sa = tmp.isEmpty() ? "" : tmp.getFirst().getName();
+//    tmp = map.get(b);
+//    sb = tmp.isEmpty() ? "" : tmp.getFirst().getName();
+//    ret = sa.compareTo(sb);
+//    if (ret == 0) {
+//      ret = a.getType().compareTo(b.getType());
+//      if (ret == 0)
+//        ret = a.getName().compareTo(b.getName());
+//    }
+//    return ret;
+//  }
+//}

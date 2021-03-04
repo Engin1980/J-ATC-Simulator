@@ -62,4 +62,9 @@ class UsedRange {
     used += (int) ((usedPercents / 100d) * maximum);
     return maximum - used;
   }
+
+  @Override
+  public String toString() {
+    return String.format("UsedRange(max=%d, usedPx=%d, used%%=%d, wilds=%d)", maximum, usedPixels, usedPercents, wildCount);
+  }
 }

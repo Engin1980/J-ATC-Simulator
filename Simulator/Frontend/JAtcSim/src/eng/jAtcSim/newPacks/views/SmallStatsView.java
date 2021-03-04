@@ -60,15 +60,12 @@ public class SmallStatsView implements IView {
 
   private JPanel parent;
 
-  public void init(ISimulation sim) {
-    this.stats = sim.getStats();
-    sim.registerOnSecondElapsed(s -> update());
-  }
-
   @Override
   public void init(JPanel panel, ISimulation simulation, AppSettings settings) {
     this.parent = panel;
     this.initComponents();
+    this.stats = simulation.getStats();
+    simulation.registerOnSecondElapsed(s -> update());
   }
 
   private void initComponents() {

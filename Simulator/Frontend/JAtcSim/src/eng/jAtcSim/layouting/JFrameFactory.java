@@ -75,11 +75,21 @@ public class JFrameFactory {
 
     ISet<JPanelInfo> panelInfos = new ESet<>();
 
+    forceFrameContentPaneHasCorrectDimension(frame);
+
     buildContent((JPanel) frame.getContentPane(), window.getContent(), panelInfos);
 
     JFrameInfo ret = new JFrameInfo(frame, panelInfos);
 
     return ret;
+  }
+
+  private void forceFrameContentPaneHasCorrectDimension(JFrame frame) {
+    frame.setVisible(true);
+    frame.invalidate();
+    frame.validate();
+    frame.repaint();
+    frame.setVisible(false);
   }
 
   private void buildContent(JPanel pane, Block content, ISet<JPanelInfo> panelInfos) {
