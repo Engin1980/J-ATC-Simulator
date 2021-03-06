@@ -67,13 +67,13 @@ public class LayoutFactory {
 
     int val;
     if (text.equals("*"))
-      ret = new WildValue();
+      ret = Value.createWild();
     else if (text.endsWith("%")) {
       val = Integer.parseInt(text.substring(0, text.length() - 1));
-      ret = new PercentageValue(val);
+      ret = Value.create(Value.Unit.percentage, val);
     } else {
       val = Integer.parseInt(text.substring(0, text.length() - 2));
-      ret = new PixelValue(val);
+      ret = Value.create(Value.Unit.pixel, val);
     }
 
     return ret;
@@ -82,16 +82,17 @@ public class LayoutFactory {
   }
 
   private Block loadAnyBlock(XElement parentElement) {
-    Block ret = null;
+    Block ret;
 
-    if (parentElement.tryGetChild("panel") != null)
+    if (parentElement.getChildren().count() == 0)
+      ret = new EmptyBlock();
+    else if (parentElement.tryGetChild("panel") != null)
       ret = loadPanel(parentElement);
     else if (parentElement.getChildren("column").count() > 0)
       ret = loadColumns(parentElement);
     else if (parentElement.getChildren("row").count() > 0)
       ret = loadRows(parentElement);
-
-    EAssert.Argument.isNotNull(ret);
+    else throw new EApplicationException("Block type not recognized!");
 
     return ret;
   }

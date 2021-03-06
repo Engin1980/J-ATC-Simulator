@@ -9,6 +9,8 @@ import java.awt.*;
 
 public class JFrameFactory {
 
+  public static final boolean COLORIZE_PANELS  = false;
+
   public static class JFrameInfo {
     private final JFrame frame;
     private final ISet<JPanelInfo> panels;
@@ -69,13 +71,11 @@ public class JFrameFactory {
 
     frame.setTitle(window.getTitle());
 
-    Rectangle rect = convertPositionToRectangle(window.getPosition());
+    Rectangle rect = convertPositionToFrameRectangle(window.getPosition());
     frame.setLocation(rect.getLocation());
     frame.setSize(rect.getSize());
 
     ISet<JPanelInfo> panelInfos = new ESet<>();
-
-    forceFrameContentPaneHasCorrectDimension(frame);
 
     buildContent((JPanel) frame.getContentPane(), window.getContent(), panelInfos);
 
@@ -84,12 +84,18 @@ public class JFrameFactory {
     return ret;
   }
 
-  private void forceFrameContentPaneHasCorrectDimension(JFrame frame) {
-    frame.setVisible(true);
-    frame.invalidate();
-    frame.validate();
-    frame.repaint();
-    frame.setVisible(false);
+  private Rectangle convertPositionToFrameRectangle(Position position) {
+    EAssert.Argument.isNotNull(position, "position");
+
+    Dimension monitorResolution = getMonitorResolution(position.getMonitor());
+
+    int x = position.getX().convertValueToInt(monitorResolution.width);
+    int y = position.getY().convertValueToInt(monitorResolution.height);
+    int width = position.getWidth().convertValueToInt(monitorResolution.width);
+    int height = position.getHeight().convertValueToInt(monitorResolution.height);
+
+    Rectangle ret = new Rectangle(x, y, width, height);
+    return ret;
   }
 
   private void buildContent(JPanel pane, Block content, ISet<JPanelInfo> panelInfos) {
@@ -99,7 +105,9 @@ public class JFrameFactory {
       buildPanelContent(pane, (ColumnList) content, panelInfos);
     else if (content instanceof RowList)
       buildPanelContent(pane, (RowList) content, panelInfos);
-    else
+    else if (content instanceof EmptyBlock) {
+      // intentionally blank
+    } else
       throw new UnsupportedOperationException();
   }
 
@@ -108,88 +116,61 @@ public class JFrameFactory {
   }
 
   private void buildPanelContent(JPanel parent, ColumnList columns, ISet<JPanelInfo> panelInfos) {
-    UsedRange ur = new UsedRange(parent.getWidth());
-    ur.use(columns.getColumns().select(q -> q.getWidth()));
-
-    int x = 0;
-
+    Value[] blocks = columns.getColumns().select(q -> q.getWidth()).toArray(Value.class);
+    parent.setLayout(new ColRowLayoutManager(Orientation.columns, parent.getHeight(), blocks));
     for (Column column : columns.getColumns()) {
       JPanel pane = new JPanel();
-
-      int y = 0;
-      int width = ur.getWidth(column.getWidth());
-      int height = pane.getHeight();
-
-      pane.setLocation(x, y);
-      pane.setSize(width, height);
-
+      if (COLORIZE_PANELS) pane.setBackground(ColorProvider.nextColor());
       buildContent(pane, column.getContent(), panelInfos);
-
-      x += width;
+      parent.add(pane);
     }
   }
 
   private void buildPanelContent(JPanel parent, RowList rows, ISet<JPanelInfo> panelInfos) {
-    UsedRange ur = new UsedRange(parent.getWidth());
-    ur.use(rows.getRows().select(q -> q.getHeight()));
-
-    int y = 0;
+    Value[] blocks = rows.getRows().select(q -> q.getHeight()).toArray(Value.class);
+    parent.setLayout(new ColRowLayoutManager(Orientation.rows, parent.getHeight(), blocks));
 
     for (Row row : rows.getRows()) {
       JPanel pane = new JPanel();
-
-      int x = 0;
-      int width = pane.getWidth();
-      int height = ur.getWidth(row.getHeight());
-
-      pane.setLocation(x, y);
-      pane.setSize(width, height);
-
+      if (COLORIZE_PANELS) pane.setBackground(ColorProvider.nextColor());
       buildContent(pane, row.getContent(), panelInfos);
-
-      y += height;
+      parent.add(pane);
     }
   }
 
-  private Rectangle convertPositionToRectangle(Position position) {
-    EAssert.Argument.isNotNull(position, "position");
-
-    Dimension monitorResolution = getMonitorResolution(position.getMonitor());
-    UsedRange urw = new UsedRange(monitorResolution.width);
-    UsedRange urh = new UsedRange(monitorResolution.height);
-
-    int x = convertValueToInteger(position.getX(), urw);
-    int y = convertValueToInteger(position.getY(), urh);
-    int width = convertValueToInteger(position.getWidth(), urw);
-    int height = convertValueToInteger(position.getHeight(), urh);
-
-    Rectangle ret = new Rectangle(x, y, width, height);
-    return ret;
-  }
-
-  private int convertValueToInteger(Value value, UsedRange ur) {
-    int ret;
-    if (value instanceof PixelValue)
-      ret = ((PixelValue) value).getValue();
-    else if (value instanceof WildValue)
-      ret = Math.max(ur.getWildWidth(), 1);
-    else if (value instanceof PercentageValue)
-      ret = ur.getPercentageWidth(((PercentageValue) value).getValue());
-    else
-      throw new UnsupportedOperationException("Unknown value type.");
-
-    return ret;
-  }
-
   private Dimension getMonitorResolution(Integer monitorIndex) {
-    if (monitorIndex == 0) monitorIndex = 0;
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice[] graphicsDevices = ge.getScreenDevices();
+    if (monitorIndex == null) monitorIndex = 0;
+    else if (monitorIndex >= graphicsDevices.length) monitorIndex = graphicsDevices.length - 1;
     GraphicsDevice graphicsDevice = graphicsDevices[monitorIndex];
     DisplayMode displayMode = graphicsDevice.getDisplayMode();
     Dimension ret = new Dimension(
             displayMode.getWidth(),
             displayMode.getHeight());
+    return ret;
+  }
+}
+
+class ColorProvider {
+  private static Color[] colors = {
+          Color.CYAN,
+          Color.BLUE,
+          Color.DARK_GRAY,
+          Color.GREEN,
+          Color.MAGENTA,
+          Color.ORANGE,
+          Color.PINK,
+          Color.RED,
+          Color.WHITE,
+          Color.YELLOW
+  };
+  private static int index = 0;
+
+  public static Color nextColor() {
+    Color ret = colors[index];
+    index++;
+    if (index >= colors.length) index = 0;
     return ret;
   }
 }

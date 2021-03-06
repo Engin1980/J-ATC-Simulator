@@ -18,16 +18,16 @@ class Window {
     this.withMenu = withMenu;
   }
 
-  public String getTitle() {
-    return title;
-  }
-
   public Block getContent() {
     return content;
   }
 
   public Position getPosition() {
     return position;
+  }
+
+  public String getTitle() {
+    return title;
   }
 
   public boolean isWithMenu() {

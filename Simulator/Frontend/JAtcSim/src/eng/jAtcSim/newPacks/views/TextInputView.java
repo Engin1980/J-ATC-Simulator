@@ -56,17 +56,15 @@ public class TextInputView implements IView {
     this.sim = initInfo.getSimulation();
     this.userAtcId = initInfo.getUserAtcId();
 
-    JPanel pnlContent = this.buildTextPanel();
-    this.parent.add(pnlContent, BorderLayout.CENTER);
+    JTextField txt = this.buildTextField();
+    this.parent.setLayout(new BorderLayout());
+    this.parent.add(txt, BorderLayout.CENTER);
   }
 
-  private JPanel buildTextPanel() {
+  private JTextField buildTextField() {
     JTextField txtInput = new JTextField();
     Font font = new Font("Courier New", Font.PLAIN, txtInput.getFont().getSize());
     txtInput.setFont(font);
-    JPanel ret = eng.eSystem.swing.LayoutManager.createFlowPanel(eng.eSystem.swing.LayoutManager.eVerticalAlign.middle,
-            3,
-            txtInput);
 
     this.commandInputTextFieldExtender = new CommandInputTextFieldExtender(txtInput,
             this.buildParsers(),
@@ -78,7 +76,7 @@ public class TextInputView implements IView {
     this.commandInputTextFieldExtender.onSpecialCommand.add(this::processSpecialCommand);
     this.commandInputTextFieldExtender.onError.add(this::processError);
 
-    return ret;
+    return txtInput;
   }
 
 

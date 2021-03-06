@@ -182,6 +182,7 @@ public class AppSettings {
     this.radarStyleSettings = RadarStyleSettings.load(this.appRadarSettings.styleSettingsFile.toString());
     this.dynamicPlaneFormatter = loadDynamicPlaneFormatter(this.speechFormatterFile);
     this.flightStripSettings = loadFlightStripSettings();
+    this.radarDisplaySettings = this.appRadarSettings.displaySettings.toRadarDisplaySettings();
   }
 
   private FlightStripSettings loadFlightStripSettings() {

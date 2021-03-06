@@ -99,6 +99,7 @@ public class JAtcSim {
     Layout layout = new LayoutFactory().loadFromXml(layoutFile);
     NewPack pack = new NewPack();
     pack.init(g, layout, appSettings);
+    pack.show();
 
     g.getSimulation().start();
 
@@ -279,6 +280,7 @@ public class JAtcSim {
       Layout layout = new LayoutFactory().loadFromXml(layoutFile);
       NewPack pack = new NewPack();
       pack.init(g, layout, appSettings);
+      pack.show();
 
       g.getSimulation().start();
 

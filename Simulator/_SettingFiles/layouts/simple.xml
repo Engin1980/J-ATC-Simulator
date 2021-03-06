@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <windows xmlns="https://github.com/Engin1980/J-ATC-Simulator/layout">
 
-    <window title="Main SDI layout">
+    <window title="Main radar screen">
         <position x="0px" y="0px" width="100%" height="100%"/>
         <column width="225px">
             <panel view="flightListView"/>
@@ -18,7 +18,7 @@
             <row height="*">
                 <panel view="scheduledListView"/>
             </row>
-            <row height="140px">
+            <row height="225px">
                 <panel view="smallStatsView"/>
             </row>
         </column>

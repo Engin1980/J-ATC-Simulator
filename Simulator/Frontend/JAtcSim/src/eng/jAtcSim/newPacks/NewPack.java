@@ -20,6 +20,8 @@ import eng.jAtcSim.settings.AppSettings;
 import eng.jAtcSim.xmlLoading.XmlSerialization;
 import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
 
+import javax.swing.*;
+import java.awt.*;
 import java.nio.file.Path;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -30,6 +32,7 @@ public class NewPack {
   private Area area;
   private Airport aip;
   private AppSettings settings;
+  private ISet<JFrameFactory.JFrameInfo> frames;
 
 
   public void init(IGame game, Layout layout, AppSettings appSettings) {
@@ -43,11 +46,12 @@ public class NewPack {
 
     JFrameFactory frameFactory = new JFrameFactory();
     //TODO how to set menu?
-    ISet<JFrameFactory.JFrameInfo> frames = frameFactory.build(layout);
+    frames = frameFactory.build(layout);
 
     ISet<Tuple<IView, JFrameFactory.JPanelInfo>> view2panelMap = new ESet<>();
     for (JFrameFactory.JFrameInfo frame : frames) {
       for (JFrameFactory.JPanelInfo panel : frame.getPanels()) {
+        panel.getPanel().setBackground(Color.blue);
         String viewName = panel.getViewName();
         IView view = ViewFactory.getView(viewName);
         view2panelMap.add(new Tuple<>(view, panel));
@@ -64,10 +68,34 @@ public class NewPack {
     for (Tuple<IView, JFrameFactory.JPanelInfo> item : view2panelMap) {
       item.getA().init(item.getB().getPanel(), vii);
     }
+
+    //printSummary(frames);
   }
 
-  public void start() {
+  public void show() {
+    frames.forEach(q -> q.getFrame().setVisible(true));
+    System.out.println("Viewed:");
+  }
 
+  private void printSummary(ISet<JFrameFactory.JFrameInfo> frames) {
+    for (JFrameFactory.JFrameInfo frame : frames) {
+      System.out.println("Layout summary");
+      System.out.println("Frame " + frame.getFrame().getTitle());
+      printSummaryPanel((JPanel) frame.getFrame().getContentPane(), 0);
+    }
+  }
+
+  private void printSummaryPanel(JPanel panel, int index) {
+    for (int i = 0; i <= index; i++) {
+      System.out.print("\t");
+    }
+    System.out.println(panel);
+    for (Component component : panel.getComponents()) {
+      if (component instanceof JPanel) {
+        JPanel inner = (JPanel) component;
+        printSummaryPanel(inner, index + 1);
+      }
+    }
   }
 
   private DynamicPlaneFormatter loadDynamicPlaneFormatter(Path speechFormatterFile) {
