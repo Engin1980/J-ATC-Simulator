@@ -15,6 +15,9 @@ import eng.newXmlUtils.implementations.EntriesDeserializer;
 import eng.newXmlUtils.implementations.EntriesSerializer;
 import eng.newXmlUtils.implementations.ItemsDeserializer;
 import eng.newXmlUtils.implementations.ItemsSerializer;
+import exml.loading.XLoadContext;
+import exml.saving.XSaveContext;
+import exml.saving.XSaveObjectContext;
 
 import java.awt.*;
 import java.io.IOException;
@@ -70,24 +73,57 @@ public class FileHistoryManager {
       throw new EApplicationException("Failed to load history of loaded files.", ex);
     }
 
-    XmlContext ctx = new XmlContext();
-    ctx.sdfManager.setDeserializer(EMap.class, new EntriesDeserializer());
-    ctx.sdfManager.setDeserializer(EList.class, new ItemsDeserializer());
-    ctx.sdfManager.setDeserializer(String.class, (e, c) -> e.getContent());
-    IMap<String, IList<String>> tmp = (IMap<String, IList<String>>) XmlContext.deserialize(doc.getRoot(), ctx, EMap.class);
+//    XmlContext ctx = new XmlContext();
+//    ctx.sdfManager.setDeserializer(EMap.class, new EntriesDeserializer());
+//    ctx.sdfManager.setDeserializer(EList.class, new ItemsDeserializer());
+//    ctx.sdfManager.setDeserializer(String.class, (e, c) -> e.getContent());
+//    IMap<String, IList<String>> tmp = (IMap<String, IList<String>>) XmlContext.deserialize(doc.getRoot(), ctx, EMap.class);
+//
+//    FileHistoryManager.histories = tmp;
 
+
+    XLoadContext ctx = new XLoadContext();
+    ctx.setParser(String.class, s -> s);
+    ctx.setDeserializer(EList.class, e -> ctx.objects.loadItems(e, String.class));
+    ctx.setDeserializer(EMap.class, e -> ctx.objects.loadEntries(e, String.class, String.class));
+
+    IMap<String, IList<String>> tmp = (IMap<String, IList<String>>) ctx.loadObject(doc.getRoot(), EMap.class);
     FileHistoryManager.histories = tmp;
+
+//    XLoadContext ctx = new XLoadContext();
+//    ctx.setDeserializer(IMap.class, e -> {
+//      EMap<String, IList<String>> ret = new EMap<>();
+//      for (XElement se : e.getChildren()) {
+//        String key = se.getName();
+//        IList<String> values = new EList<>();
+//        ctx.loadItems(e, values, String.class);
+//        ret.set(key, values);
+//      }
+//      return ret;
+//    });
+//    ctx.setDeserializer(IList.class, e -> {
+//      IList<String> ret = new EList<>();
+//      for (XElement se : e.getChildren()) {
+//        String s = se.getContent();
+//        ret.add(s);
+//      }
+//      return ret;
+//    });
+//
+//    FileHistoryManager.histories = (IMap<String, IList<String>>) ctx.loadObject(doc.getRoot(), IMap.class);
   }
 
   private static void saveHistories() {
     Path userHomeHistoryFile = getHistoryFilePath();
 
     XElement root = new XElement("root");
-    XmlContext ctx = new XmlContext();
-    ctx.sdfManager.setSerializer(EMap.class, new EntriesSerializer());
-    ctx.sdfManager.setSerializer(EList.class, new ItemsSerializer());
-    ctx.sdfManager.setSerializer(String.class, (e, v, c) -> e.setContent((String) v));
-    XmlContext.serialize(root, histories, ctx);
+
+    XSaveContext ctx = new XSaveContext();
+    ctx.setSerializer(EMap.class, (o, e) -> ctx.objects.saveEntries(o, String.class, IList.class, e));
+    ctx.setSerializer(EList.class, (o,e)->ctx.objects.saveItems(o, String.class, e));
+    ctx.setFormatter(String.class, s -> s);
+
+    ctx.saveObject(FileHistoryManager.histories, root);
 
     XDocument doc = new XDocument(root);
 

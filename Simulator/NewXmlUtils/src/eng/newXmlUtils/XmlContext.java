@@ -11,6 +11,7 @@ import eng.newXmlUtils.utils.InternalXmlUtils;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
+@Deprecated
 public class XmlContext {
 
   public static class XmlContextValues {
