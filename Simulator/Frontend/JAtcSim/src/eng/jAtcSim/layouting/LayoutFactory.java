@@ -24,13 +24,13 @@ public class LayoutFactory {
     return ret;
   }
 
-  public Layout loadFromXml(String fileName){
+  public Layout loadFromXml(String fileName) {
     XElement root;
     try {
       XDocument doc = XDocument.load(fileName);
       root = doc.getRoot();
     } catch (EXmlException e) {
-      throw new EApplicationException("Failed to load layout xml file " + fileName + ".",e);
+      throw new EApplicationException("Failed to load layout xml file " + fileName + ".", e);
     }
 
     Layout ret = loadFromXml(root);
@@ -44,8 +44,10 @@ public class LayoutFactory {
     String title = elm.getAttribute("title");
     boolean withMenu = elm.tryGetAttribute("menu", "0").equals("1");
     Block content = loadAnyBlock(elm);
+    String styleS = elm.tryGetAttribute("style", "normal");
+    Window.WindowStyle style = Window.WindowStyle.parse(styleS);
 
-    ret = new Window(position, content, title, withMenu);
+    ret = new Window(position, content, title, style, withMenu);
 
     return ret;
   }

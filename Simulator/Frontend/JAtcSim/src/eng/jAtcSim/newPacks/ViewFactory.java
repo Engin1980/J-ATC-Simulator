@@ -27,6 +27,7 @@ public class ViewFactory {
     viewMap.set("textInputView", () -> new TextInputView());
     viewMap.set("scheduledListView", () -> new ScheduledListView());
     viewMap.set("smallStatsView", () -> new SmallStatsView());
+    viewMap.set("appLogView", () -> new AppLogView());
   }
 
   public static IView getView(String viewName) {

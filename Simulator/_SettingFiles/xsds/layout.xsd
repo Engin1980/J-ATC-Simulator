@@ -20,7 +20,16 @@
             </xs:choice>
         </xs:sequence>
         <xs:attribute name="title" type="nonemptyString" use="optional"/>
+        <xs:attribute name="style" type="windowStyle" use="optional"/>
     </xs:complexType>
+
+    <xs:simpleType name="windowStyle">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="minimized"/>
+            <xs:enumeration value="normal"/>
+            <xs:enumeration value="maximized"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="row">
         <xs:choice>

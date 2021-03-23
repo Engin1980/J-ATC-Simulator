@@ -16,7 +16,6 @@ import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.frmPacks.Pack;
-import eng.jAtcSim.frmPacks.shared.FrmLog;
 import eng.jAtcSim.layouting.Layout;
 import eng.jAtcSim.layouting.LayoutFactory;
 import eng.jAtcSim.newLib.gameSim.IGame;
@@ -58,7 +57,6 @@ public class JAtcSim {
       //new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
       //new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
       null;
-  private static FrmLog frmLog;
 
   public static JLabel getAppImage(JFrame frm) {
     URL url = frm.getClass().getResource("/intro.png");
@@ -120,7 +118,6 @@ public class JAtcSim {
     // initial path here only until settings are loaded from xml file
     AppAcc appContext = new AppAcc(new ApplicationLog(), Paths.get("C:\\Temp\\"));
     ContextManager.setContext(IAppAcc.class, appContext);
-    frmLog = new FrmLog();
 
     appSettings = AppSettings.create();
     appContext.updateLogPath(appSettings.logFolder);

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <windows xmlns="https://github.com/Engin1980/J-ATC-Simulator/layout">
 
-    <window title="Main radar screen">
-        <position x="0px" y="0px" width="100%" height="100%"/>
+    <window title="Main radar screen" style="maximized">
+        <position x="0px" y="0px" width="80%" height="80%"/>
         <column width="225px">
             <panel view="flightListView"/>
         </column>
@@ -24,8 +24,13 @@
         </column>
     </window>
 
-    <window title="Additional view">
-        <position x="100%" y="0px" width="40px" height="40px"/>
+    <window title="Additional view" style="minimized">
+        <position x="0px" y="0px" width="40px" height="40px"/>
         <panel view="radarView"/>
+    </window>
+
+    <window title="Log view" style="minimized">
+        <position x="0px" y="0px" width="400px" height="300px" />
+        <panel view="appLogView" />
     </window>
 </windows>

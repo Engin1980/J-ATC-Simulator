@@ -7,6 +7,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eXmlSerialization.XmlSerializer;
+import eng.jAtcSim.Stylist;
 import eng.jAtcSim.layouting.JFrameFactory;
 import eng.jAtcSim.layouting.Layout;
 import eng.jAtcSim.newLib.area.Airport;
@@ -56,6 +57,8 @@ public class NewPack {
         IView view = ViewFactory.getView(viewName);
         view2panelMap.add(new Tuple<>(view, panel));
       }
+
+      Stylist.apply(frame.getFrame(), true);
     }
 
     ViewInitInfo vii = new ViewInitInfo();

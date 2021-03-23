@@ -69,7 +69,16 @@ public class JFrameFactory {
     EAssert.Argument.isNotNull(window, "window");
     JFrame frame = new JFrame();
 
-    frame.setTitle(window.getTitle());
+    frame.setTitle(window.getTitle() + " [jAtcSim]");
+
+    switch (window.getStyle()){
+      case maximized:
+        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+        break;
+      case minimized:
+        frame.setExtendedState(Frame.ICONIFIED);
+        break;
+    }
 
     Rectangle rect = convertPositionToFrameRectangle(window.getPosition());
     frame.setLocation(rect.getLocation());
