@@ -6,14 +6,19 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.Stylist;
+import eng.jAtcSim.abstractRadar.global.SoundManager;
+import eng.jAtcSim.app.FrmAbout;
 import eng.jAtcSim.layouting.JFrameFactory;
 import eng.jAtcSim.layouting.Layout;
+import eng.jAtcSim.layouting.MenuFactory;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
 import eng.jAtcSim.newPacks.views.ViewInitInfo;
@@ -23,6 +28,7 @@ import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.nio.file.Path;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -34,7 +40,6 @@ public class NewPack {
   private Airport aip;
   private AppSettings settings;
   private ISet<JFrameFactory.JFrameInfo> frames;
-
 
   public void init(IGame game, Layout layout, AppSettings appSettings) {
     settings = appSettings;
@@ -58,6 +63,9 @@ public class NewPack {
         view2panelMap.add(new Tuple<>(view, panel));
       }
 
+      if (frame.getMenuSimProxy() != null)
+        bindMenuProxy(frame.getMenuSimProxy(), this.sim);
+
       Stylist.apply(frame.getFrame(), true);
     }
 
@@ -78,6 +86,38 @@ public class NewPack {
   public void show() {
     frames.forEach(q -> q.getFrame().setVisible(true));
     System.out.println("Viewed:");
+  }
+
+  private void bindMenuProxy(MenuFactory.MenuSimProxy menuSimProxy, ISimulation sim) {
+    menuSimProxy.onTogglePause.add(() -> sim.pauseUnpauseSim());
+    menuSimProxy.onShowProject.add(() -> {
+      ProcessBuilder pb;
+      String url = "https://github.com/Engin1980/J-ATC-Simulator/wiki";
+      String osName = System.getProperty("os.name");
+      if (osName.contains("Windows"))
+        pb = new ProcessBuilder("cmd", "/c", "start", url);
+      else
+        pb = new ProcessBuilder("xsd-open", url);
+      try {
+        pb.start();
+      } catch (IOException e) {
+        //TODO
+        //Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
+      }
+    });
+    menuSimProxy.onSimSpeed.add(q -> sim.sendSystemCommandAnonymous(TickSpeedRequest.createSet(q)));
+    menuSimProxy.onToggleSound.add(() -> {
+      SoundManager.switchEnabled();
+      //TODO do somehow: s.setState(SoundManager.isEnabled());
+    });
+    menuSimProxy.onQuit.add(() -> {
+      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      this.setVisible(false);
+    });
+    menuSimProxy.onShowAbout.add(() -> {
+      new FrmAbout().setVisible(true);
+    });
+    menuSimProxy.onRecordingRequest.add(() -> viewRecordingPanel());
   }
 
   private void printSummary(ISet<JFrameFactory.JFrameInfo> frames) {
@@ -112,6 +152,19 @@ public class NewPack {
     }
     DynamicPlaneFormatter ret = new DynamicPlaneFormatter(speechResponses);
     return ret;
+  }
+
+  private void viewRecordingPanel() {
+    throw new ToDoException();
+//    RecordingPanel pnl;
+//    if (recording != null)
+//      pnl = new RecordingPanel(recording.getSettings());
+//    else
+//      pnl = new RecordingPanel(null);
+//    pnl.getRecordingStarted().add(q -> recording_recordingStarted(q));
+//    pnl.getRecordingStopped().add(() -> recording_recordingStopped());
+//    pnl.getViewRecordingFolderRequest().add(() -> recording_viewRecordingFolderRequest());
+//    SwingFactory.show(pnl, "Recording");
   }
 
 }

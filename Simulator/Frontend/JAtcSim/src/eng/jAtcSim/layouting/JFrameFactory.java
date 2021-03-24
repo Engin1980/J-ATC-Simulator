@@ -14,13 +14,15 @@ public class JFrameFactory {
   public static class JFrameInfo {
     private final JFrame frame;
     private final ISet<JPanelInfo> panels;
+    private final MenuFactory.MenuSimProxy menuSimProxy;
 
-    public JFrameInfo(JFrame frame, ISet<JPanelInfo> panels) {
+    public JFrameInfo(JFrame frame, ISet<JPanelInfo> panels, MenuFactory.MenuSimProxy menuSimProxy) {
       EAssert.Argument.isNotNull(frame, "frame");
       EAssert.Argument.isNotNull(panels, "panels");
 
       this.frame = frame;
       this.panels = panels;
+      this.menuSimProxy = menuSimProxy;
     }
 
     public JFrame getFrame() {
@@ -29,6 +31,10 @@ public class JFrameFactory {
 
     public ISet<JPanelInfo> getPanels() {
       return panels;
+    }
+
+    public MenuFactory.MenuSimProxy getMenuSimProxy() {
+      return menuSimProxy;
     }
   }
 
@@ -68,12 +74,14 @@ public class JFrameFactory {
   private JFrameInfo buildFrame(Window window) {
     EAssert.Argument.isNotNull(window, "window");
     JFrame frame = new JFrame();
+    MenuFactory.MenuSimProxy menuSimProxy;
 
     frame.setTitle(window.getTitle() + " [jAtcSim]");
 
     if (window.isWithMenu()) {
-      MenuFactory.buildMenu(frame);
-    }
+      menuSimProxy = MenuFactory.buildMenu(frame);
+    } else
+      menuSimProxy = null;
 
     switch (window.getStyle()){
       case maximized:
@@ -92,7 +100,7 @@ public class JFrameFactory {
 
     buildContent((JPanel) frame.getContentPane(), window.getContent(), panelInfos);
 
-    JFrameInfo ret = new JFrameInfo(frame, panelInfos);
+    JFrameInfo ret = new JFrameInfo(frame, panelInfos, menuSimProxy);
 
     return ret;
   }

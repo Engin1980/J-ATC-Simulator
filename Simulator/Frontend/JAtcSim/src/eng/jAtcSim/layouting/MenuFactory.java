@@ -1,5 +1,8 @@
 package eng.jAtcSim.layouting;
 
+import eng.eSystem.Tuple;
+import eng.eSystem.events.EventAnonymous;
+import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.functionalInterfaces.Consumer;
 
 import javax.swing.*;
@@ -7,9 +10,9 @@ import java.awt.event.KeyEvent;
 
 public class MenuFactory {
 
-  private static class SimProxy {
+  public static class MenuSimProxy {
 
-    public enum Views {
+    public enum ViewRequest {
       FLIGHT_STRIP,
       STATS,
       RADAR,
@@ -17,61 +20,41 @@ public class MenuFactory {
       SCHEDULED;
     }
 
-    public enum Tools {
+    public enum ToolRequest {
       COMMAND_BUTTONS,
       RECORDING
     }
 
-    public void quit() {
-//      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//      this.setVisible(false);
-    }
-
-    public void recordingViewRequest() {
-//      viewRecordingPanel()
-    }
-
-    public void saveSimulation() {
-
-    }
+    public final EventAnonymousSimple onQuit = new EventAnonymousSimple();
+    public final EventAnonymousSimple onSave = new EventAnonymousSimple();
+    public final EventAnonymousSimple onRecordingRequest = new EventAnonymousSimple();
+    public final EventAnonymous<Integer> onSimSpeed = new EventAnonymous<>();
+    public final EventAnonymousSimple onShowAbout = new EventAnonymousSimple();
+    public final EventAnonymousSimple onShowProject = new EventAnonymousSimple();
+    public final EventAnonymousSimple onTogglePause = new EventAnonymousSimple();
+    public final EventAnonymousSimple onToggleSound = new EventAnonymousSimple();
 
     public void setSimulationSpeed(int speedInMs) {
-
+      this.onSimSpeed.raise(speedInMs);
     }
 
-    public void showAboutPage() {
-      //about_app
-//      new FrmAbout().setVisible(true)
+    void showAboutPage() {
+      this.onShowAbout.raise();
     }
 
-    public void showProjectPage() {
-//      {
-//        ProcessBuilder pb;
-//        String url = "https://github.com/Engin1980/J-ATC-Simulator/wiki";
-//        String osName = System.getProperty("os.name");
-//        if (osName.contains("Windows"))
-//          pb = new ProcessBuilder("cmd", "/c", "start", url);
-//        else
-//          pb = new ProcessBuilder("xsd-open", url);
-//        try {
-//          pb.start();
-//        } catch (IOException e) {
-//          //TODO
-//          //Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
-//        }
-//      });
+    void showProjectPage() {
+      this.onShowProject.raise();
     }
 
-    public void togglePause() {
-//      parent.getSim().pauseUnpauseSim();
+    void togglePause() {
+      this.onTogglePause.raise();
     }
 
-    public void toggleSound() {
-//      SoundManager.switchEnabled();
-//      s.setState(SoundManager.isEnabled());
+    void toggleSound() {
+      this.onToggleSound.raise();
     }
 
-    public void toolRequest(Tools tool) {
+    public void toolRequest(ToolRequest tool) {
 //COMMANDS
 //      boolean isVis = pnlCommands.isVisible();
 //      isVis = !isVis;
@@ -79,7 +62,7 @@ public class MenuFactory {
 //      s.setState(isVis);
     }
 
-    public void viewRequest(Views view) {
+    public void viewRequest(ViewRequest view) {
 
       //mood
 //      {
@@ -115,16 +98,29 @@ public class MenuFactory {
 //        s.setState(isVis);
 //      }
     }
+
+    void quit() {
+      this.onQuit.raise();
+    }
+
+    void recordingViewRequest() {
+      this.onRecordingRequest.raise();
+    }
+
+    void saveSimulation() {
+      this.onSave.raise();
+    }
   }
 
-  public static void buildMenu(JFrame frame) {
-    JMenuBar mnu = buildMenu();
-    frame.setJMenuBar(mnu);
+  public static MenuSimProxy buildMenu(JFrame frame) {
+    Tuple<JMenuBar, MenuSimProxy> tmp = buildMenu();
+    frame.setJMenuBar(tmp.getA());
+    return tmp.getB();
   }
 
-  private static JMenuBar buildMenu() {
+  private static Tuple<JMenuBar, MenuSimProxy> buildMenu() {
     JMenuBar ret = new JMenuBar();
-    SimProxy sp = new SimProxy();
+    MenuSimProxy sp = new MenuSimProxy();
 
     JMenu mnuFile = new JMenu("File");
     mnuFile.setMnemonic(KeyEvent.VK_F);
@@ -169,16 +165,16 @@ public class MenuFactory {
 
     {
       buildCheckMenuItem(mnuView, "Flight strips", true, 'f',
-              s -> sp.viewRequest(SimProxy.Views.FLIGHT_STRIP));
+              s -> sp.viewRequest(MenuSimProxy.ViewRequest.FLIGHT_STRIP));
       buildCheckMenuItem(mnuView, "Command buttons", true, 'c',
-              s -> sp.toolRequest(SimProxy.Tools.COMMAND_BUTTONS));
+              s -> sp.toolRequest(MenuSimProxy.ToolRequest.COMMAND_BUTTONS));
       buildCheckMenuItem(mnuView, "Scheduled & Stats", true, 's',
-              s -> sp.viewRequest(SimProxy.Views.SCHEDULED));
+              s -> sp.viewRequest(MenuSimProxy.ViewRequest.SCHEDULED));
 
       mnuView.addSeparator();
-      buildMenuItem(mnuView, "Show mood results", null, s -> sp.viewRequest(SimProxy.Views.MOODS));
-      buildMenuItem(mnuView, "Show stats graphs", null, s -> sp.viewRequest(SimProxy.Views.STATS));
-      buildMenuItem(mnuView, "Add new radar view", 'r', s -> sp.viewRequest(SimProxy.Views.RADAR));
+      buildMenuItem(mnuView, "Show mood results", null, s -> sp.viewRequest(MenuSimProxy.ViewRequest.MOODS));
+      buildMenuItem(mnuView, "Show stats graphs", null, s -> sp.viewRequest(MenuSimProxy.ViewRequest.STATS));
+      buildMenuItem(mnuView, "Add new radar view", 'r', s -> sp.viewRequest(MenuSimProxy.ViewRequest.RADAR));
     }
 
     {
@@ -187,7 +183,7 @@ public class MenuFactory {
       buildMenuItem(mnuHelp, "About", 'o', s -> sp.showAboutPage());
     }
 
-    return ret;
+    return new Tuple<>(ret, sp);
   }
 
   private static void buildMenuItem(JMenu mnu, String label, Character charMnemonic, Consumer<JMenuItem> action) {
