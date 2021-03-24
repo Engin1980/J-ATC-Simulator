@@ -71,6 +71,10 @@ public class JFrameFactory {
 
     frame.setTitle(window.getTitle() + " [jAtcSim]");
 
+    if (window.isWithMenu()) {
+      MenuFactory.buildMenu(frame);
+    }
+
     switch (window.getStyle()){
       case maximized:
         frame.setExtendedState(Frame.MAXIMIZED_BOTH);
