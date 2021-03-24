@@ -2,11 +2,7 @@ package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
-import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.implementations.ItemsSerializer;
-import eng.newXmlUtils.implementations.ObjectSerializer;
 
 public class Area {
 
@@ -86,14 +82,13 @@ public class Area {
 //    }
 //  }
 
+  public static Area create(String icao, IList<Airport> airports, NavaidList navaids, IList<Border> borders) {
+    return new Area(icao, airports, navaids, borders);
+  }
   private final IList<Airport> airports;
   private final NavaidList navaids;
   private final IList<Border> borders;
   private final String icao;
-
-  public static Area create(String icao, IList<Airport> airports, NavaidList navaids, IList<Border> borders){
-    return new Area(icao, airports, navaids, borders);
-  }
 
   private Area(String icao, IList<Airport> airports, NavaidList navaids, IList<Border> borders) {
     EAssert.Argument.isNotNull(icao, "Parameter 'icao' cannot be null.");
@@ -105,7 +100,7 @@ public class Area {
     this.borders = borders;
     this.icao = icao;
 
-    this.airports.forEach(q->{
+    this.airports.forEach(q -> {
       q.setParent(this);
       q.bind();
     });

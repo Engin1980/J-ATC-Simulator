@@ -10,14 +10,8 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.swing.other.HistoryForJFileChooser;
-import eng.newXmlUtils.XmlContext;
-import eng.newXmlUtils.implementations.EntriesDeserializer;
-import eng.newXmlUtils.implementations.EntriesSerializer;
-import eng.newXmlUtils.implementations.ItemsDeserializer;
-import eng.newXmlUtils.implementations.ItemsSerializer;
 import exml.loading.XLoadContext;
 import exml.saving.XSaveContext;
-import exml.saving.XSaveObjectContext;
 
 import java.awt.*;
 import java.io.IOException;
@@ -120,7 +114,7 @@ public class FileHistoryManager {
 
     XSaveContext ctx = new XSaveContext();
     ctx.setSerializer(EMap.class, (o, e) -> ctx.objects.saveEntries(o, String.class, IList.class, e));
-    ctx.setSerializer(EList.class, (o,e)->ctx.objects.saveItems(o, String.class, e));
+    ctx.setSerializer(EList.class, (o, e) -> ctx.objects.saveItems(o, String.class, e));
     ctx.setFormatter(String.class, s -> s);
 
     ctx.saveObject(FileHistoryManager.histories, root);
