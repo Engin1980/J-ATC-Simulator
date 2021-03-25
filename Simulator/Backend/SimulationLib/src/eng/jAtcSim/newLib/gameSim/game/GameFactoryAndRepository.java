@@ -18,6 +18,7 @@ import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.NavaidList;
+import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.sources.AirplaneTypesSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.AreaSource;
@@ -201,6 +202,27 @@ public class GameFactoryAndRepository {
     );
 
     return game;
+  }
+
+  public void save(IGame game, IMap<String, Object> customData, String fileName) {
+    XElement root = new XElement("game");
+
+    XSaveContext ctx = new XSaveContext();
+    initSavingContext(ctx);
+
+    try {
+      ctx.saveObject(game, root);
+    } catch (Exception ex) {
+      System.out.println("Failed to save the whole save file");
+      ex.printStackTrace(System.out);
+    }
+
+    XDocument doc = new XDocument(root);
+    try {
+      doc.save(fileName);
+    } catch (EXmlException e) {
+      throw new EApplicationException("Failed to save simulation.", e);
+    }
   }
 
   private void initSavingContext(XSaveContext ctx) {

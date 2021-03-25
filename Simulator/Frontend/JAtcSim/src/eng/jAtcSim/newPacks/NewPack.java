@@ -1,16 +1,14 @@
 package eng.jAtcSim.newPacks;
 
 import eng.eSystem.Tuple;
-import eng.eSystem.collections.ESet;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IMap;
-import eng.eSystem.collections.ISet;
+import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.app.FrmAbout;
+import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.layouting.JFrameFactory;
 import eng.jAtcSim.layouting.Layout;
 import eng.jAtcSim.layouting.MenuFactory;
@@ -18,6 +16,7 @@ import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.gameSim.game.GameFactoryAndRepository;
 import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
@@ -39,7 +38,8 @@ public class NewPack {
   private Area area;
   private Airport aip;
   private AppSettings settings;
-  private ISet<JFrameFactory.JFrameInfo> frames;
+  private ISet<JFrameFactory.JFrameInfo> frameInfos;
+  private String lastGameFileName;
 
   public void init(IGame game, Layout layout, AppSettings appSettings) {
     settings = appSettings;
@@ -52,10 +52,10 @@ public class NewPack {
 
     JFrameFactory frameFactory = new JFrameFactory();
     //TODO how to set menu?
-    frames = frameFactory.build(layout);
+    frameInfos = frameFactory.build(layout);
 
     ISet<Tuple<IView, JFrameFactory.JPanelInfo>> view2panelMap = new ESet<>();
-    for (JFrameFactory.JFrameInfo frame : frames) {
+    for (JFrameFactory.JFrameInfo frame : frameInfos) {
       for (JFrameFactory.JPanelInfo panel : frame.getPanels()) {
         panel.getPanel().setBackground(Color.blue);
         String viewName = panel.getViewName();
@@ -83,8 +83,42 @@ public class NewPack {
     //printSummary(frames);
   }
 
+  public void quit() {
+    for (JFrameFactory.JFrameInfo frame : frameInfos) {
+      frame.getFrame().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      frame.getFrame().setVisible(false);
+    }
+    //TODO do it using something like system.close() ?
+  }
+
+  public void save() {
+    boolean wasRunning = this.sim.isRunning();
+    this.sim.stop();
+
+    JFileChooser jf = SwingFactory.createFileDialog(SwingFactory.FileDialogType.game, lastGameFileName);
+    int res = jf.showSaveDialog(this.frameInfos.getFirst().getFrame());
+    if (res == JFileChooser.APPROVE_OPTION) {
+
+      String fileName = jf.getSelectedFile().getAbsolutePath();
+
+      if (!fileName.endsWith(SwingFactory.SAVED_SIMULATION_EXTENSION))
+        fileName += SwingFactory.SAVED_SIMULATION_EXTENSION;
+
+      //TODO implement custom object saving
+      IMap<String, Object> customData = new EMap<>(); //this.parent.getDataToStore();
+
+      new GameFactoryAndRepository().save(this.game, customData, fileName);
+      lastGameFileName = fileName;
+      //TODO do somehow:
+//      this.parent.getSim().sendTextMessageForUser("Game saved.");
+    }
+
+    if (wasRunning)
+      this.sim.start();
+  }
+
   public void show() {
-    frames.forEach(q -> q.getFrame().setVisible(true));
+    frameInfos.forEach(q -> q.getFrame().setVisible(true));
     System.out.println("Viewed:");
   }
 
@@ -111,13 +145,15 @@ public class NewPack {
       //TODO do somehow: s.setState(SoundManager.isEnabled());
     });
     menuSimProxy.onQuit.add(() -> {
-      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      this.setVisible(false);
+      this.quit();
     });
     menuSimProxy.onShowAbout.add(() -> {
       new FrmAbout().setVisible(true);
     });
     menuSimProxy.onRecordingRequest.add(() -> viewRecordingPanel());
+    menuSimProxy.onSave.add(() -> {
+      this.save();
+    });
   }
 
   private void printSummary(ISet<JFrameFactory.JFrameInfo> frames) {

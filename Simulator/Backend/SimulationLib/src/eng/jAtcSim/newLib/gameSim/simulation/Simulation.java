@@ -47,7 +47,6 @@ import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
-import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
@@ -175,6 +174,11 @@ public class Simulation implements IXPersistable {
     public void unregisterOnSecondElapsed(int simulationSecondListenerHandlerId) {
       Simulation.this.getTimerModule().unregisterOnTickListener(simulationSecondListenerHandlerId);
     }
+
+    @Override
+    public boolean isRunning() {
+      return Simulation.this.getTimerModule().isRunning();
+    }
   }
 
   private static final boolean DEBUG_STYLE_TIMER = false;
@@ -197,7 +201,6 @@ public class Simulation implements IXPersistable {
   private final WorldModule worldModule;
 
   @XConstructor
-  @XmlConstructor
   private Simulation(XLoadContext ctx) {
     this.now = new EDayTimeRun(0);
     SharedAcc sharedContext = new SharedAcc(
