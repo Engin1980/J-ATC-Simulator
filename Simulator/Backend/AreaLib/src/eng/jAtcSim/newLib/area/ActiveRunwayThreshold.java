@@ -26,7 +26,7 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 /**
  * @author Marek
  */
-public class ActiveRunwayThreshold extends Parentable<ActiveRunway> implements IXPersistable {
+public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
 
   public static class Prototype {
     public final String name;
@@ -171,16 +171,6 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> implements I
 
   public IReadOnlyList<DARoute> getRoutes() {
     return routes;
-  }
-
-  @Override
-  public void load(XElement elm, XLoadContext ctx) {
-    throw new ToDoException();
-  }
-
-  @Override
-  public void save(XElement elm, XSaveContext ctx) {
-    elm.setContent(this.getParent().getParent().getIcao() + this.getName());
   }
 
   @Override

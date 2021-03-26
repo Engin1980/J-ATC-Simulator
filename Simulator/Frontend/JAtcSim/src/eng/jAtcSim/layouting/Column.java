@@ -14,12 +14,12 @@ public class Column {
     this.width = width;
   }
 
-  public Value getWidth() {
-    return width;
-  }
-
   public Block getContent() {
     return content;
+  }
+
+  public Value getWidth() {
+    return width;
   }
 
 }

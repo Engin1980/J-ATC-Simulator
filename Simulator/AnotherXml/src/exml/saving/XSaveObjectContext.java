@@ -32,13 +32,11 @@ public class XSaveObjectContext {
     for (Map.Entry<K, V> entry : entries) {
       K key = entry.getKey();
       XElement keyElement = new XElement(Constants.KEY_ELEMENT);
-      saveObject(key, keyElement);
-      addTypeAttributeIfRequired(keyElement, key, keyType);
+      saveObject(key, keyElement, keyType);
 
       V value = entry.getValue();
       XElement valueElement = new XElement(Constants.VALUE_ELEMENT);
-      saveObject(value, valueElement);
-      addTypeAttributeIfRequired(valueElement, value, valueType);
+      saveObject(value, valueElement, valueType);
 
       XElement entryElement = new XElement(Constants.ENTRY_ELEMENT);
       entryElement.addElement(keyElement);
@@ -62,8 +60,7 @@ public class XSaveObjectContext {
   public void saveItems(Iterable<?> items, Class<?> itemType, XElement elm) {
     for (Object item : items) {
       XElement itemElement = new XElement(Constants.ITEM_ELEMENT);
-      saveObject(item, itemElement);
-      addTypeAttributeIfRequired(itemElement, item, itemType);
+      saveObject(item, itemElement, itemType);
       elm.addElement(itemElement);
     }
   }
@@ -72,6 +69,12 @@ public class XSaveObjectContext {
     XElement elm = new XElement(itemsElementName);
     this.saveItems(items, itemType, elm);
     return elm;
+  }
+
+
+  public void saveObject(Object obj, XElement elm, Class<?> expectedObjectType){
+    saveObject(obj, elm);
+    addTypeAttributeIfRequired(elm, obj, expectedObjectType);
   }
 
   public void saveObject(Object obj, XElement elm) {

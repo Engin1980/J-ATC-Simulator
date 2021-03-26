@@ -1,6 +1,5 @@
 package eng.jAtcSim.frmPacks.shared;
 
-import eng.eSystem.ERandom;
 import eng.eSystem.collections.*;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
@@ -9,7 +8,6 @@ import eng.jAtcSim.app.controls.ImagePanel;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
-import eng.jAtcSim.newLib.traffic.movementTemplating.FlightMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GenericCommercialMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GenericGeneralAviationMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
@@ -45,9 +43,9 @@ public class FrmTrafficBarGraph extends JFrame {
   private static final int IMG_HEIGHT = 500;
   private static final int IMG_WIDTH = 1400;
   private static final int MARGIN = 20;
-  private ComboBoxExtender<String> cmbSerie = new ComboBoxExtender<>();
-  private IMap<String, IList<DataItem>> ds = new EMap<>();
-  private ImagePanel pnlImage = new ImagePanel(IMG_WIDTH, IMG_HEIGHT);
+  private final ComboBoxExtender<String> cmbSerie = new ComboBoxExtender<>();
+  private final IMap<String, IList<DataItem>> ds = new EMap<>();
+  private final ImagePanel pnlImage = new ImagePanel(IMG_WIDTH, IMG_HEIGHT);
   private String title;
 
   public FrmTrafficBarGraph() {
@@ -103,7 +101,7 @@ public class FrmTrafficBarGraph extends JFrame {
     dts = new EList<>();
 
     Context.getApp().getAppLog().write(ApplicationLog.eType.info,
-        "Implementation of type categories overview is not realized.");
+            "Implementation of type categories overview is not realized.");
 //    for (int i = 0; i < 23; i++) {
 //      String domain = i + ":00 - " + i + ":59";
 //      int ii = i;
@@ -147,7 +145,7 @@ public class FrmTrafficBarGraph extends JFrame {
 
   private void initLayout() {
     JPanel pnlContent =
-        LayoutManager.createBoxPanel(pnlImage);
+            LayoutManager.createBoxPanel(pnlImage);
     JPanel pnlBottom = LayoutManager.createFlowPanel(cmbSerie.getControl());
 
     LayoutManager.fillBorderedPanel(this, null, pnlBottom, null, null, pnlContent);
@@ -165,20 +163,20 @@ public class FrmTrafficBarGraph extends JFrame {
 
     CategoryAxis domainAxis = new CategoryAxis("Time");
     domainAxis.setCategoryLabelPositions(
-        CategoryLabelPositions.createUpRotationLabelPositions(
-            90d * Math.PI / 180d));
+            CategoryLabelPositions.createUpRotationLabelPositions(
+                    90d * Math.PI / 180d));
     ValueAxis rangeAxis = new NumberAxis("Movements");
     rangeAxis.setRange(0, 60);
     CategoryItemRenderer renderer = new StackedBarRenderer();
 
     renderer.setBaseItemLabelGenerator(
-        new StandardCategoryItemLabelGenerator());
+            new StandardCategoryItemLabelGenerator());
     for (int i = 0; i < ds.select(q -> q.type).distinct().size(); i++) {
       renderer.setSeriesItemLabelsVisible(i, Boolean.TRUE);
     }
 
     CategoryPlot plot = new CategoryPlot(
-        dataset, domainAxis, rangeAxis, renderer);
+            dataset, domainAxis, rangeAxis, renderer);
     JFreeChart chart = new JFreeChart(key, plot);
 
     BufferedImage bufferedImage = chart.createBufferedImage(IMG_WIDTH, IMG_HEIGHT);

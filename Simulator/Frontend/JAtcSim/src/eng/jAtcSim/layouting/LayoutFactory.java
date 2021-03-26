@@ -42,7 +42,7 @@ public class LayoutFactory {
     Window ret;
     Position position = loadPosition(elm.getChild("position"));
     String title = elm.getAttribute("title");
-    boolean withMenu = elm.tryGetAttribute("withMenu", "false").toLowerCase().equals("true");
+    boolean withMenu = elm.tryGetAttribute("withMenu", "false").equalsIgnoreCase("true");
     Block content = loadAnyBlock(elm);
     String styleS = elm.tryGetAttribute("style", "normal");
     Window.WindowStyle style = Window.WindowStyle.parse(styleS);

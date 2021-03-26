@@ -2,14 +2,13 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.events.EventAnonymous;
 import eng.eSystem.events.EventAnonymousSimple;
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.SwingRadar.Coloring;
-import eng.jAtcSim.abstractRadar.support.AirplaneDisplayInfo;
+import eng.jAtcSim.abstractRadar.global.Color;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.abstractRadar.global.Color;
-import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,16 +31,16 @@ public class CommandButtonsPanel extends JPanel {
     initComponents();
   }
 
+  public EventAnonymousSimple getEraseEvent() {
+    return eraseEvent;
+  }
+
   public EventAnonymous<String> getGeneratedEvent() {
     return generatedEvent;
   }
 
   public EventAnonymousSimple getSendEvent() {
     return sendEvent;
-  }
-
-  public EventAnonymousSimple getEraseEvent() {
-    return eraseEvent;
   }
 
   public void setPlane(IAirplaneInfo plane) {
@@ -54,7 +53,7 @@ public class CommandButtonsPanel extends JPanel {
   }
 
   public void setPlane(Callsign callsign) {
-    IAirplaneInfo ai = sim.getPlanesToDisplay().tryGetFirst(q->q.callsign().equals(callsign));
+    IAirplaneInfo ai = sim.getPlanesToDisplay().tryGetFirst(q -> q.callsign().equals(callsign));
     if (ai == null)
       setPlane((IAirplaneInfo) null);
     else
@@ -127,7 +126,7 @@ public class CommandButtonsPanel extends JPanel {
     pnlSend.add(btn);
 
     LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.center, 0,
-        pnlPlane, pnlAtc, pnlHS, pnlA, pnlSub, pnlSend);
+            pnlPlane, pnlAtc, pnlHS, pnlA, pnlSub, pnlSend);
 
     LayoutManager.adjustComponents(this, (c) -> {
       c.setBackground(Coloring.get(bgColor));

@@ -45,11 +45,11 @@ public class XmlSerializationFactory {
     //sett.getSerializers().addAsFirstForType(java.awt.Font.class, new AwtFontElementSerializer());
     sett.getSerializers().addAsFirstForType(Font.class, new RadarFontElementSerializer());
     sett.getSerializers().addAsFirstForType(
-        Color.class,
-        new ElementSerializerWrappingAttributeSerializer(new RadarColorAttributeSerializer()));
+            Color.class,
+            new ElementSerializerWrappingAttributeSerializer(new RadarColorAttributeSerializer()));
     sett.getSerializers().addAsFirstForType(
-        Color.class,
-        new RadarColorAttributeSerializer());
+            Color.class,
+            new RadarColorAttributeSerializer());
     XmlSerializer ser = new XmlSerializer(sett);
     return ser;
   }
@@ -58,7 +58,7 @@ public class XmlSerializationFactory {
     XmlSettings sett = createBasicXmlSettings();
 
     sett.getMeta().forClass(IMap.class).setRule(
-        new XmlRule(null, null).with(new SpeechResponsesDeserializer())
+            new XmlRule(null, null).with(new SpeechResponsesDeserializer())
     );
 
     XmlSerializer ser = new XmlSerializer(sett);
@@ -69,17 +69,17 @@ public class XmlSerializationFactory {
     XmlSettings sett = createBasicXmlSettings();
     sett.getSerializers().addAsFirstForType(LocalTime.class, new LocalTimeAttributeSerializer("HH:mm"));
     sett.getMeta().forClass(StartupSettings.CustomTraffic.class)
-        .forField("companies")
-        .getRules()
-        .add(new XmlRule()
-            .with(0, new XmlRule(null, String.class))
-            .with(1, new XmlRule(null, Integer.class)));
+            .forField("companies")
+            .getRules()
+            .add(new XmlRule()
+                    .with(0, new XmlRule(null, String.class))
+                    .with(1, new XmlRule(null, Integer.class)));
     sett.getMeta().forClass(StartupSettings.CustomTraffic.class)
-        .forField("countryCodes")
-        .getRules()
-        .add(new XmlRule()
-            .with(0, new XmlRule(null, String.class))
-            .with(1, new XmlRule(null, Integer.class)));
+            .forField("countryCodes")
+            .getRules()
+            .add(new XmlRule()
+                    .with(0, new XmlRule(null, String.class))
+                    .with(1, new XmlRule(null, Integer.class)));
     XmlSerializer ser = new XmlSerializer(sett);
 
     return ser;
@@ -110,10 +110,10 @@ public class XmlSerializationFactory {
       logType = ApplicationLog.eType.info;
 
     String sb = "XML " +
-        String.format("%-20s", e.type) +
-        " :: " +
-        StringUtils.repeat(" ", e.indent) +
-        e.message;
+            String.format("%-20s", e.type) +
+            " :: " +
+            StringUtils.repeat(" ", e.indent) +
+            e.message;
     Context.getApp().getAppLog().write(logType, sb);
   }
 }

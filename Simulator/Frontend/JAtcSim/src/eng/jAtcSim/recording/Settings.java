@@ -1,12 +1,12 @@
 package eng.jAtcSim.recording;
 
 public class Settings {
-  private String path;
-  private int interval;
-  private int width;
-  private int height;
-  private String imageType;
-  private float jpgQuality;
+  private final String path;
+  private final int interval;
+  private final int width;
+  private final int height;
+  private final String imageType;
+  private final float jpgQuality;
 
   public Settings(String path, int interval, int windowWidth, int windowHeight, String imageType, float jpgQuality) {
     this.path = path;
@@ -17,27 +17,27 @@ public class Settings {
     this.jpgQuality = jpgQuality;
   }
 
-  public String getImageType() {
-    return imageType;
+  public int getHeight() {
+    return height;
   }
 
-  public String getPath() {
-    return path;
+  public String getImageType() {
+    return imageType;
   }
 
   public int getInterval() {
     return interval;
   }
 
-  public int getWidth() {
-    return width;
-  }
-
-  public int getHeight() {
-    return height;
-  }
-
   public float getJpgQuality() {
     return jpgQuality;
+  }
+
+  public String getPath() {
+    return path;
+  }
+
+  public int getWidth() {
+    return width;
   }
 }

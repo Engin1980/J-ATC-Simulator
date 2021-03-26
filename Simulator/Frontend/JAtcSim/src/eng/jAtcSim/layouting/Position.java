@@ -26,23 +26,23 @@ class Position {
     this(x, y, width, height, 1);
   }
 
-  public Value getX() {
-    return x;
-  }
-
-  public Value getY() {
-    return y;
-  }
-
-  public Value getWidth() {
-    return width;
-  }
-
   public Value getHeight() {
     return height;
   }
 
   public Integer getMonitor() {
     return monitor;
+  }
+
+  public Value getWidth() {
+    return width;
+  }
+
+  public Value getX() {
+    return x;
+  }
+
+  public Value getY() {
+    return y;
   }
 }

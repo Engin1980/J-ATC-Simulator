@@ -6,7 +6,6 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.events.Event;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.swing.LayoutManager;
-import eng.jAtcSim.settings.FlightStripSettings;
 import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
@@ -14,6 +13,7 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Format;
 import eng.jAtcSim.newPacks.ICanSelectCallsign;
 import eng.jAtcSim.newPacks.IView;
+import eng.jAtcSim.settings.FlightStripSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,11 +27,6 @@ public class FlightListView implements IView, ICanSelectCallsign {
   private JPanel pnlContent;
   private Callsign selectedCallsign;
   private JPanel parent;
-
-  @Override
-  public Event<IView, Callsign> onSelectedCallsignChanged() {
-    return selectedCallsignChanged;
-  }
 
   public Callsign getSelectedCallsign() {
     return selectedCallsign;
@@ -67,6 +62,11 @@ public class FlightListView implements IView, ICanSelectCallsign {
     this.sim.registerOnSecondElapsed(s -> updateList());
   }
 
+  @Override
+  public Event<IView, Callsign> onSelectedCallsignChanged() {
+    return selectedCallsignChanged;
+  }
+
   private void updateList() {
     // init pri prvnim volani
     if (plns == null) {
@@ -92,7 +92,7 @@ public class FlightListView implements IView, ICanSelectCallsign {
         if (this.getSelectedCallsign() == callsign)
           this.setSelectedCallsign(null);
         else
-          this.setSelectedCallsign((Callsign) callsign);
+          this.setSelectedCallsign(callsign);
       });
     }
 
@@ -124,9 +124,10 @@ class FlightStripPanel extends JPanel {
   public static void resetIndex() {
     index = 0;
   }
+
   private final Event<FlightStripPanel, Callsign> clickEvent = new Event<>(this);
-  private Callsign callsign;
-  private FlightListView parent;
+  private final Callsign callsign;
+  private final FlightListView parent;
 
   public FlightStripPanel(FlightListView parent, IAirplaneInfo ai) {
 

@@ -1,11 +1,11 @@
 package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.utilites.awt.ComponentUtils;
-import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
-import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
-import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.eSystem.swing.LayoutManager;
+import eng.eSystem.utilites.awt.ComponentUtils;
+import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
+import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
+import eng.jAtcSim.app.startupSettings.StartupSettings;
 
 import javax.swing.*;
 
@@ -68,7 +68,7 @@ public class WeatherPanel extends JStartupPanel {
 
 
     JPanel pnlMain = LayoutManager.createFormPanel(2, 1,
-        pnlWeather, pnlUserWeather);
+            pnlWeather, pnlUserWeather);
 
     this.add(pnlMain);
   }
@@ -81,17 +81,17 @@ public class WeatherPanel extends JStartupPanel {
 
     rdbWeatherFromWeb = new JRadioButton();
     rdbWeatherFromWeb.addActionListener(
-        e -> ComponentUtils.adjustComponentTree(this.userWeatherPanel, q -> q.setEnabled(false)));
+            e -> ComponentUtils.adjustComponentTree(this.userWeatherPanel, q -> q.setEnabled(false)));
     rdbWeatherFromWeb.setText("online weather from web");
 
     rdbWeatherFromFile = new JRadioButton();
     rdbWeatherFromWeb.addActionListener(
-        e -> ComponentUtils.adjustComponentTree(this.userWeatherPanel, q -> q.setEnabled(false)));
+            e -> ComponentUtils.adjustComponentTree(this.userWeatherPanel, q -> q.setEnabled(false)));
     rdbWeatherFromFile.setText("from file");
 
     rdbWeatherFromUser = new JRadioButton();
     rdbWeatherFromUser.addActionListener(
-        e -> ComponentUtils.adjustComponentTree(this.userWeatherPanel, q -> q.setEnabled(true)));
+            e -> ComponentUtils.adjustComponentTree(this.userWeatherPanel, q -> q.setEnabled(true)));
     rdbWeatherFromUser.setSelected(true);
     rdbWeatherFromUser.setText("custom weather");
 
@@ -103,12 +103,12 @@ public class WeatherPanel extends JStartupPanel {
 
   private JPanel createWeatherPanel() {
     JPanel ret = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE,
-        rdbWeatherFromWeb,
-        LayoutManager.createFlowPanel(
-            LayoutManager.eVerticalAlign.baseline, 4,
-            rdbWeatherFromFile,
-            LayoutManager.createFlowPanel(fleWeather.getTextControl(), fleWeather.getButtonControl())),
-        rdbWeatherFromUser
+            rdbWeatherFromWeb,
+            LayoutManager.createFlowPanel(
+                    LayoutManager.eVerticalAlign.baseline, 4,
+                    rdbWeatherFromFile,
+                    LayoutManager.createFlowPanel(fleWeather.getTextControl(), fleWeather.getButtonControl())),
+            rdbWeatherFromUser
     );
     return ret;
   }

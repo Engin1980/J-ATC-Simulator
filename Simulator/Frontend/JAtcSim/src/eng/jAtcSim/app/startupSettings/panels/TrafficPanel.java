@@ -28,7 +28,6 @@ import eng.jAtcSim.frmPacks.shared.FrmTrafficBarGraph;
 import eng.jAtcSim.newLib.gameSim.game.sources.FleetsSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.SourceFactory;
 import eng.jAtcSim.newLib.gameSim.game.sources.TrafficSource;
-import eng.jAtcSim.newLib.gameSim.game.sources.TrafficXmlSource;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
@@ -49,11 +48,11 @@ public class TrafficPanel extends JStartupPanel {
   private static ITrafficModel generateCustomTrafficModel(StartupSettings.Traffic trf) {
 
     SimpleGenericTrafficModel ret = SimpleGenericTrafficModel.create(
-        trf.customTraffic.getGeneralAviationProbability(),
-        trf.customTraffic.getDepartureProbability(),
-        trf.customTraffic.getMovementsForHours(),
-        trf.customTraffic.getCompanies(),
-        trf.customTraffic.getCountryCodes());
+            trf.customTraffic.getGeneralAviationProbability(),
+            trf.customTraffic.getDepartureProbability(),
+            trf.customTraffic.getMovementsForHours(),
+            trf.customTraffic.getCompanies(),
+            trf.customTraffic.getCountryCodes());
 
     return ret;
 
@@ -72,7 +71,7 @@ public class TrafficPanel extends JStartupPanel {
   private javax.swing.JRadioButton rdbUser;
   private javax.swing.JRadioButton rdbXml;
   private JScrollBar sldArrivalsDepartures;
-  private int[] specificMovementValues = null;
+  private final int[] specificMovementValues = null;
   private RegexPatternTextFieldExtender txtCompanies;
   private RegexPatternTextFieldExtender txtCountryCodes;
   private RegexPatternTextFieldExtender txtMovements;
@@ -181,11 +180,11 @@ public class TrafficPanel extends JStartupPanel {
 
   private JPanel createCustomTrafficPanel() {
     JPanel ret2 = LayoutManager.createFormPanel(5, 2,
-        new JLabel("Movements / hour:"), txtMovements.getControl(),
-        new JLabel("Overall departure probability:"), sldArrivalsDepartures,
-        new JLabel("Overall general aviation probability:"), nudNonCommercials.getControl(),
-        new JLabel("Companies:"), txtCompanies.getControl(),
-        new JLabel("Country codes:"), txtCountryCodes.getControl());
+            new JLabel("Movements / hour:"), txtMovements.getControl(),
+            new JLabel("Overall departure probability:"), sldArrivalsDepartures,
+            new JLabel("Overall general aviation probability:"), nudNonCommercials.getControl(),
+            new JLabel("Companies:"), txtCompanies.getControl(),
+            new JLabel("Country codes:"), txtCountryCodes.getControl());
     return ret2;
 
 //    JPanel ret = LayoutManager.createFormPanel(7, 2,
@@ -206,18 +205,18 @@ public class TrafficPanel extends JStartupPanel {
 
   private JPanel createGlobalPanel() {
     return LayoutManager.createFormPanel(2, 2,
-        new JLabel("Max planes count:"),
-        LayoutManager.createFlowPanel(
-            LayoutManager.eVerticalAlign.baseline,
-            super.DISTANCE,
-            nudMaxPlanes.getControl(),
-            new JLabel("Traffic density (%):"), nudTrafficDensity.getControl(),
-            chkAllowDelays),
-        new JLabel("Emergencies probability:"),
-        LayoutManager.createFlowPanel(
-            LayoutManager.eVerticalAlign.baseline,
-            super.DISTANCE,
-            cmbEmergencyProbability.getControl()));
+            new JLabel("Max planes count:"),
+            LayoutManager.createFlowPanel(
+                    LayoutManager.eVerticalAlign.baseline,
+                    DISTANCE,
+                    nudMaxPlanes.getControl(),
+                    new JLabel("Traffic density (%):"), nudTrafficDensity.getControl(),
+                    chkAllowDelays),
+            new JLabel("Emergencies probability:"),
+            LayoutManager.createFlowPanel(
+                    LayoutManager.eVerticalAlign.baseline,
+                    DISTANCE,
+                    cmbEmergencyProbability.getControl()));
   }
 
   private void createLayout() {
@@ -237,7 +236,7 @@ public class TrafficPanel extends JStartupPanel {
     pnlCustomTraffic.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
 
     JPanel pnlMain = LayoutManager.createFormPanel(3, 1,
-        pnlGlobalTrafficSettings, pnlTrafficSource, this.pnlCustomTraffic);
+            pnlGlobalTrafficSettings, pnlTrafficSource, this.pnlCustomTraffic);
 
     pnlMain = LayoutManager.createBorderedPanel(DISTANCE, pnlMain);
 
@@ -246,10 +245,10 @@ public class TrafficPanel extends JStartupPanel {
 
   private JPanel createTrafficSourcePanel() {
     return LayoutManager.createFormPanel(3, 2,
-        rdbXml,
-        LayoutManager.createFlowPanel(fleTraffic.getTextControl(), fleTraffic.getButtonControl()),
-        rdbUser, null,
-        null, btnAnalyseTraffic);
+            rdbXml,
+            LayoutManager.createFlowPanel(fleTraffic.getTextControl(), fleTraffic.getButtonControl()),
+            rdbUser, null,
+            null, btnAnalyseTraffic);
   }
 
 //  private void btnSpecifyTraffic_click(ActionEvent actionEvent) {
@@ -285,9 +284,9 @@ public class TrafficPanel extends JStartupPanel {
     EAssert.isTrue(m.find());
     int cnt = Integer.parseInt(m.group(1));
     Double d = m.group(2) == null ? null
-        : Double.parseDouble("0." + m.group(2));
+            : Double.parseDouble("0." + m.group(2));
     Double g = m.group(3) == null ? null
-        : Double.parseDouble("0." + m.group(3));
+            : Double.parseDouble("0." + m.group(3));
     SimpleGenericTrafficModel.MovementsForHour ret = new SimpleGenericTrafficModel.MovementsForHour(cnt, g, d);
     return ret;
   }
@@ -343,7 +342,7 @@ public class TrafficPanel extends JStartupPanel {
     Double g = movementsPerHour[0].generalAviationProbability;
     IList<SimpleGenericTrafficModel.MovementsForHour> lst = new EList<>(movementsPerHour);
     if (lst.isAll(
-        q -> q.count == c && q.departureProbability == d && q.generalAviationProbability == g
+            q -> q.count == c && q.departureProbability == d && q.generalAviationProbability == g
     )) {
       ret = encodeMovement(movementsPerHour[0]);
     } else {

@@ -22,7 +22,9 @@ import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.game.Game;
 import eng.jAtcSim.newLib.gameSim.game.GameFactoryAndRepository;
 import eng.jAtcSim.newLib.gameSim.game.sources.SourceFactory;
-import eng.jAtcSim.newLib.gameSim.game.startupInfos.*;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.GameStartupInfo;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.SimulationSettings;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.TrafficSettings;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.context.AppAcc;
 import eng.jAtcSim.newLib.shared.context.IAppAcc;
@@ -52,11 +54,11 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class JAtcSim {
 
   private static final boolean FAST_START = false;
-  private static AppSettings appSettings;
   private static final ITrafficModel enginSpecificTraffic =
-      //new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
-      //new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
-      null;
+          //new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
+          //new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
+          null;
+  private static AppSettings appSettings;
 
   public static JLabel getAppImage(JFrame frm) {
     URL url = frm.getClass().getResource("/intro.png");
@@ -135,9 +137,9 @@ public class JAtcSim {
       startupSettings = XmlSerialization.loadFromFile(ser, appSettings.startupSettingsFile.toString(), StartupSettings.class);
     } catch (Exception ex) {
       Context.getApp().getAppLog().write(
-          ApplicationLog.eType.warning,
-          "Failed to load startup settings from " + appSettings.startupSettingsFile.toString() +
-              ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n\t"));
+              ApplicationLog.eType.warning,
+              "Failed to load startup settings from " + appSettings.startupSettingsFile.toString() +
+                      ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n\t"));
       startupSettings = new StartupSettings();
     }
 
@@ -168,7 +170,7 @@ public class JAtcSim {
       startupSettings.files.normalizeSlashes();
       XmlSerializer ser = XmlSerializationFactory.createForStartupSettings();
       XmlSerialization.saveToFile(ser, startupSettings, StartupSettings.class,
-          appSettings.startupSettingsFile.toString(), "startupSettings");
+              appSettings.startupSettingsFile.toString(), "startupSettings");
     } catch (EApplicationException ex) {
       throw new EApplicationException("Failed to normalize or save default settings.", ex);
     }
@@ -180,8 +182,8 @@ public class JAtcSim {
       GameStartupInfo gsi = new GameStartupInfo();
 
       gsi.areaSource = SourceFactory.createAreaSource(
-          startupSettings.files.areaXmlFile,
-          startupSettings.recent.icao
+              startupSettings.files.areaXmlFile,
+              startupSettings.recent.icao
       );
 
       gsi.simulationSettings = new SimulationSettings();
@@ -238,7 +240,7 @@ public class JAtcSim {
         speechResponses = XmlSerialization.loadFromFile(ser, appSettings.speechFormatterFile.toString(), IMap.class);
       } catch (EApplicationException ex) {
         throw new EApplicationException(
-            sf("Unable to load speech responses from xml file '%s'.", appSettings.speechFormatterFile), ex);
+                sf("Unable to load speech responses from xml file '%s'.", appSettings.speechFormatterFile), ex);
       }
 //      //TODO do somehow configurable
 //      gsi.parserFormatterStartInfo = new ParserFormatterStartInfo(
@@ -304,13 +306,13 @@ public class JAtcSim {
         throw new EEnumValueUnsupportedException(weather.snowState);
     }
     Weather ret =
-        new Weather(weather.windDirection,
-            weather.windSpeed,
-            weather.windSpeed,
-            weather.visibilityInM,
-            weather.cloudBaseAltitudeFt,
-            weather.cloudBaseProbability,
-            snowState);
+            new Weather(weather.windDirection,
+                    weather.windSpeed,
+                    weather.windSpeed,
+                    weather.visibilityInM,
+                    weather.cloudBaseAltitudeFt,
+                    weather.cloudBaseProbability,
+                    snowState);
     return ret;
   }
 
@@ -323,7 +325,7 @@ public class JAtcSim {
       object = ctor.newInstance();
     } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
       throw new ERuntimeException(
-          sf("Failed to create instance of radar pack '%s'.", packTypeName), ex);
+              sf("Failed to create instance of radar pack '%s'.", packTypeName), ex);
     }
     Pack ret = (Pack) object;
     return ret;
@@ -335,7 +337,7 @@ public class JAtcSim {
         java.nio.file.Files.createDirectories(path);
       } catch (IOException e) {
         throw new EApplicationException(sf(
-            "Failed to create/use log path '%s'", path.toString()), e);
+                "Failed to create/use log path '%s'", path.toString()), e);
       }
     }
   }
@@ -358,149 +360,149 @@ public class JAtcSim {
   private static void initDefault() {
     // default theme
     Stylist.add(
-        "Global - components font",
-        new Stylist.TypeFilter(java.awt.Component.class, true),
-        q -> {
-          Font fnt = new Font("Verdana", 0, 12);
-          q.setFont(fnt);
-        });
+            "Global - components font",
+            new Stylist.TypeFilter(java.awt.Component.class, true),
+            q -> {
+              Font fnt = new Font("Verdana", 0, 12);
+              q.setFont(fnt);
+            });
   }
 
   private static void initIntro() {
     // intro page
     Stylist.add(
-        "Frm Intro - frm flightStripSize",
-        new Stylist.TypeFilter(FrmIntro.class, false),
-        q -> {
-          Dimension d = new Dimension(500, 420);
-          q.setMinimumSize(d);
-          q.setPreferredSize(d);
-        });
+            "Frm Intro - frm flightStripSize",
+            new Stylist.TypeFilter(FrmIntro.class, false),
+            q -> {
+              Dimension d = new Dimension(500, 420);
+              q.setMinimumSize(d);
+              q.setPreferredSize(d);
+            });
 
     Stylist.add(
-        "Frm Intro - JButton style",
-        new Stylist.AndFilter(
-            new Stylist.TypeFilter(javax.swing.JButton.class, false),
-            new Stylist.ParentTypeFilter(FrmIntro.class, true)
-        )
-        ,
-        q -> {
-          Dimension d = new Dimension(450, 32);
-          q.setPreferredSize(d);
-          q.setMinimumSize(d);
-          q.setMaximumSize(d);
-        });
+            "Frm Intro - JButton style",
+            new Stylist.AndFilter(
+                    new Stylist.TypeFilter(javax.swing.JButton.class, false),
+                    new Stylist.ParentTypeFilter(FrmIntro.class, true)
+            )
+            ,
+            q -> {
+              Dimension d = new Dimension(450, 32);
+              q.setPreferredSize(d);
+              q.setMinimumSize(d);
+              q.setMaximumSize(d);
+            });
 
     Stylist.add(
-        "Frm Intro - JPanel dark background style",
-        new Stylist.AndFilter(
-            new Stylist.TypeFilter(JPanel.class, true),
-            new Stylist.ParentTypeFilter(FrmIntro.class, true)
-        ),
-        q -> q.setBackground(Color.DARK_GRAY)
+            "Frm Intro - JPanel dark background style",
+            new Stylist.AndFilter(
+                    new Stylist.TypeFilter(JPanel.class, true),
+                    new Stylist.ParentTypeFilter(FrmIntro.class, true)
+            ),
+            q -> q.setBackground(Color.DARK_GRAY)
     );
   }
 
   private static void initMainMenus() {
     Stylist.add(
-        "JMenuBar style",
-        new Stylist.TypeFilter(JMenuBar.class, true),
-        q -> {
-          q.setBackground(Color.DARK_GRAY);
-          q.setForeground(Color.LIGHT_GRAY);
-        });
+            "JMenuBar style",
+            new Stylist.TypeFilter(JMenuBar.class, true),
+            q -> {
+              q.setBackground(Color.DARK_GRAY);
+              q.setForeground(Color.LIGHT_GRAY);
+            });
     Stylist.add(
-        "JMenu style",
-        new Stylist.TypeFilter(JMenu.class, false),
-        q -> {
-          q.setBackground(Color.DARK_GRAY);
-          q.setForeground(Color.LIGHT_GRAY);
-          ((JMenu) q).setOpaque(true);
-        });
+            "JMenu style",
+            new Stylist.TypeFilter(JMenu.class, false),
+            q -> {
+              q.setBackground(Color.DARK_GRAY);
+              q.setForeground(Color.LIGHT_GRAY);
+              ((JMenu) q).setOpaque(true);
+            });
     Stylist.add(
-        "JMenuItem style",
-        new Stylist.TypeFilter(JMenuItem.class, false),
-        q -> {
-          q.setBackground(Color.DARK_GRAY);
-          q.setForeground(Color.LIGHT_GRAY);
-        });
+            "JMenuItem style",
+            new Stylist.TypeFilter(JMenuItem.class, false),
+            q -> {
+              q.setBackground(Color.DARK_GRAY);
+              q.setForeground(Color.LIGHT_GRAY);
+            });
     Stylist.add(
-        "JMenuChecked style",
-        new Stylist.TypeFilter(JCheckBoxMenuItem.class, false),
-        q -> {
-          q.setBackground(Color.DARK_GRAY);
-          q.setForeground(Color.LIGHT_GRAY);
-        });
+            "JMenuChecked style",
+            new Stylist.TypeFilter(JCheckBoxMenuItem.class, false),
+            q -> {
+              q.setBackground(Color.DARK_GRAY);
+              q.setForeground(Color.LIGHT_GRAY);
+            });
   }
 
   private static void initStartupProgress() {
     Stylist.add(
-        "Startup progress form background dark",
-        new Stylist.TypeFilter(FrmStartupProgress.class, true),
-        q -> q.setBackground(Color.DARK_GRAY)
+            "Startup progress form background dark",
+            new Stylist.TypeFilter(FrmStartupProgress.class, true),
+            q -> q.setBackground(Color.DARK_GRAY)
     );
 
     Stylist.add(
-        "Startup progress - panels dark",
-        new Stylist.AndFilter(
-            new Stylist.TypeFilter(javax.swing.JPanel.class, false),
-            new Stylist.ParentTypeFilter(FrmStartupProgress.class, true)
-        )
-        ,
-        q -> q.setBackground(Color.DARK_GRAY));
+            "Startup progress - panels dark",
+            new Stylist.AndFilter(
+                    new Stylist.TypeFilter(javax.swing.JPanel.class, false),
+                    new Stylist.ParentTypeFilter(FrmStartupProgress.class, true)
+            )
+            ,
+            q -> q.setBackground(Color.DARK_GRAY));
   }
 
   private static void initStartupSettings() {
 
     Stylist.add(
-        "Startup settings - JPanel dark",
-        new Stylist.TypeFilter(JPanel.class, true),
-        q -> q.setBackground(Color.DARK_GRAY)
+            "Startup settings - JPanel dark",
+            new Stylist.TypeFilter(JPanel.class, true),
+            q -> q.setBackground(Color.DARK_GRAY)
     );
 
     Stylist.add(
-        "Startup settings - JPanel border style",
-        new Stylist.TypeFilter(javax.swing.JPanel.class, true),
-        q -> {
-          javax.swing.JPanel p = (javax.swing.JPanel) q;
-          TitledBorder b = (TitledBorder) p.getBorder();
-          if (b != null) b.setTitleColor(Color.LIGHT_GRAY);
-        });
+            "Startup settings - JPanel border style",
+            new Stylist.TypeFilter(javax.swing.JPanel.class, true),
+            q -> {
+              javax.swing.JPanel p = (javax.swing.JPanel) q;
+              TitledBorder b = (TitledBorder) p.getBorder();
+              if (b != null) b.setTitleColor(Color.LIGHT_GRAY);
+            });
 
     Stylist.add(
-        "Startup settings - JLabel style",
-        new Stylist.TypeFilter(JLabel.class, false),
-        q -> {
-          q.setForeground(Color.LIGHT_GRAY);
-        }
+            "Startup settings - JLabel style",
+            new Stylist.TypeFilter(JLabel.class, false),
+            q -> {
+              q.setForeground(Color.LIGHT_GRAY);
+            }
     );
 
     Stylist.add(
-        "Startup settings - JRadioButton style",
-        new Stylist.TypeFilter(JRadioButton.class, false),
-        q -> {
-          q.setForeground(Color.LIGHT_GRAY);
-          q.setBackground(Color.DARK_GRAY);
-        }
+            "Startup settings - JRadioButton style",
+            new Stylist.TypeFilter(JRadioButton.class, false),
+            q -> {
+              q.setForeground(Color.LIGHT_GRAY);
+              q.setBackground(Color.DARK_GRAY);
+            }
     );
     Stylist.add(
-        "Startup settings - JCheckBox style",
-        new Stylist.TypeFilter(JCheckBox.class, false),
-        q -> {
-          q.setForeground(Color.LIGHT_GRAY);
-          q.setBackground(Color.DARK_GRAY);
-        }
+            "Startup settings - JCheckBox style",
+            new Stylist.TypeFilter(JCheckBox.class, false),
+            q -> {
+              q.setForeground(Color.LIGHT_GRAY);
+              q.setBackground(Color.DARK_GRAY);
+            }
     );
     Stylist.add(
-        "Startup settings - JTextField style",
-        new Stylist.TypeFilter(JTextField.class, false),
-        q -> {
-          JTextField txt = (JTextField) q;
-          if (txt.isEditable() == false) {
-            q.setForeground(Color.LIGHT_GRAY);
-            q.setBackground(Color.DARK_GRAY);
-          }
-        }
+            "Startup settings - JTextField style",
+            new Stylist.TypeFilter(JTextField.class, false),
+            q -> {
+              JTextField txt = (JTextField) q;
+              if (txt.isEditable() == false) {
+                q.setForeground(Color.LIGHT_GRAY);
+                q.setBackground(Color.DARK_GRAY);
+              }
+            }
     );
   }
 
@@ -513,10 +515,10 @@ public class JAtcSim {
   }
 
   private static void resolveShortXmlFileNamesInStartupSettings(AppSettings appSettings, StartupSettings
-      startupSettings) {
+          startupSettings) {
     Path tmp;
     Path appPath;
-    appPath = appSettings.getApplicationFolder();
+    appPath = AppSettings.getApplicationFolder();
 
     tmp = Paths.get(startupSettings.files.areaXmlFile);
     if (tmp.isAbsolute()) {

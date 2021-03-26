@@ -1,6 +1,5 @@
 package eng.jAtcSim.app.startupSettings;
 
-import eng.eSystem.ERandom;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.swing.LayoutManager;
@@ -30,7 +29,7 @@ public class FrmStartupSettings extends JPanel {
   private JButton btnValidate;
   private boolean dialogResultOk;
   private String lastStartupSettingsFileName = null;
-  private JPanel pnlContent;
+  private final JPanel pnlContent;
 
   public FrmStartupSettings() throws HeadlessException {
 
@@ -45,18 +44,18 @@ public class FrmStartupSettings extends JPanel {
 
   public void fillBySettings(StartupSettings settings) {
     ComponentUtils.adjustComponentTree(this,
-        q -> q instanceof IForSettings, q -> {
-          IForSettings ifs = (IForSettings) q;
-          ifs.fillBySettings(settings);
-        });
+            q -> q instanceof IForSettings, q -> {
+              IForSettings ifs = (IForSettings) q;
+              ifs.fillBySettings(settings);
+            });
   }
 
   public void fillSettingsBy(StartupSettings settings) {
     ComponentUtils.adjustComponentTree(this,
-        q -> q instanceof IForSettings, q -> {
-          IForSettings ifs = (IForSettings) q;
-          ifs.fillSettingsBy(settings);
-        });
+            q -> q instanceof IForSettings, q -> {
+              IForSettings ifs = (IForSettings) q;
+              ifs.fillSettingsBy(settings);
+            });
   }
 
   public boolean isDialogResultOk() {
@@ -122,16 +121,16 @@ public class FrmStartupSettings extends JPanel {
     });
 
     JPanel ret = LayoutManager.createBorderedPanel(
-        null,
-        null,
-        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.bottom, 4,
-            btnLoad,
-            btnSave),
-        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.bottom, 4,
-            btnCancel,
-            btnValidate,
-            btnApply),
-        null);
+            null,
+            null,
+            LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.bottom, 4,
+                    btnLoad,
+                    btnSave),
+            LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.bottom, 4,
+                    btnCancel,
+                    btnValidate,
+                    btnApply),
+            null);
 
     ret = LayoutManager.createBorderedPanel(4, ret);
 
@@ -173,7 +172,7 @@ public class FrmStartupSettings extends JPanel {
       types.init();
     } catch (Exception ex) {
       Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to load types from '%s'. '%s'", ss.files.planesXmlFile,
-          ExceptionUtils.toFullString(ex));
+              ExceptionUtils.toFullString(ex));
       MessageBox.show("Failed to load types from file " + ss.files.planesXmlFile + ". " + ex.getMessage(), "Error...");
       btnValidate.setEnabled(true);
       return;
@@ -182,12 +181,12 @@ public class FrmStartupSettings extends JPanel {
       fleets.init();
     } catch (Exception ex) {
       Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to load fleets from '%s' and/or '%s'. '%s'",
-          ss.files.companiesFleetsXmlFile,
-          ss.files.generalAviationFleetsXmlFile,
-          ExceptionUtils.toFullString(ex));
+              ss.files.companiesFleetsXmlFile,
+              ss.files.generalAviationFleetsXmlFile,
+              ExceptionUtils.toFullString(ex));
       MessageBox.show(sf("Failed to load fleets from file '%s' and/or '%s'. %s.",
-          ss.files.companiesFleetsXmlFile, ss.files.generalAviationFleetsXmlFile, ex.getMessage()),
-          "Error...");
+              ss.files.companiesFleetsXmlFile, ss.files.generalAviationFleetsXmlFile, ex.getMessage()),
+              "Error...");
       btnValidate.setEnabled(true);
       return;
     }
@@ -198,7 +197,7 @@ public class FrmStartupSettings extends JPanel {
         ws.init();
       } catch (Exception ex) {
         Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to load weather from '%s'. '%s'", ss.files.weatherXmlFile,
-            ExceptionUtils.toFullString(ex));
+                ExceptionUtils.toFullString(ex));
         MessageBox.show("Failed to load weather from file " + ss.files.weatherXmlFile + ". " + ex.getMessage(), "Error...");
         btnValidate.setEnabled(true);
         return;
@@ -211,7 +210,7 @@ public class FrmStartupSettings extends JPanel {
         traffics.init();
       } catch (Exception ex) {
         Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to load traffic from '%s'. '%s'", ss.files.trafficXmlFile,
-            ExceptionUtils.toFullString(ex));
+                ExceptionUtils.toFullString(ex));
         MessageBox.show("Failed to load traffic from file " + ss.files.trafficXmlFile + ". " + ex.getMessage(), "Error...");
         btnValidate.setEnabled(true);
         return;
@@ -223,7 +222,7 @@ public class FrmStartupSettings extends JPanel {
         IReadOnlyList<String> requiredPlaneTypes = fltm.getRequiredPlaneTypes();
         IReadOnlyList<String> knownPlaneTypes = types.getContent().getTypeNames();
         IReadOnlyList<String> unknownPlaneTypes = requiredPlaneTypes
-            .where(q -> knownPlaneTypes.contains(q) == false);
+                .where(q -> knownPlaneTypes.contains(q) == false);
         for (String unknownPlaneType : unknownPlaneTypes) {
           Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Required plane kind '%s' not found in known plane types.", unknownPlaneType);
         }

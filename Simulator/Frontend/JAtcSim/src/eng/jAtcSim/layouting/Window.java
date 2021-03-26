@@ -4,7 +4,7 @@ import eng.eSystem.validation.EAssert;
 
 class Window {
 
-  public enum WindowStyle{
+  public enum WindowStyle {
     minimized,
     normal,
     maximized;
@@ -38,16 +38,16 @@ class Window {
     this.style = style;
   }
 
-  public WindowStyle getStyle() {
-    return style;
-  }
-
   public Block getContent() {
     return content;
   }
 
   public Position getPosition() {
     return position;
+  }
+
+  public WindowStyle getStyle() {
+    return style;
   }
 
   public String getTitle() {

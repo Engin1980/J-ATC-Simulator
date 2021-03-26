@@ -9,7 +9,6 @@ import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.app.controls.ImagePanel;
 import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.Snapshot;
-import eng.jAtcSim.newLib.stats.StatsProvider;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
@@ -49,8 +48,9 @@ public class StatsGraphPanel extends JPanel {
     public final Color color;
 
     public MeasureLine(String title, Function<Snapshot, Double> valueSelector) {
-      this (title, valueSelector, null);
+      this(title, valueSelector, null);
     }
+
     public MeasureLine(String title, Function<Snapshot, Double> valueSelector, Color color) {
       this.title = title;
       this.valueSelector = valueSelector;
@@ -65,11 +65,8 @@ public class StatsGraphPanel extends JPanel {
   private static final Color COLOR_TOTAL = Color.black;
   private static final Color COLOR_ARRIVAL_APP = Color.yellow;
   private static final Color COLOR_DEPARTURE_APP = new Color(150, 150, 255);
-  private static final Color COLOR_TOTAL_APP = new Color(178,178,178);
+  private static final Color COLOR_TOTAL_APP = new Color(178, 178, 178);
   private static IReadOnlyList<Measure> measures;
-  private ComboBoxExtender<String> cmbMeasures;
-  private ImagePanel pnlImage;
-  private IStatsProvider statsProvider;
 
   static {
     EList<Measure> measures = new EList<>();
@@ -80,7 +77,7 @@ public class StatsGraphPanel extends JPanel {
     lines.add(new MeasureLine("Departures", q -> q.getRunwayMovementsPerHour().getArrivals(), COLOR_DEPARTURE));
     lines.add(new MeasureLine("Arrivals", q -> q.getRunwayMovementsPerHour().getDepartures(), COLOR_ARRIVAL));
     measure = new Measure(
-        "Runway movements per hour", "Number of planes", lines, new StackedBarRenderer());
+            "Runway movements per hour", "Number of planes", lines, new StackedBarRenderer());
     measures.add(measure);
 
     lines = new EList<>();
@@ -92,7 +89,7 @@ public class StatsGraphPanel extends JPanel {
     lines.add(new MeasureLine("Total under APP", q -> q.getPlanesUnderApp().getTotal().getMaximum(), COLOR_TOTAL_APP));
 
     measure = new Measure(
-        "Maximum number of planes", "Number of planes", lines, new LineAndShapeRenderer());
+            "Maximum number of planes", "Number of planes", lines, new LineAndShapeRenderer());
     measures.add(measure);
 
     lines = new EList<>();
@@ -103,14 +100,14 @@ public class StatsGraphPanel extends JPanel {
     lines.add(new MeasureLine("Arrivals under APP", q -> q.getPlanesUnderApp().getArrivals().getMean(), COLOR_ARRIVAL_APP));
     lines.add(new MeasureLine("Total under APP", q -> q.getPlanesUnderApp().getTotal().getMean(), COLOR_TOTAL_APP));
     measure = new Measure(
-        "Average number of planes", "Number of planes",lines, new LineAndShapeRenderer());
+            "Average number of planes", "Number of planes", lines, new LineAndShapeRenderer());
     measures.add(measure);
 
     lines = new EList<>();
     lines.add(new MeasureLine("MRVA violation", q -> (double) q.getMrvaErrorsCount(), Color.magenta));
     lines.add(new MeasureLine("Airprox violation", q -> (double) q.getAirproxErrorsCount(), Color.red));
     measure = new Measure(
-        "Errors", "Incidents per second", lines, new LineAndShapeRenderer());
+            "Errors", "Incidents per second", lines, new LineAndShapeRenderer());
     measures.add(measure);
 
     lines = new EList<>();
@@ -118,11 +115,15 @@ public class StatsGraphPanel extends JPanel {
     lines.add(new MeasureLine("Best mood rating", q -> q.getFinishedPlanesMoods().getTotal().getMaximum(), Color.green));
     lines.add(new MeasureLine("Worst mood rating", q -> q.getFinishedPlanesMoods().getTotal().getMinimum(), Color.red));
     measure = new Measure(
-        "Mood rating (total)", "Achieved points", lines, new LineAndShapeRenderer());
+            "Mood rating (total)", "Achieved points", lines, new LineAndShapeRenderer());
     measures.add(measure);
 
     StatsGraphPanel.measures = measures;
   }
+
+  private ComboBoxExtender<String> cmbMeasures;
+  private ImagePanel pnlImage;
+  private IStatsProvider statsProvider;
 
   public StatsGraphPanel() {
     initComponents();
@@ -167,18 +168,18 @@ public class StatsGraphPanel extends JPanel {
 
     CategoryAxis domainAxis = new CategoryAxis(gds.title);
     domainAxis.setCategoryLabelPositions(
-        CategoryLabelPositions.createUpRotationLabelPositions(
-            90d * Math.PI / 180d));
+            CategoryLabelPositions.createUpRotationLabelPositions(
+                    90d * Math.PI / 180d));
     ValueAxis rangeAxis = new NumberAxis(gds.yAxisLabel);
 
     renderer.setBaseItemLabelGenerator(
-        new StandardCategoryItemLabelGenerator());
+            new StandardCategoryItemLabelGenerator());
     for (int i = 0; i < gds.xAxisTitles.length; i++) {
       renderer.setSeriesItemLabelsVisible(i, Boolean.TRUE);
     }
 
     CategoryPlot plot = new CategoryPlot(
-        dataset, domainAxis, rangeAxis, renderer);
+            dataset, domainAxis, rangeAxis, renderer);
 
     CategoryItemRenderer cir = plot.getRenderer();
     for (int i = 0; i < gds.lines.size(); i++) {
@@ -213,7 +214,7 @@ public class StatsGraphPanel extends JPanel {
       gdl.lineTitle = measureLine.title;
       gdl.color = measureLine.color;
       gdl.values = ArrayUtils.toPrimitive(
-          snapshots.select(q -> measureLine.valueSelector.apply(q)).toArray(Double.class));
+              snapshots.select(q -> measureLine.valueSelector.apply(q)).toArray(Double.class));
       gds.lines.add(gdl);
     }
 

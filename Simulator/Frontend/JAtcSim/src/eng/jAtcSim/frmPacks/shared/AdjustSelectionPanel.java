@@ -3,11 +3,11 @@ package eng.jAtcSim.frmPacks.shared;
 import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.IReadOnlySet;
 import eng.eSystem.collections.ISet;
+import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.swing.DialogResult;
 import eng.eSystem.swing.Factory;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.CheckedListBoxExtender;
-import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.utilites.StringUtils;
 
 import javax.swing.*;
@@ -18,28 +18,14 @@ import java.awt.event.KeyEvent;
 
 public class AdjustSelectionPanel<T> extends JPanel {
 
-  private eng.eSystem.swing.extenders.CheckedListBoxExtender<T> lstBox;
+  private final eng.eSystem.swing.extenders.CheckedListBoxExtender<T> lstBox;
   private DialogResult dialogResult = DialogResult.none;
-  private ISet<T> checkedItems = new ESet<>();
-  private ISet<T> modelItems = new ESet<>();
+  private final ISet<T> checkedItems = new ESet<>();
+  private final ISet<T> modelItems = new ESet<>();
 
-  public AdjustSelectionPanel(Selector<T,String> selector) {
+  public AdjustSelectionPanel(Selector<T, String> selector) {
     this.lstBox = new CheckedListBoxExtender<>(new JList(), selector);
     initComponents();
-  }
-
-  public void resetDialogResult() {
-    this.dialogResult = DialogResult.none;
-  }
-
-  public DialogResult getDialogResult() {
-    return dialogResult;
-  }
-
-  public void setItems(Iterable<T> items) {
-    lstBox.clearItems();
-    lstBox.addItems(items);
-    items.forEach(q -> this.modelItems.add(q));
   }
 
   public Iterable<T> getCheckedItems() {
@@ -53,6 +39,20 @@ public class AdjustSelectionPanel<T> extends JPanel {
     lstBox.setCheckedItems(items);
   }
 
+  public DialogResult getDialogResult() {
+    return dialogResult;
+  }
+
+  public void resetDialogResult() {
+    this.dialogResult = DialogResult.none;
+  }
+
+  public void setItems(Iterable<T> items) {
+    lstBox.clearItems();
+    lstBox.addItems(items);
+    items.forEach(q -> this.modelItems.add(q));
+  }
+
   private void initComponents() {
     JScrollPane pnlLst = new JScrollPane(lstBox.getControl());
     JTextField txt = new JTextField();
@@ -63,10 +63,10 @@ public class AdjustSelectionPanel<T> extends JPanel {
       }
     });
     JPanel pnlBtns = LayoutManager.createGridPanel(2, 2, 0,
-        Factory.createButton("(all)", this::btnCheckAll_click),
-        Factory.createButton("(none)", this::btnCheckNone_click),
-        Factory.createButton("Cancel", this::btnCancel_click),
-        Factory.createButton("Ok", this::btnOk_click));
+            Factory.createButton("(all)", this::btnCheckAll_click),
+            Factory.createButton("(none)", this::btnCheckNone_click),
+            Factory.createButton("Cancel", this::btnCancel_click),
+            Factory.createButton("Ok", this::btnOk_click));
     JPanel pnlFilter = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center, 0, txt, pnlBtns);
 
     LayoutManager.fillBorderedPanel(this, null, pnlFilter, null, null, pnlLst);

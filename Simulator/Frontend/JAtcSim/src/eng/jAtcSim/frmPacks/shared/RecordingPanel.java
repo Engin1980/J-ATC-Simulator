@@ -2,16 +2,17 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.events.EventAnonymous;
 import eng.eSystem.events.EventAnonymousSimple;
+import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.Stylist;
+import eng.jAtcSim.app.extenders.NumericUpDownExtender;
+import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.recording.Settings;
-import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
-import eng.jAtcSim.app.extenders.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -26,11 +27,11 @@ public class RecordingPanel extends JPanel {
   private NumericUpDownExtender nudHeight;
   private NumericUpDownExtender nudJpgQuality;
   private XmlFileSelectorExtender fleFolder;
-  private JPanel pnlBefore;
-  private JPanel pnlDuring;
-  private EventAnonymous<Settings> recordingStarted = new EventAnonymous<>();
-  private EventAnonymousSimple recordingStopped = new EventAnonymousSimple();
-  private EventAnonymousSimple viewRecordingFolderRequest = new EventAnonymousSimple();
+  private final JPanel pnlBefore;
+  private final JPanel pnlDuring;
+  private final EventAnonymous<Settings> recordingStarted = new EventAnonymous<>();
+  private final EventAnonymousSimple recordingStopped = new EventAnonymousSimple();
+  private final EventAnonymousSimple viewRecordingFolderRequest = new EventAnonymousSimple();
   private ComboBoxExtender<String> cmbImageType;
   private XmlFileSelectorExtender fleFfmpeg;
   private XmlFileSelectorExtender fleVideoIn;
@@ -69,10 +70,10 @@ public class RecordingPanel extends JPanel {
     ret.setBorder(BorderFactory.createTitledBorder("During recording:"));
 
     LayoutManager.fillBoxPanel(ret, LayoutManager.eHorizontalAlign.center, 4,
-        LayoutManager.createBorderedPanel(4,
-            SwingFactory.createButton("Stop recording", this::btnStopRecording_click)),
-        LayoutManager.createBorderedPanel(4,
-            SwingFactory.createButton("View results", this::btnViewResultFolder_click)));
+            LayoutManager.createBorderedPanel(4,
+                    SwingFactory.createButton("Stop recording", this::btnStopRecording_click)),
+            LayoutManager.createBorderedPanel(4,
+                    SwingFactory.createButton("View results", this::btnViewResultFolder_click)));
 
     return ret;
   }
@@ -96,22 +97,22 @@ public class RecordingPanel extends JPanel {
     }
 
     JPanel tmpA = LayoutManager.createFormPanel(6, 2,
-        new JLabel("Target folder:"),
-        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 4, fleFolder.getTextControl(), fleFolder.getButtonControl()),
-        new JLabel("Interval (sim sec):"),
-        nudInterval.getControl(),
-        new JLabel("Window width (px):"),
-        nudWidth.getControl(),
-        new JLabel("Window height (px):"),
-        nudHeight.getControl(),
-        new JLabel("Image kind:"),
-        cmbImageType.getControl(),
-        new JLabel("JPG quality %:"),
-        nudJpgQuality.getControl()
+            new JLabel("Target folder:"),
+            LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 4, fleFolder.getTextControl(), fleFolder.getButtonControl()),
+            new JLabel("Interval (sim sec):"),
+            nudInterval.getControl(),
+            new JLabel("Window width (px):"),
+            nudWidth.getControl(),
+            new JLabel("Window height (px):"),
+            nudHeight.getControl(),
+            new JLabel("Image kind:"),
+            cmbImageType.getControl(),
+            new JLabel("JPG quality %:"),
+            nudJpgQuality.getControl()
     );
 
     JPanel tmpB = LayoutManager.createBorderedPanel(4,
-        SwingFactory.createButton("Start recording", this::btnStartRecording_click));
+            SwingFactory.createButton("Start recording", this::btnStartRecording_click));
 
     LayoutManager.fillBoxPanel(ret, LayoutManager.eHorizontalAlign.center, 4, tmpA, tmpB);
 
@@ -160,11 +161,11 @@ public class RecordingPanel extends JPanel {
   private void btnConvert_click(ActionEvent actionEvent) {
     String inPath = Paths.get(fleVideoIn.getFileName(), "%05d." + cmbVideoImageType.getSelectedItem()).toString();
     ProcessBuilder pb = new ProcessBuilder("cmd",
-        fleFfmpeg.getFileName(),
-        "-r", "1",
-        "-i", inPath,
-        "-r", Integer.toString(nudFPS.getValue()),
-        fleVideoOut.getFileName());
+            fleFfmpeg.getFileName(),
+            "-r", "1",
+            "-i", inPath,
+            "-r", Integer.toString(nudFPS.getValue()),
+            fleVideoOut.getFileName());
     try {
       pb.start();
     } catch (IOException e) {
@@ -175,9 +176,9 @@ public class RecordingPanel extends JPanel {
   private void btnStartRecording_click(ActionEvent actionEvent) {
     if (!checkSanity()) return;
     Settings sett = new Settings(
-        fleFolder.getFileName(), nudInterval.getValue(), nudWidth.getValue(), nudHeight.getValue(),
-        cmbImageType.getSelectedItem(),
-        nudJpgQuality.getValue() / 100f);
+            fleFolder.getFileName(), nudInterval.getValue(), nudWidth.getValue(), nudHeight.getValue(),
+            cmbImageType.getSelectedItem(),
+            nudJpgQuality.getValue() / 100f);
     recordingStarted.raise(sett);
     adjustAvailibility(true);
   }

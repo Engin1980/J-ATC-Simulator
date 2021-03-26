@@ -19,13 +19,13 @@ public class ImagePanel extends JPanel {
     this.setMaximumSize(d);
   }
 
-  public synchronized void setImage(BufferedImage image) {
-    this.image = image;
-  }
-
   public synchronized void paint(Graphics g) {
     super.paint(g);
     if (this.image != null)
       g.drawImage(image, 0, 0, width, height, null);
+  }
+
+  public synchronized void setImage(BufferedImage image) {
+    this.image = image;
   }
 }

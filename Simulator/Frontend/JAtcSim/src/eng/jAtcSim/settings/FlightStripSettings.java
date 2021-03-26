@@ -3,7 +3,7 @@ package eng.jAtcSim.settings;
 import java.awt.*;
 
 public class FlightStripSettings {
-  public static class Clrs{
+  public static class Clrs {
     public Color even;
     public Color odd;
   }

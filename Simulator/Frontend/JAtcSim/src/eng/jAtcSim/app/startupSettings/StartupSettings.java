@@ -143,7 +143,7 @@ public class StartupSettings {
     public void setMovementsForHours(SimpleGenericTrafficModel.MovementsForHour[] movementsForHours) {
       EAssert.Argument.isNotNull(movementsForHours, "movementsPerHour");
       EAssert.Argument.isTrue(movementsForHours.length == MOVEMENTS_PER_HOUR_LENGTH,
-          sf("There must be exactly %d records in movements per hour.", MOVEMENTS_PER_HOUR_LENGTH));
+              sf("There must be exactly %d records in movements per hour.", MOVEMENTS_PER_HOUR_LENGTH));
       this.movementsForHours = movementsForHours;
     }
 

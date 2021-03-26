@@ -1,33 +1,15 @@
 package eng.jAtcSim.app.extenders.swingFactory;
 
-import eng.eSystem.Tuple;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.EMap;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.other.HistoryForJFileChooser;
 import eng.eSystem.swing.other.JFileChooserAsidePanel;
-import eng.jAtcSim.frmPacks.shared.MoodHistoryPanel;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class SwingFactory {
 
@@ -55,12 +37,6 @@ public class SwingFactory {
     JScrollBar ret = new JScrollBar(JScrollBar.HORIZONTAL);
     ret.getModel().setRangeProperties(value, 0, minimum, maximum, true);
     return ret;
-  }
-
-  private static void bindAsidePanel(JFileChooser jFileChooser, JFileChooserAsidePanel... asidePanels) {
-    JFileChooserAsidePanel.LayoutDefinition layoutDefinition =
-        new JFileChooserAsidePanel.LayoutDefinition(JFileChooserAsidePanel.eOrientation.vertical, 500, 500);
-    JFileChooserAsidePanel.bind(jFileChooser, layoutDefinition, asidePanels);
   }
 
   public static JFileChooser createFileDialog(FileDialogType type, String defaultFile) {
@@ -179,6 +155,12 @@ public class SwingFactory {
     JButton ret = new JButton(title);
     ret.addActionListener(action);
     return ret;
+  }
+
+  private static void bindAsidePanel(JFileChooser jFileChooser, JFileChooserAsidePanel... asidePanels) {
+    JFileChooserAsidePanel.LayoutDefinition layoutDefinition =
+            new JFileChooserAsidePanel.LayoutDefinition(JFileChooserAsidePanel.eOrientation.vertical, 500, 500);
+    JFileChooserAsidePanel.bind(jFileChooser, layoutDefinition, asidePanels);
   }
 }
 

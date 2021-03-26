@@ -22,6 +22,7 @@ public class AdjustSelectionPanelWrapper<T> {
 
     void doResponse(Iterable<T> data);
   }
+
   private final JFrame frm;
   private final ActionSelectionPanelWraperListener<T> lis;
   private final AdjustSelectionPanel<T> pnl;

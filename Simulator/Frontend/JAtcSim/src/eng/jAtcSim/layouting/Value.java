@@ -1,10 +1,5 @@
 package eng.jAtcSim.layouting;
 
-import eng.eSystem.events.IEventListenerAnonymous;
-import eng.eSystem.validation.EAssert;
-
-import java.nio.file.attribute.AclEntry;
-
 class Value {
   public enum Unit {
     pixel,
@@ -18,6 +13,7 @@ class Value {
   public static Value create(Unit unit, int value) {
     return new Value(unit, value);
   }
+
   public final Unit unit;
   public final Integer value;
 
@@ -26,12 +22,12 @@ class Value {
     this.value = value;
   }
 
-  public int convertValueToInt(int maximum){
+  public int convertValueToInt(int maximum) {
     if (value == null)
       return maximum;
     else if (unit == Unit.pixel)
       return value;
     else
-      return (int)(maximum * value / 100d);
+      return (int) (maximum * value / 100d);
   }
 }

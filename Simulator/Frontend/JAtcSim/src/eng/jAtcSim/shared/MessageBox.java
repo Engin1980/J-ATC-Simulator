@@ -5,17 +5,15 @@
  */
 package eng.jAtcSim.shared;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 /**
- *
  * @author Marek Vajgl
  */
 public class MessageBox {
-  
-    public static void show(String infoMessage, String titleBar)
-    {
-        JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
-    }
-    
+
+  public static void show(String infoMessage, String titleBar) {
+    JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
+  }
+
 }

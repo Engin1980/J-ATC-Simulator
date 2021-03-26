@@ -1,9 +1,9 @@
 package eng.jAtcSim.app;
 
-import eng.jAtcSim.contextLocal.Context;
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
-import eng.eSystem.swing.LayoutManager;
+import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import javax.swing.*;
@@ -39,11 +39,11 @@ public class FrmStartupProgress extends JFrame {
     JPanel pnlLabel = LayoutManager.createBorderedPanel(8, lbl);
 
     JPanel pnl =
-        LayoutManager.createBorderedPanel(
-            LayoutManager.createBorderedPanel(8, lblImage),
-            null, null, null,
-            LayoutManager.createGridPanel(2, 1, 0, pnlProgress, pnlLabel)
-        );
+            LayoutManager.createBorderedPanel(
+                    LayoutManager.createBorderedPanel(8, lblImage),
+                    null, null, null,
+                    LayoutManager.createGridPanel(2, 1, 0, pnlProgress, pnlLabel)
+            );
     pnl.setPreferredSize(new Dimension(400, 225));
 
     this.setUndecorated(true);

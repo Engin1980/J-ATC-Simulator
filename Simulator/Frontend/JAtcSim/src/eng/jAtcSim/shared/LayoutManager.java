@@ -1,15 +1,9 @@
 package eng.jAtcSim.shared;
 
-import eng.eSystem.utilites.awt.ComponentUtils;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class LayoutManager {
-
-  public interface Action {
-    void apply(Component component);
-  }
 
   public enum eHorizontalAlign {
     left,
@@ -22,6 +16,10 @@ public class LayoutManager {
     middle,
     bottom,
     baseline
+  }
+
+  public interface Action {
+    void apply(Component component);
   }
 
   public static void setFixedSize(Component component) {
@@ -40,17 +38,17 @@ public class LayoutManager {
 
   public static void setFixedWidth(Component component, int width) {
     component.setMaximumSize(
-        new Dimension(
-            width,
-            (int) component.getMaximumSize().getHeight()));
+            new Dimension(
+                    width,
+                    (int) component.getMaximumSize().getHeight()));
     component.setPreferredSize(
-        new Dimension(
-        width,
-        (int) component.getPreferredSize().getHeight()));
+            new Dimension(
+                    width,
+                    (int) component.getPreferredSize().getHeight()));
     component.setMinimumSize(
-        new Dimension(
-            width,
-            (int) component.getMinimumSize().getHeight()));
+            new Dimension(
+                    width,
+                    (int) component.getMinimumSize().getHeight()));
   }
 
   public static void setFixedHeight(Component component) {
@@ -59,17 +57,17 @@ public class LayoutManager {
 
   public static void setFixedHeight(Component component, int height) {
     component.setMaximumSize(
-        new Dimension(
-            (int) component.getMaximumSize().getWidth(),
-            height));
+            new Dimension(
+                    (int) component.getMaximumSize().getWidth(),
+                    height));
     component.setPreferredSize(
-        new Dimension(
-            (int) component.getPreferredSize().getWidth(),
-            height));
+            new Dimension(
+                    (int) component.getPreferredSize().getWidth(),
+                    height));
     component.setMinimumSize(
-        new Dimension(
-            (int) component.getMaximumSize().getWidth(),
-            height));
+            new Dimension(
+                    (int) component.getMaximumSize().getWidth(),
+                    height));
   }
 
   public static void setPanelBorderText(JPanel pnl, String text) {
@@ -293,9 +291,9 @@ public class LayoutManager {
 
     if (components.length != rowCount * columnCount)
       throw new IllegalArgumentException(
-          String.format(
-              "Component array length %d is not valid for row-count %d lineTitle %d. Unable to create form-panel layout.",
-              components.length, rowCount, columnCount));
+              String.format(
+                      "Component array length %d is not valid for row-count %d lineTitle %d. Unable to create form-panel layout.",
+                      components.length, rowCount, columnCount));
 
     rows = new Component[rowCount][];
     for (int i = 0; i < rowCount; i++) {
@@ -322,9 +320,9 @@ public class LayoutManager {
 
   public static JPanel indentPanel(JComponent panel, int distance) {
     JPanel ret =
-        LayoutManager.createFlowPanel(eVerticalAlign.baseline, 0,
-            createHorizontalPlaceholder(distance),
-            panel);
+            LayoutManager.createFlowPanel(eVerticalAlign.baseline, 0,
+                    createHorizontalPlaceholder(distance),
+                    panel);
     return ret;
   }
 

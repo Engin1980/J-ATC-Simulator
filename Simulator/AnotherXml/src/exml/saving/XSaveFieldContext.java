@@ -111,7 +111,7 @@ public class XSaveFieldContext {
       return;
 
     XElement fieldElement = new XElement(pfi.field.getName());
-    ctx.objects.saveObject(pfi.value, fieldElement);
+    ctx.objects.saveObject(pfi.value, fieldElement, pfi.field.getType());
     elm.addElement(fieldElement);
   }
 

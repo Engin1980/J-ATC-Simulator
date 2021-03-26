@@ -20,15 +20,6 @@ public class ColRowLayoutManager implements LayoutManager {
     this.blockSizesMinimalSum = calculateBlockSizesMinimaLSum();
   }
 
-  private int calculateBlockSizesMinimaLSum() {
-    int ret = 0;
-    for (Value blockSize : blockSizes) {
-      if (blockSize.value != null && blockSize.unit == Value.Unit.pixel)
-        ret += blockSize.value;
-    }
-    return ret;
-  }
-
   @Override
   public void addLayoutComponent(String s, Component component) {
     this.components.add(component);
@@ -78,6 +69,15 @@ public class ColRowLayoutManager implements LayoutManager {
     this.components.remove(component);
   }
 
+  private int calculateBlockSizesMinimaLSum() {
+    int ret = 0;
+    for (Value blockSize : blockSizes) {
+      if (blockSize.value != null && blockSize.unit == Value.Unit.pixel)
+        ret += blockSize.value;
+    }
+    return ret;
+  }
+
   private void layerContainerColumns(Container parent) {
     Insets insets = parent.getInsets();
     int availableWidth = parent.getWidth() - insets.left - insets.right;
@@ -122,7 +122,7 @@ public class ColRowLayoutManager implements LayoutManager {
     for (int i = 0; i < ret.length; i++) {
       if (blockSizes[i].value == null) {
         wilds++;
-      } else{
+      } else {
         ret[i] = blockSizes[i].convertValueToInt(total);
         used += ret[i];
       }

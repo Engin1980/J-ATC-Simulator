@@ -3,7 +3,6 @@ package eng.jAtcSim.app.extenders.swingFactory;
 import eng.eSystem.Tuple;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.other.JFileChooserAsidePanel;
-import eng.jAtcSim.app.extenders.swingFactory.XmlInfo;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -41,10 +40,10 @@ public class XmlMetaInfoPreviewAside extends JFileChooserAsidePanel {
     JScrollPane pnlDescriptionScroll = new JScrollPane(txtDescription);
     pnlDescriptionScroll.setBorder(null);
     JPanel pnlDescription = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 0,
-        pnlDescriptionScroll);
+            pnlDescriptionScroll);
 
     JPanel pnlAll = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 8,
-        pnlTitle, pnlVersionDate, pnlAuthor, pnlDescription);
+            pnlTitle, pnlVersionDate, pnlAuthor, pnlDescription);
     pnlAll.setBorder(new TitledBorder("File META info:"));
     LayoutManager.fillBorderedPanel(this, 8, pnlAll);
     this.setPreferredSize(new Dimension(WIDTH, HEIGHT));

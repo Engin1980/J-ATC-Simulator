@@ -5,25 +5,24 @@
  */
 package eng.jAtcSim.app.extenders;
 
-import java.awt.Color;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import javax.swing.JTextField;
 
 /**
- *
  * @author Marek Vajgl
  */
 public class TimeExtender {
 
+  private static final String pattern = "H:mm";
   private final JTextField txt;
   private Color okColor;
-  private Color failColor = Color.red;
-  private static final String pattern = "H:mm";
+  private final Color failColor = Color.red;
 
-  public TimeExtender(java.time.LocalTime time){
+  public TimeExtender(java.time.LocalTime time) {
     this(new JTextField(), time);
   }
 
@@ -35,48 +34,47 @@ public class TimeExtender {
         checkSanity();
       }
     });
-    if (time != null){
+    if (time != null) {
       setTime(time);
     }
     okColor = this.txt.getForeground();
     checkSanity();
   }
 
-  private boolean checkSanity() {
-    boolean ret = getTime() != null;
-    if (ret){
-      txt.setForeground(okColor);
-    } else
-    {
-      if (txt.getForeground().equals(failColor) == false)
-        okColor = txt.getForeground();
-      txt.setForeground(failColor);
+  public JTextField getControl() {
+    return txt;
+  }
+
+  public java.time.LocalTime getTime() {
+    java.time.LocalTime ret;
+    try {
+      ret = java.time.LocalTime.parse(txt.getText(), DateTimeFormatter.ofPattern(pattern));
+    } catch (Exception ex) {
+      ret = null;
     }
     return ret;
   }
 
-  public JTextField getControl(){
-    return txt;
-  }
-
-  public void setTime(java.time.LocalTime time){
+  public void setTime(java.time.LocalTime time) {
     if (time == null)
       time = LocalTime.now();
     String h = time.format(DateTimeFormatter.ofPattern(pattern));
     txt.setText(h);
   }
 
-  public java.time.LocalTime getTime(){
-    java.time.LocalTime ret;
-    try{
-      ret = java.time.LocalTime.parse(txt.getText(), DateTimeFormatter.ofPattern(pattern));
-    } catch (Exception ex){
-      ret = null;
-    }
-    return ret;
-  }
-
   public boolean isValid() {
     return checkSanity();
+  }
+
+  private boolean checkSanity() {
+    boolean ret = getTime() != null;
+    if (ret) {
+      txt.setForeground(okColor);
+    } else {
+      if (txt.getForeground().equals(failColor) == false)
+        okColor = txt.getForeground();
+      txt.setForeground(failColor);
+    }
+    return ret;
   }
 }

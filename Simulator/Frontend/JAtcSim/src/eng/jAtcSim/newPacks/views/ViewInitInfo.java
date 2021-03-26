@@ -13,8 +13,15 @@ public class ViewInitInfo {
   private Airport airport;
   private DynamicPlaneFormatter dynamicAirplaneSpeechFormatter;
 
+  public ViewInitInfo() {
+  }
+
   public Airport getAirport() {
     return airport;
+  }
+
+  public void setAirport(Airport airport) {
+    this.airport = airport;
   }
 
   public DynamicPlaneFormatter getDynamicAirplaneSpeechFormatter() {
@@ -25,34 +32,27 @@ public class ViewInitInfo {
     this.dynamicAirplaneSpeechFormatter = dynamicAirplaneSpeechFormatter;
   }
 
-  public void setAirport(Airport airport) {
-    this.airport = airport;
-  }
-
-  public ViewInitInfo() {
-  }
-
-  public void setSimulation(ISimulation simulation) {
-    this.simulation = simulation;
+  public AppSettings getSettings() {
+    return settings;
   }
 
   public void setSettings(AppSettings settings) {
     this.settings = settings;
   }
 
-  public void setUserAtcId(AtcId userAtcId) {
-    this.userAtcId = userAtcId;
-  }
-
-  public AppSettings getSettings() {
-    return settings;
-  }
-
   public ISimulation getSimulation() {
     return simulation;
   }
 
+  public void setSimulation(ISimulation simulation) {
+    this.simulation = simulation;
+  }
+
   public AtcId getUserAtcId() {
     return this.userAtcId;
+  }
+
+  public void setUserAtcId(AtcId userAtcId) {
+    this.userAtcId = userAtcId;
   }
 }

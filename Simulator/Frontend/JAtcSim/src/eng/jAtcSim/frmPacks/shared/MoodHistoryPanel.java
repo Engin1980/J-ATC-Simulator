@@ -2,8 +2,8 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.eSystem.swing.LayoutManager;
+import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.newLib.mood.MoodExperienceResult;
 import eng.jAtcSim.newLib.mood.MoodResult;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -36,11 +36,11 @@ public class MoodHistoryPanel extends JPanel {
   public class ResultRow extends JPanel {
     public ResultRow(MoodExperienceResult experienceResult) {
       JLabel lblTime = new JLabel(
-          experienceResult.getTime() == null ? "" : experienceResult.getTime().toString());
+              experienceResult.getTime() == null ? "" : experienceResult.getTime().toString());
       LayoutManager.setFixedWidth(lblTime, labelWidth);
 
       JLabel lblPoints = new JLabel(
-          experienceResult.getPoints() < 0 ? Integer.toString(experienceResult.getPoints()) : "+" + experienceResult.getPoints());
+              experienceResult.getPoints() < 0 ? Integer.toString(experienceResult.getPoints()) : "+" + experienceResult.getPoints());
       LayoutManager.setFixedWidth(lblPoints, labelWidth);
 
       JLabel lblDescription = new JLabel(experienceResult.getDescription());
@@ -53,9 +53,9 @@ public class MoodHistoryPanel extends JPanel {
   }
 
   private static final Color selectedBackgroundColor = Color.white;
-  private static int labelWidth = 150;
-  private static Dimension panelDimension = new Dimension(500, 300);
-  private static Dimension formDimension = new Dimension(500, 500);
+  private static final int labelWidth = 150;
+  private static final Dimension panelDimension = new Dimension(500, 300);
+  private static final Dimension formDimension = new Dimension(500, 500);
   private JPanel pnlTop;
   private JPanel pnlBottom;
   private IList<MoodResult> dataSet;

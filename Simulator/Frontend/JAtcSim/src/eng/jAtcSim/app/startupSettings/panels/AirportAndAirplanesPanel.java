@@ -24,7 +24,7 @@ import static eng.eSystem.utilites.FunctionShortcuts.coalesce;
 
 public class AirportAndAirplanesPanel extends JStartupPanel {
 
-  static class AirportInfo{
+  static class AirportInfo {
     public String icao;
     public String title;
 
@@ -55,10 +55,6 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     fillAirportsComboBox(null);
   }
 
-  public EventAnonymous<String> getOnIcaoChanged() {
-    return onIcaoChanged;
-  }
-
   @Override
   public void fillBySettings(StartupSettings settings) {
     cmbAirports.clearItems();
@@ -81,6 +77,10 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     settings.files.areaXmlFile = fleArea.getFileName();
   }
 
+  public EventAnonymous<String> getOnIcaoChanged() {
+    return onIcaoChanged;
+  }
+
   private void initComponents() {
     this.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
 
@@ -100,32 +100,32 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     pnlPlanes.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
 
     JPanel pnlMain = LayoutManager.createFormPanel(2, 1,
-        pnlArea, pnlPlanes);
+            pnlArea, pnlPlanes);
 
     this.add(pnlMain);
   }
 
   private JPanel createPlanesPanel() {
     JPanel ret = LayoutManager.createFormPanel(3, 3,
-        new JLabel("Airplane types:"),
-        fleTypes.getTextControl(), fleTypes.getButtonControl(),
-        new JLabel("Airlines fleets:"),
-        fleFleet.getTextControl(), fleFleet.getButtonControl(),
-        new JLabel("General aviation fleets:"),
-        fleGaFleet.getTextControl(), fleGaFleet.getButtonControl());
+            new JLabel("Airplane types:"),
+            fleTypes.getTextControl(), fleTypes.getButtonControl(),
+            new JLabel("Airlines fleets:"),
+            fleFleet.getTextControl(), fleFleet.getButtonControl(),
+            new JLabel("General aviation fleets:"),
+            fleGaFleet.getTextControl(), fleGaFleet.getButtonControl());
     return ret;
   }
 
   private JPanel createAreaPanel() {
     JPanel ret = LayoutManager.createFormPanel(2, 2,
-        new JLabel("Select area:"),
-        LayoutManager.createFlowPanel(
-            fleArea.getTextControl(),
-            fleArea.getButtonControl(),
-            btnLoadArea
-        ),
-        new JLabel("Select airport:"),
-        cmbAirports.getControl()
+            new JLabel("Select area:"),
+            LayoutManager.createFlowPanel(
+                    fleArea.getTextControl(),
+                    fleArea.getButtonControl(),
+                    btnLoadArea
+            ),
+            new JLabel("Select airport:"),
+            cmbAirports.getControl()
     );
 
     return ret;
@@ -138,7 +138,7 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     fleTypes = new XmlFileSelectorExtender(SwingFactory.FileDialogType.types);
     fleArea = new XmlFileSelectorExtender(SwingFactory.FileDialogType.area);
     btnLoadArea = SwingFactory.createButton("Load", this::btnLoadArea_click);
-    cmbAirports = new ComboBoxExtender<>(q->q.title);
+    cmbAirports = new ComboBoxExtender<>(q -> q.title);
     cmbAirports.getOnSelectionChanged().add(o ->
     {
       if (cmbAirports.getSelectedItem() != null)
@@ -149,11 +149,11 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
   private void btnLoadArea_click(ActionEvent actionEvent) {
     btnLoadArea.setEnabled(false);
     AreaSource area = SourceFactory.createAreaSource(fleArea.getFileName(), "");
-    try{
+    try {
       area.init();
-    } catch (Exception ex){
+    } catch (Exception ex) {
       Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to area from '%s'. '%s'", fleFleet.getFileName(),
-          ExceptionUtils.toFullString(ex));
+              ExceptionUtils.toFullString(ex));
       MessageBox.show("Failed to load area from file " + fleFleet.getFileName() + ". " + ex.getMessage(), "Error...");
       btnLoadArea.setEnabled(true);
       return;
@@ -169,15 +169,15 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     IList<AirportInfo> tmp;
 
     if (area != null) {
-      tmp = area.getAirports().select(q->
-          new AirportInfo(q.getIcao(), q.getName() + " [" + q.getIcao() + "]"));
+      tmp = area.getAirports().select(q ->
+              new AirportInfo(q.getIcao(), q.getName() + " [" + q.getIcao() + "]"));
     } else {
-      tmp = new EList<>( new AirportInfo[]{new AirportInfo("----", "(Area not loaded)")});
+      tmp = new EList<>(new AirportInfo[]{new AirportInfo("----", "(Area not loaded)")});
     }
 
     cmbAirports.clearItems();
     cmbAirports.addItems(tmp);
-    if (selectedItem == null || cmbAirports.getItems().isNone(q->q.icao.equals(selectedItem.icao)))
+    if (selectedItem == null || cmbAirports.getItems().isNone(q -> q.icao.equals(selectedItem.icao)))
       cmbAirports.setSelectedIndex(0);
     else
       cmbAirports.setSelectedItem(selectedItem);

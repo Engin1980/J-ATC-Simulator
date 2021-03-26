@@ -2,12 +2,12 @@ package eng.jAtcSim.newPacks.views;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.swing.LayoutManager;
-import eng.jAtcSim.settings.FlightStripSettings;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 import eng.jAtcSim.newPacks.IView;
+import eng.jAtcSim.settings.FlightStripSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -150,7 +150,7 @@ class ScheduledFlightStripPanel extends JPanel {
     JLabel lblDelay = new JLabel("+" + movement.getDelayInMinutes());
     setLabelFixedSize(lblDelay, DELAY_DIMENSION);
 
-    JComponent [] cmps = new JComponent[]{lblCallsign, lblDepartureArrival, lblTypeName, lblTime, lblDelay, null};
+    JComponent[] cmps = new JComponent[]{lblCallsign, lblDepartureArrival, lblTypeName, lblTime, lblDelay, null};
 
     JPanel pnl = LayoutManager.createGridPanel(2, 3, 0, cmps);
     adjustComponentStyle(bgColor, frColor, normalFont, cmps);

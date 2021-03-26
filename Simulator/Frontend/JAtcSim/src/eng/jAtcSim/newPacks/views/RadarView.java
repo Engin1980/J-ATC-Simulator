@@ -2,7 +2,10 @@ package eng.jAtcSim.newPacks.views;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.Tuple;
-import eng.eSystem.collections.*;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.functionalInterfaces.Selector;
@@ -13,7 +16,6 @@ import eng.jAtcSim.abstractRadar.RadarViewPort;
 import eng.jAtcSim.abstractRadar.settings.RadarBehaviorSettings;
 import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
 import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
-import eng.jAtcSim.app.extenders.CommandInputTextFieldExtender;
 import eng.jAtcSim.frmPacks.shared.AdjustSelectionPanelWrapper;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Area;
@@ -403,7 +405,7 @@ class ButtonBinding {
     Class cls = this.target.getClass();
     Method mi;
     try {
-      mi = cls.getMethod("is" + propertyName, new Class[0]);
+      mi = cls.getMethod("is" + propertyName);
     } catch (NoSuchMethodException e) {
       throw new EApplicationException("Unable to find property is" + propertyName + " over " + target + ".", e);
     }
@@ -420,12 +422,12 @@ class ButtonBinding {
     Class cls = this.target.getClass();
     Method mi;
     try {
-      mi = cls.getMethod("set" + propertyName, new Class[]{boolean.class});
+      mi = cls.getMethod("set" + propertyName, boolean.class);
     } catch (NoSuchMethodException e) {
       throw new EApplicationException("Unable to find property set" + propertyName + " over " + target + ".", e);
     }
     try {
-      mi.invoke(target, new Object[]{val});
+      mi.invoke(target, val);
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new EApplicationException("Unable to write property set" + propertyName + " over " + target + ".", e);
     }
@@ -434,7 +436,7 @@ class ButtonBinding {
 
 class RouteComparator implements Comparator<DARoute> {
 
-  private IMap<DARoute, IList<ActiveRunwayThreshold>> map;
+  private final IMap<DARoute, IList<ActiveRunwayThreshold>> map;
 
   public RouteComparator(IMap<DARoute, IList<ActiveRunwayThreshold>> map) {
     this.map = map;

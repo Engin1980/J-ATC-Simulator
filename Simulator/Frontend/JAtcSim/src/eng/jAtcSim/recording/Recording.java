@@ -3,14 +3,14 @@ package eng.jAtcSim.recording;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.BitmapRadar.BitmapCanvas;
-import eng.jAtcSim.contextLocal.Context;
-import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.abstractRadar.Radar;
 import eng.jAtcSim.abstractRadar.settings.RadarBehaviorSettings;
 import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
 import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
-import eng.jAtcSim.abstractRadar.Radar;
+import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.InitialPosition;
+import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
@@ -57,12 +57,12 @@ public class Recording {
     this.isActive = true;
   }
 
-  public boolean isActive() {
-    return isActive;
-  }
-
   public Settings getSettings() {
     return settings;
+  }
+
+  public boolean isActive() {
+    return isActive;
   }
 
   public void stop() {
@@ -89,7 +89,7 @@ public class Recording {
       }
     } catch (Exception e) {
       Context.getApp().getAppLog().write(ApplicationLog.eType.critical,
-          "Recording error. " + ExceptionUtils.toFullString(e, "\n\t"));
+              "Recording error. " + ExceptionUtils.toFullString(e, "\n\t"));
       this.stop();
     }
   }

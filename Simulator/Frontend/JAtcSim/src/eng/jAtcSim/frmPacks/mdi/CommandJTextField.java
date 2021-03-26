@@ -5,13 +5,13 @@
  */
 package eng.jAtcSim.frmPacks.mdi;
 
+import javax.swing.*;
 import java.awt.event.KeyEvent;
-import static java.awt.event.KeyEvent.VK_ESCAPE;
 import java.awt.event.KeyListener;
-import javax.swing.JTextField;
+
+import static java.awt.event.KeyEvent.VK_ESCAPE;
 
 /**
- *
  * @author Marek
  */
 public class CommandJTextField extends JTextField {
@@ -29,13 +29,6 @@ class EMyKeyListener implements KeyListener {
   public EMyKeyListener(JTextField parent) {
     this.parent = parent;
   }
-  
-  @Override
-  public void keyTyped(KeyEvent e) {
-    if (e.getKeyCode() == VK_ESCAPE){
-      parent.setText("");
-    }
-  }
 
   @Override
   public void keyPressed(KeyEvent e) {
@@ -44,5 +37,12 @@ class EMyKeyListener implements KeyListener {
   @Override
   public void keyReleased(KeyEvent e) {
   }
-  
+
+  @Override
+  public void keyTyped(KeyEvent e) {
+    if (e.getKeyCode() == VK_ESCAPE) {
+      parent.setText("");
+    }
+  }
+
 }

@@ -46,6 +46,6 @@ public class Game implements IGame, IXPersistable {
     ctx.fields.saveField(this, "fleetsSource", elm);
     ctx.fields.saveField(this, "trafficSource", elm);
     ctx.fields.saveField(this, "weatherSource", elm);
-    ctx.fields.saveField(this, "simulation", elm);
+    //ctx.fields.saveField(this, "simulation", elm);
   }
 }

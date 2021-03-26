@@ -9,8 +9,6 @@ import java.awt.*;
 
 public class JFrameFactory {
 
-  public static final boolean COLORIZE_PANELS  = false;
-
   public static class JFrameInfo {
     private final JFrame frame;
     private final ISet<JPanelInfo> panels;
@@ -29,12 +27,12 @@ public class JFrameFactory {
       return frame;
     }
 
-    public ISet<JPanelInfo> getPanels() {
-      return panels;
-    }
-
     public MenuFactory.MenuSimProxy getMenuSimProxy() {
       return menuSimProxy;
+    }
+
+    public ISet<JPanelInfo> getPanels() {
+      return panels;
     }
   }
 
@@ -58,6 +56,7 @@ public class JFrameFactory {
       return viewName;
     }
   }
+  public static final boolean COLORIZE_PANELS = false;
 
   public ISet<JFrameInfo> build(Layout layout) {
     EAssert.Argument.isNotNull(layout, "layout");
@@ -83,7 +82,7 @@ public class JFrameFactory {
     } else
       menuSimProxy = null;
 
-    switch (window.getStyle()){
+    switch (window.getStyle()) {
       case maximized:
         frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         break;
@@ -174,7 +173,7 @@ public class JFrameFactory {
 }
 
 class ColorProvider {
-  private static Color[] colors = {
+  private static final Color[] colors = {
           Color.CYAN,
           Color.BLUE,
           Color.DARK_GRAY,

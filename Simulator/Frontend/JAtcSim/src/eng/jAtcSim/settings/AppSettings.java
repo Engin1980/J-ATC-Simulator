@@ -155,14 +155,6 @@ public class AppSettings {
   private DynamicPlaneFormatter dynamicPlaneFormatter;
 
 
-  public RadarDisplaySettings getRadarDisplaySettings() {
-    return radarDisplaySettings;
-  }
-
-  public RadarStyleSettings getRadarStyleSettings() {
-    return radarStyleSettings;
-  }
-
   private AppSettings() {
     if (!initialized)
       throw new EApplicationException("Unable to create a new instance of AppSettings. Static method 'AppSettings.init()' must be called first.");
@@ -176,6 +168,14 @@ public class AppSettings {
 
   public FlightStripSettings getFlightStripSettings() {
     return flightStripSettings;
+  }
+
+  public RadarDisplaySettings getRadarDisplaySettings() {
+    return radarDisplaySettings;
+  }
+
+  public RadarStyleSettings getRadarStyleSettings() {
+    return radarStyleSettings;
   }
 
   public void load() {

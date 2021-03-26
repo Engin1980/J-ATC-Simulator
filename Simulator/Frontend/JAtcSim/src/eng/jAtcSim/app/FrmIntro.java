@@ -1,15 +1,14 @@
 package eng.jAtcSim.app;
 
-import eng.eSystem.swing.other.HistoryForJFileChooser;
+import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
-import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
-import eng.jAtcSim.shared.MessageBox;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.FrmStartupSettings;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.shared.MessageBox;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,7 +18,7 @@ import java.io.IOException;
 
 public class FrmIntro extends JFrame {
 
-  private StartupSettings startupSettings;
+  private final StartupSettings startupSettings;
 
   public FrmIntro(StartupSettings startupSettings) {
     initializeComponents();
@@ -48,8 +47,8 @@ public class FrmIntro extends JFrame {
 
 
     JPanel pnl = LayoutManager.createBorderedPanel(16,
-        LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center, 16,
-            lblImage, btnStartupSettings, btnRun, btnLoadSim, btnExit));
+            LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center, 16,
+                    lblImage, btnStartupSettings, btnRun, btnLoadSim, btnExit));
 
     this.getContentPane().setLayout(new BorderLayout());
     this.getContentPane().add(pnl);
@@ -78,7 +77,7 @@ public class FrmIntro extends JFrame {
     } catch (Exception ex) {
       ex.printStackTrace();
       MessageBox.show("Failed to start up the simulation. Something is wrong. Check the app settings. \n\n" +
-          ExceptionUtils.toFullString(ex, "\n"), "Error during simulation start-up.");
+              ExceptionUtils.toFullString(ex, "\n"), "Error during simulation start-up.");
       this.setVisible(true);
     }
   }
@@ -99,7 +98,7 @@ public class FrmIntro extends JFrame {
     } catch (Exception ex) {
       ex.printStackTrace();
       MessageBox.show("Failed to load the simulation. \n\n" +
-          ExceptionUtils.toFullString(ex, "\n"), "Error during simulation load.");
+              ExceptionUtils.toFullString(ex, "\n"), "Error during simulation load.");
       this.setVisible(true);
     }
   }

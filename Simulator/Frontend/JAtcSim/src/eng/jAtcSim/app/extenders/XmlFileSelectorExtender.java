@@ -9,11 +9,11 @@ import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 
-import java.awt.*;
-import java.io.File;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.io.File;
 
 /**
  * @author Marek
@@ -38,17 +38,17 @@ public class XmlFileSelectorExtender {
 
     this.txt.getDocument().addDocumentListener(new DocumentListener() {
       @Override
+      public void changedUpdate(DocumentEvent e) {
+        checkFileExists();
+      }
+
+      @Override
       public void insertUpdate(DocumentEvent e) {
         checkFileExists();
       }
 
       @Override
       public void removeUpdate(DocumentEvent e) {
-        checkFileExists();
-      }
-
-      @Override
-      public void changedUpdate(DocumentEvent e) {
         checkFileExists();
       }
     });
@@ -62,18 +62,26 @@ public class XmlFileSelectorExtender {
     this(new JTextField(), new JButton("(browse)"), type);
   }
 
-  public JTextField getTextControl() {
-    return txt;
-  }
-
   public JButton getButtonControl() {
     return btn;
   }
 
   public JPanel getControl() {
     JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 4,
-        txt, btn);
+            txt, btn);
     return ret;
+  }
+
+  public final File getFile() {
+    return file;
+  }
+
+  public final void setFile(File file) {
+    this.file = file;
+    if (this.file == null)
+      this.txt.setText("< browse for file >");
+    else
+      this.txt.setText(this.file.getPath());
   }
 
   public final String getFileName() {
@@ -90,16 +98,8 @@ public class XmlFileSelectorExtender {
       setFile(new File(fileName));
   }
 
-  public final File getFile() {
-    return file;
-  }
-
-  public final void setFile(File file) {
-    this.file = file;
-    if (this.file == null)
-      this.txt.setText("< browse for file >");
-    else
-      this.txt.setText(this.file.getPath());
+  public JTextField getTextControl() {
+    return txt;
   }
 
   public boolean isValid() {

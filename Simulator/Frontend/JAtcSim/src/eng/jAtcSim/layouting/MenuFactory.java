@@ -17,7 +17,7 @@ public class MenuFactory {
       STATS,
       RADAR,
       MOODS,
-      SCHEDULED;
+      SCHEDULED
     }
 
     public enum ToolRequest {
@@ -36,22 +36,6 @@ public class MenuFactory {
 
     public void setSimulationSpeed(int speedInMs) {
       this.onSimSpeed.raise(speedInMs);
-    }
-
-    void showAboutPage() {
-      this.onShowAbout.raise();
-    }
-
-    void showProjectPage() {
-      this.onShowProject.raise();
-    }
-
-    void togglePause() {
-      this.onTogglePause.raise();
-    }
-
-    void toggleSound() {
-      this.onToggleSound.raise();
     }
 
     public void toolRequest(ToolRequest tool) {
@@ -97,6 +81,22 @@ public class MenuFactory {
 //        pnlLeft.setVisible(isVis);
 //        s.setState(isVis);
 //      }
+    }
+
+    void showAboutPage() {
+      this.onShowAbout.raise();
+    }
+
+    void showProjectPage() {
+      this.onShowProject.raise();
+    }
+
+    void togglePause() {
+      this.onTogglePause.raise();
+    }
+
+    void toggleSound() {
+      this.onToggleSound.raise();
     }
 
     void quit() {

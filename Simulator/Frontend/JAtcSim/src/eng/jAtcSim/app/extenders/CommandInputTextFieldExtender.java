@@ -69,6 +69,7 @@ public class CommandInputTextFieldExtender {
       this.arguments = arguments;
     }
   }
+
   public final Event<CommandInputTextFieldExtender, SpecialCommandEventArgs> onSpecialCommand = new Event<>(this);
   public final Event<CommandInputTextFieldExtender, CommandEventArgs<AtcId, IAtcSpeech>> onAtcCommand = new Event<>(this);
   public final Event<CommandInputTextFieldExtender, CommandEventArgs<Callsign, SpeechList<IForPlaneSpeech>>> onPlaneCommand = new Event<>(this);
@@ -79,6 +80,7 @@ public class CommandInputTextFieldExtender {
   private final JTextField txt;
   private final ParsersSet parsers;
   private boolean isCtr = false;
+
   public CommandInputTextFieldExtender(JTextField txt,
                                        ParsersSet parsers,
                                        Producer<IReadOnlyList<AtcId>> atcIdsProducer,

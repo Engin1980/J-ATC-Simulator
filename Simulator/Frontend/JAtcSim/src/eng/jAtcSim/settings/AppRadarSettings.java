@@ -29,6 +29,7 @@ public class AppRadarSettings {
       ret.maxAltitude = SmartXmlLoaderUtils.loadInteger(elm, "maxAltitude");
       return ret;
     }
+
     public boolean airport = true;
     public boolean country = true;
     public boolean ctr = true;
@@ -69,6 +70,7 @@ public class AppRadarSettings {
       return ret;
     }
   }
+
   public DisplaySettings displaySettings;
   public int displayTextDelay;
   public Path styleSettingsFile;

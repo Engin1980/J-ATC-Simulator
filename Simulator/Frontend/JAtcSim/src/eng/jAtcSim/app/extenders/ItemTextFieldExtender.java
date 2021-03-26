@@ -13,13 +13,18 @@ import java.awt.*;
 public class ItemTextFieldExtender {
 
   private static final Color FAIL_COLOR = new Color(255, 150, 150);
-  private JTextField txt;
+  private final JTextField txt;
   private String[] model = new String[0];
   private Color okColor = null;
 
   public ItemTextFieldExtender() {
     this.txt = new JTextField();
     this.txt.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+        update();
+      }
+
       @Override
       public void insertUpdate(DocumentEvent e) {
         update();
@@ -29,21 +34,7 @@ public class ItemTextFieldExtender {
       public void removeUpdate(DocumentEvent e) {
         update();
       }
-
-      @Override
-      public void changedUpdate(DocumentEvent e) {
-        update();
-      }
     });
-  }
-
-  public String[] getModel() {
-    return model;
-  }
-
-  public void setModel(String[] model) {
-    this.model = model;
-    update();
   }
 
   public JTextField getControl() {
@@ -53,14 +44,24 @@ public class ItemTextFieldExtender {
   public String[] getItems() {
     String[] tmp = txt.getText().split(";");
     IList<String> lst = new EList<>(tmp);
-    tmp = lst.select(q->q.trim()).where(q->q.length() > 0).distinct().toArray(String.class);
+    tmp = lst.select(q -> q.trim()).where(q -> q.length() > 0).distinct().toArray(String.class);
     return tmp;
   }
-  public void setItems(String[] items){
+
+  public void setItems(String[] items) {
     IList<String> lst = new EList<>(items);
     EStringBuilder t = new EStringBuilder();
-    t.appendItems(lst,q->q, ";" );
+    t.appendItems(lst, q -> q, ";");
     txt.setText(t.toString());
+  }
+
+  public String[] getModel() {
+    return model;
+  }
+
+  public void setModel(String[] model) {
+    this.model = model;
+    update();
   }
 
   private void update() {

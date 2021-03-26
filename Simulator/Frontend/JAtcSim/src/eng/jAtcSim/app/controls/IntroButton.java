@@ -11,14 +11,10 @@ import java.awt.geom.Rectangle2D;
 public class IntroButton extends JPanel {
 
   private String text = "IntroButton";
-  private Color backColor = new Color(255, 255, 150, 128);
-  private Color foreColor= new Color(0,0,255);
+  private final Color backColor = new Color(255, 255, 150, 128);
+  private final Color foreColor = new Color(0, 0, 255);
   private boolean isMouseOver = false;
   private final EventSimple<IntroButton> onClick = new EventSimple<>(this);
-
-  public EventSimple<IntroButton> getOnClick() {
-    return onClick;
-  }
 
   public IntroButton(String text) {
     super(true);
@@ -43,6 +39,20 @@ public class IntroButton extends JPanel {
     });
   }
 
+  public EventSimple<IntroButton> getOnClick() {
+    return onClick;
+  }
+
+  public String getText() {
+    return text;
+  }
+
+  public void setText(String text) {
+    if (text == null) text = "";
+    this.text = text;
+    this.revalidate();
+  }
+
   private void this_mouseExit() {
     this.isMouseOver = false;
     this.repaint();
@@ -57,27 +67,17 @@ public class IntroButton extends JPanel {
     this.onClick.raise();
   }
 
-  public String getText() {
-    return text;
-  }
-
-  public void setText(String text) {
-    if (text == null) text = "";
-    this.text = text;
-    this.revalidate();
-  }
-
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
 
     Graphics2D gg = (Graphics2D) g;
     gg.setRenderingHint(
-        RenderingHints.KEY_ANTIALIASING,
-        RenderingHints.VALUE_ANTIALIAS_ON);
+            RenderingHints.KEY_ANTIALIASING,
+            RenderingHints.VALUE_ANTIALIAS_ON);
 //
     gg.setComposite(AlphaComposite.getInstance(
-        AlphaComposite.SRC_OVER, 0.3f));
+            AlphaComposite.SRC_OVER, 0.3f));
     gg.setColor(this.backColor);
     gg.fillRoundRect(0, 0, g.getClipBounds().width, g.getClipBounds().height, 48, 48);
 
@@ -91,8 +91,7 @@ public class IntroButton extends JPanel {
     y = y + (int) rect.getHeight() / 2;
     gg.drawString(this.text, x, y);
 
-    if (isMouseOver)
-    {
+    if (isMouseOver) {
       gg.setColor(Color.white);
       gg.setStroke(new BasicStroke(5));
       gg.drawRoundRect(0, 0, g.getClipBounds().width, g.getClipBounds().height, 48, 48);

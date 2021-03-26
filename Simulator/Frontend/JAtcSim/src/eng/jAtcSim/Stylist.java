@@ -1,13 +1,11 @@
 package eng.jAtcSim;
 
 import eng.eSystem.Triple;
-import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 
 import java.awt.*;
 import java.util.function.Consumer;
-import java.util.zip.CheckedOutputStream;
 
 public class Stylist {
 
@@ -16,7 +14,7 @@ public class Stylist {
   }
 
   public static class AndFilter extends Filter {
-    private IList<Filter> inner = new EList<>();
+    private final IList<Filter> inner = new EList<>();
 
     public AndFilter(Filter... filters) {
       this.inner.addMany(filters);
@@ -33,8 +31,8 @@ public class Stylist {
   }
 
   public static class TypeFilter extends Filter {
-    private Class type;
-    private boolean alsoDescendants;
+    private final Class type;
+    private final boolean alsoDescendants;
 
     public TypeFilter(Class type, boolean alsoDescendants) {
       this.type = type;
@@ -113,8 +111,9 @@ public class Stylist {
       return ret;
     }
   }
+
   public static boolean verbose = false;
-  private static IList<Triple<String, Filter, Consumer<Component>>> inner = new EList<>();
+  private static final IList<Triple<String, Filter, Consumer<Component>>> inner = new EList<>();
   private static int nextId = 1;
 
   public static void add(Filter filter, Consumer<Component> style) {

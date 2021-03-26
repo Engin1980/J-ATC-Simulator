@@ -2,8 +2,8 @@ package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.jAtcSim.Stylist;
 import eng.eSystem.swing.LayoutManager;
+import eng.jAtcSim.Stylist;
 import eng.jAtcSim.app.extenders.NumericUpDownExtender;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 
@@ -13,8 +13,8 @@ import java.awt.event.ActionEvent;
 public class GenericTrafficMovementsPerHourPanel extends JPanel {
 
   private static final int HOURS = 24;
-  private JLabel[] lbls = new JLabel[HOURS];
-  private NumericUpDownExtender[] nums = new NumericUpDownExtender[HOURS];
+  private final JLabel[] lbls = new JLabel[HOURS];
+  private final NumericUpDownExtender[] nums = new NumericUpDownExtender[HOURS];
   private boolean applied = false;
 
   public GenericTrafficMovementsPerHourPanel() {
@@ -31,8 +31,8 @@ public class GenericTrafficMovementsPerHourPanel extends JPanel {
       cmps.add(lbls[i + 12]);
       cmps.add(nums[i + 12].getControl());
     }
-    cmps.add((JComponent) null);
-    cmps.add((JComponent) null);
+    cmps.add(null);
+    cmps.add(null);
     cmps.add(SwingFactory.createButton("Cancel", this::btnCancel_click));
     cmps.add(SwingFactory.createButton("Apply", this::btnApply_click));
 
@@ -43,23 +43,23 @@ public class GenericTrafficMovementsPerHourPanel extends JPanel {
     Stylist.apply(this, true);
   }
 
-  public void setValues(int[] values) {
-    assert values != null;
-    assert values.length == 24;
-    for (int i = 0; i < values.length; i++) {
-      nums[i].setValue(values[i]);
-    }
-  }
-
-  public int[] getValues(){
-    int [] ret = null;
-    if (this.applied){
+  public int[] getValues() {
+    int[] ret = null;
+    if (this.applied) {
       ret = new int[24];
       for (int i = 0; i < ret.length; i++) {
         ret[i] = nums[i].getValue();
       }
     }
     return ret;
+  }
+
+  public void setValues(int[] values) {
+    assert values != null;
+    assert values.length == 24;
+    for (int i = 0; i < values.length; i++) {
+      nums[i].setValue(values[i]);
+    }
   }
 
   public void setValues(int value) {

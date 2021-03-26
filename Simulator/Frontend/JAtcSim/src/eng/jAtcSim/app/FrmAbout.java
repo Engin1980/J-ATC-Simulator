@@ -1,16 +1,16 @@
 package eng.jAtcSim.app;
 
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
-import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class FrmAbout extends JFrame {
 
-  private String[] lines = {
-      "Log window icon made by Designmodo from www.flaticon.com."
+  private final String[] lines = {
+          "Log window icon made by Designmodo from www.flaticon.com."
   };
 
   public FrmAbout() {
