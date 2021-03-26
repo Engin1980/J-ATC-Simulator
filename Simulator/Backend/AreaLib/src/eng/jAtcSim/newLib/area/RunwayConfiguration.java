@@ -6,7 +6,7 @@ import eng.eSystem.collections.*;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
@@ -62,7 +62,7 @@ public class RunwayConfiguration implements IXPersistable {
   private final int windSpeedTo;
   private final int windTo;
 
-  @XmlConstructor
+
   @XConstructor
   public RunwayConfiguration(XLoadContext ctx) {
     arrivals = null;

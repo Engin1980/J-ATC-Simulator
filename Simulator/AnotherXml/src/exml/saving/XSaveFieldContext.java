@@ -44,6 +44,10 @@ public class XSaveFieldContext {
     this.ctx = ctx;
   }
 
+  public void ignoreFields(Object obj, String... fieldNames) {
+    this.usedFieldEvidence.add(obj, fieldNames);
+  }
+
   public void saveField(Object obj, String fieldName, XElement elm) {
     Field field = SharedUtils.getField(obj.getClass(), fieldName);
 
@@ -57,10 +61,6 @@ public class XSaveFieldContext {
       saveFieldToElement(obj, fieldName, elm);
 
     ctx.log.decreaseIndent();
-  }
-
-  public void ignoreFields(Object obj, String... fieldNames){
-    this.usedFieldEvidence.add(obj, fieldNames);
   }
 
   @Deprecated

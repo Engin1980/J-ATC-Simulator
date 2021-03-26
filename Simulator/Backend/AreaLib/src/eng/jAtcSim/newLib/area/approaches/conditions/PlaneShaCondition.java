@@ -4,7 +4,7 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.approaches.perCategoryValues.IntegerPerCategoryValue;
 import eng.jAtcSim.newLib.shared.PostContracts;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class PlaneShaCondition implements ICondition {
@@ -31,7 +31,7 @@ public class PlaneShaCondition implements ICondition {
   private final eType type;
 
   @XConstructor
-  @XmlConstructor
+
   private PlaneShaCondition() {
     this.minimum = null;
     this.maximum = null;

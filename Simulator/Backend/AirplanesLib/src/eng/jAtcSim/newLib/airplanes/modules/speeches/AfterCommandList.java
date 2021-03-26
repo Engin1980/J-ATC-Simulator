@@ -19,7 +19,7 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
@@ -364,7 +364,7 @@ class AFItem implements IXPersistable {
   public final AfterCommand antecedent;
   public final ICommand consequent;
 
-  @XmlConstructor
+
   @XConstructor
   private AFItem() {
     antecedent = null;

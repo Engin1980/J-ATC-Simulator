@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.stats.properties;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.shared.PostContracts;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -20,7 +20,7 @@ public class MMM implements IXPersistable {
   private final double mean;
 
   @XConstructor
-  @XmlConstructor
+
   private MMM() {
     minimum = Double.NaN;
     maximum = Double.NaN;

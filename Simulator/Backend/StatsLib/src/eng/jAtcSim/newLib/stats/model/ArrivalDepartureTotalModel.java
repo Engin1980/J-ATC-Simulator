@@ -1,14 +1,14 @@
 package eng.jAtcSim.newLib.stats.model;
 
 import eng.eSystem.validation.EAssert;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class ArrivalDepartureTotalModel<T> extends ArrivalDepartureModel<T> {
   private T total;
 
   @XConstructor
-  @XmlConstructor
+
   private ArrivalDepartureTotalModel(){
     super();
   }

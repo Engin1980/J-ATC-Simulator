@@ -8,7 +8,7 @@ import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
@@ -24,7 +24,7 @@ public abstract class Atc implements IXPersistable {
   private AtcRecorder recorder = null;
 
   @XConstructor
-  @XmlConstructor
+
   protected Atc() {
     PostContracts.register(this, () -> atcId != null);
     PostContracts.register(this, () -> this.recorder != null);

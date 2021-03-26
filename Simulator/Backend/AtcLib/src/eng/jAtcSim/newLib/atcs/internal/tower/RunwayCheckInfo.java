@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.atcs.internal.tower;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -54,7 +54,7 @@ public class RunwayCheckInfo implements IXPersistable {
   private SchedulerForAdvice scheduler;
 
   @XConstructor
-  @XmlConstructor
+
   private RunwayCheckInfo() {
     expectedDurationInMinutes = 0;
     PostContracts.register(this, () -> this.scheduler != null);

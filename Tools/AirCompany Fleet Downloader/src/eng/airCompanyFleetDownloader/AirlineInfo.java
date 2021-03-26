@@ -20,7 +20,7 @@ public class AirlineInfo {
   private boolean decoded = false;
 
   @XConstructor
-  @XmlConstructor
+
   private AirlineInfo() {
     name = null;
     url = null;

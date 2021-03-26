@@ -29,7 +29,7 @@ import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.traffic.movementTemplating.*;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
@@ -44,7 +44,7 @@ public class TrafficModule extends SimulationModule {
   private final double delayStepProbability;
 
 //  @XConstructor
-//  @XmlConstructor
+//
 //  private TrafficModule() {
 //    super((Simulation) null);
 //    this.trafficProvider = null;

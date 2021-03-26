@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.airplanes.modules.sha;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.Restriction;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -20,7 +20,7 @@ class RestrictableItem implements IXPersistable {
    */
   private int targetValue;
 
-  @XmlConstructor
+
   @XConstructor
   RestrictableItem(int targetValue) {
     setTargetValue(targetValue);

@@ -4,7 +4,7 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -48,7 +48,7 @@ public class Participant implements IXPersistable {
   private final String id;
 
   @XConstructor
-  @XmlConstructor
+
   private Participant(eType type, String id) {
     this.type = type;
     this.id = id;

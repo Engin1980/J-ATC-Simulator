@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class TaxiToHoldingPointCommand implements ICommand {
@@ -18,7 +18,7 @@ public class TaxiToHoldingPointCommand implements ICommand {
   }
 
   @XConstructor
-  @XmlConstructor
+
   private TaxiToHoldingPointCommand() {
     runwayThresholdName = null;
   }

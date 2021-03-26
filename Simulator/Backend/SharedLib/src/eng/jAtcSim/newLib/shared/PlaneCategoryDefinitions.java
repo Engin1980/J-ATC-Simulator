@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.shared;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -15,7 +15,7 @@ public class PlaneCategoryDefinitions implements IXPersistable {
   }
 
   @XConstructor
-  @XmlConstructor
+
   private PlaneCategoryDefinitions() {
   }
 

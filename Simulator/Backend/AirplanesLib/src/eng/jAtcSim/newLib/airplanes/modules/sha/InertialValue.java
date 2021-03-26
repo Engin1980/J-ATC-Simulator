@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha;
 
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -11,7 +11,7 @@ class InertialValue implements IXPersistable {
   private double inertia;
   private final Double minimum;
 
-  @XmlConstructor
+
   @XConstructor
   public InertialValue(double value,
                        double maxPositiveInertiaChange, double maxNegativeInertiaChange,

@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.area.approaches.perCategoryValues;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -23,7 +23,7 @@ public class IntegerPerCategoryValue implements IXPersistable {
   }
 
   @XConstructor
-  @XmlConstructor
+
   private IntegerPerCategoryValue(int a, int b, int c, int d) {
     this.a = a;
     this.b = b;

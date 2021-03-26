@@ -4,7 +4,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.traffic.contextLocal.Context;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -21,7 +21,7 @@ public class EntryExitInfo implements IXPersistable {
   private final Coordinate otherAirportCoordinate;
 
   @XConstructor
-  @XmlConstructor
+
   private EntryExitInfo() {
     this.navaid = null;
     this.radial = null;

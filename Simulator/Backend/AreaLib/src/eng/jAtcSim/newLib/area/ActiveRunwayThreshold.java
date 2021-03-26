@@ -8,6 +8,8 @@ package eng.jAtcSim.newLib.area;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -15,13 +17,16 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
+import exml.IXPersistable;
+import exml.loading.XLoadContext;
+import exml.saving.XSaveContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 /**
  * @author Marek
  */
-public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
+public class ActiveRunwayThreshold extends Parentable<ActiveRunway> implements IXPersistable {
 
   public static class Prototype {
     public final String name;
@@ -166,6 +171,16 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
 
   public IReadOnlyList<DARoute> getRoutes() {
     return routes;
+  }
+
+  @Override
+  public void load(XElement elm, XLoadContext ctx) {
+    throw new ToDoException();
+  }
+
+  @Override
+  public void save(XElement elm, XSaveContext ctx) {
+    elm.setContent(this.getParent().getParent().getIcao() + this.getName());
   }
 
   @Override

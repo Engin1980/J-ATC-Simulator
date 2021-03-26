@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 /**
@@ -17,7 +17,7 @@ public class ContactCommand implements ICommand {
   }
 
   @XConstructor
-  @XmlConstructor
+
   private ContactCommand() {
     atc = null;
   }

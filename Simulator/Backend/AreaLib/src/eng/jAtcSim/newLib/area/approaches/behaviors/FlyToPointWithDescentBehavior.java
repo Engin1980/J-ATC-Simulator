@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.area.approaches.behaviors;
 
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.shared.PostContracts;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class FlyToPointWithDescentBehavior extends FlyToPointBehavior {
@@ -20,7 +20,7 @@ public class FlyToPointWithDescentBehavior extends FlyToPointBehavior {
     this.slope = slope;
   }
 
-  @XmlConstructor
+
   @XConstructor
   protected FlyToPointWithDescentBehavior() {
     this.altitudeFixValue = 0;

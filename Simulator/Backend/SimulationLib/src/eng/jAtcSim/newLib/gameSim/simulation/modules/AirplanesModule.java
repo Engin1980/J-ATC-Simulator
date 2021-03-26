@@ -39,7 +39,7 @@ import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
@@ -56,7 +56,7 @@ public class AirplanesModule extends SimulationModule {
   private final IList<AirplaneTemplate> planesPrepared = new EList<>();
 
   @XConstructor
-  @XmlConstructor
+
   private AirplanesModule() {
     super((Simulation) null);
     this.airplanesController = null;

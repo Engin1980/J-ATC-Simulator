@@ -5,7 +5,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
@@ -14,7 +14,7 @@ public class AtcModule extends Module {
   private AtcId atcId;
   private int secondsWithoutRadarContact = 0;
 
-  @XmlConstructor
+
   @XConstructor
   private AtcModule(XLoadContext ctx) {
     super(ctx);

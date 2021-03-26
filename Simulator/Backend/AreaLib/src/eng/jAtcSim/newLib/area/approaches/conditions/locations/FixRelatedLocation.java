@@ -5,7 +5,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class FixRelatedLocation implements ILocation {
@@ -24,7 +24,7 @@ public class FixRelatedLocation implements ILocation {
   private final double maximalDistance;
 
   @XConstructor
-  @XmlConstructor
+
   private FixRelatedLocation() {
     coordinate = null;
     fromRadial = null;

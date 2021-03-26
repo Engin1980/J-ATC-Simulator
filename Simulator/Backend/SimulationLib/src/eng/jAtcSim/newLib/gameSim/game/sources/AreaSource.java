@@ -9,7 +9,7 @@ import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.context.ISharedAcc;
 import eng.jAtcSim.newLib.shared.context.NonSimSharedAcc;
 import eng.jAtcSim.newLib.xml.area.AreaXmlLoader;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -21,7 +21,7 @@ public class AreaSource extends Source<Area> {
   private String icao;
 
   @XConstructor
-  @XmlConstructor
+
   private AreaSource() {
   }
 

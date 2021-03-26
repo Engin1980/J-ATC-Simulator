@@ -19,7 +19,7 @@ import eng.jAtcSim.newLib.shared.AtcIdList;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
@@ -35,7 +35,7 @@ public class AtcProvider implements IXPersistable {
   @XIgnored
   private final CacheUsingProducer<AtcIdList> userAtcIdsCache = new CacheUsingProducer<>(this::evaluateUserAtcIdsCache);
 
-  @XmlConstructor
+
   @XConstructor
   private AtcProvider() {
     this.atcs = null;

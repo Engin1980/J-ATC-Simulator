@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class AfterAltitudeCommand extends AfterCommand {
@@ -15,7 +15,7 @@ public class AfterAltitudeCommand extends AfterCommand {
   private final int altitude;
 
   @XConstructor
-  @XmlConstructor
+
   private AfterAltitudeCommand() {
     super(AboveBelowExactly.exactly);
     altitude = 0;

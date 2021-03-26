@@ -6,23 +6,16 @@ import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import exml.IXPersistable;
-import exml.annotations.XIgnored;
 import exml.loading.XLoadContext;
 import exml.saving.XSaveContext;
 
 public class Game implements IGame, IXPersistable {
 
-  @XIgnored
   private AreaSource areaSource;
-  @XIgnored
   private AirplaneTypesSource airplaneTypesSource;
-  @XIgnored
   private FleetsSource fleetsSource;
-  @XIgnored
   private TrafficSource trafficSource;
-  @XIgnored
   private WeatherSource weatherSource;
-  @XIgnored
   private Simulation simulation;
 
   private Game() {
@@ -44,7 +37,6 @@ public class Game implements IGame, IXPersistable {
 
   @Override
   public void load(XElement elm, XLoadContext ctx) {
-
   }
 
   @Override

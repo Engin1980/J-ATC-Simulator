@@ -6,7 +6,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.time.EDayTime;
 import eng.jAtcSim.newLib.traffic.contextLocal.Context;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
@@ -21,7 +21,7 @@ public class TrafficProvider implements IXPersistable {
   private final IMap<Integer, IList<MovementTemplate>> movementsForDay = new EMap<>();
 
   @XConstructor
-  @XmlConstructor
+
   private TrafficProvider() {
     this.trafficModel = null;
   }

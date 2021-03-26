@@ -23,7 +23,7 @@ import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
@@ -41,7 +41,7 @@ class SwitchManager implements IXPersistable {
   private Producer<IReadOnlyList<Message>> delayedMessagesProducer;
 
   @XConstructor
-  @XmlConstructor
+
   SwitchManager() {
     PostContracts.register(this, () -> parent != null);
   }

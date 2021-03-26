@@ -16,7 +16,7 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneConfirmation;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -34,7 +34,7 @@ public abstract class ComputerAtc extends Atc {
   }
 
   @XConstructor
-  @XmlConstructor
+
   protected ComputerAtc() {
     PostContracts.register(this, () -> switchManager != null);
   }

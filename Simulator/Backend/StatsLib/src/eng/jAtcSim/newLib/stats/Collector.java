@@ -9,7 +9,7 @@ import eng.jAtcSim.newLib.stats.model.ArrivalDepartureTotalModel;
 import eng.jAtcSim.newLib.stats.model.ErrorsModel;
 import eng.jAtcSim.newLib.stats.properties.CounterProperty;
 import eng.jAtcSim.newLib.stats.properties.StatisticProperty;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -27,7 +27,7 @@ public class Collector implements IXPersistable {
   private int holdingPointMaximumCount = 0;
 
   @XConstructor
-  @XmlConstructor
+
   private Collector(){
     fromTime = null;
     toTime = null;

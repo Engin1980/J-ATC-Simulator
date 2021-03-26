@@ -13,7 +13,7 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.AtcIdList;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.ContextManager;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
@@ -28,7 +28,7 @@ public class AtcModule implements IXPersistable {
     this.atcProvider = atcProvider;
   }
 
-  @XmlConstructor
+
   @XConstructor
   private AtcModule() {
     this.atcProvider = null;

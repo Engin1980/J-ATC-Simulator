@@ -42,7 +42,7 @@
 //    this.delayInMinutes = delayInMinutes;
 //  }
 //
-//  @XmlConstructor
+//
 //  private Movement() {
 //    callsign = null;
 //    airplaneType = null;

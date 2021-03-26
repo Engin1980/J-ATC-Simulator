@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.gameSim.simulation.controllers;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.time.EDayTime;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -12,7 +12,7 @@ public class EmergencyAppearanceController implements IXPersistable {
   private final double emergencyPerDayProbability;
 
   @XConstructor
-  @XmlConstructor
+
   public EmergencyAppearanceController(double emergencyPerDayProbability) {
     this.emergencyPerDayProbability = emergencyPerDayProbability;
   }

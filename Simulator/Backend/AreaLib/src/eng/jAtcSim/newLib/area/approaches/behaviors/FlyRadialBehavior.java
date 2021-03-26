@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.area.approaches.behaviors;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class FlyRadialBehavior implements IApproachBehavior {
@@ -12,7 +12,7 @@ public class FlyRadialBehavior implements IApproachBehavior {
 
   private String tag;
 
-  @XmlConstructor
+
   @XConstructor
   protected FlyRadialBehavior() {
     this.coordinate = null;

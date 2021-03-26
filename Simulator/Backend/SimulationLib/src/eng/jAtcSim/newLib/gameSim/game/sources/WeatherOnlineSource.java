@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.weather.DynamicWeatherProvider;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.weather.WeatherProvider;
 import eng.jAtcSim.newLib.weather.downloaders.MetarDownloaderNoaaGov;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class WeatherOnlineSource extends WeatherSource {
@@ -14,7 +14,7 @@ public class WeatherOnlineSource extends WeatherSource {
   private final Weather fallbackWeather;
 
   @XConstructor
-  @XmlConstructor
+
   private WeatherOnlineSource() {
     icao = null;
     fallbackWeather = null;

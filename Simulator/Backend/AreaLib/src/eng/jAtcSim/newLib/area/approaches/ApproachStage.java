@@ -7,7 +7,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.approaches.behaviors.IApproachBehavior;
 import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 import eng.jAtcSim.newLib.shared.PostContracts;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
@@ -29,7 +29,7 @@ public class ApproachStage implements IXPersistable {
   private final IApproachBehavior behavior;
   private final String name;
 
-  @XmlConstructor
+
   @XConstructor
   private ApproachStage() {
     this.exitCondition = null;

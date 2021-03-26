@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.mood;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -26,7 +26,7 @@ public class MoodExperienceResult implements IXPersistable {
   private int points;
 
   @XConstructor
-  @XmlConstructor
+
   private MoodExperienceResult() {
   }
 

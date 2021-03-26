@@ -8,7 +8,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 ;
@@ -26,7 +26,7 @@ public class ClearedToApproachCommand implements ICommand {
   }
 
   @XConstructor
-  @XmlConstructor
+
   private ClearedToApproachCommand() {
     thresholdName = null;
     type = ApproachType.visual;

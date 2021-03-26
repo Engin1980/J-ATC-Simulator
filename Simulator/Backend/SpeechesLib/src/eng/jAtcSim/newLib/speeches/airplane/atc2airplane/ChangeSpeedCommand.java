@@ -7,7 +7,7 @@ import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class ChangeSpeedCommand implements ICommand {
@@ -24,7 +24,7 @@ public class ChangeSpeedCommand implements ICommand {
   }
 
   @XConstructor
-  @XmlConstructor
+
   private ChangeSpeedCommand(){
     this.restriction = null;
   }

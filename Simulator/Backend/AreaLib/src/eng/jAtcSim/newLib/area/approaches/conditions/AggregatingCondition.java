@@ -4,7 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class AggregatingCondition implements ICondition {
@@ -21,7 +21,7 @@ public class AggregatingCondition implements ICondition {
   private final eConditionAggregator aggregator;
 
   @XConstructor
-  @XmlConstructor
+
   private AggregatingCondition() {
     this.conditions = null;
     this.aggregator = eConditionAggregator.or;

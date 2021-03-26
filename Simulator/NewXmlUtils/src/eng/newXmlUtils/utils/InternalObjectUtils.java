@@ -84,7 +84,7 @@ public class InternalObjectUtils {
           ctor.setAccessible(false);
           return tmp;
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-          throw new EXmlException(sf("Failed to invoke private parameter-less @XmlConstructor for type '%s'.", type), e);
+          throw new EXmlException(sf("Failed to invoke private parameter-less  for type '%s'.", type), e);
         }
       });
     } else

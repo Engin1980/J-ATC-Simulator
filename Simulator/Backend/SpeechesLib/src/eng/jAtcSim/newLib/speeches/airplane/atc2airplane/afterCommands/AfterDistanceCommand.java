@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class AfterDistanceCommand extends AfterCommandWithNavaid {
@@ -15,7 +15,7 @@ public class AfterDistanceCommand extends AfterCommandWithNavaid {
   private final double distance;
 
   @XConstructor
-  @XmlConstructor
+
   private AfterDistanceCommand() {
     super("?", AboveBelowExactly.exactly);
     distance = 0;

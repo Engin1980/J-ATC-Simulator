@@ -9,7 +9,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -99,7 +99,7 @@ public class CallsignFactory implements IXPersistable {
   }
 
   @XConstructor
-  @XmlConstructor
+
   public CallsignFactory(boolean useExtendedCallsigns) {
     this.useExtendedCallsigns = useExtendedCallsigns;
   }

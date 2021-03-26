@@ -1,10 +1,7 @@
 package eng.jAtcSim.newLib.area;
 
-import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
-import eng.newXmlUtils.annotations.XmlConstructor;
 import exml.IXPersistable;
-import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 
 import java.util.Objects;
@@ -18,7 +15,6 @@ public class RunwayThresholdConfiguration implements IXPersistable {
   private final ActiveRunwayThreshold threshold;
 
   //TODO really this must be here?
-  @XmlConstructor
   @XConstructor
   public RunwayThresholdConfiguration() {
     categories = null;
@@ -46,7 +42,7 @@ public class RunwayThresholdConfiguration implements IXPersistable {
     if (o == null || getClass() != o.getClass()) return false;
     RunwayThresholdConfiguration that = (RunwayThresholdConfiguration) o;
     return Objects.equals(categories, that.categories) &&
-        Objects.equals(threshold, that.threshold);
+            Objects.equals(threshold, that.threshold);
   }
 
   public PlaneCategoryDefinitions getCategories() {

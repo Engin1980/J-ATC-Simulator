@@ -4,7 +4,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class AltitudeRestrictionCommand implements ICommand {
@@ -23,7 +23,7 @@ public class AltitudeRestrictionCommand implements ICommand {
   private final Restriction restriction;
 
   @XConstructor
-  @XmlConstructor
+
   private AltitudeRestrictionCommand() {
     this.restriction = null;
   }

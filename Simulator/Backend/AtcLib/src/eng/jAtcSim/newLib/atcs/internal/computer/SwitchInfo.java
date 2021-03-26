@@ -5,7 +5,7 @@ import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -15,7 +15,7 @@ class SwitchInfo implements IXPersistable {
   private EDayTimeStamp lastRequest;
 
   @XConstructor
-  @XmlConstructor
+
   private SwitchInfo() {
     atcId = null;
     firstRequest = null;

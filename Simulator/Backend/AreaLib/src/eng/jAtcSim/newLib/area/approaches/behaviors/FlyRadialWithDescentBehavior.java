@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.area.approaches.behaviors;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.shared.PostContracts;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
@@ -24,7 +24,7 @@ public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
   private final int altitudeFixValue;
   private final double slope;
 
-  @XmlConstructor
+
   @XConstructor
   private FlyRadialWithDescentBehavior(){
     super();

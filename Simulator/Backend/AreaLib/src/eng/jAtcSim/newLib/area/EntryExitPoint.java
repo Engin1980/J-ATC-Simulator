@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.area;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class EntryExitPoint extends Parentable<Airport> {
@@ -30,7 +30,7 @@ public class EntryExitPoint extends Parentable<Airport> {
   private Integer maxMrvaAltitude;
   private int radialFromAirport = UNSET;
 
-  @XmlConstructor
+
   @XConstructor
   private EntryExitPoint() {
   }

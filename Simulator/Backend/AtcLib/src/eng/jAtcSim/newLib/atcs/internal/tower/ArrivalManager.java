@@ -14,7 +14,7 @@ import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
@@ -27,7 +27,7 @@ class ArrivalManager implements IXPersistable {
   private TowerAtc parent;
 
   @XConstructor
-  @XmlConstructor
+
   ArrivalManager() {
     PostContracts.register(this, () -> parent != null);
   }

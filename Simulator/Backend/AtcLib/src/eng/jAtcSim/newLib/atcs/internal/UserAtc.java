@@ -30,7 +30,7 @@ import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
@@ -59,7 +59,7 @@ public class UserAtc extends Atc implements IUserAtcInterface {
   @XIgnored
   private IReadOnlyList<Message> thisSecondMessages = new EList<>();
 
-  @XmlConstructor
+
   @XConstructor
   private UserAtc() {
   }

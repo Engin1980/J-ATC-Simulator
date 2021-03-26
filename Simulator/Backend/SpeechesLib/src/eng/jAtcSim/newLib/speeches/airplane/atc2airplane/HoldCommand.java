@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class HoldCommand extends ToNavaidCommand {
@@ -25,7 +25,7 @@ public class HoldCommand extends ToNavaidCommand {
   private final LeftRight turn;
 
   @XConstructor
-  @XmlConstructor
+
   private HoldCommand() {
     super("?");
     this.published = false;

@@ -4,7 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -19,7 +19,7 @@ public class DelayedList<T> implements IXPersistable {
     public int delayLeft;
 
     @XConstructor
-    @XmlConstructor
+
     private DelayedItem(T item, int delay) {
       this.item = item;
       this.delayLeft = delay;
@@ -32,7 +32,7 @@ public class DelayedList<T> implements IXPersistable {
   private final IList<DelayedItem<T>> inner = new EList<>(LinkedList.class);
 
   @XConstructor
-  @XmlConstructor
+
   public DelayedList(int minimalDelay, int maximalDelay) {
     this.minimalDelay = minimalDelay;
     this.maximalDelay = maximalDelay;

@@ -4,7 +4,7 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
@@ -25,7 +25,7 @@ public class SchedulerForAdvice implements IXPersistable {
   private EDayTimeStamp scheduledTime;
 
   @XConstructor
-  @XmlConstructor
+
   private SchedulerForAdvice() {
     PostContracts.register(this, () -> this.scheduledTime != null);
   }

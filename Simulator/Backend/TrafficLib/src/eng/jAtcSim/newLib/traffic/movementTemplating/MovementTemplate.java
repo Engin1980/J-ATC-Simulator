@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.traffic.movementTemplating;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
@@ -18,7 +18,7 @@ public abstract class MovementTemplate implements IXPersistable {
   private final EntryExitInfo entryExitInfo;
 
   @XConstructor
-  @XmlConstructor
+
   protected MovementTemplate() {
     kind = eKind.arrival;
     appearanceTime = null;

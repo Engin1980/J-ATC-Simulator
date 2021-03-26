@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands;
 
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class AfterHeadingCommand extends AfterCommand {
@@ -11,7 +11,7 @@ public class AfterHeadingCommand extends AfterCommand {
   }
 
   @XConstructor
-  @XmlConstructor
+
   private AfterHeadingCommand() {
     super(AboveBelowExactly.exactly);
     heading = 0;

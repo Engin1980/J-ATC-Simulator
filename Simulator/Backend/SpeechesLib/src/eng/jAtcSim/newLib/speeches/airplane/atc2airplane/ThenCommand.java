@@ -7,7 +7,7 @@
 package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class ThenCommand implements ICommand {
@@ -18,7 +18,7 @@ public class ThenCommand implements ICommand {
   }
 
   @XConstructor
-  @XmlConstructor
+
   private ThenCommand() {
   }
 

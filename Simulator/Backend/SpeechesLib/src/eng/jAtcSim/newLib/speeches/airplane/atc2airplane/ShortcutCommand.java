@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import exml.annotations.XConstructor;
 
 public class ShortcutCommand extends ToNavaidCommand {
@@ -11,7 +11,7 @@ public class ShortcutCommand extends ToNavaidCommand {
   }
 
   @XConstructor
-  @XmlConstructor
+
   private ShortcutCommand() {
     super("?");
   }

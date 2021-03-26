@@ -5,7 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
-import eng.newXmlUtils.annotations.XmlConstructor;
+
 import eng.newXmlUtils.annotations.XmlConstructorParameter;
 import exml.IXPersistable;
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
