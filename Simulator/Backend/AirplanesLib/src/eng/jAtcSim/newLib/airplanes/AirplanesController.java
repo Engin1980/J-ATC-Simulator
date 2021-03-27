@@ -19,7 +19,7 @@ import exml.annotations.XIgnored;
 
 public class AirplanesController implements IXPersistable {
 
-  @XIgnored private final AirplaneList planes = new AirplaneList();
+  private final AirplaneList planes = new AirplaneList();
   @XIgnored private final IAirplaneList publicPlanes = new IAirplaneList();
   @XIgnored private AtcId departureInitialAtcId;
   @XIgnored private AtcId arrivalInitialAtId;

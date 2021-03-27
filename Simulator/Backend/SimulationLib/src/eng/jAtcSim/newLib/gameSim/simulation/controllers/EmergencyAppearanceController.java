@@ -12,7 +12,6 @@ public class EmergencyAppearanceController implements IXPersistable {
   private final double emergencyPerDayProbability;
 
   @XConstructor
-
   public EmergencyAppearanceController(double emergencyPerDayProbability) {
     this.emergencyPerDayProbability = emergencyPerDayProbability;
   }

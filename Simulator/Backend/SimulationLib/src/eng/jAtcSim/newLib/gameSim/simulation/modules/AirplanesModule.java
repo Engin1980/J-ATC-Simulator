@@ -39,9 +39,9 @@ import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
-
-import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
+import exml.loading.XLoadContext;
+import exml.saving.XSaveContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -56,7 +56,6 @@ public class AirplanesModule extends SimulationModule {
   private final IList<AirplaneTemplate> planesPrepared = new EList<>();
 
   @XConstructor
-
   private AirplanesModule() {
     super((Simulation) null);
     this.airplanesController = null;
@@ -149,7 +148,7 @@ public class AirplanesModule extends SimulationModule {
 
     //TODEL
     //FIXME
-    if (parent.getAtcModule() == null){
+    if (parent.getAtcModule() == null) {
       System.out.println("Pauza - proč je to null???");
     }
 
@@ -181,6 +180,15 @@ public class AirplanesModule extends SimulationModule {
     return this.mrvaController.isMrvaErrorForPlane(airplane);
   }
 
+  @Override
+  public void load(XElement elm, XLoadContext ctx) {
+    super.load(elm, ctx);
+
+    ctx.fields.ignoreFields(this,
+            "planes4public",
+            "planesPrepared");
+  }
+
   public void removePlane(Callsign callsign, boolean isForced) {
     super.parent.getAtcModule().unregisterPlane(callsign, isForced);
     this.planes4public.remove(q -> q.callsign().equals(callsign));
@@ -192,18 +200,6 @@ public class AirplanesModule extends SimulationModule {
   @Override
   public void save(XElement elm, XSaveContext ctx) {
     super.save(elm, ctx);
-    ctx.fields.ignoreFields(this,
-            "planes4public",
-            "planesPrepared");
-
-    //TODEL not required
-    // ctx.saveRemainingFields(this, elm);
-  }
-
-  @Override
-  public void load(XElement elm, XLoadContext ctx) {
-    super.load(elm, ctx);
-
     ctx.fields.ignoreFields(this,
             "planes4public",
             "planesPrepared");

@@ -76,7 +76,10 @@ public class XSaveFieldContext {
       return;
 
     XElement fieldElement = new XElement(pfi.field.getName());
-    ctx.objects.saveObject(pfi.value, fieldElement);
+    EAssert.Argument.isTrue(pfi.value instanceof Iterable,
+            sf("Value of '%s.%s' must be Iterable, found '%s'.", obj.getClass(), itemsFieldName, pfi.value));
+    Iterable<?> items = (Iterable<?>) pfi.value;
+    ctx.objects.saveItems(items, itemType, fieldElement);
     elm.addElement(fieldElement);
   }
 

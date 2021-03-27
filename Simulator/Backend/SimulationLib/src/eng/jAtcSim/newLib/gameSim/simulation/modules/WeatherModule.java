@@ -17,13 +17,6 @@ public class WeatherModule extends SimulationModule {
   private final WeatherManager weatherManager;
 
   @XConstructor
-
-  private WeatherModule(){
-    super((Simulation) null);
-    weatherManager = null;
-  }
-
-  @XConstructor
   public WeatherModule(XLoadContext ctx) {
     super(ctx);
     this.weatherManager = null;
