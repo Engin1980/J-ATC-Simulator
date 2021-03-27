@@ -8,4 +8,5 @@ public class Constants {
   public static final String ITEM_ELEMENT = "item";
   public static final String ENTRY_ELEMENT  = "entry";
   public static final String INNER_CLASS_REFERENCE_FIELD_NAME = "this$0";
+  public static final String TYPES_ENCODING_ELEMENT = "__types";
 }

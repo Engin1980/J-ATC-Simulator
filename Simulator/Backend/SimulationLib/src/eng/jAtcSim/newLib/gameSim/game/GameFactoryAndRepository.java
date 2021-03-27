@@ -38,6 +38,7 @@ import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.weather.WeatherProvider;
 import exml.Constants;
+import exml.TypingShortcutsProvider;
 import exml.loading.XLoadContext;
 import exml.saving.XSaveContext;
 
@@ -148,7 +149,8 @@ public class GameFactoryAndRepository {
     }
 
     XElement root = doc.getRoot();
-
+    TypingShortcutsProvider.expandTypes(root);
+    
     XLoadContext ctx = new XLoadContext();
     initLoadingContext(ctx);
 
@@ -212,6 +214,7 @@ public class GameFactoryAndRepository {
 
     try {
       ctx.saveObject(game, root);
+      TypingShortcutsProvider.collapseTypes(root);
     } catch (Exception ex) {
       System.out.println("Failed to save the whole save file");
       ex.printStackTrace(System.out);
