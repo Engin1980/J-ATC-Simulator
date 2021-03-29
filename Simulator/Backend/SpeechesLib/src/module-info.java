@@ -2,7 +2,6 @@ module JAtcSim.Modules.Backend.SpeechesLib {
   requires transitive JAtcSim.Modules.Backend.SharedLib;
   requires transitive JAtcSim.Modules.Backend.MessagingLib;
   requires eng.eSystem;
-  requires eng.newXmlUtils;
   requires AnotherXml;
   exports eng.jAtcSim.newLib.speeches;
   exports eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands;

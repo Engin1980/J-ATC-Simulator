@@ -10,7 +10,6 @@ module JAtcSim.Modules.Backend.AirplanesLib {
   requires JAtcSim.Modules.Backend.WeatherLib;
   requires JAtcSimLib.Modules.Backend.TrafficLib;
   requires JAtcSim.Modules.Backend.StatsLib;
-  requires eng.newXmlUtils;
   requires AnotherXml;
   exports eng.jAtcSim.newLib.airplanes.context to
       JAtcSim.Modules.Backend.AtcLib,

@@ -1,7 +1,6 @@
 package eng.jAtcSim.abstractRadar.global;
 
 import eng.eSystem.eXml.XElement;
-import eng.newXmlUtils.ReflectionUtils;
 import exml.IXPersistable;
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;

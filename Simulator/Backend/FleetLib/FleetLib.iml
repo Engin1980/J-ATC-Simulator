@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="SharedLib" />
     <orderEntry type="library" name="eng.eSystem (jAtcSim)" level="project" />
+    <orderEntry type="module" module-name="AnotherXml" />
   </component>
 </module>

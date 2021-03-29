@@ -11,6 +11,7 @@
       <excludeFolder url="file://$MODULE_DIR$/Postponed/JavaFXRadar/src/eng/jAtcSim/javaFXRadar" />
       <excludeFolder url="file://$MODULE_DIR$/Simulator/temp" />
       <excludeFolder url="file://$MODULE_DIR$/Tools/JAtcImagesToVideoConverter" />
+      <excludeFolder url="file://$MODULE_DIR$/Simulator/XmlUtilsLib" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

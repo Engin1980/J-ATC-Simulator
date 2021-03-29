@@ -1,8 +1,6 @@
 package eng.jAtcSim.newLib.fleet.airliners;
 
-import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.fleet.Fleets;
 
@@ -13,7 +11,7 @@ public class AirlinesFleets extends Fleets<CompanyFleet> {
   }
 
   private AirlinesFleets(IList<CompanyFleet> companyFleets, CompanyFleet defaultFleet) {
-    super(companyFleets, q->q.getIcao(), defaultFleet);
+    super(companyFleets, q -> q.getIcao(), defaultFleet);
     EAssert.Argument.isTrue(defaultFleet.getTypes().isEmpty() == false, "Default fleet for airliners contains no types.");
   }
 }

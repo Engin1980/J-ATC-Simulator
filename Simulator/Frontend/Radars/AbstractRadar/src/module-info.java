@@ -15,5 +15,4 @@ module JAtcSim.Modules.Frontend.Radars.AbstractRadarModule {
   requires JAtcSim.Modules.Backend.SpeechesLib;
   requires JAtcSim.modules.backend.TextProcessingLib;
   requires AnotherXml;
-  requires eng.newXmlUtils;
 }

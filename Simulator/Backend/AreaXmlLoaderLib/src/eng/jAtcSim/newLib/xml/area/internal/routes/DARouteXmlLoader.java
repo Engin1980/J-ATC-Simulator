@@ -123,18 +123,4 @@ public class DARouteXmlLoader extends XmlLoader<DARoute> {
     boolean ret = pointLines.isAny(q -> mrva.hasIntersectionWithLine(q));
     return ret;
   }
-
-//  private void normalizeRouteNavaids(IList<ICommand> commands, IList<Navaid> routeNavaids, Navaid mainRouteNavaid, DARoute.eType type) {
-//    if (routeNavaids.contains(mainRouteNavaid) == false) {
-//      switch (type) {
-//        case sid:
-//          commands.add(route.mainNavaid);
-//          break;
-//        case star:
-//        case transition:
-//          tmp.insert(0, route.mainNavaid);
-//          break;
-//      }
-//    }
-//  }
 }

@@ -166,8 +166,8 @@ public class FrmStartupSettings extends JPanel {
     this.fillSettingsBy(ss);
 
     btnValidate.setEnabled(false);
+
     AirplaneTypesSource types = SourceFactory.createAirplaneTypesSource(ss.files.planesXmlFile);
-    FleetsSource fleets = SourceFactory.createFleetsSource(ss.files.generalAviationFleetsXmlFile, ss.files.companiesFleetsXmlFile);
     try {
       types.init();
     } catch (Exception ex) {
@@ -177,6 +177,8 @@ public class FrmStartupSettings extends JPanel {
       btnValidate.setEnabled(true);
       return;
     }
+
+    FleetsSource fleets = SourceFactory.createFleetsSource(ss.files.generalAviationFleetsXmlFile, ss.files.companiesFleetsXmlFile);
     try {
       fleets.init();
     } catch (Exception ex) {

@@ -47,7 +47,7 @@ public class FleetsSource extends Source<FleetsSource.Fleets> {
       throw new EApplicationException(sf("Failed to load g-a xml-fleets-file from '%s'", this.generalAviationFileName), e);
     }
     try {
-      companyFleets = FleetsXmlLoader.loadAirlinesFleets(companyFileName);
+      companyFleets = FleetsXmlLoader.loadCompanyFleet(companyFileName);
     } catch (Exception e) {
       throw new EApplicationException(sf("Failed to load company xml-fleets-file from '%s'", this.companyFileName), e);
     }

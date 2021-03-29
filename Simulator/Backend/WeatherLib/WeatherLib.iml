@@ -10,7 +10,6 @@
     <orderEntry type="module" module-name="AreaLib" />
     <orderEntry type="module" module-name="SharedLib" />
     <orderEntry type="library" name="eng.eSystem (jAtcSim)" level="project" />
-    <orderEntry type="module" module-name="XmlUtilsLib" />
     <orderEntry type="module" module-name="NewXmlUtils" />
     <orderEntry type="module" module-name="AnotherXml" />
   </component>

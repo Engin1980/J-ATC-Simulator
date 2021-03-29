@@ -1,10 +1,8 @@
 module JAtcSim.Modules.Backend.SharedLib {
   requires eng.eSystem;
-  requires eng.newXmlUtils;
   requires AnotherXml;
   exports eng.jAtcSim.newLib.shared;
   exports eng.jAtcSim.newLib.shared.time;
-  exports eng.jAtcSim.newLib.shared.xml;
   exports eng.jAtcSim.newLib.shared.logging;
   exports eng.jAtcSim.newLib.shared.logging.writers;
   exports eng.jAtcSim.newLib.shared.enums;

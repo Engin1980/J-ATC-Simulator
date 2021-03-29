@@ -2,7 +2,6 @@ module JAtcSim.Modules.Backend.AreaLib {
   requires transitive JAtcSim.Modules.Backend.SharedLib;
   requires eng.eSystem;
   requires JAtcSim.Modules.Backend.SpeechesLib;
-  requires eng.newXmlUtils;
   requires AnotherXml;
   exports eng.jAtcSim.newLib.area;
   exports eng.jAtcSim.newLib.area.routes;

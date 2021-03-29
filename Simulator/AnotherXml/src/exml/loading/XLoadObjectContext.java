@@ -22,6 +22,74 @@ public class XLoadObjectContext {
     this.ctx = ctx;
   }
 
+  public <K, V> void loadEntries(XElement elm, Object targetMap, Class<K> expectedKeyType, Class<V> expectedValueType) {
+    EAssert.Argument.isTrue(
+            targetMap instanceof Map || targetMap instanceof IMap,
+            "'targetMap' value must be instance of Map or IMap.");
+
+    IMap<K, V> tmp = loadEntries(elm, expectedKeyType, expectedValueType);
+
+    if (targetMap instanceof IMap)
+      ((IMap) targetMap).setMany(tmp);
+    else if (targetMap instanceof Map) {
+      Map map = (Map) targetMap;
+      map.putAll(tmp.toJavaMap());
+    } else
+      EAssert.fail();
+  }
+
+  public <K, V> IMap<K, V> loadEntries(XElement elm, Class<K> expectedKeyType, Class<V> expectedValueType) {
+    IMap<K, V> ret = new EMap<>();
+    for (XElement childElement : elm.getChildren(Constants.ENTRY_ELEMENT)) {
+      XElement keyElement = childElement.getChild(Constants.KEY_ELEMENT);
+      K key = this.loadObject(keyElement, expectedKeyType);
+
+      XElement valueElement = childElement.getChild(Constants.VALUE_ELEMENT);
+      V value = this.loadObject(valueElement, expectedValueType);
+
+      ret.set(key, value);
+    }
+
+    return ret;
+  }
+
+  public <T> IList<T> loadItems(XElement elm, Class<? extends T> expectedItemType) {
+    IList<T> ret = new EList<>();
+    for (XElement childElement : elm.getChildren(Constants.ITEM_ELEMENT)) {
+      T item = this.loadObject(childElement, expectedItemType);
+      ret.add(item);
+    }
+    return ret;
+  }
+
+  /**
+   * Load iterable into target list.
+   *
+   * @param elm              Source element with items
+   * @param targetList       Target container. Must be ISet, Set, IList or List.
+   * @param expectedItemType Expected type of one item.
+   */
+  public void loadItems(XElement elm, Object targetList, Class<?> expectedItemType) {
+    EAssert.Argument.isTrue(targetList instanceof ISet || targetList instanceof IList || targetList instanceof List,
+            "'targetList' must be an instance of ISet, Set, IList or List");
+    Iterable<Object> items = loadItems(elm, expectedItemType);
+
+    if (targetList instanceof ISet)
+      ((ISet) targetList).addMany(items);
+    else if (targetList instanceof Set) {
+      for (Object item : items) {
+        ((java.util.Set) targetList).add(item);
+      }
+    } else if (targetList instanceof IList)
+      ((IList) targetList).addMany(items);
+    else if (targetList instanceof java.util.List)
+      for (Object item : items) {
+        ((java.util.List) targetList).add(item);
+      }
+    else
+      EAssert.fail();
+  }
+
   public <T> T loadObject(XElement elm, Class<T> type) {
     ctx.log.log("%s (%s)", elm, type == null ? "?" : type.getSimpleName());
     if (elm.getContent().equals(Constants.NULL)) {
@@ -74,75 +142,6 @@ public class XLoadObjectContext {
     ret.postLoad(ctx);
     return (T) ret;
   }
-
-  public <T> IList<T> loadItems(XElement elm, Class<? extends T> expectedItemType) {
-    IList<T> ret = new EList<>();
-    for (XElement childElement : elm.getChildren(Constants.ITEM_ELEMENT)) {
-      T item = this.loadObject(childElement, expectedItemType);
-      ret.add(item);
-    }
-    return ret;
-  }
-
-  public <K, V> void loadEntries(XElement elm, Object targetMap, Class<K> expectedKeyType, Class<V> expectedValueType) {
-    EAssert.Argument.isTrue(
-            targetMap instanceof Map || targetMap instanceof IMap,
-            "'targetMap' value must be instance of Map or IMap.");
-
-    IMap<K, V> tmp = loadEntries(elm, expectedKeyType, expectedValueType);
-
-    if (targetMap instanceof IMap)
-      ((IMap) targetMap).setMany(tmp);
-    else if (targetMap instanceof Map) {
-      Map map = (Map) targetMap;
-      map.putAll(tmp.toJavaMap());
-    } else
-      EAssert.fail();
-  }
-
-  public <K, V> IMap<K, V> loadEntries(XElement elm, Class<K> expectedKeyType, Class<V> expectedValueType) {
-    IMap<K, V> ret = new EMap<>();
-    for (XElement childElement : elm.getChildren(Constants.ENTRY_ELEMENT)) {
-      XElement keyElement = childElement.getChild(Constants.KEY_ELEMENT);
-      K key = this.loadObject(keyElement, expectedKeyType);
-
-      XElement valueElement = childElement.getChild(Constants.VALUE_ELEMENT);
-      V value = this.loadObject(valueElement, expectedValueType);
-
-      ret.set(key, value);
-    }
-
-    return ret;
-  }
-
-  /**
-   * Load iterable into target list.
-   * @param elm Source element with items
-   * @param targetList Target container. Must be ISet, Set, IList or List.
-   * @param expectedItemType Expected type of one item.
-   */
-  public void loadItems(XElement elm, Object targetList, Class<?> expectedItemType) {
-    EAssert.Argument.isTrue(targetList instanceof ISet || targetList instanceof IList || targetList instanceof List,
-            "'targetList' must be an instance of ISet, Set, IList or List");
-    Iterable<Object> items = loadItems(elm, expectedItemType);
-
-    if (targetList instanceof ISet)
-      ((ISet) targetList).addMany(items);
-    else if (targetList instanceof Set){
-      for (Object item : items) {
-        ((java.util.Set) targetList).add(item);
-      }
-    }
-    else if (targetList instanceof IList)
-      ((IList) targetList).addMany(items);
-    else if (targetList instanceof java.util.List)
-      for (Object item : items) {
-        ((java.util.List) targetList).add(item);
-      }
-    else
-      EAssert.fail();
-  }
-
 
   private Optional<Class<?>> tryLoadTypeFromElement(XElement elm) {
     String typeName = elm.tryGetAttribute(Constants.TYPE_ATTRIBUTE);
