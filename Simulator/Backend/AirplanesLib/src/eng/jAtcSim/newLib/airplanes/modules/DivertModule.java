@@ -56,17 +56,6 @@ public class DivertModule extends Module {
     return possible;
   }
 
-  @Override
-  public void load(XElement elm, XLoadContext ctx) {
-    super.load(elm, ctx);
-  }
-
-  @Override
-  public void save(XElement elm, XSaveContext ctx) {
-    super.save(elm, ctx);
-    ctx.fields.saveRemainingFields(this, elm);
-  }
-
   private void checkForDivert() {
     if (possible
             && rdr.getRouting().isDivertable()

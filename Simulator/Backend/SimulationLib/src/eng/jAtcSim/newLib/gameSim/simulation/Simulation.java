@@ -348,11 +348,6 @@ public class Simulation implements IXPersistable {
 //    ContextManager.setContext(ISharedAcc.class, sharedContext);
 //  }
 
-  @Override
-  public void save(XElement elm, XSaveContext ctx) {
-    ctx.fields.saveRemainingFields(this, elm);
-  }
-
   private void elapseSecond() {
     long elapseStartMs = System.currentTimeMillis();
 

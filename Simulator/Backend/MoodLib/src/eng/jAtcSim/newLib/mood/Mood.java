@@ -75,11 +75,8 @@ public class Mood implements IXPersistable {
     return Context.getShared().getNow().toStamp();
   }
 
-  @XIgnored
   private final IList<Experience<ArrivalExperience>> arrivalExperiences;
-  @XIgnored
   private final IList<Experience<DepartureExperience>> departureExperiences;
-  @XIgnored
   private final IList<Experience<SharedExperience>> sharedExperiences;
 
   private Mood(IList<Experience<ArrivalExperience>> arrivalExperiences, IList<Experience<DepartureExperience>> departureExperiences, IList<Experience<SharedExperience>> sharedExperiences) {
@@ -137,18 +134,6 @@ public class Mood implements IXPersistable {
 
   public void experience(ArrivalExperience kindOfExperience) {
     this.arrivalExperiences.add(new Experience<>(getNowStamp(), kindOfExperience));
-  }
-
-  @Override
-  public void load(XElement elm, XLoadContext ctx) {
-    throw new ToDoException();
-  }
-
-  @Override
-  public void save(XElement elm, XSaveContext ctx) {
-    ctx.saveFieldItems(this, "arrivalExperiences", Experience.class, elm);
-    ctx.saveFieldItems(this, "departureExperiences", Experience.class, elm);
-    ctx.saveFieldItems(this, "sharedExperiences", Experience.class, elm);
   }
 
   private IList<MoodExperienceResult> evaluateArrivals(int delayInMinutes) {

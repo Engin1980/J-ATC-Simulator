@@ -2,7 +2,6 @@ package eng.jAtcSim.newLib.atcs.internal.tower;
 
 
 import eng.eSystem.collections.*;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinates;
@@ -34,10 +33,9 @@ import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.weather.Weather;
-
-import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
+import exml.loading.XLoadContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 

@@ -375,17 +375,6 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
     return ret;
   }
-
-  @Override
-  public void save(XElement elm, XSaveContext ctx) {
-    super.save(elm, ctx);
-    ctx.fields.saveRemainingFields(this, elm);
-  }
-
-  @Override
-  public void load(XElement elm, XLoadContext ctx) {
-    super.load(elm, ctx);
-  }
 }
 
 

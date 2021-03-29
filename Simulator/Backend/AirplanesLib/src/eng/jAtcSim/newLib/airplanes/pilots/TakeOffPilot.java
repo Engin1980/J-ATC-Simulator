@@ -64,17 +64,6 @@ public class TakeOffPilot extends Pilot {
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
-    super.load(elm, ctx);
-  }
-
-  @Override
-  public void save(XElement elm, XSaveContext ctx) {
-    super.save(elm, ctx);
-    ctx.fields.saveRemainingFields(this, elm);
-  }
-
-  @Override
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
             AirplaneState.holdingPoint

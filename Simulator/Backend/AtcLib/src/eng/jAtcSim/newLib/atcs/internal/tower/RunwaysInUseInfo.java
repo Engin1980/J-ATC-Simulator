@@ -1,7 +1,9 @@
 package eng.jAtcSim.newLib.atcs.internal.tower;
 
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import exml.IXPersistable;
+import exml.saving.XSaveContext;
 
 public class RunwaysInUseInfo implements IXPersistable {
   // TODO make private
@@ -15,5 +17,10 @@ public class RunwaysInUseInfo implements IXPersistable {
 
   public RunwayConfiguration getScheduled() {
     return scheduled;
+  }
+
+  @Override
+  public void save(XElement elm, XSaveContext ctx) {
+    System.out.println("bubla");
   }
 }

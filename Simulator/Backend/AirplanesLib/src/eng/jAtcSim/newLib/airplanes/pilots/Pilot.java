@@ -1,6 +1,5 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
@@ -13,9 +12,9 @@ import eng.jAtcSim.newLib.airplanes.IAirplaneWriter;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.Restriction;
 import exml.IXPersistable;
-import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
+import exml.loading.XLoadContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -26,7 +25,7 @@ public abstract class Pilot implements IXPersistable {
   private boolean isFirstElapseSecond = true;
 
   @XConstructor
-  protected Pilot(XLoadContext ctx){
+  protected Pilot(XLoadContext ctx) {
     this(ctx.parents.get(Airplane.class));
   }
 

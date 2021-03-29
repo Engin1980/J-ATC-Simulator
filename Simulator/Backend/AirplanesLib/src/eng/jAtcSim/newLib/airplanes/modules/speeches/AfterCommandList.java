@@ -174,8 +174,8 @@ public class AfterCommandList implements IXPersistable {
     return ret;
   }
 
-  @XIgnored private final IList<AFItem> rt = new EList<>();
-  @XIgnored private final IList<AFItem> ex = new EList<>();
+  private final IList<AFItem> rt = new EList<>();
+  private final IList<AFItem> ex = new EList<>();
 
   public void addExtension(AfterCommand afterCommand, ICommand consequent) {
     AFItem it = new AFItem(afterCommand, consequent);
@@ -317,18 +317,6 @@ public class AfterCommandList implements IXPersistable {
 
   public boolean isRouteEmpty() {
     return this.rt.isEmpty();
-  }
-
-  @Override
-  public void save(XElement elm, XSaveContext ctx) {
-    ctx.saveFieldItems(this, "ex", AFItem.class, elm);
-    ctx.saveFieldItems(this, "rt", AFItem.class, elm);
-  }
-
-  @Override
-  public void load(XElement elm, XLoadContext ctx) {
-    ctx.fields.loadFieldItems(this, "ex", this.ex, AFItem.class, elm);
-    ctx.fields.loadFieldItems(this, "rt", this.rt, AFItem.class, elm);
   }
 
   public String toLogString() {

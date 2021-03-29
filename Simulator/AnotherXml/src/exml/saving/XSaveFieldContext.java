@@ -118,7 +118,7 @@ public class XSaveFieldContext {
     elm.addElement(fieldElement);
   }
 
-  public void saveRemainingFields(IXPersistable obj, XElement elm) {
+  void saveRemainingFields(IXPersistable obj, XElement elm) {
     EAssert.Argument.isNotNull(obj, "obj");
     EAssert.Argument.isNotNull(elm, "elm");
 
@@ -129,7 +129,7 @@ public class XSaveFieldContext {
       this.saveField(obj, remainingField, elm);
     }
 
-    usedFieldEvidence.add(obj, remainingFields);
+    usedFieldEvidence.reset(obj);
   }
 
   private ProcessFieldInfo prepareFieldToProcess(Object obj, String fieldName) {

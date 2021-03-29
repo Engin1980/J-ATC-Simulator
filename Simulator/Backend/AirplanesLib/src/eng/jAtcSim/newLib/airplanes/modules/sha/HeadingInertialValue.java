@@ -5,18 +5,15 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
-
-import eng.newXmlUtils.annotations.XmlConstructorParameter;
 import exml.IXPersistable;
-import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
-import exml.annotations.XIgnored;
+import exml.loading.XLoadContext;
+import exml.saving.XSaveContext;
 
 class HeadingInertialValue implements IXPersistable {
   private final double maxInertia;
   private final double maxInertiaChange;
   protected double value;
-  @XIgnored
   private final IList<Double> thresholds = new EList<>();
   private int inertiaStep = 0;
 
@@ -74,16 +71,6 @@ class HeadingInertialValue implements IXPersistable {
   public void reset(double value) {
     this.value = value;
     this.inertiaStep = 0;
-  }
-
-  @Override
-  public void save(XElement elm, XSaveContext ctx) {
-    ctx.saveFieldItems(this, "thresholds", Double.class, elm);
-  }
-
-  @Override
-  public void load(XElement elm, XLoadContext ctx) {
-    ctx.fields.loadFieldItems(this, "thresholds", this.thresholds, Double.class, elm);
   }
 
   private void buildHashMap() {

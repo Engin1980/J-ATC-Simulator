@@ -150,7 +150,7 @@ public class GameFactoryAndRepository {
 
     XElement root = doc.getRoot();
     TypingShortcutsProvider.expandTypes(root);
-    
+
     XLoadContext ctx = new XLoadContext();
     initLoadingContext(ctx);
 
