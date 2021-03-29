@@ -96,7 +96,7 @@ public class StartupSettings {
       this.countryCodes.set("OK", 1);
       this.movementsForHours = new SimpleGenericTrafficModel.MovementsForHour[MOVEMENTS_PER_HOUR_LENGTH];
       for (int i = 0; i < movementsForHours.length; i++) {
-        movementsForHours[i] = new SimpleGenericTrafficModel.MovementsForHour(5, null, null);
+        movementsForHours[i] = new SimpleGenericTrafficModel.MovementsForHour(5, generalAviationProbability, departureProbability);
       }
     }
 

@@ -5,10 +5,9 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.area.InactiveRunwayThreshold;
-import eng.jAtcSim.newLib.shared.xml.IXmlLogable;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 
-class InactiveRunwayThresholdXmlLoader implements IXmlLogable {
+class InactiveRunwayThresholdXmlLoader {
 
   IList<InactiveRunwayThreshold> loadBoth(IReadOnlyList<XElement> sources) {
     assert sources.size() == 2 : "There must be two thresholds";
@@ -21,10 +20,11 @@ class InactiveRunwayThresholdXmlLoader implements IXmlLogable {
   }
 
   private InactiveRunwayThreshold.Prototype load(XElement source) {
-    log(3, "Xml-loading inactive threshold");
+    //TODEL
+    //log(3, "Xml-loading inactive threshold");
     SmartXmlLoaderUtils.setContext(source);
     String name = SmartXmlLoaderUtils.loadString("name");
-    log(3, "... inactive runway threshold '%s'", name);
+    //log(3, "... inactive runway threshold '%s'", name);
     Coordinate coordinate = SmartXmlLoaderUtils.loadCoordinate("coordinate");
 
     InactiveRunwayThreshold.Prototype ret = new InactiveRunwayThreshold.Prototype(name, coordinate);

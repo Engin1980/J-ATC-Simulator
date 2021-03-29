@@ -190,7 +190,7 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
 
     IList<IList<Approach>> approachesList = SmartXmlLoaderUtils.loadList(
             source.getChild("approaches").getChildren(),
-            new ApproachXmlLoader(context));
+            new ApproachXmlLoader(context)::load);
 
     IList<Approach> approaches = approachesList.selectMany(q -> q);
 

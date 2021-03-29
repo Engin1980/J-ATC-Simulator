@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.xml.area.internal.approaches;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
@@ -23,7 +24,6 @@ import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
-import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
@@ -74,7 +74,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
         ret = loadCustom(source);
         break;
       default:
-        throw new XmlLoadException("Unknown approach type " + source.getName() + ".");
+        throw new EApplicationException("Unknown approach type " + source.getName() + ".");
     }
     return ret;
   }

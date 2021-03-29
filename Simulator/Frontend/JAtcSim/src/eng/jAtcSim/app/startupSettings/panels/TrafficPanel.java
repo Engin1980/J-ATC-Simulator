@@ -48,8 +48,6 @@ public class TrafficPanel extends JStartupPanel {
   private static ITrafficModel generateCustomTrafficModel(StartupSettings.Traffic trf) {
 
     SimpleGenericTrafficModel ret = SimpleGenericTrafficModel.create(
-            trf.customTraffic.getGeneralAviationProbability(),
-            trf.customTraffic.getDepartureProbability(),
             trf.customTraffic.getMovementsForHours(),
             trf.customTraffic.getCompanies(),
             trf.customTraffic.getCountryCodes());
@@ -325,21 +323,17 @@ public class TrafficPanel extends JStartupPanel {
   private String encodeMovement(SimpleGenericTrafficModel.MovementsForHour movementPerHour) {
     StringBuilder sb = new StringBuilder();
     sb.append(movementPerHour.count);
-    if (movementPerHour.generalAviationProbability != null || movementPerHour.departureProbability != null) {
-      sb.append(":");
-      if (movementPerHour.departureProbability != null)
-        sb.append(movementPerHour.departureProbability.toString().substring(1));
-      if (movementPerHour.generalAviationProbability != null)
-        sb.append("/").append(movementPerHour.generalAviationProbability.toString().substring(1));
-    }
+    sb.append(":");
+    sb.append(Double.toString(movementPerHour.departureProbability).substring(1));
+    sb.append("/").append(Double.toString(movementPerHour.generalAviationProbability).substring(1));
     return sb.toString();
   }
 
   private String encodeMovements(SimpleGenericTrafficModel.MovementsForHour[] movementsPerHour) {
     String ret;
     int c = movementsPerHour[0].count;
-    Double d = movementsPerHour[0].departureProbability;
-    Double g = movementsPerHour[0].generalAviationProbability;
+    double d = movementsPerHour[0].departureProbability;
+    double g = movementsPerHour[0].generalAviationProbability;
     IList<SimpleGenericTrafficModel.MovementsForHour> lst = new EList<>(movementsPerHour);
     if (lst.isAll(
             q -> q.count == c && q.departureProbability == d && q.generalAviationProbability == g
