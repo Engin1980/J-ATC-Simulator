@@ -8,8 +8,7 @@ import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
 public class ActiveRunwayXmlLoader extends XmlLoader<ActiveRunway> {
 
-
-  protected ActiveRunwayXmlLoader(LoadingContext context) {
+  public ActiveRunwayXmlLoader(LoadingContext context) {
     super(context);
   }
 

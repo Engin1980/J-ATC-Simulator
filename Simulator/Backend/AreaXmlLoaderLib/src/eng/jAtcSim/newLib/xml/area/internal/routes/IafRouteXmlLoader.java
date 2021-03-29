@@ -29,7 +29,7 @@ public class IafRouteXmlLoader extends XmlLoader<IafRoute> {
 
     IList<ICommand> commands = SmartXmlLoaderUtils.loadList(
         source.getChildren(),
-        new SpeechXmlLoader()
+        new SpeechXmlLoader(this.context)::load
     );
 
     IafRoute ret = IafRoute.create(commands, navaid, category);

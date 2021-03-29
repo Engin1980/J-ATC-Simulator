@@ -63,36 +63,36 @@ class AirportXmlLoader extends XmlLoader<Airport> {
     SmartXmlLoaderUtils.loadList(
         source.getChild("atcTemplates").getChildren(),
         atcs,
-        new AtcXmlLoader());
+        new AtcXmlLoader(this.context)::load);
 
     EntryExitPointList entryExitPoints;
     {
       IList<EntryExitPoint> tmp = SmartXmlLoaderUtils.loadList(
           coalesce(source.tryGetChild("entryExitPoints"), new XElement("tmp")).getChildren(),
-          new EntryExitPointXmlLoader(context));
+          new EntryExitPointXmlLoader(context)::load);
       entryExitPoints = new EntryExitPointList(tmp);
     }
     IList<PublishedHold> holds = SmartXmlLoaderUtils.loadList(
         source.getChild("holds").getChildren(),
-        new PublishedHoldXmlLoader(context));
+        new PublishedHoldXmlLoader(context)::load);
 
     IList<DARoute> daRoutes = new EDistinctList<>(q -> q.getName(), EDistinctList.Behavior.exception);
     IReadOnlyList<XElement> routes = extractRoutes(source.getChild("daRoutes"), "route");
-    SmartXmlLoaderUtils.loadList(routes, daRoutes, new DARouteXmlLoader(context));
+    SmartXmlLoaderUtils.loadList(routes, daRoutes, new DARouteXmlLoader(context)::load);
 
     routes = extractRoutes(source.getChild("iafRoutes"), "iafRoute");
-    IList<IafRoute> iafRoutes = SmartXmlLoaderUtils.loadList(routes, new IafRouteXmlLoader(context));
+    IList<IafRoute> iafRoutes = SmartXmlLoaderUtils.loadList(routes, new IafRouteXmlLoader(context)::load);
 
     routes = extractRoutes(source.getChild("gaRoutes"), "gaRoute");
-    IList<GaRoute> gaRoutes = SmartXmlLoaderUtils.loadList(routes, new GaRouteXmlLoader(context));
+    IList<GaRoute> gaRoutes = SmartXmlLoaderUtils.loadList(routes, new GaRouteXmlLoader(context)::load);
 
     IList<InactiveRunway> inactiveRunways = SmartXmlLoaderUtils.loadList(
         source.getChild("runways").getChildren("inactiveRunway"),
-        new InactiveRunwayXmlLoader());
+        new InactiveRunwayXmlLoader(this.context)::load);
 
     IList<ActiveRunway> runways = SmartXmlLoaderUtils.loadList(
         source.getChild("runways").getChildren("runway"),
-        new ActiveRunwayXmlLoader(context));
+        new ActiveRunwayXmlLoader(context)::load);
     context.airport.activeRunways = runways;
 
     IList<RunwayConfiguration> runwayConfigurations = new EList<>();
@@ -102,7 +102,7 @@ class AirportXmlLoader extends XmlLoader<Airport> {
         SmartXmlLoaderUtils.loadList(
             rc.getChildren(),
             runwayConfigurations,
-            new RunwayConfigurationXmlLoader(context));
+            new RunwayConfigurationXmlLoader(context)::load);
     }
 
     // TODO check airport

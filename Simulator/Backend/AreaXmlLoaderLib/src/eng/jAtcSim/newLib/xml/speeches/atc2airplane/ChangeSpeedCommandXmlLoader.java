@@ -2,11 +2,17 @@ package eng.jAtcSim.newLib.xml.speeches.atc2airplane;
 
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
-import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeSpeedCommand;
+import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
-public class ChangeSpeedCommandXmlLoader implements IXmlLoader<ChangeSpeedCommand> {
+public class ChangeSpeedCommandXmlLoader extends XmlLoader<ChangeSpeedCommand> {
+
+  public ChangeSpeedCommandXmlLoader(LoadingContext data) {
+    super(data);
+  }
+
   @Override
   public ChangeSpeedCommand load(XElement element) {
     assert element.getName().equals("speed");

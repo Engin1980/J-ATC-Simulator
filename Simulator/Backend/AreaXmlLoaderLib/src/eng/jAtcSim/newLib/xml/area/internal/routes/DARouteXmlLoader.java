@@ -43,7 +43,7 @@ public class DARouteXmlLoader extends XmlLoader<DARoute> {
 
     IList<ICommand> commands = SmartXmlLoaderUtils.loadList(
         source.getChildren(),
-        new SpeechXmlLoader()
+        new SpeechXmlLoader(this.context)::load
     );
 
     IReadOnlyList<Navaid> routeNavaids = getNavaidsFromCommands(commands);

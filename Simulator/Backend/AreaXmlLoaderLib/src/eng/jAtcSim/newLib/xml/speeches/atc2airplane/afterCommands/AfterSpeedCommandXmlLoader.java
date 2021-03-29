@@ -2,12 +2,17 @@ package eng.jAtcSim.newLib.xml.speeches.atc2airplane.afterCommands;
 
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
-import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterSpeedCommand;
+import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
-public class AfterSpeedCommandXmlLoader implements IXmlLoader<AfterSpeedCommand> {
+public class AfterSpeedCommandXmlLoader extends XmlLoader<AfterSpeedCommand> {
+
+  public AfterSpeedCommandXmlLoader(LoadingContext data) {
+    super(data);
+  }
+
   @Override
   public AfterSpeedCommand load(XElement element) {
     SmartXmlLoaderUtils.setContext(element);

@@ -13,29 +13,34 @@ import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.BorderPoint;
-import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class BorderXmlLoader implements IXmlLoader<Border> {
+public class BorderXmlLoader extends XmlLoader<Border> {
 
   private static final Border.eType[] TYPES_MUST_HAVE_MAX_ALTITUDE = {
-      Border.eType.tma,
-      Border.eType.ctr,
-      Border.eType.restricted,
-      Border.eType.danger,
-      Border.eType.mrva,
-      Border.eType.other
+          Border.eType.tma,
+          Border.eType.ctr,
+          Border.eType.restricted,
+          Border.eType.danger,
+          Border.eType.mrva,
+          Border.eType.other
   };
   private static final Border.eType[] TYPES_MUST_HAVE_MIN_ALTITUDE = {
-      Border.eType.tma,
-      Border.eType.ctr,
-      Border.eType.restricted,
-      Border.eType.danger,
-      Border.eType.other
+          Border.eType.tma,
+          Border.eType.ctr,
+          Border.eType.restricted,
+          Border.eType.danger,
+          Border.eType.other
   };
 
+  public BorderXmlLoader(LoadingContext data) {
+    super(data);
+  }
+
+  @Override
   public Border load(XElement source) {
     log(1, "Xml-loading border");
     SmartXmlLoaderUtils.setContext(source);
@@ -126,7 +131,7 @@ public class BorderXmlLoader implements IXmlLoader<Border> {
           int radial = SmartXmlLoaderUtils.loadInteger(node, "radial");
           double distance = SmartXmlLoaderUtils.loadDouble(node, "distance");
           Coordinate borderPointCoordinate = Coordinates.getCoordinate(
-              coordinate, radial, distance);
+                  coordinate, radial, distance);
           point = BorderPoint.create(borderPointCoordinate);
           ret.add(point);
           break;
@@ -139,11 +144,11 @@ public class BorderXmlLoader implements IXmlLoader<Border> {
       int index = arcTuple.getA();
       coordinate = SmartXmlLoaderUtils.loadCoordinate(arcTuple.getB(), "coordinate");
       boolean isClockwise = SmartXmlLoaderUtils.loadStringRestricted(arcTuple.getB(), "direction",
-          new String[]{"clockwise", "counterclockwise"}).equals("clockwise");
+              new String[]{"clockwise", "counterclockwise"}).equals("clockwise");
       BorderPoint beforeBorderPoint = ret.get(index - 1);
       BorderPoint afterBorderPoint = index == ret.count() ? ret.get(0) : ret.get(index);
       IList<BorderPoint> arcPoints = generateArcPoints(
-          beforeBorderPoint, coordinate, isClockwise, afterBorderPoint);
+              beforeBorderPoint, coordinate, isClockwise, afterBorderPoint);
       ret.insertMany(index, arcPoints);
     }
 

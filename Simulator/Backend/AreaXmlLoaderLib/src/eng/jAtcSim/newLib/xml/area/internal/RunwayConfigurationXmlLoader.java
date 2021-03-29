@@ -1,9 +1,11 @@
 package eng.jAtcSim.newLib.xml.area.internal;
 
-import eng.eSystem.collections.*;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.jAtcSim.newLib.area.*;
+import eng.jAtcSim.newLib.area.RunwayConfiguration;
+import eng.jAtcSim.newLib.area.RunwayThresholdConfiguration;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
@@ -40,7 +42,7 @@ public class RunwayConfigurationXmlLoader extends XmlLoader<RunwayConfiguration>
     }
 
     RunwayConfiguration ret = new RunwayConfiguration(
-        windFrom, windTo, windSpeedFrom, windSpeedTo, arrivals, departures);
+            windFrom, windTo, windSpeedFrom, windSpeedTo, arrivals, departures);
     return ret;
   }
 }

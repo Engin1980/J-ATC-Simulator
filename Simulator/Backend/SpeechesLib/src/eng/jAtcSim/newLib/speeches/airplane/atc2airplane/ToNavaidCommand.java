@@ -1,6 +1,5 @@
 package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
-
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 

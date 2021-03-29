@@ -1,10 +1,16 @@
 package eng.jAtcSim.newLib.xml.speeches.atc2airplane;
 
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
+import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
-public class ProceedDirectCommandXmlLoader implements IXmlLoader<ProceedDirectCommand> {
+public class ProceedDirectCommandXmlLoader extends XmlLoader<ProceedDirectCommand> {
+
+  public ProceedDirectCommandXmlLoader(LoadingContext data) {
+    super(data);
+  }
+
   @Override
   public ProceedDirectCommand load(XElement element) {
     assert element.getName().equals("proceedDirect");

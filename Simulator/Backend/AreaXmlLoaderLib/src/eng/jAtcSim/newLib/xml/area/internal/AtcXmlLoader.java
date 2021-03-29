@@ -3,10 +3,15 @@ package eng.jAtcSim.newLib.xml.area.internal;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Atc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
-import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
-public class AtcXmlLoader implements IXmlLoader<Atc> {
+public class AtcXmlLoader extends XmlLoader<Atc> {
+
+  public AtcXmlLoader(LoadingContext data) {
+    super(data);
+  }
+
   @Override
   public Atc load(XElement source) {
     log(2, "Xml-loading atc");
@@ -22,8 +27,8 @@ public class AtcXmlLoader implements IXmlLoader<Atc> {
     Integer ctrNavaidAcceptDistance = SmartXmlLoaderUtils.loadInteger("ctrNavaidAcceptDistance", null);
 
     Atc ret = Atc.create(name, type, frequency,
-        acceptAltitude, releaseAltitude, orderedAltitude,
-        ctrAcceptDistance, ctrNavaidAcceptDistance);
+            acceptAltitude, releaseAltitude, orderedAltitude,
+            ctrAcceptDistance, ctrNavaidAcceptDistance);
 
     return ret;
   }

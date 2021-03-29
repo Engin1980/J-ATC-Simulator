@@ -2,11 +2,17 @@ package eng.jAtcSim.newLib.xml.speeches.atc2airplane;
 
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
-import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.HoldCommand;
+import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
-public class HoldCommandXmlLoader implements IXmlLoader<HoldCommand> {
+public class HoldCommandXmlLoader extends XmlLoader<HoldCommand> {
+
+  public HoldCommandXmlLoader(LoadingContext data) {
+    super(data);
+  }
+
   @Override
   public HoldCommand load(XElement element) {
     assert element.getName().equals("hold");
@@ -26,6 +32,7 @@ public class HoldCommandXmlLoader implements IXmlLoader<HoldCommand> {
     return ret;
   }
 
+  //TODEL
 //  public static HoldCommand load(XElement element, Airport parent) {
 //    assert element.getName().equals("hold");
 //

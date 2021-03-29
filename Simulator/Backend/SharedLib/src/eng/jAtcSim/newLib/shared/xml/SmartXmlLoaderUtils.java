@@ -5,9 +5,12 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
+
+import java.util.function.Function;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -258,14 +261,6 @@ public abstract class SmartXmlLoaderUtils {
     return tmp;
   }
 
-  // this is duplicite with IXmlLoader as IXmlLoader is functional interface
-//  public static <T> void loadList(IReadOnlyList<XElement> elements, IList<T> list, Function<XElement, T> function) {
-//    for (XElement element : elements) {
-//      T item = function.apply(element);
-//      list.add(item);
-//    }
-//  }
-
   public static Integer loadInteger(XElement source, String key, Integer defaultValue) {
     Integer ret;
     String tmp = loadString(source, key, null);
@@ -280,22 +275,21 @@ public abstract class SmartXmlLoaderUtils {
     return ret;
   }
 
-  //TODEL remove unused from this class
-//  public static <T> IList<T> loadList(IReadOnlyList<XElement> elements, IXmlLoader<T> xmlLoader) {
-//    IList<T> ret = new EList<>();
-//    for (XElement element : elements) {
-//      T item = xmlLoader.load(element);
-//      ret.add(item);
-//    }
-//    return ret;
-//  }
+  public static <T> IList<T> loadList(IReadOnlyList<XElement> elements, Selector<XElement, T> xmlLoader) {
+    IList<T> ret = new EList<>();
+    for (XElement element : elements) {
+      T item = xmlLoader.invoke(element);
+      ret.add(item);
+    }
+    return ret;
+  }
 
-//  public static <T> void loadList(IReadOnlyList<XElement> elements, IList<T> list, IXmlLoader<T> xmlLoader) {
-//    for (XElement element : elements) {
-//      T item = xmlLoader.load(element);
-//      list.add(item);
-//    }
-//  }
+  public static <T> void loadList(IReadOnlyList<XElement> elements, IList<T> list, Selector<XElement, T> xmlLoader) {
+    for (XElement element : elements) {
+      T item = xmlLoader.invoke(element);
+      list.add(item);
+    }
+  }
 
   public static PlaneCategoryDefinitions loadPlaneCategory(String key, String defaultValue) {
     assert context != null;
