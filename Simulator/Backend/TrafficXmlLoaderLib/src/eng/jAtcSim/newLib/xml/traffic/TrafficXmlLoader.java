@@ -2,7 +2,6 @@ package eng.jAtcSim.newLib.xml.traffic;
 
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;

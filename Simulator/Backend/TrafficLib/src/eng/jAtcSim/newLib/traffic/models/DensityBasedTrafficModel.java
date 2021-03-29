@@ -4,14 +4,13 @@ import eng.eSystem.ERandom;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.contextLocal.Context;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
-import eng.jAtcSim.newLib.traffic.movementTemplating.GenericGeneralAviationMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GenericCommercialMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.GenericGeneralAviationMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -41,12 +40,6 @@ public class DensityBasedTrafficModel implements ITrafficModel {
   }
 
   public static class DirectionWeight {
-    public static DirectionWeight load(XElement source) {
-      int heading = SmartXmlLoaderUtils.loadInteger(source, "heading");
-      double weight = SmartXmlLoaderUtils.loadDouble(source, "weight");
-      return new DirectionWeight(heading, weight);
-    }
-
     public final int heading;
     public final double weight;
 
@@ -75,10 +68,10 @@ public class DensityBasedTrafficModel implements ITrafficModel {
   }
 
   public static DensityBasedTrafficModel create(
-      HourBlockMovements[] perHourMovements,
-      IList<Company> companies,
-      IList<Company> countries,
-      IList<DirectionWeight> directions
+          HourBlockMovements[] perHourMovements,
+          IList<Company> companies,
+          IList<Company> countries,
+          IList<DirectionWeight> directions
   ) {
     return new DensityBasedTrafficModel(perHourMovements, companies, countries, directions);
   }
@@ -89,10 +82,10 @@ public class DensityBasedTrafficModel implements ITrafficModel {
   private final IList<DirectionWeight> directions;
 
   private DensityBasedTrafficModel(
-      HourBlockMovements[] perHourMovements,
-      IList<Company> companies,
-      IList<Company> countries,
-      IList<DirectionWeight> directions) {
+          HourBlockMovements[] perHourMovements,
+          IList<Company> companies,
+          IList<Company> countries,
+          IList<DirectionWeight> directions) {
     EAssert.Argument.isNotNull(perHourMovements, "perHourMovements");
     EAssert.Argument.isTrue(perHourMovements.length == 24);
     EAssert.Argument.isTrue(EList.of(perHourMovements).isAll(q -> q != null));
@@ -122,7 +115,7 @@ public class DensityBasedTrafficModel implements ITrafficModel {
   }
 
   private IReadOnlyList<MovementTemplate> generateMovementsForHour(
-      int count, double gaProb, MovementTemplate.eKind kind, int hour) {
+          int count, double gaProb, MovementTemplate.eKind kind, int hour) {
     IList<MovementTemplate> ret = new EList<>();
 
     ERandom rnd = Context.getApp().getRnd();
@@ -145,7 +138,7 @@ public class DensityBasedTrafficModel implements ITrafficModel {
       Character category = company.category;
       String companyIcao = company.icao;
       ret = new GenericCommercialMovementTemplate(
-          companyIcao, category, kind, time, new EntryExitInfo(radial));
+              companyIcao, category, kind, time, new EntryExitInfo(radial));
     } else {
       Company country = this.countries.getRandomByWeights(q -> q.weight, rnd);
       String countryPrefix = country.icao;

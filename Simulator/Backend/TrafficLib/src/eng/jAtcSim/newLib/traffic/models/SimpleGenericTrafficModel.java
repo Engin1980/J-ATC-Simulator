@@ -15,6 +15,8 @@ import eng.jAtcSim.newLib.traffic.movementTemplating.GenericCommercialMovementTe
 import eng.jAtcSim.newLib.traffic.movementTemplating.GenericGeneralAviationMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
+import java.util.Arrays;
+
 public class SimpleGenericTrafficModel implements ITrafficModel {
 
   public static class MovementsForHour {
@@ -23,21 +25,15 @@ public class SimpleGenericTrafficModel implements ITrafficModel {
     }
 
     public final int count;
-    public final Double departureProbability;
-    public final Double generalAviationProbability;
+    public final double departureProbability;
+    public final double generalAviationProbability;
 
-    public MovementsForHour() {
-      this.count = 0;
-      this.departureProbability = 0.5;
-      this.generalAviationProbability = 0.2;
-    }
-
-    public MovementsForHour(int count, Double generalAviationProbability, Double departureProbability) {
+    public MovementsForHour(int count, double generalAviationProbability, double departureProbability) {
       EAssert.Argument.isTrue(count >= 0);
-      EAssert.Argument.isTrue(generalAviationProbability == null || NumberUtils.isBetweenOrEqual(0, generalAviationProbability, 1),
-          "General-aviation probability must be empty or between 0 and 1.");
-      EAssert.Argument.isTrue(departureProbability == null || NumberUtils.isBetweenOrEqual(0, departureProbability, 1),
-          "Departure probability must be empty or between 0 and 1.");
+      EAssert.Argument.isTrue(NumberUtils.isBetweenOrEqual(0, generalAviationProbability, 1),
+          "General-aviation probability must be between 0 and 1.");
+      EAssert.Argument.isTrue(NumberUtils.isBetweenOrEqual(0, departureProbability, 1),
+          "Departure probability must be between 0 and 1.");
       this.count = count;
       this.generalAviationProbability = generalAviationProbability;
       this.departureProbability = departureProbability;
@@ -68,26 +64,21 @@ public class SimpleGenericTrafficModel implements ITrafficModel {
     }
   }
 
+  //TODEL some of the following methods is probably not used, delete them if able
   public static SimpleGenericTrafficModel create(
-      double globalGeneralAviationProbability,
-      double globalDepartureProbability,
       MovementsForHour[] movementsForHours,
       IList<ValueAndWeight> companies,
       IList<ValueAndWeight> countries) {
-    return new SimpleGenericTrafficModel(globalGeneralAviationProbability,
-        globalDepartureProbability, movementsForHours, companies, countries);
+    return new SimpleGenericTrafficModel(movementsForHours, companies, countries);
   }
 
   public static SimpleGenericTrafficModel create(
-      double globalGeneralAviationProbability,
-      double globalDepartureProbability,
       MovementsForHour[] movementsForHours,
       IMap<String, Integer> companies,
       IMap<String, Integer> countries) {
     IList<ValueAndWeight> lstCompanies = companies.getEntries().select(q -> new ValueAndWeight(q.getKey(), q.getValue())).toList();
     IList<ValueAndWeight> lstCountries = countries.getEntries().select(q -> new ValueAndWeight(q.getKey(), q.getValue())).toList();
-    return new SimpleGenericTrafficModel(globalGeneralAviationProbability,
-        globalDepartureProbability, movementsForHours, lstCompanies, lstCountries);
+    return new SimpleGenericTrafficModel(movementsForHours, lstCompanies, lstCountries);
   }
 
   private final IList<ValueAndWeight> companies;
@@ -96,8 +87,6 @@ public class SimpleGenericTrafficModel implements ITrafficModel {
   private final ERandom rnd = Context.getApp().getRnd();
 
   private SimpleGenericTrafficModel(
-      double globalGeneralAviationProbability,
-      double globalDepartureProbability,
       MovementsForHour[] movementsForHours,
       IList<ValueAndWeight> companies,
       IList<ValueAndWeight> countries) {
@@ -108,21 +97,7 @@ public class SimpleGenericTrafficModel implements ITrafficModel {
     EAssert.Argument.isNotNull(countries, "countries");
     EAssert.Argument.isTrue(countries.isEmpty() == false);
 
-    this.movementsForHours = new MovementsForHour[24];
-    for (int i = 0; i < this.movementsForHours.length; i++) {
-      this.movementsForHours[i] = new MovementsForHour(
-          movementsForHours[i].count,
-          movementsForHours[i].departureProbability == null ?
-              globalDepartureProbability : movementsForHours[i].departureProbability,
-          movementsForHours[i].generalAviationProbability == null ?
-              globalGeneralAviationProbability : movementsForHours[i].generalAviationProbability);
-
-      EAssert.Argument.isTrue(
-          NumberUtils.isBetweenOrEqual(0, this.movementsForHours[i].generalAviationProbability, 1));
-      EAssert.Argument.isTrue(
-          NumberUtils.isBetweenOrEqual(0, this.movementsForHours[i].departureProbability, 1));
-    }
-
+    this.movementsForHours = Arrays.copyOf(movementsForHours, movementsForHours.length);
     this.companies = companies;
     this.countries = countries;
   }

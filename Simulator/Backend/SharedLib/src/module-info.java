@@ -15,4 +15,5 @@ module JAtcSim.Modules.Backend.SharedLib {
       JAtcSim.Modules.Backend.AirplanesLib,
       JAtcSim.Modules.Backend.AtcLib,
       JAtcSim.Modules.Backend.SimulationLib, AreaXmlLoaderLib;
+  exports eng.jAtcSim.newLib.shared.xml;
 }

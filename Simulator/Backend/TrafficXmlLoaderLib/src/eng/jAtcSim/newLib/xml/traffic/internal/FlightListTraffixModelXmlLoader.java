@@ -1,10 +1,11 @@
 package eng.jAtcSim.newLib.xml.traffic.internal;
 
-import eng.eSystem.collections.*;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.xml.IXmlLogable;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.traffic.models.FlightListTrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
@@ -12,38 +13,42 @@ import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class FlightListTraffixModelXmlLoader implements IXmlLogable {
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
+public class FlightListTraffixModelXmlLoader {
   public FlightListTrafficModel load(XElement source) {
-    SmartXmlLoaderUtils.setContext(source);
-    log(0, "Xml-loading flight list traffic");
 
     IList<FlightListTrafficModel.Flight> flights = new EList<>();
-    SmartXmlLoaderUtils.loadList(source.getChildren("flight"),
-        flights,
-        q -> loadFlight(q));
+    source.getChildren("flight").forEach(q -> {
+      FlightListTrafficModel.Flight f = loadFlight(q);
+      flights.add(f);
+    });
 
     FlightListTrafficModel ret = new FlightListTrafficModel(flights);
     return ret;
   }
 
-  private FlightListTrafficModel.Flight loadFlight(XElement source) {
-    log(1, "loading flight");
-    SmartXmlLoaderUtils.setContext(source);
-    String callsignS = SmartXmlLoaderUtils.loadString("callsign");
-    log(1, "... flight '%s'", callsignS);
-    String timeS = SmartXmlLoaderUtils.loadString("time");
-    LocalTime time = LocalTime.parse(
-        timeS,
-        DateTimeFormatter.ofPattern("H:mm"));
+  private FlightListTrafficModel.Flight loadFlight(XElement elm) {
+    String callsignS = elm.getAttribute("callsign");
     Callsign callsign = new Callsign(callsignS);
-    MovementTemplate.eKind kind = SmartXmlLoaderUtils.loadEnum("kind", MovementTemplate.eKind.class);
-    Integer heading = SmartXmlLoaderUtils.loadInteger("heading", null);
-    Coordinate otherAirportCoordinate = SmartXmlLoaderUtils.loadCoordinate("otherAirport", null);
-    String airplaneType = SmartXmlLoaderUtils.loadString("planeType", null);
-    String follows = SmartXmlLoaderUtils.loadString("follows", null);
+
+    String timeS = elm.getAttribute("time");
+    LocalTime time = LocalTime.parse(
+            timeS,
+            DateTimeFormatter.ofPattern("H:mm"));
+
+    MovementTemplate.eKind kind = Enum.valueOf(MovementTemplate.eKind.class, elm.getAttribute("kind"));
+    Integer heading = elm.hasAttribute("heading") ?
+            Integer.parseInt(elm.getAttribute("heading")) : null;
+
+    Coordinate otherAirportCoordinate = SmartXmlLoaderUtils.loadCoordinate(elm, "otherAirport", null);
+    String airplaneType = elm.tryGetAttribute("planeType", null);
+    String follows = elm.tryGetAttribute("follows", null);
+    EAssert.isTrue(airplaneType != null || follows != null,
+            sf("Flight '%s' must have type or be following of previous flight.", callsignS));
 
     FlightListTrafficModel.Flight ret = new FlightListTrafficModel.Flight(
-        callsign, heading, otherAirportCoordinate, kind, airplaneType, time, follows);
+            callsign, heading, otherAirportCoordinate, kind, airplaneType, time, follows);
     return ret;
 
   }
