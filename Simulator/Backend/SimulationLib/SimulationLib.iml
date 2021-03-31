@@ -28,7 +28,6 @@
     <orderEntry type="module" module-name="FleetXmlLoaderLib" />
     <orderEntry type="module" module-name="TrafficXmlLoaderLib" />
     <orderEntry type="module" module-name="SpeechesLib" />
-    <orderEntry type="module" module-name="NewXmlUtils" />
     <orderEntry type="module" module-name="AnotherXml" />
     <orderEntry type="module" module-name="JAtcSimSolution" />
   </component>

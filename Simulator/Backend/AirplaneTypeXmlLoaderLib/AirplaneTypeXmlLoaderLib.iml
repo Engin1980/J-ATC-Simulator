@@ -10,7 +10,5 @@
     <orderEntry type="library" name="eng.eSystem (jAtcSim)" level="project" />
     <orderEntry type="module" module-name="AirplaneTypeLib" />
     <orderEntry type="module" module-name="SharedLib" />
-    <orderEntry type="module" module-name="AnotherXml" />
-    <orderEntry type="module" module-name="AnotherXml" />
   </component>
 </module>

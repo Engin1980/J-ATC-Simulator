@@ -22,12 +22,10 @@
     <orderEntry type="module" module-name="AirplanesLib" />
     <orderEntry type="module" module-name="TextProcessingLib" />
     <orderEntry type="module" module-name="SpeechesLib" />
-    <orderEntry type="module" module-name="WeatherLib" />
-    <orderEntry type="module" module-name="WeatherLib" />
     <orderEntry type="module" module-name="MoodLib" />
     <orderEntry type="module" module-name="StatsLib" />
     <orderEntry type="module" module-name="AtcLib" />
     <orderEntry type="module" module-name="MessagingLib" />
-    <orderEntry type="module" module-name="NewXmlUtils" />
+    <orderEntry type="module" module-name="WeatherLib" />
   </component>
 </module>
