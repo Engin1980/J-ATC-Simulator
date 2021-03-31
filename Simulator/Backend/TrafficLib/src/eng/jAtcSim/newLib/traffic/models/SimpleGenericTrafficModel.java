@@ -14,6 +14,7 @@ import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GenericCommercialMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GenericGeneralAviationMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
+import exml.annotations.XConstructor;
 
 import java.util.Arrays;
 

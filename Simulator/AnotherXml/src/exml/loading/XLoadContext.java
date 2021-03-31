@@ -44,6 +44,11 @@ public class XLoadContext {
     this.parsers.set(type, parser);
   }
 
+  public XLoadContext withDefaultParsers(){
+    this.addDefaultParsers();
+    return this;
+  }
+
   public void addDefaultParsers(){
     this.setParser(short.class, q -> Short.valueOf(q));
     this.setParser(byte.class, q -> Byte.valueOf(q));

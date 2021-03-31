@@ -3,6 +3,7 @@ package eng.jAtcSim;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
+import eng.eSystem.eXml.XDocument;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
@@ -38,6 +39,7 @@ import eng.jAtcSim.newPacks.NewPack;
 import eng.jAtcSim.settings.AppSettings;
 import eng.jAtcSim.xmlLoading.XmlSerialization;
 import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
+import exml.loading.XLoadContext;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -48,6 +50,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -131,16 +135,20 @@ public class JAtcSim {
 
 
     // startupSettings wizard
-    XmlSerializer ser = XmlSerializationFactory.createForStartupSettings();
     StartupSettings startupSettings;
-    try {
-      startupSettings = XmlSerialization.loadFromFile(ser, appSettings.startupSettingsFile.toString(), StartupSettings.class);
-    } catch (Exception ex) {
-      Context.getApp().getAppLog().write(
-              ApplicationLog.eType.warning,
-              "Failed to load startup settings from " + appSettings.startupSettingsFile.toString() +
-                      ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n\t"));
-      startupSettings = new StartupSettings();
+    {
+      try {
+        XDocument doc = XDocument.load(appSettings.startupSettingsFile.toString());
+        XLoadContext ctx = new XLoadContext().withDefaultParsers();
+        ctx.setParser(LocalTime.class, q -> LocalTime.parse(q, DateTimeFormatter.ofPattern("H:mm")));
+        startupSettings = ctx.loadObject(doc.getRoot(), StartupSettings.class);
+      } catch (Exception ex) {
+        Context.getApp().getAppLog().write(
+                ApplicationLog.eType.warning,
+                "Failed to load startup settings from " + appSettings.startupSettingsFile.toString() +
+                        ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n\t"));
+        startupSettings = new StartupSettings();
+      }
     }
 
     FrmIntro frmIntro = new FrmIntro(startupSettings);

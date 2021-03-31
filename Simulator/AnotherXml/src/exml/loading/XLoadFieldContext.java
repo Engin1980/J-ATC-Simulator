@@ -89,7 +89,7 @@ public class XLoadFieldContext {
 
     if (fieldElement == null)
       if (obligation == FieldObligation.mandatory)
-        throw new XLoadException(sf("Unable to find mandatory element for field '%s'.", field.getName()), ctx);
+        throw new XLoadException(sf("Unable to find mandatory element for field '%s' in '%s'.", field.getName(), elm.toXPath()), ctx);
       else
         return; // ignored or optionals are skipped
 

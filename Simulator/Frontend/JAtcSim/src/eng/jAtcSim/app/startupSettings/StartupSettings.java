@@ -1,18 +1,28 @@
 package eng.jAtcSim.app.startupSettings;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
+import exml.IXPersistable;
+import exml.annotations.XAttribute;
+import exml.annotations.XIgnored;
+import exml.loading.XLoadContext;
+import exml.saving.XSaveContext;
 
 import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.Map;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class StartupSettings {
+public class StartupSettings implements IXPersistable {
 
-  public static class Files {
+  public static class Files implements IXPersistable {
     private static String normalizePath(String path) {
       String ret;
       if (path == null)
@@ -22,12 +32,12 @@ public class StartupSettings {
       return ret;
     }
 
-    public String areaXmlFile;
-    public String companiesFleetsXmlFile;
-    public String generalAviationFleetsXmlFile;
-    public String planesXmlFile;
-    public String trafficXmlFile;
-    public String weatherXmlFile;
+    @XAttribute public String areaXmlFile;
+    @XAttribute public String companiesFleetsXmlFile;
+    @XAttribute public String generalAviationFleetsXmlFile;
+    @XAttribute public String planesXmlFile;
+    @XAttribute public String trafficXmlFile;
+    @XAttribute public String weatherXmlFile;
 
     public void normalizeSlashes() {
       this.trafficXmlFile = normalizePath(this.trafficXmlFile);
@@ -39,12 +49,12 @@ public class StartupSettings {
     }
   }
 
-  public static class Recent {
-    public String icao;
-    public LocalTime time;
+  public static class Recent implements IXPersistable {
+    @XAttribute public String icao;
+    @XAttribute public LocalTime time;
   }
 
-  public static class Weather {
+  public static class Weather implements IXPersistable {
     public enum WeatherSourceType {
       user,
       online,
@@ -57,38 +67,38 @@ public class StartupSettings {
       intensive
     }
 
-    public int cloudBaseAltitudeFt;
-    public double cloudBaseProbability;
-    public eSnowState snowState;
-    public WeatherSourceType type = WeatherSourceType.user;
-    public int visibilityInM;
-    public int windDirection;
-    public int windSpeed;
+    @XAttribute public int cloudBaseAltitudeFt;
+    @XAttribute public double cloudBaseProbability;
+    @XAttribute public eSnowState snowState;
+    @XAttribute public WeatherSourceType type = WeatherSourceType.user;
+    @XAttribute public int visibilityInM;
+    @XAttribute public int windDirection;
+    @XAttribute public int windSpeed;
   }
 
-  public static class Traffic {
+  public static class Traffic implements IXPersistable {
     public enum eTrafficType {
       user,
       xml
     }
 
-    public boolean allowDelays;
+    @XAttribute public boolean allowDelays;
     public CustomTraffic customTraffic = new CustomTraffic();
-    public double densityPercentage;
-    public double emergencyPerDayProbability = 1 / 7d;
-    public int maxPlanes;
-    public eTrafficType type;
+    @XAttribute public double densityPercentage;
+    @XAttribute public double emergencyPerDayProbability = 1 / 7d;
+    @XAttribute public int maxPlanes;
+    @XAttribute public eTrafficType type;
   }
 
-  public static class CustomTraffic {
+  public static class CustomTraffic implements IXPersistable {
 
     private static final int MOVEMENTS_PER_HOUR_LENGTH = 24;
-    private IMap<String, Integer> companies = new EMap<>();
-    private IMap<String, Integer> countryCodes = new EMap<>();
-    private double departureProbability = .5;
-    private double generalAviationProbability = .5;
-    private SimpleGenericTrafficModel.MovementsForHour[] movementsForHours;
-    private boolean useExtendedCallsigns = false;
+    @XIgnored private IMap<String, Integer> companies = new EMap<>();
+    @XIgnored private IMap<String, Integer> countryCodes = new EMap<>();
+    @XAttribute private double departureProbability = .5;
+    @XAttribute private double generalAviationProbability = .5;
+    @XIgnored private SimpleGenericTrafficModel.MovementsForHour[] movementsForHours;
+    @XAttribute private boolean useExtendedCallsigns = false;
 
     public CustomTraffic() {
       this.companies.set("CSA", 1);
@@ -154,14 +164,80 @@ public class StartupSettings {
     public void setUseExtendedCallsigns(boolean useExtendedCallsigns) {
       this.useExtendedCallsigns = useExtendedCallsigns;
     }
+
+    @Override
+    public void load(XElement elm, XLoadContext ctx) {
+      companies = new EMap<>();
+      elm.getChild("companies").getChildren().forEach(q -> elementToEntry(q, companies));
+
+      countryCodes = new EMap<>();
+      elm.getChild("countryCodes").getChildren().forEach(q -> elementToEntry(q, countryCodes));
+
+      ctx.fields.loadField(this, "generalAviationProbability", elm);
+      ctx.fields.loadField(this, "departureProbability", elm);
+
+      {
+        IList<SimpleGenericTrafficModel.MovementsForHour> lst = new EList<>();
+        elm.getChild("movementsForHours").getChildren().forEach(q -> {
+          int count = Integer.parseInt(q.getAttribute("count"));
+          double gap = q.hasAttribute("generalAviationProbability") ?
+                  Double.parseDouble(q.getAttribute("generalAviationProbability")) : this.generalAviationProbability;
+          double dp = q.hasAttribute("departureProbability") ?
+                  Double.parseDouble(q.getAttribute("departureProbability")) : this.departureProbability;
+          lst.add(new SimpleGenericTrafficModel.MovementsForHour(count, gap, dp));
+        });
+        this.movementsForHours = lst.toArray(SimpleGenericTrafficModel.MovementsForHour.class);
+        EAssert.isTrue(this.movementsForHours.length == MOVEMENTS_PER_HOUR_LENGTH);
+      }
+    }
+
+    @Override
+    public void save(XElement elm, XSaveContext ctx) {
+      {
+        XElement tmp = new XElement("companies");
+        elm.addElement(tmp);
+        companies.forEach(q -> tmp.addElement(entryToElement(q)));
+      }
+      {
+        XElement tmp = new XElement("countryCodes");
+        elm.addElement(tmp);
+        countryCodes.forEach(q -> tmp.addElement(entryToElement(q)));
+      }
+      {
+        XElement tmp = new XElement("movementsForHours");
+        elm.addElement(tmp);
+        Arrays.stream(movementsForHours).forEach(q -> {
+          XElement it = new XElement("item");
+          it.setAttribute("count", Integer.toString(q.count));
+          if (q.generalAviationProbability != this.generalAviationProbability)
+            it.setAttribute("generalAviationProbability", Double.toString(q.generalAviationProbability));
+          if (q.departureProbability != this.departureProbability)
+            it.setAttribute("departureProbability", Double.toString(q.departureProbability));
+          tmp.addElement(it);
+        });
+      }
+    }
+
+    private void elementToEntry(XElement elm, IMap<String, Integer> map) {
+      String key = elm.getAttribute("key");
+      int val = elm.hasAttribute("weight") ? Integer.parseInt(elm.getAttribute("weight")) : 1;
+      map.set(key, val);
+    }
+
+    private XElement entryToElement(Map.Entry<String, Integer> e) {
+      XElement ret = new XElement("item");
+      ret.setAttribute("key", e.getKey());
+      if (e.getValue() != null) ret.setAttribute("weight", e.getValue().toString());
+      return ret;
+    }
   }
 
-  public static class Layout {
-    public String layoutXmlFile = null;
+  public static class Layout implements IXPersistable {
+    @XAttribute public String layoutXmlFile = null;
   }
 
-  public static class Simulation {
-    public int secondLengthInMs = 1000;
+  public static class Simulation implements IXPersistable {
+    @XAttribute public int secondLengthInMs = 1000;
   }
 
   public final Files files;

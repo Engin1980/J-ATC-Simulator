@@ -5,44 +5,40 @@
   <simulation secondLengthInMs="1000"/>
   <traffic allowDelays="false" densityPercentage="0.0" emergencyPerDayProbability="0.14285714285714285" maxPlanes="0" type="xml">
     <customTraffic departureProbability="0.5" generalAviationProbability="0.5" useExtendedCallsigns="false">
-      <companies __keyType="java.lang.String" __type="eng.eSystem.collections.EMap">
-        <entry key="CSA">
-          <value>(_null_)</value>
-        </entry>
-        <entry key="EZY">
-          <value>(_null_)</value>
-        </entry>
+      <companies>
+        <item key="CSA" weight="5" />
+        <item key="EZY" />
       </companies>
       <countryCodes __keyType="java.lang.String" __type="eng.eSystem.collections.EMap">
-        <entry key="OK">
-          <value>(_null_)</value>
-        </entry>
+        <entry key="OK" weight="8" />
+        <entry key="OM" weight="2" />
+        <entry key="AT" />
       </countryCodes>
       <movementsForHours __itemType="eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel$MovementsForHour">
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
-        <item count="5" departureProbability="(_null_)" generalAviationProbability="(_null_)"/>
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" departureProbability="0.3" generalAviationProbability="0.7"/>
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
+        <item count="5" />
       </movementsForHours>
     </customTraffic>
   </traffic>
