@@ -217,7 +217,7 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
+  public void xLoad(XElement elm, XLoadContext ctx) {
     IAirplaneList planes = ctx.values.get(IAirplaneList.class);
 
     ctx.objects
@@ -249,7 +249,7 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void save(XElement elm, XSaveContext ctx) {
+  public void xSave(XElement elm, XSaveContext ctx) {
     ctx.objects.saveItems(this.closeArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "closeArrivals");
     ctx.objects.saveItems(this.farArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "farArrivals");
     ctx.objects.saveItems(this.middleArrivals.select(q -> q.getCallsign()), Callsign.class, elm, "middleArrivals");

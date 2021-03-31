@@ -32,7 +32,7 @@ public class FlightStripSettings implements IXPersistable {
   public static FlightStripSettings load(Path fileName) {
     FlightStripSettings ret;
     try {
-      XLoadContext ctx = new XLoadContext();
+      XLoadContext ctx = new XLoadContext().withDefaultParsers();
       ctx.setDeserializer(
               Dimension.class,
               e -> new Dimension(

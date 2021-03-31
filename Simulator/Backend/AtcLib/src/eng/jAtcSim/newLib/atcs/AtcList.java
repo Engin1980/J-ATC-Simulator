@@ -19,12 +19,12 @@ public class AtcList extends EDistinctList<Atc> implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XSaveContext ctx) {
+  public void xSave(XElement elm, XSaveContext ctx) {
     ctx.fields.ignoreFields(this, "selector", "onDuplicateBehavior");
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
+  public void xLoad(XElement elm, XLoadContext ctx) {
     ctx.fields.ignoreFields(this, "selector", "onDuplicateBehavior");
   }
 

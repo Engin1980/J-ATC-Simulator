@@ -103,7 +103,7 @@ public class AtcProvider implements IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
+  public void xLoad(XElement elm, XLoadContext ctx) {
     ctx.fields.loadFieldItems(this, "atcs", new AtcList(), Atc.class, elm);
   }
 
@@ -113,7 +113,7 @@ public class AtcProvider implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XSaveContext ctx) {
+  public void xSave(XElement elm, XSaveContext ctx) {
     ctx.saveFieldItems(this, "atcs", Atc.class, elm);
   }
 

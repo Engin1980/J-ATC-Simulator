@@ -20,7 +20,7 @@ public class RunwaysInUseInfo implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XSaveContext ctx) {
+  public void xSave(XElement elm, XSaveContext ctx) {
     System.out.println("bubla");
   }
 }

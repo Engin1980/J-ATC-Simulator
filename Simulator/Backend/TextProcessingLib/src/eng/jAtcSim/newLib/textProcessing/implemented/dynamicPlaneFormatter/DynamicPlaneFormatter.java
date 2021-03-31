@@ -1,20 +1,21 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XDocument;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
-import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.IPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.textProcessing.formatting.IPlaneFormatter;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.CommandVariableEvaluator;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
-import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.XmlFormatterLoader;
 
 import java.nio.file.Path;
 
@@ -22,23 +23,71 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class DynamicPlaneFormatter implements IPlaneFormatter<String> {
 
-  public static DynamicPlaneFormatter create(Path xmlFilePath) {
-    XDocument doc;
-    try {
-      doc = XDocument.load(xmlFilePath.toAbsolutePath());
-    } catch (EXmlException e) {
-      throw new EApplicationException("Unable to load XmlFormatter from file " + xmlFilePath + ".", e);
+  private static class DynamicPlaneFormatterLoader {
+
+    private final static String[] prefixes = {
+          "eng.jAtcSim.newLib.speeches.airplane.atc2airplane.",
+          "eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.",
+          "eng.jAtcSim.newLib.speeches.airplane.airplane2atc.",
+          "eng.jAtcSim.newLib.speeches.base.",
+          "eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses."
+    };
+
+    private static Class<?> getTypeClass(String className) {
+      Class<?> cls = null;
+      for (String prefix : prefixes) {
+        String fullName = prefix + className;
+        try {
+          cls = Class.forName(fullName);
+          break;
+        } catch (ClassNotFoundException e) {
+          // intentionally blank
+        }
+      }
+      if (cls == null) {
+        throw new EApplicationException(sf("Unable to find class '%s' as response application.", className));
+      }
+      return cls;
     }
 
-    DynamicPlaneFormatter ret = new XmlFormatterLoader().parse(doc.getRoot());
+    private DynamicPlaneFormatter load(XElement root) {
+      DynamicPlaneFormatter ret = new DynamicPlaneFormatter();
+
+      IMap<Class<?>, IList<Sentence>> tmp = ret.sentences;
+      for (XElement responseElement : root.getChildren("response")) {
+        String type = responseElement.getAttribute("type");
+        Class<?> cls = getTypeClass(type);
+        IList<Sentence> lst = new EList<>();
+        tmp.set(cls, lst);
+        for (XElement sentenceElement : responseElement.getChildren("sentence")) {
+          String text = sentenceElement.getContent();
+          String kind = sentenceElement.tryGetAttribute("kind");
+          Sentence sent = new Sentence(kind, text);
+          lst.add(sent);
+        }
+      }
+
+      return ret;
+    }
+  }
+
+  public static DynamicPlaneFormatter load(Path file) {
+    DynamicPlaneFormatter ret;
+    try {
+      XElement root = XDocument.load(file).getRoot();
+      ret = new DynamicPlaneFormatterLoader().load(root);
+    } catch (EXmlException e) {
+      throw new EApplicationException("Unable to load."); //TODO improve
+    }
+
     return ret;
   }
 
   private final IMap<Class<?>, IList<Sentence>> sentences;
   private final CommandVariableEvaluator commandVariableEvaluator = new CommandVariableEvaluator(this);
 
-  public DynamicPlaneFormatter(IMap<Class<?>, IList<Sentence>> sentences) {
-    this.sentences = sentences;
+  private DynamicPlaneFormatter() {
+    this.sentences = new EMap<>();
   }
 
   @Override

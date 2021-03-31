@@ -12,7 +12,7 @@ public class AtcIdList extends EDistinctList<AtcId> implements IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
+  public void xLoad(XElement elm, XLoadContext ctx) {
     ctx.ingoreFields(this, "selector", "onDuplicateBehavior");
   }
 }

@@ -103,7 +103,7 @@ class ArrivalManager implements IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
+  public void xLoad(XElement elm, XLoadContext ctx) {
     IAirplaneList planes = ctx.values.get(IAirplaneList.class);
 
     ctx.objects
@@ -129,7 +129,7 @@ class ArrivalManager implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XSaveContext ctx) {
+  public void xSave(XElement elm, XSaveContext ctx) {
     ctx.objects.saveItems(goAroundedPlanesToSwitchList.select(q -> q.getCallsign()), Callsign.class, elm, "goAroundedPlanesToSwitchList");
     ctx.objects.saveItems(landingPlanesList.select(q -> q.getCallsign()), Callsign.class, elm, "landingPlanesList");
   }

@@ -5,7 +5,7 @@
            targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/speechResponsesFormat"
            xmlns="https://github.com/Engin1980/J-ATC-Simulator/speechResponsesFormat"
            elementFormDefault="qualified">
-  <xs:element name="speaches">
+  <xs:element name="speeches">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="response" type="response" minOccurs="0" maxOccurs="unbounded" />

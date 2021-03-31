@@ -41,12 +41,12 @@ public interface IAirplane extends IXPersistable {
   }
 
   @Override
-  default void load(XElement elm, XLoadContext ctx) {
+  default void xLoad(XElement elm, XLoadContext ctx) {
 
   }
 
   @Override
-  default void save(XElement elm, XSaveContext ctx) {
+  default void xSave(XElement elm, XSaveContext ctx) {
     elm.setContent(this.getCallsign().toString(true));
   }
 }

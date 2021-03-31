@@ -162,7 +162,7 @@ public class AirplaneType implements IXPersistable {
   }
 
   @Override
-  public void postLoad(XLoadContext ctx) {
+  public void xPostLoad(XLoadContext ctx) {
     setFinalField("v2", this.vR + 15);
 
     {

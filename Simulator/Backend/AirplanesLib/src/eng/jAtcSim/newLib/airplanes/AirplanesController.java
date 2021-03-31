@@ -60,12 +60,12 @@ public class AirplanesController implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XSaveContext ctx) {
+  public void xSave(XElement elm, XSaveContext ctx) {
     ctx.saveFieldItems(this, "planes", Airplane.class, elm);
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
+  public void xLoad(XElement elm, XLoadContext ctx) {
     ctx.fields.loadFieldItems(this, "planes", this.planes, Airplane.class, elm);
     this.publicPlanes.addMany(this.planes.select(q->q.getReader()));
   }

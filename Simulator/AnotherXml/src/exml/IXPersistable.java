@@ -5,15 +5,15 @@ import exml.loading.XLoadContext;
 import exml.saving.XSaveContext;
 
 public interface IXPersistable {
-  default void load(XElement elm, XLoadContext ctx) {
+  default void xLoad(XElement elm, XLoadContext ctx) {
     // intentionally blank, can be overridden/implemented
   }
 
-  default void save(XElement elm, XSaveContext ctx) {
+  default void xSave(XElement elm, XSaveContext ctx) {
     // intentionally blank, can be overridden/implemented
   }
 
-  default void postLoad(XLoadContext ctx) {
+  default void xPostLoad(XLoadContext ctx) {
     // intentionally blank, can be overriden/implemented
   }
 }

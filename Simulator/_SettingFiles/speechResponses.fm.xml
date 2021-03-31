@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<speaches
+<speeches
         xmlns="https://github.com/Engin1980/J-ATC-Simulator/speechResponsesFormat">
   <response type="AfterAltitudeCommand">
     <sentence>when passing {cmd:alt}</sentence>
@@ -160,4 +160,4 @@
     <sentence>we are now proceeding divert via {cmd:navaid}</sentence>
     <sentence>diverting through {cmd:navaid}</sentence>
   </response>
-</speaches>
+</speeches>

@@ -165,7 +165,7 @@ public class RecentStats implements IXPersistable {
   private int finishedDepartures;
 
   @Override
-  public void save(XElement elm, XSaveContext ctx) {
+  public void xSave(XElement elm, XSaveContext ctx) {
     // explicitly set here to specify exact IList item type
     ctx.saveFieldItems(this, "mrvaErrors", TimedValue.class, elm);
     ctx.saveFieldItems(this, "airproxErrors", TimedValue.class, elm);
@@ -181,7 +181,7 @@ public class RecentStats implements IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
+  public void xLoad(XElement elm, XLoadContext ctx) {
     // explicitly set here to specify exact IList item type
     ctx.fields.loadFieldItems(this, "mrvaErrors", this.mrvaErrors, TimedValue.class, elm);
     ctx.fields.loadFieldItems(this, "airproxErrors", this.airproxErrors, TimedValue.class, elm);

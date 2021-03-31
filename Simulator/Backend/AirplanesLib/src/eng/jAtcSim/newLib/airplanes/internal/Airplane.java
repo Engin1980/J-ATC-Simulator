@@ -666,7 +666,7 @@ public class Airplane implements IXPersistable {
   }
 
   @Override
-  public void postLoad(XLoadContext ctx) {
+  public void xPostLoad(XLoadContext ctx) {
     initRecorders();
   }
 

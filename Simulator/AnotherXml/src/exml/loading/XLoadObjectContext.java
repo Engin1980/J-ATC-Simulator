@@ -137,9 +137,9 @@ public class XLoadObjectContext {
 
     IXPersistable ret;
     ret = (IXPersistable) ConstructionUtils.provideInstance(type, ctx);
-    ret.load(elm, this.ctx);
+    ret.xLoad(elm, this.ctx);
     ctx.fields.loadAllRemaningFields(ret, elm);
-    ret.postLoad(ctx);
+    ret.xPostLoad(ctx);
     return (T) ret;
   }
 

@@ -13,4 +13,5 @@ module JAtcSim.modules.backend.TextProcessingLib {
   requires JAtcSim.Modules.Backend.SpeechesLib;
   requires JAtcSim.Modules.Backend.WeatherLib;
   requires JAtcSim.Modules.Backend.MessagingLib;
+  requires AnotherXml;
 }

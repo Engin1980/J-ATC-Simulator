@@ -122,15 +122,15 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
-    super.load(elm, ctx);
+  public void xLoad(XElement elm, XLoadContext ctx) {
+    super.xLoad(elm, ctx);
     ctx.fields.ignoreFields(this,
             "cqr");
   }
 
   @Override
-  public void save(XElement elm, XSaveContext ctx) {
-    super.save(elm, ctx);
+  public void xSave(XElement elm, XSaveContext ctx) {
+    super.xSave(elm, ctx);
     ctx.fields.ignoreFields(this,
             "cqr");
   }

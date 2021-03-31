@@ -156,7 +156,7 @@ class DepartureManager implements IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
+  public void xLoad(XElement elm, XLoadContext ctx) {
     IAirplaneList planes = ctx.values.get(IAirplaneList.class);
 
     ctx.objects
@@ -218,7 +218,7 @@ class DepartureManager implements IXPersistable {
   }
 
   @Override
-  public void save(XElement elm, XSaveContext ctx) {
+  public void xSave(XElement elm, XSaveContext ctx) {
     ctx.objects.saveItems(holdingPointNotAssigned.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointNotAssigned");
     ctx.objects.saveItems(holdingPointWaitingForAppSwitchConfirmation.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointWaitingForAppSwitchConfirmation");
     ctx.objects.saveItems(holdingPointReady.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointReady");

@@ -255,7 +255,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void postLoad(XLoadContext ctx) {
+  public void xPostLoad(XLoadContext ctx) {
     Context.getArea().setCurrentRunwayConfiguration(this.inUseInfo.current);
     Context.getArea().setScheduledRunwayConfiguration(this.inUseInfo.scheduled);
   }

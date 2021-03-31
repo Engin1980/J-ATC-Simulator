@@ -36,11 +36,11 @@ public class Game implements IGame, IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
+  public void xLoad(XElement elm, XLoadContext ctx) {
   }
 
   @Override
-  public void save(XElement elm, XSaveContext ctx) {
+  public void xSave(XElement elm, XSaveContext ctx) {
     // explicitly to write content in predefined order
     ctx.fields.saveField(this, "areaSource", elm);
     ctx.fields.saveField(this, "airplaneTypesSource", elm);

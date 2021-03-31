@@ -46,9 +46,12 @@ public class AppSettings implements IXPersistable {
     ret.radar.styleSettingsFile = decodePath(ret.radar.styleSettingsFile.toString());
     ret.autosave.path = decodePath(ret.autosave.path.toString());
 
+    ret.loadInternalStuff();
+
     return ret;
   }
 
+  //TODEL
 //  public static AppSettings create() {
 //    AppSettings ret = new AppSettings();
 //
@@ -142,19 +145,6 @@ public class AppSettings implements IXPersistable {
     return ret;
   }
 
-  private static DynamicPlaneFormatter loadDynamicPlaneFormatter(Path speechFormatterFile) {
-    throw new ToDoException();
-//    IMap<Class<?>, IList<Sentence>> speechResponses;
-//    try {
-//      XmlSerializer ser = XmlSerializationFactory.createForSpeechResponses();
-//      speechResponses = XmlSerialization.loadFromFile(ser, speechFormatterFile.toFile(), IMap.class);
-//    } catch (EApplicationException ex) {
-//      throw new EApplicationException(
-//              sf("Unable to load speech responses from xml file '%s'.", speechFormatterFile), ex);
-//    }
-//    DynamicPlaneFormatter ret = new DynamicPlaneFormatter(speechResponses);
-//    return ret;
-  }
 
   public AppAutoSaveSettings autosave = new AppAutoSaveSettings();
   @XIgnored private FlightStripSettings flightStripSettings = null;
@@ -197,7 +187,7 @@ public class AppSettings implements IXPersistable {
 
   private void loadInternalStuff() {
     this.radarStyleSettings = RadarStyleSettings.load(this.radar.styleSettingsFile);
-    this.dynamicPlaneFormatter = loadDynamicPlaneFormatter(this.speechFormatterFile);
+    this.dynamicPlaneFormatter = DynamicPlaneFormatter.load(this.speechFormatterFile);
     this.flightStripSettings = FlightStripSettings.load(this.stripSettingsFile);
     this.radarDisplaySettings = this.radar.displaySettings.toRadarDisplaySettings();
   }

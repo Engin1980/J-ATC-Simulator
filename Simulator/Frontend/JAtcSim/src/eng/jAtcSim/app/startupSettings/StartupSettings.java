@@ -166,7 +166,7 @@ public class StartupSettings implements IXPersistable {
     }
 
     @Override
-    public void load(XElement elm, XLoadContext ctx) {
+    public void xLoad(XElement elm, XLoadContext ctx) {
       companies = new EMap<>();
       elm.getChild("companies").getChildren().forEach(q -> elementToEntry(q, companies));
 
@@ -192,7 +192,7 @@ public class StartupSettings implements IXPersistable {
     }
 
     @Override
-    public void save(XElement elm, XSaveContext ctx) {
+    public void xSave(XElement elm, XSaveContext ctx) {
       {
         XElement tmp = new XElement("companies");
         elm.addElement(tmp);

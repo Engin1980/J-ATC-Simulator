@@ -37,7 +37,7 @@ public class Font implements IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
+  public void xLoad(XElement elm, XLoadContext ctx) {
     this.family = elm.getAttribute("family");
     this.style = Integer.parseInt(elm.getAttribute("style"));
     this.size = Integer.parseInt(elm.getAttribute("size"));

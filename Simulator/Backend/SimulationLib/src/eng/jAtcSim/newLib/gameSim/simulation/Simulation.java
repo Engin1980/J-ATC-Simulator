@@ -328,7 +328,7 @@ public class Simulation implements IXPersistable {
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
+  public void xLoad(XElement elm, XLoadContext ctx) {
     ctx.parents.set(this);
 
     ctx.fields.loadField(this, "airplanesModule", elm);

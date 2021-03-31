@@ -139,16 +139,16 @@ public class ApproachPilot extends Pilot {
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
-    super.load(elm, ctx);
+  public void xLoad(XElement elm, XLoadContext ctx) {
+    super.xLoad(elm, ctx);
 
     ctx.fields.loadFieldItems(this, "stages", new EList<>(), ApproachStage.class, elm);
     ctx.fields.loadFieldItems(this, "gaRouteCommands", new EList<>(), ICommand.class, elm);
   }
 
   @Override
-  public void save(XElement elm, XSaveContext ctx) {
-    super.save(elm, ctx);
+  public void xSave(XElement elm, XSaveContext ctx) {
+    super.xSave(elm, ctx);
     ctx.saveFieldItems(this, "stages", ApproachStage.class, elm);
     ctx.saveFieldItems(this, "gaRouteCommands", ICommand.class, elm);
   }

@@ -52,12 +52,12 @@ public class PresetWeather extends Weather {
   }
 
   @Override
-  public void load(XElement elm, XLoadContext ctx) {
+  public void xLoad(XElement elm, XLoadContext ctx) {
     this.time = LocalTime.parse(elm.getAttribute("localTime"), dtf);
   }
 
   @Override
-  public void save(XElement elm, XSaveContext ctx) {
+  public void xSave(XElement elm, XSaveContext ctx) {
     elm.setAttribute("localTime", time.format(dtf));
   }
 }

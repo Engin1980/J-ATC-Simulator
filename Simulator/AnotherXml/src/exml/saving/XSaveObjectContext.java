@@ -104,7 +104,7 @@ public class XSaveObjectContext {
       saveItems(lst, obj.getClass().getComponentType(), elm);
     } else if (obj instanceof IXPersistable) {
       IXPersistable persistable = (IXPersistable) obj;
-      persistable.save(elm, this.ctx); // calls custom overload
+      persistable.xSave(elm, this.ctx); // calls custom overload
       ctx.fields.saveRemainingFields(persistable, elm); // calls global save
     } else {
       throw new XSaveException(sf("Don't know how to save instance of '%s'.", obj.getClass()), ctx);
