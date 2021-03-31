@@ -12,6 +12,8 @@ import exml.annotations.XAttribute;
 import exml.annotations.XOptional;
 import exml.loading.XLoadContext;
 
+import java.nio.file.Path;
+
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class RadarStyleSettings implements IXPersistable {
@@ -220,7 +222,7 @@ public class RadarStyleSettings implements IXPersistable {
     }
   }
 
-  public static RadarStyleSettings load(String fileName) {
+  public static RadarStyleSettings load(Path fileName) {
     RadarStyleSettings ret;
     try {
       XDocument doc = XDocument.load(fileName);

@@ -1,15 +1,11 @@
 package eng.jAtcSim;
 
 import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XDocument;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.exceptions.ToDoException;
+import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.*;
 import eng.eSystem.utilites.ExceptionUtils;
-import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.app.FrmIntro;
 import eng.jAtcSim.app.FrmStartupProgress;
@@ -31,15 +27,13 @@ import eng.jAtcSim.newLib.shared.context.AppAcc;
 import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
-import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newPacks.NewPack;
 import eng.jAtcSim.settings.AppSettings;
-import eng.jAtcSim.xmlLoading.XmlSerialization;
-import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
 import exml.loading.XLoadContext;
+import exml.saving.XSaveContext;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -125,7 +119,7 @@ public class JAtcSim {
     AppAcc appContext = new AppAcc(new ApplicationLog(), Paths.get("C:\\Temp\\"));
     ContextManager.setContext(IAppAcc.class, appContext);
 
-    appSettings = AppSettings.create();
+    appSettings = AppSettings.loadOrCreate();
     appContext.updateLogPath(appSettings.logFolder);
     ensureLogPathExists(appSettings.logFolder);
 
@@ -138,7 +132,7 @@ public class JAtcSim {
     StartupSettings startupSettings;
     {
       try {
-        XDocument doc = XDocument.load(appSettings.startupSettingsFile.toString());
+        XDocument doc = XDocument.load(appSettings.startupSettingsFile);
         XLoadContext ctx = new XLoadContext().withDefaultParsers();
         ctx.setParser(LocalTime.class, q -> LocalTime.parse(q, DateTimeFormatter.ofPattern("H:mm")));
         startupSettings = ctx.loadObject(doc.getRoot(), StartupSettings.class);
@@ -176,10 +170,12 @@ public class JAtcSim {
     try {
       resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
       startupSettings.files.normalizeSlashes();
-      XmlSerializer ser = XmlSerializationFactory.createForStartupSettings();
-      XmlSerialization.saveToFile(ser, startupSettings, StartupSettings.class,
-              appSettings.startupSettingsFile.toString(), "startupSettings");
-    } catch (EApplicationException ex) {
+
+      XSaveContext ctx = new XSaveContext().withDefaultFormatters();
+      XElement root = ctx.saveObject(startupSettings, "startupSettings");
+      XDocument doc = new XDocument(root);
+      doc.save(appSettings.startupSettingsFile);
+    } catch (EApplicationException | EXmlException ex) {
       throw new EApplicationException("Failed to normalize or save default settings.", ex);
     }
 
@@ -242,14 +238,15 @@ public class JAtcSim {
           throw new EEnumValueUnsupportedException(startupSettings.weather.type);
       }
 
-      IMap<Class<?>, IList<Sentence>> speechResponses;
-      try {
-        XmlSerializer ser = XmlSerializationFactory.createForSpeechResponses();
-        speechResponses = XmlSerialization.loadFromFile(ser, appSettings.speechFormatterFile.toString(), IMap.class);
-      } catch (EApplicationException ex) {
-        throw new EApplicationException(
-                sf("Unable to load speech responses from xml file '%s'.", appSettings.speechFormatterFile), ex);
-      }
+      if (0 == 0) throw new ToDoException("load somehow");
+//      IMap<Class<?>, IList<Sentence>> speechResponses;
+//      try {
+//        XmlSerializer ser = XmlSerializationFactory.createForSpeechResponses();
+//        speechResponses = XmlSerialization.loadFromFile(ser, appSettings.speechFormatterFile.toString(), IMap.class);
+//      } catch (EApplicationException ex) {
+//        throw new EApplicationException(
+//                sf("Unable to load speech responses from xml file '%s'.", appSettings.speechFormatterFile), ex);
+//      }
 //      //TODO do somehow configurable
 //      gsi.parserFormatterStartInfo = new ParserFormatterStartInfo(
 //          new ParserFormatterStartInfo.Parsers(

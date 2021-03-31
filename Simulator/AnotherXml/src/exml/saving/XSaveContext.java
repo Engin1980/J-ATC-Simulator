@@ -42,4 +42,29 @@ public class XSaveContext {
     this.serializers.set(type, serializer);
   }
 
+  public void addDefaultFormatters(){
+    this.setFormatter(short.class, q -> Short.toString(q));
+    this.setFormatter(byte.class, q -> Byte.toString(q));
+    this.setFormatter(int.class, q -> Integer.toString(q));
+    this.setFormatter(long.class, q -> Long.toString(q));
+    this.setFormatter(float.class, q -> Float.toString(q));
+    this.setFormatter(double.class, q -> Double.toString(q));
+    this.setFormatter(boolean.class, q -> Boolean.toString(q));
+    this.setFormatter(char.class, q -> Character.toString(q));
+    this.setFormatter(Short.class, q -> Short.toString(q));
+    this.setFormatter(Byte.class, q -> Byte.toString(q));
+    this.setFormatter(Integer.class, q -> Integer.toString(q));
+    this.setFormatter(Long.class, q -> Long.toString(q));
+    this.setFormatter(Float.class, q -> Float.toString(q));
+    this.setFormatter(Double.class, q -> Double.toString(q));
+    this.setFormatter(Boolean.class, q -> Boolean.toString(q));
+    this.setFormatter(Character.class, q -> Character.toString(q));
+    this.setFormatter(String.class, q -> q);
+  }
+
+  public XSaveContext withDefaultFormatters(){
+    this.addDefaultFormatters();
+    return this;
+  }
+
 }

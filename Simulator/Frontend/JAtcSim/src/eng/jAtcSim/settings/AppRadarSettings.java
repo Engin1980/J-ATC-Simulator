@@ -3,11 +3,14 @@ package eng.jAtcSim.settings;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
+import exml.IXPersistable;
+import exml.annotations.XAttribute;
 
 import java.nio.file.Path;
 
-public class AppRadarSettings {
-  public static class DisplaySettings {
+public class AppRadarSettings implements IXPersistable {
+  public static class DisplaySettings implements IXPersistable {
+
     public static DisplaySettings load(XElement elm) {
       DisplaySettings ret = new DisplaySettings();
 
@@ -30,23 +33,23 @@ public class AppRadarSettings {
       return ret;
     }
 
-    public boolean airport = true;
-    public boolean country = true;
-    public boolean ctr = true;
-    public boolean fix = true;
-    public boolean history = true;
-    public int maxAltitude = 99000;
-    public int minAltitude = 0;
-    public boolean minorFix = true;
-    public boolean mrva = true;
-    public boolean mrvaLabel = true;
-    public boolean ndb = true;
-    public boolean rings = true;
-    public boolean routeFix = true;
-    public boolean sid = true;
-    public boolean star = true;
-    public boolean tma = true;
-    public boolean vor = true;
+    @XAttribute public boolean airport = true;
+    @XAttribute public boolean country = true;
+    @XAttribute public boolean ctr = true;
+    @XAttribute public boolean fix = true;
+    @XAttribute public boolean history = true;
+    @XAttribute public int maxAltitude = 99000;
+    @XAttribute public int minAltitude = 0;
+    @XAttribute public boolean minorFix = true;
+    @XAttribute public boolean mrva = true;
+    @XAttribute public boolean mrvaLabel = true;
+    @XAttribute public boolean ndb = true;
+    @XAttribute public boolean rings = true;
+    @XAttribute public boolean routeFix = true;
+    @XAttribute public boolean sid = true;
+    @XAttribute public boolean star = true;
+    @XAttribute public boolean tma = true;
+    @XAttribute public boolean vor = true;
 
     public RadarDisplaySettings toRadarDisplaySettings() {
       RadarDisplaySettings ret = new RadarDisplaySettings();

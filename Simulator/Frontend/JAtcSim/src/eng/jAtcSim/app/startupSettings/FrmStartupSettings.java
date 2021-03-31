@@ -1,11 +1,12 @@
 package eng.jAtcSim.app.startupSettings;
 
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XDocument;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
-import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.panels.*;
@@ -15,8 +16,8 @@ import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.FlightListTrafficModel;
 import eng.jAtcSim.shared.MessageBox;
-import eng.jAtcSim.xmlLoading.XmlSerialization;
-import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
+import exml.loading.XLoadContext;
+import exml.saving.XSaveContext;
 
 import javax.swing.*;
 import java.awt.*;
@@ -76,8 +77,8 @@ public class FrmStartupSettings extends JPanel {
     File file = jfc.getSelectedFile();
     StartupSettings sett;
     try {
-      XmlSerializer ser = XmlSerializationFactory.createForStartupSettings();
-      sett = XmlSerialization.loadFromFile(ser, file, StartupSettings.class);
+      XLoadContext ctx = new XLoadContext().withDefaultParsers();
+      sett = ctx.loadObject(XDocument.load(file).getRoot(), StartupSettings.class);
     } catch (Exception e) {
       throw new EApplicationException("Unable to load startup settings.", e);
     }
@@ -101,8 +102,10 @@ public class FrmStartupSettings extends JPanel {
     this.fillSettingsBy(sett);
 
     try {
-      XmlSerializer ser = XmlSerializationFactory.createForStartupSettings();
-      XmlSerialization.saveToFile(ser, sett, StartupSettings.class, fileName);
+      XSaveContext ctx = new XSaveContext().withDefaultFormatters();
+      XElement root = ctx.saveObject(sett, "startupSettings");
+      XDocument doc = new XDocument(root);
+      doc.save(fileName);
     } catch (Exception e) {
       throw new EApplicationException("Failed to save startup settings.", e);
     }

@@ -4,4 +4,5 @@ module AnotherXml {
   exports exml.loading;
   exports exml.saving;
   requires eng.eSystem;
+  requires java.desktop;
 }

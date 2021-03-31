@@ -27,7 +27,6 @@
     <orderEntry type="module" module-name="MoodLib" />
     <orderEntry type="module" module-name="StatsLib" />
     <orderEntry type="module" module-name="AtcLib" />
-    <orderEntry type="library" name="eng.eXmlSerialization (jAtcSim)" level="project" />
     <orderEntry type="module" module-name="MessagingLib" />
     <orderEntry type="module" module-name="NewXmlUtils" />
   </component>

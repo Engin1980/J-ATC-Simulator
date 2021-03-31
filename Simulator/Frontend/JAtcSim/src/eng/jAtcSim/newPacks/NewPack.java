@@ -4,7 +4,6 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ToDoException;
-import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.app.FrmAbout;
@@ -22,8 +21,6 @@ import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.Dynam
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
 import eng.jAtcSim.newPacks.views.ViewInitInfo;
 import eng.jAtcSim.settings.AppSettings;
-import eng.jAtcSim.xmlLoading.XmlSerialization;
-import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -178,16 +175,17 @@ public class NewPack {
   }
 
   private DynamicPlaneFormatter loadDynamicPlaneFormatter(Path speechFormatterFile) {
-    IMap<Class<?>, IList<Sentence>> speechResponses;
-    try {
-      XmlSerializer ser = XmlSerializationFactory.createForSpeechResponses();
-      speechResponses = XmlSerialization.loadFromFile(ser, speechFormatterFile.toFile(), IMap.class);
-    } catch (EApplicationException ex) {
-      throw new EApplicationException(
-              sf("Unable to load speech responses from xml file '%s'.", speechFormatterFile), ex);
-    }
-    DynamicPlaneFormatter ret = new DynamicPlaneFormatter(speechResponses);
-    return ret;
+    throw new ToDoException();
+//    IMap<Class<?>, IList<Sentence>> speechResponses;
+//    try {
+//      XmlSerializer ser = XmlSerializationFactory.createForSpeechResponses();
+//      speechResponses = XmlSerialization.loadFromFile(ser, speechFormatterFile.toFile(), IMap.class);
+//    } catch (EApplicationException ex) {
+//      throw new EApplicationException(
+//              sf("Unable to load speech responses from xml file '%s'.", speechFormatterFile), ex);
+//    }
+//    DynamicPlaneFormatter ret = new DynamicPlaneFormatter(speechResponses);
+//    return ret;
   }
 
   private void viewRecordingPanel() {
