@@ -89,8 +89,8 @@ public class XSaveFieldContext {
 
     if (pfi.value == null) {
       elm.setAttribute(pfi.field.getName(), Constants.NULL);
-    } else if (ctx.formatters.containsKey(obj.getClass())) {
-      Selector<Object, String> formatter = (Selector<Object, String>) ctx.formatters.get(obj.getClass());
+    } else if (ctx.formatters.containsKey(pfi.value.getClass())) {
+      Selector<Object, String> formatter = (Selector<Object, String>) ctx.formatters.get(pfi.value.getClass());
       String s = formatter.invoke(pfi.value);
       elm.setAttribute(pfi.field.getName(), s);
     } else if (pfi.value.getClass().isEnum()) {

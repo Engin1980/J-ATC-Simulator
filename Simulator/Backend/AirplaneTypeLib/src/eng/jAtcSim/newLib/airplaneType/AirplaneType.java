@@ -8,6 +8,9 @@ import exml.annotations.XIgnored;
 import exml.annotations.XOptional;
 import exml.loading.XLoadContext;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class AirplaneType implements IXPersistable {
@@ -15,104 +18,126 @@ public class AirplaneType implements IXPersistable {
   /**
    * Name of kind
    */
-  @XAttribute public final String name = null;
+  @XAttribute public final String name;
 
   @XAttribute
   @XOptional
-  public final String fullName = null;
+  public final String fullName;
 
   /**
    * Category (A, B, C or D)
    */
-  @XAttribute public final char category = ' ';
+  @XAttribute public final char category;
 
   /**
    * Maximum altitude in ft
    */
-  @XAttribute public final int maxAltitude = -1;
+  @XAttribute public final int maxAltitude;
 
   /**
    * Rotation speed at take-off.
    */
-  @XAttribute public final int vR = -1;
+  @XAttribute public final int vR;
 
   /**
    * Minimum speed at approach
    */
-  @XAttribute public final int vMinApp = -1;
+  @XAttribute public final int vMinApp;
 
   /**
    * Maximum speed at approach
    */
-  @XAttribute public final int vMaxApp = -1;
+  @XAttribute public final int vMaxApp;
 
   /**
    * Common speed at approach
    */
-  @XAttribute public final int vApp = -1;
+  @XAttribute public final int vApp;
 
   /**
    * Minimum clean speed
    */
-  @XAttribute public final int vMinClean = -1;
+  @XAttribute public final int vMinClean;
 
   /**
    * Maximum clean speed
    */
-  @XAttribute public final int vMaxClean = -1;
+  @XAttribute public final int vMaxClean;
 
   /**
    * Common cruise speed
    */
-  @XAttribute public final int vCruise = -1;
+  @XAttribute public final int vCruise;
 
   /**
    * Departure speed
    */
-  @XAttribute public final int vDep = -1;
+  @XAttribute public final int vDep;
 
-  @XIgnored public final int v2 = -1;
+  @XIgnored public final int v2;
 
   /**
    * Climb rate ft/min at low altitudes
    */
-  @XAttribute public final int lowClimbRate = -1;
+  @XAttribute public final int lowClimbRate;
 
   /**
    * Climb rate ft/min at high altitudes
    */
-  @XAttribute public final int highClimbRate = -1;
+  @XAttribute public final int highClimbRate;
 
   /**
    * Descend rate ft/min at high altitudes
    */
-  @XAttribute public final int highDescendRate = -1;
+  @XAttribute public final int highDescendRate;
 
   /**
    * Descend rate ft/min at low altitudes
    */
-  @XAttribute public final int lowDescendRate = -1;
+  @XAttribute public final int lowDescendRate;
 
   /**
    * Rate of increase speed kts/sec
    */
-  @XAttribute public final double speedIncreaseRate = -1;
+  @XAttribute public final double speedIncreaseRate;
 
   /**
    * Rate of decrease speed kts/sec
    */
-  @XAttribute public final double speedDecreaseRate = -1;
+  @XAttribute public final double speedDecreaseRate;
 
   /**
    * Rate of heading change in degrees/second.
    */
-  @XAttribute public final int headingChangeRate = -1;
+  @XAttribute public final int headingChangeRate;
 
   @XIgnored private final RateInfo _climb = null;
   @XIgnored private final RateInfo _descend = null;
 
+  private static final int EMPTY = Integer.MIN_VALUE;
+
   @XConstructor
   private AirplaneType(XLoadContext ctx) {
+    name = null;
+    fullName = null;
+    category = '?';
+    maxAltitude =EMPTY;
+    vR = EMPTY;
+    vMinApp = EMPTY;
+    vMaxApp = EMPTY;
+    vApp = EMPTY;
+    vMinClean = EMPTY;
+    vMaxClean = EMPTY;
+    vCruise = EMPTY;
+    vDep = EMPTY;
+    this.v2 = EMPTY;
+    lowClimbRate = EMPTY;
+    highClimbRate = EMPTY;
+    highDescendRate = EMPTY;
+    lowDescendRate = EMPTY;
+    speedDecreaseRate = EMPTY;
+    speedIncreaseRate = EMPTY;
+    headingChangeRate = EMPTY;
   }
 
 //  public AirplaneType(String name, String fullName, char category, int maxAltitude, int vR,
@@ -184,7 +209,10 @@ public class AirplaneType implements IXPersistable {
 
   private void setFinalField(String name, Object value) {
     try {
-      this.getClass().getField(name).set(this, value);
+      Field f = this.getClass().getDeclaredField(name);
+      f.setAccessible(true);
+      f.set(this,value);
+      f.setAccessible(false);
     } catch (IllegalAccessException | NoSuchFieldException e) {
       throw new EApplicationException(sf("Failed to set field '%s' internally.", name));
     }

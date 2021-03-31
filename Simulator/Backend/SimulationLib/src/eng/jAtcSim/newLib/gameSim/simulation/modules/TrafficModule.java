@@ -29,9 +29,8 @@ import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.traffic.movementTemplating.*;
-
-import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
+import exml.loading.XLoadContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -284,6 +283,7 @@ public class TrafficModule extends SimulationModule {
               .where(q -> q.getType().is(isArrival ? EntryExitPoint.Type.entry : EntryExitPoint.Type.exit));
 
     eeps = eeps.where(q -> q.getMaxMrvaAltitudeOrHigh() < pt.maxAltitude);
+
     if (eeps.isEmpty()) {
       Context.getApp().getAppLog().write(ApplicationLog.eType.warning,
               sf("There are no available entry/exit points for plane of kind %s with service ceiling at %d ft. " +

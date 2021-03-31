@@ -47,12 +47,12 @@ public class FleetsXmlLoader {
     IList<CompanyFleet> lst = new EList<>();
     elm.getChildren("company").forEach(q ->
             lst.add(loadCompanyFleet(
-                    elm.getAttribute("icao"),
-                    elm.tryGetAttribute("name", ""),
+                    q.getAttribute("icao"),
+                    q.tryGetAttribute("name", ""),
                     q.getChildren("type"),
                     ctx)));
     CompanyFleet def = loadCompanyFleet(
-            "DEFF",
+            elm.getChild("default").getAttribute("icao"),
             "-default-",
             elm.getChild("default").getChildren("type"),
             ctx);
@@ -72,7 +72,10 @@ public class FleetsXmlLoader {
   private static IList<TypeAndWeight> loadTypesAndWeights(IReadOnlyList<XElement> types, XLoadContext ctx) {
     IList<TypeAndWeight> ret = new EList<>();
     types.forEach(q -> {
-      TypeAndWeight tw = ctx.loadObject(q, TypeAndWeight.class);
+      TypeAndWeight tw = TypeAndWeight.create(
+              q.getAttribute("name"),
+              Integer.parseInt(q.getAttribute("weight"))
+      );
       ret.add(tw);
     });
     return ret;
@@ -82,17 +85,17 @@ public class FleetsXmlLoader {
     XLoadContext ctx = new XLoadContext();
 
     IList<CountryFleet> lst = new EList<>();
-    elm.getChildren("company").forEach(q -> lst.add(loadCountryFleet(
-            q.getAttribute("countryCode"),
+    elm.getChildren("country").forEach(q -> lst.add(loadCountryFleet(
+            q.getAttribute("code"),
             q.getAttribute("aircraftPrefix"),
             q.tryGetAttribute("name", ""),
             q.getChildren("type"),
             ctx)));
     CountryFleet def = loadCountryFleet(
             "DEF",
-            "DF",
+            elm.getChild("default").getAttribute("aircraftPrefix"),
             "-default-",
-            elm.getChildren("type"),
+            elm.getChild("default").getChildren("type"),
             ctx);
     GeneralAviationFleets ret = GeneralAviationFleets.create(lst, def);
     return ret;

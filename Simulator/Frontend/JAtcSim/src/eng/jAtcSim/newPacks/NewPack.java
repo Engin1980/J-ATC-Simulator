@@ -71,7 +71,7 @@ public class NewPack {
     vii.setAirport(this.aip);
     vii.setSettings(this.settings);
     vii.setUserAtcId(this.sim.getUserAtcIds().get(0));
-    vii.setDynamicAirplaneSpeechFormatter(loadDynamicPlaneFormatter(this.settings.speechFormatterFile)); //TODO improve somehow
+    vii.setDynamicAirplaneSpeechFormatter(this.settings.getDynamicPlaneFormatter()); //TODO improve somehow
 
     for (Tuple<IView, JFrameFactory.JPanelInfo> item : view2panelMap) {
       item.getA().init(item.getB().getPanel(), vii);
@@ -172,20 +172,6 @@ public class NewPack {
         printSummaryPanel(inner, index + 1);
       }
     }
-  }
-
-  private DynamicPlaneFormatter loadDynamicPlaneFormatter(Path speechFormatterFile) {
-    throw new ToDoException();
-//    IMap<Class<?>, IList<Sentence>> speechResponses;
-//    try {
-//      XmlSerializer ser = XmlSerializationFactory.createForSpeechResponses();
-//      speechResponses = XmlSerialization.loadFromFile(ser, speechFormatterFile.toFile(), IMap.class);
-//    } catch (EApplicationException ex) {
-//      throw new EApplicationException(
-//              sf("Unable to load speech responses from xml file '%s'.", speechFormatterFile), ex);
-//    }
-//    DynamicPlaneFormatter ret = new DynamicPlaneFormatter(speechResponses);
-//    return ret;
   }
 
   private void viewRecordingPanel() {

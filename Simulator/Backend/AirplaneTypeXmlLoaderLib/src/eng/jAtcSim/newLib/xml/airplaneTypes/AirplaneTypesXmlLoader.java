@@ -25,7 +25,7 @@ public class AirplaneTypesXmlLoader {
   }
 
   private static AirplaneTypes load(XElement source) {
-    XLoadContext ctx = new XLoadContext();
+    XLoadContext ctx = new XLoadContext().withDefaultParsers();
 
     IList<AirplaneType> tmp = new EList<>();
 

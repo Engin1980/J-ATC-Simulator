@@ -1,6 +1,7 @@
 package eng.jAtcSim;
 
 import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
@@ -27,6 +28,7 @@ import eng.jAtcSim.newLib.shared.context.AppAcc;
 import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 import eng.jAtcSim.newLib.weather.Weather;
@@ -172,6 +174,7 @@ public class JAtcSim {
       startupSettings.files.normalizeSlashes();
 
       XSaveContext ctx = new XSaveContext().withDefaultFormatters();
+      ctx.setFormatter(LocalTime.class, q -> q.format(DateTimeFormatter.ofPattern("H:mm")));
       XElement root = ctx.saveObject(startupSettings, "startupSettings");
       XDocument doc = new XDocument(root);
       doc.save(appSettings.startupSettingsFile);
@@ -238,8 +241,9 @@ public class JAtcSim {
           throw new EEnumValueUnsupportedException(startupSettings.weather.type);
       }
 
-      if (0 == 0) throw new ToDoException("load somehow");
-//      IMap<Class<?>, IList<Sentence>> speechResponses;
+      // TOTO je nový způsob nahrávání
+      // IMap<Class<?>, IList<Sentence>> speechResponses = appSettings.getDynamicPlaneFormatter();
+      // TOTO je starý způsob nahrávání:
 //      try {
 //        XmlSerializer ser = XmlSerializationFactory.createForSpeechResponses();
 //        speechResponses = XmlSerialization.loadFromFile(ser, appSettings.speechFormatterFile.toString(), IMap.class);
@@ -247,7 +251,7 @@ public class JAtcSim {
 //        throw new EApplicationException(
 //                sf("Unable to load speech responses from xml file '%s'.", appSettings.speechFormatterFile), ex);
 //      }
-//      //TODO do somehow configurable
+      //TODO do somehow configurable - nahore se to nahrava. Nevim k cemu se to tady pouziva.
 //      gsi.parserFormatterStartInfo = new ParserFormatterStartInfo(
 //          new ParserFormatterStartInfo.Parsers(
 //              new PlaneParser(),

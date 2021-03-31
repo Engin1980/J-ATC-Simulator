@@ -19,6 +19,7 @@
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:element name="type" type="type" />
     </xs:sequence>
+    <xs:attribute name="icao" type="sh:nonEmptyString" use="required" />
   </xs:complexType>
 
   <xs:complexType name="company">

@@ -185,6 +185,10 @@ public class AppSettings implements IXPersistable {
     return radarStyleSettings;
   }
 
+  public DynamicPlaneFormatter getDynamicPlaneFormatter() {
+    return dynamicPlaneFormatter;
+  }
+
   private void loadInternalStuff() {
     this.radarStyleSettings = RadarStyleSettings.load(this.radar.styleSettingsFile);
     this.dynamicPlaneFormatter = DynamicPlaneFormatter.load(this.speechFormatterFile);

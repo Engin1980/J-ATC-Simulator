@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <airlinesFleets
         xmlns="https://github.com/Engin1980/J-ATC-Simulator/airlinesFleets">
-  <default>
+  <default icao="DEF">
     <type name="B737" weight="3"/>
     <type name="A319" weight="3"/>
     <type name="ATR72" weight="1"/>
