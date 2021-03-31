@@ -4,6 +4,7 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/abstractRadar/settings/xml" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -14,7 +15,6 @@
     <orderEntry type="module" module-name="AirplaneTypeLib" />
     <orderEntry type="module" module-name="MessagingLib" />
     <orderEntry type="module" module-name="SimulationLib" />
-    <orderEntry type="library" name="eng.eXmlSerialization (jAtcSim)" level="project" />
     <orderEntry type="module" module-name="SpeechesLib" />
     <orderEntry type="module" module-name="TextProcessingLib" />
     <orderEntry type="module" module-name="AnotherXml" />

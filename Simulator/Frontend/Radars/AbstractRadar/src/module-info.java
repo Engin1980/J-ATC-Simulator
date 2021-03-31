@@ -11,7 +11,6 @@ module JAtcSim.Modules.Frontend.Radars.AbstractRadarModule {
   requires java.desktop;
   requires JAtcSim.Modules.Backend.MessagingLib;
   requires JAtcSim.Modules.Backend.SimulationLib;
-  requires eng.eXmlSerialization;
   requires JAtcSim.Modules.Backend.SpeechesLib;
   requires JAtcSim.modules.backend.TextProcessingLib;
   requires AnotherXml;

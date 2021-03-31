@@ -1,6 +1,6 @@
 package eng.jAtcSim.abstractRadar.global;
 
-import eng.eXmlSerialization.XmlException;
+import eng.eSystem.exceptions.EApplicationException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,10 +24,10 @@ public class Color {
         int bi = Integer.parseInt(b, 16);
         ret = new Color(ri, gi, bi);
       } catch (Exception ex) {
-        throw new XmlException("Unable to parse \"" + hex + "\" into color.");
+        throw new EApplicationException("Unable to parse \"" + hex + "\" into color.");
       }
     } else
-      throw new XmlException("Unable to parse \"" + hex + "\" into color; value does not represent color.");
+      throw new EApplicationException("Unable to parse \"" + hex + "\" into color; value does not represent color.");
 
     return ret;
   }

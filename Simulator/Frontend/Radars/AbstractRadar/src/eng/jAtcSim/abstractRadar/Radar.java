@@ -10,7 +10,6 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
-import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.abstractRadar.global.*;
 import eng.jAtcSim.abstractRadar.global.events.EMouseEventArg;
 import eng.jAtcSim.abstractRadar.global.events.KeyEventArg;
