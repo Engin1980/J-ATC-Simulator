@@ -2,7 +2,6 @@ package eng.jAtcSim.newLib.area.approaches;
 
 import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 import eng.jAtcSim.newLib.shared.PostContracts;
-
 import exml.annotations.XConstructor;
 
 public class ApproachEntryCondition {
@@ -11,7 +10,7 @@ public class ApproachEntryCondition {
     invalidHeading, invalidLocation, thresholdNotInSight, invalidAltitude
   }
 
-  public static ApproachEntryCondition create (ICondition condition, ApproachRejectionReason rejectionReason){
+  public static ApproachEntryCondition create(ICondition condition, ApproachRejectionReason rejectionReason) {
     return new ApproachEntryCondition(condition, rejectionReason);
   }
 
