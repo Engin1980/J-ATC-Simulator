@@ -20,5 +20,6 @@
     <orderEntry type="module" module-name="WeatherLib" />
     <orderEntry type="module" module-name="TrafficLib" />
     <orderEntry type="module" module-name="StatsLib" />
+    <orderEntry type="module" module-name="AnotherXml" />
   </component>
 </module>

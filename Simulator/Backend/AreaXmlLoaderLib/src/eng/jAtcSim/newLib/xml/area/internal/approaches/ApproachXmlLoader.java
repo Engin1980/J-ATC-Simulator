@@ -149,8 +149,8 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
 
     aec = ApproachEntryCondition.create(
             PlaneShaCondition.create(PlaneShaCondition.eType.heading,
-                    (int) Headings.add(radialOpposite, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
-                    (int) Headings.add(radialOpposite, ENTRY_SECTOR_ONE_SIDE_ANGLE)),
+                    (int) Headings.add(radial, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    (int) Headings.add(radial, ENTRY_SECTOR_ONE_SIDE_ANGLE)),
             ApproachEntryCondition.ApproachRejectionReason.invalidHeading);
     ret.add(aec);
 
