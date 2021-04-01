@@ -12,7 +12,6 @@ package "Low-level"{
 [MoodLib] as mood
 [TrafficLib] as traffic
 [AirplaneTypeLib] as airplaneType
-
 }
 
 
@@ -21,8 +20,11 @@ package "Midle-level"{
 [SpeechesLib] as speeches
 }
 
-package "Upper-level"{
+package "Upper-level I"{
 [AreaLib] as area
+}
+
+package "Upper-level"{
 [WeatherLib] as weather
 [AtcLib] as atc
 [AirplanesLib] as airplanes
@@ -51,7 +53,7 @@ mood <-up- stats
 weather <-up- textProcessing
 speeches <-up- textProcessing
 
-area <-up- weather
+area <-down- weather
 
 shared <-up- traffic
 

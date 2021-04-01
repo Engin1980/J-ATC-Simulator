@@ -77,6 +77,10 @@ public class NewPack {
       item.getA().init(item.getB().getPanel(), vii);
     }
 
+    for (Tuple<IView, JFrameFactory.JPanelInfo> item : view2panelMap) {
+      item.getA().postInit();
+    }
+
     //printSummary(frames);
   }
 

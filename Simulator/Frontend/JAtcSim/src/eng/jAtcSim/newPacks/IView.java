@@ -6,4 +6,7 @@ import javax.swing.*;
 
 public interface IView {
   void init(JPanel panel, ViewInitInfo initInfo);
+
+  default void postInit() {
+  }
 }

@@ -4,6 +4,7 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
+import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.app.extenders.CommandInputTextFieldExtender;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParsersSet;
@@ -20,6 +21,8 @@ import eng.jAtcSim.newPacks.IView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class TextInputView implements IView {
 
@@ -61,9 +64,53 @@ public class TextInputView implements IView {
     this.parent.add(txt, BorderLayout.CENTER);
   }
 
+  @Override
+  public void postInit() {
+    Component cmp;
+    cmp = this.parent;
+    while (cmp instanceof JFrame == false)
+      cmp = cmp.getParent();
+
+    ComponentUtils.adjustComponentTree(cmp,
+            q -> q.getClass().equals(JTextField.class) == false,
+            q -> q.addKeyListener(new KeyAdapter() {
+              @Override
+              public void keyReleased(KeyEvent e) {
+                commandInputTextFieldExtender.appendText(Character.toString(e.getKeyChar()), false);
+                commandInputTextFieldExtender.focus();
+              }
+            })
+    );
+  }
+
+  //TODEL use or delete
+  //
+  //  public class CommandInputWrapper {
+//    public void addCommandTextToLine(char keyChar) {
+//      SwingRadarPanel.this.commandInputTextFieldExtender.appendText(Character.toString(keyChar), false);
+//    }
+//
+//    public void addCommandTextToLine(String text) {
+//      SwingRadarPanel.this.commandInputTextFieldExtender.appendText(text, true);
+//    }
+//
+//    public void eraseCommand() {
+//      SwingRadarPanel.this.commandInputTextFieldExtender.erase();
+//    }
+//
+//    public void sendCommand() {
+//      SwingRadarPanel.this.commandInputTextFieldExtender.send();
+//    }
+//
+//    public void setFocus() {
+//      SwingRadarPanel.this.commandInputTextFieldExtender.focus();
+//
+//    }
+//  }
+
   private JTextField buildTextField() {
     JTextField txtInput = new JTextField();
-    Font font = new Font("Courier New", Font.PLAIN, txtInput.getFont().getSize());
+    Font font = new Font("Courier New", Font.BOLD, txtInput.getFont().getSize()+8); //todo magic number hack, implement differently
     txtInput.setFont(font);
 
     this.commandInputTextFieldExtender = new CommandInputTextFieldExtender(txtInput,
@@ -79,13 +126,11 @@ public class TextInputView implements IView {
     return txtInput;
   }
 
-
   private void processError(CommandInputTextFieldExtender commandInputTextFieldExtender, CommandInputTextFieldExtender.ErrorEventArgs e) {
     String s = convertErrorToString(e.error, e.arguments);
     throw new ToDoException("Somehow let error in this is propagated let radar can show it.");
 //    this.radar.showMessageOnScreen(s);
   }
-
 
   private String convertErrorToString(CommandInputTextFieldExtender.ErrorType errorType, IReadOnlyMap<String, Object> arguments) {
     EStringBuilder sb = new EStringBuilder();
@@ -116,14 +161,12 @@ public class TextInputView implements IView {
     return sb.toString();
   }
 
-
   private ParsersSet buildParsers() {
     return new ParsersSet(
             new PlaneParser(),
             new AtcParser(),
             new SystemParser());
   }
-
 
   private void sendPlaneCommand(CommandInputTextFieldExtender commandInputTextFieldExtender, CommandInputTextFieldExtender.CommandEventArgs<Callsign, SpeechList<IForPlaneSpeech>> e) {
     this.sim.sendPlaneCommands(this.userAtcId, e.target, e.command);
