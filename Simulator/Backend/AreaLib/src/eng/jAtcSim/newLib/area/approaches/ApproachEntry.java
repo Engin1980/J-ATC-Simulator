@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.area.approaches;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
@@ -108,7 +109,7 @@ public class ApproachEntry {
 
     aec = ApproachEntryCondition.create(
             PlaneShaCondition.create(
-            PlaneShaCondition.eType.heading, fromRadial, toRadial),
+                    PlaneShaCondition.eType.heading, fromRadial, toRadial),
             ApproachEntryCondition.ApproachRejectionReason.invalidHeading);
     ret.add(aec);
 
@@ -148,6 +149,14 @@ public class ApproachEntry {
 
   public boolean isForCategory(char c) {
     return this.categoryDefinitions.contains(c);
+  }
+
+  @Override
+  public String toString() {
+    EStringBuilder sb = new EStringBuilder();
+    sb.appendFormat("Approach Entry '%s' ('%d' entries, '%d' stages)",
+            this.tag, this.entryConditions.size(), this.entryStages.size());
+    return sb.toString();
   }
 
   public ApproachEntry withTag(String tag) {

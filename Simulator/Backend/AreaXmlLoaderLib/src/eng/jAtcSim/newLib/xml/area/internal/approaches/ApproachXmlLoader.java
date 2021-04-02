@@ -109,11 +109,12 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     ISet<ApproachEntryCondition> ret = new ESet<>();
     ApproachEntryCondition aec;
     Navaid navaid = context.area.navaids.getWithPBD(fafName);
+    int courseOpposite = (int) Headings.getOpposite(course);
 
     aec = ApproachEntryCondition.create(
             FixRelatedLocation.create(navaid.getCoordinate(),
-                    (int) Headings.add(course, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
-                    (int) Headings.add(course, ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    (int) Headings.add(courseOpposite, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    (int) Headings.add(courseOpposite, ENTRY_SECTOR_ONE_SIDE_ANGLE),
                     MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH),
             ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
     ret.add(aec);
@@ -554,7 +555,6 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     String fafName = SmartXmlLoaderUtils.loadString("faf");
     String maptName = SmartXmlLoaderUtils.loadString("mapt");
     int initialAltitude = SmartXmlLoaderUtils.loadInteger("initialAltitude");
-//    double slope = ?? get from trheshold +
 
     Navaid faf = context.area.navaids.getWithPBD(fafName);
     Navaid mapt = context.area.navaids.getWithPBD(maptName);
@@ -563,21 +563,21 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     IList<ApproachEntry> entries = new EList<>();
     IReadOnlyList<IafRoute> iafRoutes = context.airport.iafMappings.get(iafMapping);
     for (IafRoute iafRoute : iafRoutes) {
-      ApproachEntry entry = ApproachEntry.createIaf(iafRoute);
+      ApproachEntry entry = ApproachEntry.createIaf(iafRoute).withTag(iafRoute.toString());
       entries.add(entry);
     }
 
     // entry via faf before faf
     {
       ISet<ApproachEntryCondition> entryConditions = createApproachEntryConditionForFafByFafName(fafName, radial);
-      ApproachEntry entry = ApproachEntry.create(entryConditions);
+      ApproachEntry entry = ApproachEntry.create(entryConditions).withTag("direct before FAF");
       entries.add(entry);
     }
 
     // entry before mapt to faf
     {
       ISet<ApproachEntryCondition> entryConditions = createApproachEntryConditionBetweenMaptAndFaf(maptName, fafName);
-      ApproachEntry entry = ApproachEntry.create(entryConditions);
+      ApproachEntry entry = ApproachEntry.create(entryConditions).withTag("direct between FAF and MAPt");
       entries.add(entry);
     }
 

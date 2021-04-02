@@ -37,6 +37,6 @@ public class IafRoute extends Route {
 
   @Override
   public String toString() {
-    return "IAF-route via " + navaid.getName();
+    return "IAF-route via " + navaid.getName() + "/" + this.category.toString();
   }
 }
