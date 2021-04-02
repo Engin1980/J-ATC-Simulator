@@ -18,13 +18,16 @@ public class FixRelatedLocation implements ILocation {
     return new FixRelatedLocation(coordinate, fromRadial, toRadial, maximalDistance);
   }
 
+  public static FixRelatedLocation create(Coordinate coordinate, int fromRadial, int toRadial){
+    return new FixRelatedLocation(coordinate, fromRadial, toRadial, Double.MAX_VALUE);
+  }
+
   private final Coordinate coordinate;
   private final Integer fromRadial;
   private final Integer toRadial;
   private final double maximalDistance;
 
   @XConstructor
-
   private FixRelatedLocation() {
     coordinate = null;
     fromRadial = null;

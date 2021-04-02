@@ -17,9 +17,9 @@ public class ApproachEntryCondition {
   private final ICondition entryCondition;
   private final ApproachRejectionReason rejectionReason;
 
-
   @XConstructor
   private ApproachEntryCondition() {
+    //TODEL this should not be called anytime
     entryCondition = null;
     rejectionReason = null;
 

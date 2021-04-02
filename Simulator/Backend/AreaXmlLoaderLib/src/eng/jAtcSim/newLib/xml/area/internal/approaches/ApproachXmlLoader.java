@@ -37,7 +37,9 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
 
   private final static int ENTRY_SECTOR_ONE_SIDE_ANGLE = 45;
   private final static int MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH = 20;
+  private final static int MAXIMAL_DISTANCE_AFTER_FAF_TO_ENTER_APPROACH = 3;
   private static final int DEFAULT_SLOPE = 3;
+  private static final int MAXIMAL_BELOW_ALTITUDE_DELTA = 500;
 
   public static double convertGlidePathDegreesToSlope(double gpDegrees) {
     return Math.tan(Math.toRadians(gpDegrees));
@@ -82,23 +84,27 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
   private ISet<ApproachEntryCondition> createApproachEntryConditionBetweenMaptAndFaf(String maptName, String fafName) {
     Navaid faf = this.context.area.navaids.getWithPBD(fafName);
     Navaid mapt = this.context.area.navaids.getWithPBD(maptName);
-    double radial = Coordinates.getBearing(faf.getCoordinate(), mapt.getCoordinate());
+    double course = Coordinates.getBearing(faf.getCoordinate(), mapt.getCoordinate());
+    double courseOpposite = Headings.getOpposite(course);
 
     ISet<ApproachEntryCondition> ret = new ESet<>();
     ApproachEntryCondition aec;
 
-    aec = ApproachEntryCondition.create(
-            FixRelatedLocation.create(mapt.getCoordinate(),
-                    (int) Headings.add(radial, -30),
-                    (int) Headings.add(radial, 30),
-                    MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH),
-            ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
+    aec = ApproachEntryCondition.create(new AggregatingCondition(
+            EList.of(
+                    FixRelatedLocation.create(mapt.getCoordinate(),
+                            (int) Headings.add(courseOpposite, -30),
+                            (int) Headings.add(courseOpposite, 30)),
+                    FixRelatedLocation.create(faf.getCoordinate(), MAXIMAL_DISTANCE_AFTER_FAF_TO_ENTER_APPROACH)
+            ),
+            AggregatingCondition.eConditionAggregator.and
+    ), ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
     ret.add(aec);
 
     aec = ApproachEntryCondition.create(
             PlaneShaCondition.create(PlaneShaCondition.eType.heading,
-                    (int) Headings.add(radial, -30),
-                    (int) Headings.add(radial, 30)),
+                    (int) Headings.add(course, -30),
+                    (int) Headings.add(course, 30)),
             ApproachEntryCondition.ApproachRejectionReason.invalidHeading);
     ret.add(aec);
 
@@ -130,28 +136,34 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
   }
 
   private ISet<ApproachEntryCondition> createApproachEntryConditionForThresholdAndSlope(
-          Coordinate coordinate, int coordinateAltitude, int radial, int altitude, double slope) {
+          Coordinate coordinate, int coordinateAltitude, int course, int altitude, double slope) {
     double dist = (altitude - coordinateAltitude) / slope / 6076.1;
+    double courseOpposite = Headings.getOpposite(course);
     Coordinate fafCoordinate = Coordinates.getCoordinate(
-            coordinate, Headings.getOpposite(radial), dist);
+            coordinate, courseOpposite, dist);
 
     ISet<ApproachEntryCondition> ret = new ESet<>();
     ApproachEntryCondition aec;
 
-    double radialOpposite = Headings.getOpposite(radial);
-
     aec = ApproachEntryCondition.create(
             FixRelatedLocation.create(fafCoordinate,
-                    (int) Headings.add(radialOpposite, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
-                    (int) Headings.add(radialOpposite, ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    (int) Headings.add(courseOpposite, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    (int) Headings.add(courseOpposite, ENTRY_SECTOR_ONE_SIDE_ANGLE),
                     MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH),
             ApproachEntryCondition.ApproachRejectionReason.invalidLocation);
     ret.add(aec);
 
     aec = ApproachEntryCondition.create(
+            PlaneShaCondition.create(
+                    PlaneShaCondition.eType.altitude,
+                    altitude - MAXIMAL_BELOW_ALTITUDE_DELTA, null),
+            ApproachEntryCondition.ApproachRejectionReason.invalidAltitude);
+    ret.add(aec);
+
+    aec = ApproachEntryCondition.create(
             PlaneShaCondition.create(PlaneShaCondition.eType.heading,
-                    (int) Headings.add(radial, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
-                    (int) Headings.add(radial, ENTRY_SECTOR_ONE_SIDE_ANGLE)),
+                    (int) Headings.add(course, -ENTRY_SECTOR_ONE_SIDE_ANGLE),
+                    (int) Headings.add(course, ENTRY_SECTOR_ONE_SIDE_ANGLE)),
             ApproachEntryCondition.ApproachRejectionReason.invalidHeading);
     ret.add(aec);
 

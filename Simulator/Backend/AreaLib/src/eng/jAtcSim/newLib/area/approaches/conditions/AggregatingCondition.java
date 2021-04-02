@@ -17,11 +17,10 @@ public class AggregatingCondition implements ICondition {
     return new AggregatingCondition(EList.of(conditions), aggregator);
   }
 
-  private final IList<ICondition> conditions;
+  private final IList<ICondition> conditions; //TODO should be set instead of list
   private final eConditionAggregator aggregator;
 
   @XConstructor
-
   private AggregatingCondition() {
     this.conditions = null;
     this.aggregator = eConditionAggregator.or;
