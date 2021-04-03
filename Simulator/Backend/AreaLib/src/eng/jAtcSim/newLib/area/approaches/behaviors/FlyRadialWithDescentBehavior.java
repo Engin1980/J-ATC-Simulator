@@ -24,7 +24,6 @@ public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
   private final int altitudeFixValue;
   private final double slope;
 
-
   @XConstructor
   private FlyRadialWithDescentBehavior(){
     super();

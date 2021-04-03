@@ -615,7 +615,9 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       );
 
       double slope =
-              (initialAltitude - context.airport.altitude) / Coordinates.getDistanceInNM(faf.getCoordinate(), context.threshold.coordinate);
+              (initialAltitude - context.airport.altitude)
+                      / 6076.1
+                      / Coordinates.getDistanceInNM(faf.getCoordinate(), context.threshold.coordinate);
       stages.add(ApproachStage.create(
               approachType + " final",
               FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.declination, context.airport.altitude, slope),
