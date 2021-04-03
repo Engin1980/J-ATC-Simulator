@@ -24,7 +24,6 @@ public class ApproachStage implements IXPersistable {
   }
 
   private final ICondition exitCondition;
-  @XIgnored
   private final ISet<ApproachErrorCondition> errorConditions;
   private final IApproachBehavior behavior;
   private final String name;

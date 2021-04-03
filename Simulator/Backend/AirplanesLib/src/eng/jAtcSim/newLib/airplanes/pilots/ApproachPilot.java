@@ -38,6 +38,8 @@ import exml.annotations.XIgnored;
 import exml.loading.XLoadContext;
 import exml.saving.XSaveContext;
 
+import javax.net.ssl.SSLContextSpi;
+
 public class ApproachPilot extends Pilot {
 
   private static final int MAX_HEADING_DIFFERENCE = 90;
@@ -166,6 +168,8 @@ public class ApproachPilot extends Pilot {
             rdr.getCoordinate(), behavior.getCoordinate(), behavior.getInboundRadialWithDeclination(),
             rdr.getSha().getSpeed(), MAX_HEADING_DIFFERENCE);
 
+    heading = updateHeadingByWind(heading);
+
     wrt.setTargetHeading(new HeadingNavigator(heading, LeftRightAny.any));
   }
 
@@ -174,6 +178,7 @@ public class ApproachPilot extends Pilot {
       flyToPointWithDescentBehavior((FlyToPointWithDescentBehavior) behavior);
     }
     double heading = Coordinates.getBearing(rdr.getCoordinate(), behavior.getCoordinate());
+    heading = updateHeadingByWind(heading);
     wrt.setTargetHeading(new HeadingNavigator(heading, LeftRightAny.any));
   }
 
@@ -290,7 +295,46 @@ public class ApproachPilot extends Pilot {
             rdr.getRouting().getAssignedRunwayThreshold().getOtherThreshold().getCoordinate(),
             rdr.getRouting().getAssignedRunwayThreshold().getCourse(), rdr.getSha().getSpeed());
 
+    hdg = updateHeadingByWind(hdg);
+
     wrt.setTargetHeading(new HeadingNavigator(hdg, LeftRightAny.any));
+  }
+
+  private double updateHeadingByWind(double hdg){
+    final double WIND_SPEED_CORRECTION_MULTIPLIER = 1/3d;
+    int windHdg = Context.getWeather().getWeather().getWindHeading();
+    int windSpd = Context.getWeather().getWeather().getWindSpeetInKts();
+    double windDelta = Headings.getDifference(hdg, windHdg, false);
+    boolean isLeft = windHdg < 180;
+    double windEffect = (windDelta % 180) / 180d;
+    windEffect = Math.sin(windEffect * Math.PI);
+    double windCorrection = windEffect * windSpd * WIND_SPEED_CORRECTION_MULTIPLIER;
+    if (isLeft)
+      windCorrection *= -1;
+
+    double ret = hdg + windCorrection;
+    return ret;
+
+
+    /*
+    To test above behavior this can be used:
+
+        int hdg = 220;
+
+    System.out.println("Plane heading: " + hdg);
+
+    int windSpeed = 8;
+
+    for (int i = 0; i < 360; i+=10) {
+      int windHdg = i;
+      double hdgDelta = Headings.getDifference(hdg, windHdg, false);
+      boolean isLeft = hdgDelta < 180;
+      double windEffect = (hdgDelta % 180) / 180d;
+      windEffect = Math.sin(windEffect * Math.PI);
+      double windCorrection = windEffect * windSpeed / 3 * (isLeft ? -1 : 1);
+      System.out.printf("%d : %.0f ( %.3f => %.0f ) - %s %n", windHdg, hdgDelta, windEffect, windCorrection, isLeft ? "left" : "right");
+    }
+     */
   }
 
   private boolean isAfterRunwayThreshold() {

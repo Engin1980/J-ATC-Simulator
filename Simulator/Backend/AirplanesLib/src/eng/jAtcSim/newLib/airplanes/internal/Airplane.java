@@ -7,6 +7,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
+import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
@@ -737,7 +738,7 @@ public class Airplane implements IXPersistable {
       Weather weather = Context.getWeather().getWeather();
       newC = Coordinates.getCoordinate(
               newC,
-              weather.getWindHeading(),
+              Headings.getOpposite(weather.getWindHeading()),
               UnitProvider.ftToNm(weather.getWindSpeedOrWindGustSpeed()));
     }
 

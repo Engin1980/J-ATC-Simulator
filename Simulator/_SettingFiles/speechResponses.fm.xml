@@ -143,12 +143,14 @@
   </response>
   <response type="GoingAroundNotification">
     <sentence kind="decisionPointRunwayNotInSight">Missed approach, runway not in sight</sentence>
-    <sentence kind="notStabilizedApproachEnter">Missed approach, not stabilized on the approach enter</sentence>
-    <sentence kind="notStabilizedOnFinal">Missed approach, not stabilized on the final</sentence>
-    <sentence kind="noLandingClearance">Missed approach, no landing clearance</sentence>
-    <sentence kind="lostTrafficSeparationInApproach">Missed approach, close to other traffic</sentence>
-    <sentence kind="windGustBeforeTouchdown">Missed approach due to weather</sentence>
-    <sentence kind="atcDecision">Missed approach ordered by ATC</sentence>
+    <sentence kind="incorrectApproachEnter">Missed approach, not stabilized on the approach enter</sentence>
+    <sentence kind="unstabilizedAltitude">Missed approach, not stabilized altitude</sentence>
+    <sentence kind="unstabilizedHeading">Missed approach, not established on heading</sentence>
+    <sentence kind="unstabilizedRadial">Missed approach, unable follow radial</sentence>
+    <sentence kind="notOnTowerAtc">Missed approach, no landing clearance</sentence>
+    <sentence kind="unknownUnusedProbablyBut__lostTrafficSeparationInApproach">Missed approach, close to other traffic</sentence>
+<!--    <sentence kind="-windGustBeforeTouchdown">Missed approach due to weather</sentence>-->
+    <sentence kind="orderedByAtc">Missed approach ordered by ATC</sentence>
   </response>
   <response type="ReportDivertTimeCommand">
     <sentence>N/A</sentence>
