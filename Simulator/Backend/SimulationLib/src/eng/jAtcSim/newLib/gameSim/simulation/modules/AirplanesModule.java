@@ -56,23 +56,13 @@ public class AirplanesModule extends SimulationModule {
   private final IList<AirplaneTemplate> planesPrepared = new EList<>();
 
   @XConstructor
-  private AirplanesModule() {
-    super((Simulation) null);
+  private AirplanesModule(XLoadContext ctx) {
+    super(ctx);
     this.airplanesController = null;
     this.airproxController = null;
     this.emergencyAppearanceController = null;
     this.moodManager = null;
     this.mrvaController = null;
-  }
-
-  @XConstructor
-  private AirplanesModule(XLoadContext ctx, AirplanesController airplanesController, AirproxController airproxController, EmergencyAppearanceController emergencyAppearanceController, MoodManager moodManager, MrvaController mrvaController) {
-    super(ctx);
-    this.airplanesController = airplanesController;
-    this.airproxController = airproxController;
-    this.emergencyAppearanceController = emergencyAppearanceController;
-    this.moodManager = moodManager;
-    this.mrvaController = mrvaController;
   }
 
   public AirplanesModule(Simulation parent, AirplanesController airplanesController, AirproxController airproxController, MrvaController mrvaController, EmergencyAppearanceController emergencyAppearanceController, MoodManager moodManager) {
