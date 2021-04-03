@@ -148,7 +148,7 @@ public class AirplanesModule extends SimulationModule {
 
     //TODEL
     //FIXME
-    if (parent.getAtcModule() == null) {
+    if (parent == null || parent.getAtcModule() == null) {
       System.out.println("Pauza - proč je to null???");
     }
 

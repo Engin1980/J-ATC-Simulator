@@ -34,7 +34,7 @@ public interface IAirplane extends IXPersistable {
 
   boolean isEmergency();
 
-  GoingAroundNotification.GoAroundReason pullLastGoAroundReasonIfAny();
+  GoingAroundNotification.GoAroundReason getAndClearLastGoAroundReasonIfAny();
 
   default boolean isDeparture() {
     return !isArrival();

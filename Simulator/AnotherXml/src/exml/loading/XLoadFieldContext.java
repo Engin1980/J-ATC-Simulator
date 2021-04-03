@@ -102,7 +102,12 @@ public class XLoadFieldContext {
     usedFieldEvidence.add(obj, itemsFieldName);
 
     Field field = SharedUtils.getField(obj.getClass(), itemsFieldName);
-    XElement itemsElement = elm.getChild(itemsFieldName);
+    XElement itemsElement = null;
+    try {
+      itemsElement = elm.getChild(itemsFieldName);
+    } catch (Exception e) {
+      throw new XLoadException(sf("Unable to load '%s.%s'.", obj.getClass().getName(), itemsFieldName), e, ctx);
+    }
 
     ctx.objects.loadItems(itemsElement, itemsContainer, itemType);
     setFieldValue(obj, field, itemsContainer);

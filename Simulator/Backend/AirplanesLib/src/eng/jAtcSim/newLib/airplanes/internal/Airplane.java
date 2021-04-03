@@ -260,7 +260,7 @@ public class Airplane implements IXPersistable {
     }
 
     @Override
-    public GoingAroundNotification.GoAroundReason pullLastGoAroundReasonIfAny() {
+    public GoingAroundNotification.GoAroundReason getAndClearLastGoAroundReasonIfAny() {
       GoingAroundNotification.GoAroundReason ret = Airplane.this.lastGoAroundReasonIfAny;
       if (ret != null) Airplane.this.lastGoAroundReasonIfAny = null;
       return ret;

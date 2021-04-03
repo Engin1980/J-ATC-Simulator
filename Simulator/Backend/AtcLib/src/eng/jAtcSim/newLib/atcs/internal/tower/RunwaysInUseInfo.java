@@ -18,9 +18,4 @@ public class RunwaysInUseInfo implements IXPersistable {
   public RunwayConfiguration getScheduled() {
     return scheduled;
   }
-
-  @Override
-  public void xSave(XElement elm, XSaveContext ctx) {
-    System.out.println("bubla");
-  }
 }

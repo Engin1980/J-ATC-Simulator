@@ -50,9 +50,7 @@ public class ApproachPilot extends Pilot {
 
   //TODEL probably unused
   private ApproachType type;
-  @XIgnored
   private final IList<ApproachStage> stages;
-  @XIgnored
   private final IList<ICommand> gaRouteCommands;
   private final ActiveRunwayThreshold threshold;
   private final int initialAltitude;

@@ -1,12 +1,9 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
-import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
-import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneConfirmation;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
 
@@ -26,7 +23,7 @@ public class ContactCommandApplication extends CommandApplication<ContactCommand
         false);
     plane.getWriter().sendMessage(s);
 
-    GoingAroundNotification.GoAroundReason lastGaReason = plane.getReader().pullLastGoAroundReasonIfAny();
+    GoingAroundNotification.GoAroundReason lastGaReason = plane.getReader().getAndClearLastGoAroundReasonIfAny();
     if (lastGaReason != null)
     {
       GoingAroundNotification gan = new GoingAroundNotification(lastGaReason);
