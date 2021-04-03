@@ -22,6 +22,7 @@
         <xs:attribute name="title" type="nonemptyString" use="optional"/>
         <xs:attribute name="style" type="windowStyle" use="optional"/>
         <xs:attribute name="withMenu" type="xs:boolean" use="optional"/>
+        <xs:attribute name="onCloseQuit" type="xs:boolean" use="optional"/>
     </xs:complexType>
 
     <xs:simpleType name="windowStyle">

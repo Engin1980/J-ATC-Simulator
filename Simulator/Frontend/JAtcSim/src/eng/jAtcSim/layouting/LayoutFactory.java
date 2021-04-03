@@ -43,11 +43,12 @@ public class LayoutFactory {
     Position position = loadPosition(elm.getChild("position"));
     String title = elm.getAttribute("title");
     boolean withMenu = elm.tryGetAttribute("withMenu", "false").equalsIgnoreCase("true");
+    boolean onCloseQuit = elm.tryGetAttribute("onCloseQuit", "false").equalsIgnoreCase("true");
     Block content = loadAnyBlock(elm);
     String styleS = elm.tryGetAttribute("style", "normal");
     Window.WindowStyle style = Window.WindowStyle.parse(styleS);
 
-    ret = new Window(position, content, title, style, withMenu);
+    ret = new Window(position, content, title, style, withMenu, onCloseQuit);
 
     return ret;
   }
@@ -79,8 +80,6 @@ public class LayoutFactory {
     }
 
     return ret;
-
-
   }
 
   private Block loadAnyBlock(XElement parentElement) {

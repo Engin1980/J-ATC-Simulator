@@ -26,8 +26,9 @@ class Window {
   private final String title;
   private final Block content;
   private final boolean withMenu;
+  private final boolean onCloseQuit;
 
-  public Window(Position position, Block content, String title, WindowStyle style, boolean withMenu) {
+  public Window(Position position, Block content, String title, WindowStyle style, boolean withMenu, boolean onCloseQuit) {
     EAssert.Argument.isNotNull(position, "position");
     EAssert.Argument.isNotNull(content, "content");
 
@@ -36,6 +37,7 @@ class Window {
     this.title = title;
     this.withMenu = withMenu;
     this.style = style;
+    this.onCloseQuit = onCloseQuit;
   }
 
   public Block getContent() {
@@ -56,5 +58,9 @@ class Window {
 
   public boolean isWithMenu() {
     return withMenu;
+  }
+
+  public boolean isOnCloseQuit() {
+    return onCloseQuit;
   }
 }

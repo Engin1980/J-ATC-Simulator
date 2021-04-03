@@ -101,6 +101,9 @@ public class JFrameFactory {
 
     JFrameInfo ret = new JFrameInfo(frame, panelInfos, menuSimProxy);
 
+    if (window.isOnCloseQuit())
+      frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
     return ret;
   }
 
