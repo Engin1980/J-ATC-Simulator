@@ -1,10 +1,11 @@
 package eng.jAtcSim.newLib.speeches.airplane.airplane2atc;
 
+import eng.eSystem.utilites.EnumUtils;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 
 public class GoingAroundNotification implements IFromPlaneSpeech {
 
-  public enum GoAroundReason{
+  public enum GoAroundReason {
     decisionPointRunwayNotInSight,
     incorrectApproachEnter,
     unstabilizedAltitude,
@@ -15,7 +16,19 @@ public class GoingAroundNotification implements IFromPlaneSpeech {
     //    noLandingClearance,
     //    windGustBeforeTouchdown,
     unknownUnusedProbablyBut__lostTrafficSeparationInApproach,
-    orderedByAtc
+    orderedByAtc;
+
+    private static final GoAroundReason[] ATC_FAIL_REASONS = {
+            GoingAroundNotification.GoAroundReason.unknownUnusedProbablyBut__lostTrafficSeparationInApproach,
+            GoingAroundNotification.GoAroundReason.notOnTowerAtc,
+            GoingAroundNotification.GoAroundReason.incorrectApproachEnter,
+            GoingAroundNotification.GoAroundReason.unstabilizedAltitude,
+            GoingAroundNotification.GoAroundReason.unstabilizedHeading
+    };
+
+    public boolean isAtcFail() {
+      return EnumUtils.is(this, ATC_FAIL_REASONS);
+    }
   }
 
   public GoAroundReason reason;
@@ -29,7 +42,7 @@ public class GoingAroundNotification implements IFromPlaneSpeech {
   }
 
   @Override
-  public String toString(){
+  public String toString() {
     String ret = "Going around due to " + reason + " {notification}";
 
     return ret;

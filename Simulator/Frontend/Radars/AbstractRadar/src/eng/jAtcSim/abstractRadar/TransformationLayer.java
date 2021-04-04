@@ -254,7 +254,7 @@ class TransformationLayer {
     c.drawLine(f, t, color, width);
 
     if (numberOfParts >= 1) {
-      Color bck = new Color(0,0,0);
+      Color bck = new Color(0,0,0); //TODO this black here is a hack// i need it do it to be drawn as separated lines
       double dx = t.x - f.x;
       double dy = t.y - f.y;
       double px = dx / (numberOfParts);

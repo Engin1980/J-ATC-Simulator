@@ -338,15 +338,7 @@ public class Airplane implements IXPersistable {
 
       Airplane.this.lastGoAroundReasonIfAny = reason;
 
-      boolean isAtcFail = EnumUtils.is(reason,
-              new GoingAroundNotification.GoAroundReason[]{
-                      GoingAroundNotification.GoAroundReason.unknownUnusedProbablyBut__lostTrafficSeparationInApproach,
-                      GoingAroundNotification.GoAroundReason.notOnTowerAtc,
-                      GoingAroundNotification.GoAroundReason.incorrectApproachEnter,
-                      GoingAroundNotification.GoAroundReason.unstabilizedAltitude,
-                      GoingAroundNotification.GoAroundReason.unstabilizedHeading
-              });
-      if (isAtcFail)
+      if (reason.isAtcFail())
         this.addExperience(
                 Mood.ArrivalExperience.goAroundNotCausedByPilot);
 
@@ -364,7 +356,7 @@ public class Airplane implements IXPersistable {
 
       setPilotAndState(
               new ArrivalPilot(Airplane.this),
-              AirplaneState.arrivingCloseFaf
+              AirplaneState.arrivingLow
       );
     }
 

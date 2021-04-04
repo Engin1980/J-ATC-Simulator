@@ -266,7 +266,8 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
 
     IList<ApproachStage> stages = new EList<>();
     ISet<ApproachErrorCondition> errs = ApproachErrorCondition.createSet(
-            PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, context.airport.altitude + 150), GoingAroundNotification.GoAroundReason.unstabilizedHeading
+            PlaneShaCondition.create(PlaneShaCondition.eType.altitude, null, context.airport.altitude + 150),
+            GoingAroundNotification.GoAroundReason.unstabilizedHeading
     );
     stages.add(ApproachStage.create(
             "Visual-default final descend",

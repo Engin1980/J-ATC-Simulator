@@ -46,9 +46,9 @@ public class ArrivalPilot extends BasicPilot {
   protected AirplaneState[] getInitialStates() {
     return new AirplaneState[]{
             AirplaneState.arrivingHigh,
-            AirplaneState.arrivingLow,
-            AirplaneState.arrivingCloseFaf,
-            AirplaneState.flyingIaf2Faf
+            AirplaneState.arrivingLow
+//            AirplaneState.arrivingCloseFaf
+//            AirplaneState.flyingIaf2Faf // todo is this really required? plane should not enter arrival pilot with this state, or should?
     };
   }
 

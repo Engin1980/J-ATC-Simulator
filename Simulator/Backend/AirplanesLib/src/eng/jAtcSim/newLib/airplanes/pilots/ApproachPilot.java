@@ -34,11 +34,8 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ThenCommand;
 import exml.annotations.XConstructor;
-import exml.annotations.XIgnored;
 import exml.loading.XLoadContext;
 import exml.saving.XSaveContext;
-
-import javax.net.ssl.SSLContextSpi;
 
 public class ApproachPilot extends Pilot {
 
@@ -266,7 +263,25 @@ public class ApproachPilot extends Pilot {
       }
     }
 
+    if (isOverThresholdLandingAndTooHigh()) {
+      goAround(GoingAroundNotification.GoAroundReason.unstabilizedAltitude);
+      return;
+    }
+
     updateApproachState();
+  }
+
+  private boolean isOverThresholdLandingAndTooHigh() {
+    boolean ret;
+    IApproachBehavior beh = stages.getFirst().getBehavior();
+    if (beh instanceof FlyRadialWithDescentBehavior || beh instanceof LandingBehavior) {
+      // if over threshold and too high
+      ret = (.5 > Coordinates.getDistanceInNM(rdr.getCoordinate(), this.getRunwayThreshold().getCoordinate()))
+              && (400 < rdr.getSha().getAltitude() - rdr.getSha().getTargetAltitude());
+    } else
+      ret = false;
+
+    return ret;
   }
 
   private void flyLandingBehavior(LandingBehavior beh) {
@@ -300,8 +315,8 @@ public class ApproachPilot extends Pilot {
     wrt.setTargetHeading(new HeadingNavigator(hdg, LeftRightAny.any));
   }
 
-  private double updateHeadingByWind(double hdg){
-    final double WIND_SPEED_CORRECTION_MULTIPLIER = 1/3d;
+  private double updateHeadingByWind(double hdg) {
+    final double WIND_SPEED_CORRECTION_MULTIPLIER = 1 / 3d;
     int windHdg = Context.getWeather().getWeather().getWindHeading();
     int windSpd = Context.getWeather().getWeather().getWindSpeetInKts();
     double windDelta = Headings.getDifference(hdg, windHdg, false);
