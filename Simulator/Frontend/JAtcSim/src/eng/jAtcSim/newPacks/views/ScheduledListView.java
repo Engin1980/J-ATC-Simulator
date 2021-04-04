@@ -1,6 +1,7 @@
 package eng.jAtcSim.newPacks.views;
 
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
@@ -22,8 +23,8 @@ public class ScheduledListView implements IView {
   private Integer itemCount = null;
   private JPanel parent;
 
-
-  public void init(JPanel panel, ViewInitInfo initInfo) {
+  @Override
+  public void init(JPanel panel, ViewInitInfo initInfo, IReadOnlyMap<String, String> options) {
     this.parent = panel;
     this.sim = initInfo.getSimulation();
     ScheduledFlightStripPanel.setStripSettings(initInfo.getSettings().getFlightStripSettings());

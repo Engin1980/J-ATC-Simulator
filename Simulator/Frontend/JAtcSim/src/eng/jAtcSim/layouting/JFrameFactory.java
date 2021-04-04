@@ -1,6 +1,7 @@
 package eng.jAtcSim.layouting;
 
 import eng.eSystem.collections.ESet;
+import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.validation.EAssert;
 
@@ -39,13 +40,20 @@ public class JFrameFactory {
   public static class JPanelInfo {
     private final JPanel panel;
     private final String viewName;
+    private final IReadOnlyMap<String, String> options;
 
-    public JPanelInfo(JPanel panel, String viewName) {
+    public JPanelInfo(JPanel panel, String viewName, IReadOnlyMap<String, String> options) {
       EAssert.Argument.isNotNull(panel, "panel");
       EAssert.Argument.isNonemptyString(viewName, "viewName");
+      EAssert.Argument.isNotNull(options, "options");
 
       this.panel = panel;
       this.viewName = viewName;
+      this.options = options;
+    }
+
+    public IReadOnlyMap<String, String> getOptions() {
+      return options;
     }
 
     public JPanel getPanel() {
@@ -56,6 +64,7 @@ public class JFrameFactory {
       return viewName;
     }
   }
+
   public static final boolean COLORIZE_PANELS = false;
 
   public ISet<JFrameInfo> build(Layout layout) {
@@ -135,7 +144,7 @@ public class JFrameFactory {
   }
 
   private void buildPanelContent(JPanel pane, Panel content, ISet<JPanelInfo> panelInfos) {
-    panelInfos.add(new JPanelInfo(pane, content.getView()));
+    panelInfos.add(new JPanelInfo(pane, content.getView(), content.getOptions()));
   }
 
   private void buildPanelContent(JPanel parent, ColumnList columns, ISet<JPanelInfo> panelInfos) {

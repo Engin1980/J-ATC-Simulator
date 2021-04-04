@@ -14,6 +14,9 @@
   <airproxPartial>880000</airproxPartial>
   <mrvaError>FF0066</mrvaError>
 
+  <headingLineLength>120</headingLineLength>
+  <headingLineSectionCount>4</headingLineSectionCount>
+
   <activeRunway color="FFFFFF" width="3"/>
   <closedRunway color="FFAAAA" width="3"/>
 
@@ -94,8 +97,9 @@
   -->
 
   <uncontrolled color="AAAAAA" connectorColor="AAAAAA"
-                pointWidth="5" headingLineLength="60"
+                pointWidth="5"
                 historyDotCount="5" historyDotStep="3"
+                showHeadingLine="true"
                 separationRingRadius="5"
                 firstLineFormat="{1}"
                 secondLineFormat="{34} {22}"
@@ -103,7 +107,8 @@
 
   <stopped visible="false" color="000000"
            connectorColor="000000"
-           pointWidth="0" headingLineLength="0"
+           pointWidth="0"
+           showHeadingLine="false"
            historyDotCount="0" historyDotStep="5"
            separationRingRadius="0"
            firstLineFormat=""
@@ -111,7 +116,8 @@
            thirdLineFormat=""/>
 
   <app color="00FF00" connectorColor="008800"
-       pointWidth="7" headingLineLength="60"
+       pointWidth="7"
+       showHeadingLine="true"
        historyDotCount="10" historyDotStep="3"
        separationRingRadius="5"
        firstLineFormat="{1}"
@@ -119,7 +125,8 @@
        thirdLineFormat="{8} {4}"/>
 
   <ctr color="44AAFF" connectorColor="54BAFF"
-       pointWidth="5" headingLineLength="60"
+       pointWidth="5"
+       showHeadingLine="true"
        historyDotCount="5" historyDotStep="3"
        separationRingRadius="5"
        firstLineFormat="{1}"
@@ -127,7 +134,8 @@
        thirdLineFormat="{8} {4}"/>
 
   <twr color="5F5F10" connectorColor="282810"
-       pointWidth="5" headingLineLength="60"
+       pointWidth="5"
+       showHeadingLine="true"
        historyDotCount="5" historyDotStep="3"
        separationRingRadius="5"
        firstLineFormat="{1}"
@@ -135,7 +143,8 @@
        thirdLineFormat="{8} {4}"/>
 
   <selected color="FFFF00" connectorColor="888800"
-            pointWidth="7" headingLineLength="60"
+            pointWidth="7"
+            showHeadingLine="true"
             historyDotCount="10" historyDotStep="3"
             separationRingRadius="5"
             firstLineFormat="{1}"
@@ -143,7 +152,8 @@
             thirdLineFormat="{8} {4}"/>
 
   <emergency color="FF0000" connectorColor="880000"
-             pointWidth="7" headingLineLength="60"
+             pointWidth="7"
+             showHeadingLine="true"
              historyDotCount="10" historyDotStep="3"
              separationRingRadius="5"
              firstLineFormat="{1}"

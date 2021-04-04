@@ -74,7 +74,7 @@ public class NewPack {
     vii.setDynamicAirplaneSpeechFormatter(this.settings.getDynamicPlaneFormatter()); //TODO improve somehow
 
     for (Tuple<IView, JFrameFactory.JPanelInfo> item : view2panelMap) {
-      item.getA().init(item.getB().getPanel(), vii);
+      item.getA().init(item.getB().getPanel(), vii, item.getB().getOptions());
     }
 
     for (Tuple<IView, JFrameFactory.JPanelInfo> item : view2panelMap) {

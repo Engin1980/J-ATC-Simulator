@@ -8,10 +8,14 @@
         </column>
         <column width="*">
             <row height="*">
-                <panel view="radarView+"/>
+                <panel view="radarView">
+                    <option key="showMessages" value="true"/>
+                </panel>
             </row>
             <row height="30px">
-                <panel view="textInputView"/>
+                <panel view="textInputView">
+                    <option key="stealKeyFrom" value="*"/>
+                </panel>
             </row>
         </column>
         <column width="225px">

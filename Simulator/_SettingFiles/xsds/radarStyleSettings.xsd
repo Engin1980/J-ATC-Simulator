@@ -17,6 +17,9 @@
       <xs:element name="airproxPartial" type="sh:colorElement"/>
       <xs:element name="mrvaError" type="sh:colorElement"/>
 
+      <xs:element name="headingLineLength" type="xs:nonNegativeInteger" />
+      <xs:element name="headingLineSectionCount" type="xs:nonNegativeInteger" />
+
       <xs:element name="activeRunway" type="colorWidthElement" />
       <xs:element name="closedRunway" type="colorWidthElement" />
 
@@ -71,7 +74,7 @@
     <xs:attribute name="color" type="sh:colorValue" use="required" />
     <xs:attribute name="connectorColor" type="sh:colorValue" use="required" />
     <xs:attribute name="pointWidth" type="xs:nonNegativeInteger" use="required" />
-    <xs:attribute name="headingLineLength" type="xs:nonNegativeInteger" use="required" />
+    <xs:attribute name="showHeadingLine" type="xs:boolean" use="required" />
     <xs:attribute name="historyDotCount" type="xs:nonNegativeInteger" use="required" />
     <xs:attribute name="historyDotStep" type="xs:positiveInteger" use="required" />
     <xs:attribute name="separationRingRadius" type="xs:nonNegativeInteger" use="required" />

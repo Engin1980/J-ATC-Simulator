@@ -2,10 +2,7 @@ package eng.jAtcSim.newPacks.views;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.Tuple;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.functionalInterfaces.Selector;
@@ -163,7 +160,7 @@ public class RadarView implements IView {
   }
 
   @Override
-  public void init(JPanel panel, ViewInitInfo initInfo) {
+  public void init(JPanel panel, ViewInitInfo initInfo, IReadOnlyMap<String, String> options) {
     this.parent = panel;
 
     this.sim = initInfo.getSimulation();
@@ -181,6 +178,11 @@ public class RadarView implements IView {
 
     this.parent.add(pnlContent, BorderLayout.CENTER);
     this.parent.add(pnlTop, BorderLayout.PAGE_START);
+
+    if (options.tryGet("showMessages", "false").equals("true"))
+      this.getBehaviorSettings().setPaintMessages(true);
+    else
+      this.getBehaviorSettings().setPaintMessages(false);
 
     // TODO solve somehow key presses
 //    this.parent.addFocusListener(new FocusAdapter() {
@@ -238,7 +240,6 @@ public class RadarView implements IView {
 //    canvas.getGuiControl().addKeyListener(new MyKeyListener(this.txtInput));
     return ret;
   }
-
 
   private JPanel buildTopPanel() {
     JPanel ret = new JPanel();

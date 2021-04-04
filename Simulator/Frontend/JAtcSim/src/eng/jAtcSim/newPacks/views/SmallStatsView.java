@@ -1,5 +1,6 @@
 package eng.jAtcSim.newPacks.views;
 
+import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.recent.RecentStats;
@@ -59,7 +60,7 @@ public class SmallStatsView implements IView {
   private JPanel parent;
 
   @Override
-  public void init(JPanel panel, ViewInitInfo initInfo) {
+  public void init(JPanel panel, ViewInitInfo initInfo, IReadOnlyMap<String, String> options) {
     this.parent = panel;
     this.initComponents();
     this.stats = initInfo.getSimulation().getStats();

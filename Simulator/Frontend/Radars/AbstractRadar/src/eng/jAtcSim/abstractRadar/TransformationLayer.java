@@ -5,10 +5,6 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.abstractRadar.global.*;
-import eng.jAtcSim.abstractRadar.global.Color;
-import eng.jAtcSim.abstractRadar.global.Font;
-import eng.jAtcSim.abstractRadar.global.Point;
-import eng.jAtcSim.abstractRadar.global.Rectangle;
 
 import java.util.List;
 
@@ -17,8 +13,8 @@ class TransformationLayer {
   private static class Rotator {
 
     private static int[][] poss = {{1, 0}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1},
-        {-1, 2}, {0, 2}, {1, 2}, {2, 2}, {2, 1}, {2, 0}, {2, -1}, {2, -2}, {1, -2}, {0, -2},
-        {-1, -2}, {-2, -2}, {-2, -1}, {-2, 0}, {-2, 1}, {-2, 2}};
+            {-1, 2}, {0, 2}, {1, 2}, {2, 2}, {2, 1}, {2, 0}, {2, -1}, {2, -2}, {1, -2}, {0, -2},
+            {-1, -2}, {-2, -2}, {-2, -1}, {-2, 0}, {-2, 1}, {-2, 2}};
     private int width;
     private int height;
     private int index;
@@ -29,15 +25,15 @@ class TransformationLayer {
       this.index = -1;
     }
 
-    public boolean hasNext() {
-      index++;
-      boolean ret = index < poss.length;
-      return ret;
-    }
-
     public Point convert(Point p) {
       int[] c = poss[index];
       Point ret = new Point(p.x + c[0] * width, p.y + c[1] * height);
+      return ret;
+    }
+
+    public boolean hasNext() {
+      index++;
+      boolean ret = index < poss.length;
       return ret;
     }
   }
@@ -55,8 +51,8 @@ class TransformationLayer {
         return null;
 
       double d = Math.min(
-          Point.getManhattanDistance(planePoint, r.a),
-          Point.getManhattanDistance(planePoint, r.d));
+              Point.getManhattanDistance(planePoint, r.a),
+              Point.getManhattanDistance(planePoint, r.d));
 
       if (d < MINIMAL_DISTANCE_TO_DRAW_CONNECTOR)
         return null;
@@ -173,10 +169,39 @@ class TransformationLayer {
     this.initialData = new InitialData(center, widthInNm);
     topLeft = center;
     bottomRight = new Coordinate(
-        center.getLatitude().add(1),
-        center.getLongitude().add(1)
+            center.getLatitude().add(1),
+            center.getLongitude().add(1)
     );
     resetPosition();
+  }
+
+  public void adjustPlaneLabelOverlying(int width, int height) {
+    this.labelManager.adjustDetectionRegion(width, height);
+  }
+
+  public void drawAltitudeRangeText(Coordinate coordinate,
+                                    String minAltitudeLabel, String maxAltitudeLabel,
+                                    int xShiftInPixels, int yShiftInPixels,
+                                    Font font, Color color) {
+    Point p = toPoint(coordinate);
+    c.drawAltitudeRangeBoundedBetween(p, minAltitudeLabel, maxAltitudeLabel, xShiftInPixels, yShiftInPixels, font, color);
+  }
+
+  public Coordinate getMiddle() {
+    Coordinate ret = new Coordinate(
+            (topLeft.getLatitude().getTotalDegrees() + bottomRight.getLatitude().getTotalDegrees()) / 2d,
+            (topLeft.getLongitude().getTotalDegrees() + bottomRight.getLongitude().getTotalDegrees()) / 2d
+    );
+    return ret;
+  }
+
+  public boolean isReady() {
+    return isMeReady && c.isReady();
+  }
+
+  public void registerPlanePoint(Coordinate coordinate) {
+    Point p = toPoint(coordinate);
+    labelManager.addPoint(p);
   }
 
   public Coordinate toCoordinate(Point point) {
@@ -202,24 +227,6 @@ class TransformationLayer {
     return new Point((int) resWidth, (int) resHeight);
   }
 
-  public void adjustPlaneLabelOverlying(int width, int height) {
-    this.labelManager.adjustDetectionRegion(width, height);
-  }
-
-  public void registerPlanePoint(Coordinate coordinate) {
-    Point p = toPoint(coordinate);
-    labelManager.addPoint(p);
-  }
-
-  public Coordinate getMiddle() {
-    Coordinate ret = new Coordinate(
-        (topLeft.getLatitude().getTotalDegrees() + bottomRight.getLatitude().getTotalDegrees()) / 2d,
-        (topLeft.getLongitude().getTotalDegrees() + bottomRight.getLongitude().getTotalDegrees()) / 2d
-         );
-    return ret;
-  }
-
-
   Coordinate getTopLeft() {
     return topLeft;
   }
@@ -237,15 +244,53 @@ class TransformationLayer {
   }
 
   void drawLine(Coordinate from, Coordinate to, Color color, int width) {
+    this.drawLine(from, to, color, width, 1, 0);
+  }
+
+  void drawLine(Coordinate from, Coordinate to, Color color, int width, int numberOfParts, int spaceWidth) {
     Point f = toPoint(from);
     Point t = toPoint(to);
 
     c.drawLine(f, t, color, width);
+
+    if (numberOfParts >= 1) {
+      Color bck = new Color(0,0,0);
+      double dx = t.x - f.x;
+      double dy = t.y - f.y;
+      double px = dx / (numberOfParts);
+      double py = dy / (numberOfParts);
+      for (int i = 1; i < numberOfParts; i++) {
+        int x = (int) (f.x + i * px);
+        int y = (int) (f.y + i * py);
+        c.drawPoint(x, y, bck, 4);
+      }
+    }
+
+//    else {
+//      double dx = t.x - f.x;
+//      double dy = t.y - f.y;
+//      double px = dx / numberOfParts;
+//      double py = dy / numberOfParts;
+//      double sx = spaceWidth;
+//      double sy = spaceWidth;
+//
+//      for (int i = 0; i < numberOfParts; i++) {
+//        double txf = f.x + i * (px + sx);
+//        double tyf = f.y + i * (py + sx);
+//        double txt = txf + px;
+//        double tyt = tyf + px;
+//
+//        c.drawLine(
+//                (int) Math.ceil(txf), (int) Math.ceil(tyf),
+//                (int) Math.floor(txt), (int) Math.floor(tyt),
+//                color, width);
+//      }
+//    }
   }
 
-  void drawLineByHeadingAndDistance(Coordinate from, int heading, double lengthInNM, Color color, int width) {
+  void drawLineByHeadingAndDistance(Coordinate from, int heading, double lengthInNM, Color color, int width, int numberOfParts) {
     Coordinate to = Coordinates.getCoordinate(from, heading, lengthInNM);
-    drawLine(from, to, color, width);
+    this.drawLine(from, to, color, width, numberOfParts, 2);
   }
 
   void drawPoint(Coordinate coordinate, Color color, int width) {
@@ -273,15 +318,6 @@ class TransformationLayer {
     Point p = toPoint(coordinate);
     c.drawText(text, p, xShiftInPixels, yShiftInPixels, font, color);
   }
-
-  public void drawAltitudeRangeText(Coordinate coordinate,
-                                    String minAltitudeLabel, String maxAltitudeLabel,
-                                    int xShiftInPixels, int yShiftInPixels,
-                                    Font font, Color color) {
-    Point p = toPoint(coordinate);
-    c.drawAltitudeRangeBoundedBetween(p, minAltitudeLabel, maxAltitudeLabel, xShiftInPixels, yShiftInPixels, font, color);
-  }
-
 
   void drawPlaneLabel(String text, boolean isFixed, Coordinate coordinate, Point pixelShift, Font font, Color color, Color connectorColor) {
     Point op = toPoint(coordinate);
@@ -328,10 +364,6 @@ class TransformationLayer {
 
   void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color) {
     c.drawTextBlock(lines, location, font, color);
-  }
-
-  public boolean isReady(){
-    return isMeReady && c.isReady();
   }
 
   void drawCross(Coordinate coordinate, Color color, int length, int width) {
@@ -381,9 +413,9 @@ class TransformationLayer {
       this.scale = initialData.widthInNm / c.getWidth();
 
       Coordinate localTopLeft = Coordinates.getCoordinate(
-          initialData.center, 270, initialData.widthInNm / 2);
+              initialData.center, 270, initialData.widthInNm / 2);
       localTopLeft = Coordinates.getCoordinate(
-          localTopLeft, 0, this.getHeightInNm() / 2);
+              localTopLeft, 0, this.getHeightInNm() / 2);
       this.topLeft = localTopLeft;
       this.initialData = null;
     }
@@ -402,9 +434,9 @@ class TransformationLayer {
     double mh = bottomRight.getLatitude().get() - topLeft.getLatitude().get();
 
     double latD
-        = point.y / (double) c.getHeight() * mh;
+            = point.y / (double) c.getHeight() * mh;
     double lonD
-        = point.x / (double) c.getWidth() * mw;
+            = point.x / (double) c.getWidth() * mw;
     Coordinate ret = new Coordinate(-latD, -lonD);
     return ret;
   }

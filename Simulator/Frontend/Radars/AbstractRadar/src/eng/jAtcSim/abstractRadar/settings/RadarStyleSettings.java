@@ -102,7 +102,7 @@ public class RadarStyleSettings implements IXPersistable {
     @XAttribute
     private int pointWidth;
     @XAttribute
-    private int headingLineLength;
+    private boolean showHeadingLine;
     @XAttribute
     private int historyDotCount;
     @XAttribute
@@ -136,12 +136,12 @@ public class RadarStyleSettings implements IXPersistable {
       this.firstLineFormat = firstLineFormat;
     }
 
-    public int getHeadingLineLength() {
-      return headingLineLength;
+    public boolean isShowHeadingLine() {
+      return showHeadingLine;
     }
 
-    public void setHeadingLineLength(int headingLineLength) {
-      this.headingLineLength = headingLineLength;
+    public void setShowHeadingLine(boolean showHeadingLine) {
+      this.showHeadingLine = showHeadingLine;
     }
 
     public int getHistoryDotCount() {
@@ -264,6 +264,10 @@ public class RadarStyleSettings implements IXPersistable {
   public ColorWidthSettings borderCtr;
   public ColorWidthSettings borderTma;
   public ColorWidthFontSettings borderMrva;
+
+  //line
+  public int headingLineLength;
+  public int headingLineSectionCount;
 
   // mapBack
   public ColorWidthFontSettings borderRestricted;

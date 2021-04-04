@@ -3,6 +3,7 @@ package eng.jAtcSim.newPacks.views;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.events.Event;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.swing.LayoutManager;
@@ -42,7 +43,8 @@ public class FlightListView implements IView, ICanSelectCallsign {
     }
   }
 
-  public void init(JPanel panel, ViewInitInfo initInfo) {
+  @Override
+  public void init(JPanel panel, ViewInitInfo initInfo, IReadOnlyMap<String, String> options) {
     this.parent = panel;
     this.sim = initInfo.getSimulation();
     FlightStripPanel.setStripSettings(initInfo.getSettings().getFlightStripSettings());

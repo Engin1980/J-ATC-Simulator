@@ -1,5 +1,6 @@
 package eng.jAtcSim.newPacks.views;
 
+import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
@@ -45,7 +46,7 @@ public class AppLogView implements IView {
   private final Color criticalColor = Color.RED;
 
   @Override
-  public void init(JPanel panel, ViewInitInfo initInfo) {
+  public void init(JPanel panel, ViewInitInfo initInfo, IReadOnlyMap<String, String> options) {
     this.parent = panel;
     parent.add(scr);
     // keeps window on top; disabled

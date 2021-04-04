@@ -54,7 +54,7 @@ public class TextInputView implements IView {
   private AtcId userAtcId;
 
   @Override
-  public void init(JPanel panel, ViewInitInfo initInfo) {
+  public void init(JPanel panel, ViewInitInfo initInfo, IReadOnlyMap<String, String> options) {
     this.parent = panel;
     this.sim = initInfo.getSimulation();
     this.userAtcId = initInfo.getUserAtcId();
@@ -71,6 +71,7 @@ public class TextInputView implements IView {
     while (cmp instanceof JFrame == false)
       cmp = cmp.getParent();
 
+    //TODO fixed here, but should be somehow set-able using layout.xml
     ComponentUtils.adjustComponentTree(cmp,
             q -> q.getClass().equals(JTextField.class) == false,
             q -> q.addKeyListener(new KeyAdapter() {

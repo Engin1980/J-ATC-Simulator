@@ -814,9 +814,9 @@ public class Radar {
 
     // plane dot and direction line
     tl.drawPlanePoint(adi.coordinate, c, dp.getPointWidth()); // point of plane
-    if (this.displaySettings.isPlaneHeadingLineVisible()) {
-      double len = adi.tas * dp.getHeadingLineLength() / 3600d;
-      tl.drawLineByHeadingAndDistance(adi.coordinate, adi.heading, len, c, 1);
+    if (this.displaySettings.isPlaneHeadingLineVisible() && dp.isShowHeadingLine()) {
+      double len = adi.tas * styleSettings.headingLineLength / 3600d;
+      tl.drawLineByHeadingAndDistance(adi.coordinate, adi.heading, len, c, 1 , styleSettings.headingLineSectionCount);
     }
 
     // separation ring

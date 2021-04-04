@@ -1,9 +1,6 @@
 package eng.jAtcSim.layouting;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.ESet;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.ISet;
+import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
@@ -146,8 +143,15 @@ public class LayoutFactory {
     String view = elm.getAttribute("view");
     String id = elm.tryGetAttribute("id", view);
 
-    Panel panel = new Panel(view);
-    panel.setId(id);
+    IMap<String, String> options = new EMap<>();
+    elm.getChildren("option").forEach(q->
+    {
+      String k = q.getAttribute("key");
+      String v = q.getAttribute("value");
+      options.set(k,v);
+    });
+
+    Panel panel = new Panel(view, id, options);
 
     return panel;
   }

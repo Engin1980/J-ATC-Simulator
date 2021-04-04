@@ -13,21 +13,12 @@ public class ViewFactory {
 
   static {
     viewMap = new EMap<>();
-    viewMap.set("flightListView", () -> new FlightListView());
-    viewMap.set("radarView+", () -> {
-      RadarView ret = new RadarView();
-      ret.getBehaviorSettings().setPaintMessages(true);
-      return ret;
-    });
-    viewMap.set("radarView", () -> {
-      RadarView ret = new RadarView();
-      ret.getBehaviorSettings().setPaintMessages(false);
-      return ret;
-    });
-    viewMap.set("textInputView", () -> new TextInputView());
-    viewMap.set("scheduledListView", () -> new ScheduledListView());
-    viewMap.set("smallStatsView", () -> new SmallStatsView());
-    viewMap.set("appLogView", () -> new AppLogView());
+    viewMap.set("flightListView", FlightListView::new);
+    viewMap.set("radarView", RadarView::new);
+    viewMap.set("textInputView", TextInputView::new);
+    viewMap.set("scheduledListView", ScheduledListView::new);
+    viewMap.set("smallStatsView", SmallStatsView::new);
+    viewMap.set("appLogView", AppLogView::new);
   }
 
   public static IView getView(String viewName) {

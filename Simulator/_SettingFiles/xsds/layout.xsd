@@ -60,8 +60,16 @@
     </xs:complexType>
 
     <xs:complexType name="panel">
+        <xs:choice>
+            <xs:element name="option" type="option" minOccurs="0" maxOccurs="unbounded" />
+        </xs:choice>
         <xs:attribute name="view" type="xs:string" use="required"/>
         <xs:attribute name="id" type="nonemptyString" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="option">
+        <xs:attribute name="key" type="nonemptyString" use="required" />
+        <xs:attribute name="value" type="nonemptyString" use="required" />
     </xs:complexType>
 
     <xs:simpleType name="valueString">
