@@ -10,6 +10,7 @@ import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import exml.annotations.XConstructor;
+import exml.annotations.XIgnored;
 import exml.loading.XLoadContext;
 
 public class ArrivalPilot extends BasicPilot {
@@ -17,6 +18,7 @@ public class ArrivalPilot extends BasicPilot {
   private final static double LOW_SPEED_DOWN_ALTITUDE = 11000;
   private final static double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
   private static final double DEFAULT_ESTIMATED_FAF_DISTANCE = 8.5;
+  @XIgnored
   private Tuple<RunwayConfiguration, IList<Coordinate>> estimatedThresholdFafPoints = null;
 
   public ArrivalPilot(Airplane plane) {

@@ -15,8 +15,9 @@ public class TypingShortcutsProvider {
 
     XElement types = new XElement(Constants.TYPES_ENCODING_ELEMENT);
     for (Map.Entry<String, String> typeName : typeEncodes) {
-      XElement tmp = new XElement(typeName.getValue());
-      tmp.setContent(typeName.getKey());
+      XElement tmp = new XElement("type");
+      tmp.setAttribute("key", typeName.getValue());
+      tmp.setAttribute("name", typeName.getKey());
       types.addElement(tmp);
     }
     root.addElement(types);
@@ -27,7 +28,7 @@ public class TypingShortcutsProvider {
 
     XElement types = root.getChild(Constants.TYPES_ENCODING_ELEMENT);
     for (XElement child : types.getChildren()) {
-      typeDecodes.set(child.getName(), child.getContent());
+      typeDecodes.set(child.getAttribute("key"), child.getAttribute("name"));
     }
 
     expandTypesByElement(root, typeDecodes);

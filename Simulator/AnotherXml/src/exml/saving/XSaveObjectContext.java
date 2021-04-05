@@ -72,7 +72,7 @@ public class XSaveObjectContext {
   }
 
 
-  public void saveObject(Object obj, XElement elm, Class<?> expectedObjectType){
+  public void saveObject(Object obj, XElement elm, Class<?> expectedObjectType) {
     saveObject(obj, elm);
     addTypeAttributeIfRequired(elm, obj, expectedObjectType);
   }
@@ -115,6 +115,10 @@ public class XSaveObjectContext {
       processedObjects.remove(obj);
   }
 
+  public void saveObjectTypeToElement(XElement elm, Class<?> type) {
+    elm.setAttribute(Constants.TYPE_ATTRIBUTE, type.getName());
+  }
+
   private boolean isObjectToCheckCyclicSave(Object obj) {
     return obj != null
             && obj.getClass().isEnum() == false
@@ -124,6 +128,6 @@ public class XSaveObjectContext {
 
   private void addTypeAttributeIfRequired(XElement elm, Object obj, Class<?> itemType) {
     if (obj != null && itemType != null && SaveUtils.isTypeSame(obj.getClass(), itemType) == false)
-      elm.setAttribute(Constants.TYPE_ATTRIBUTE, obj.getClass().getName());
+      saveObjectTypeToElement(elm, obj.getClass());
   }
 }

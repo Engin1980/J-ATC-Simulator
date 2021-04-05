@@ -265,25 +265,38 @@ public class ApproachPilot extends Pilot {
       }
     }
 
-    if (isOverThresholdLandingAndTooHigh()) {
-      goAround(GoingAroundNotification.GoAroundReason.unstabilizedAltitude);
-      return;
+    {
+      Optional<GoingAroundNotification.GoAroundReason> ga = getReasonForGoAroundIfIsAfterThresholdOnLanding();
+      if (ga.isPresent()){
+        goAround(ga.get());
+        return;
+      }
     }
 
     updateApproachState();
   }
 
-  private boolean isOverThresholdLandingAndTooHigh() {
-    boolean ret;
+  private Optional<GoingAroundNotification.GoAroundReason> getReasonForGoAroundIfIsAfterThresholdOnLanding() {
     IApproachBehavior beh = stages.getFirst().getBehavior();
-    if (beh instanceof FlyRadialWithDescentBehavior || beh instanceof LandingBehavior) {
-      // if over threshold and too high
-      ret = (.5 > Coordinates.getDistanceInNM(rdr.getCoordinate(), this.getRunwayThreshold().getCoordinate()))
-              && (400 < rdr.getSha().getAltitude() - rdr.getSha().getTargetAltitude());
-    } else
-      ret = false;
+    if ((beh instanceof FlyRadialWithDescentBehavior || beh instanceof LandingBehavior) == false)
+      // not on final approach
+      return  Optional.empty();
 
-    return ret;
+    double crs = Coordinates.getBearing(rdr.getCoordinate(), this.getRunwayThreshold().getCoordinate());
+    double dcrs = Headings.getDifference(crs, this.getRunwayThreshold().getCourse(), true);
+    if (dcrs < 90)
+      // still before threshold
+      return Optional.empty();
+
+    double dist = Coordinates.getDistanceInNM(rdr.getCoordinate(), this.getRunwayThreshold().getCoordinate());
+    if (dist > 0.05)
+      return Optional.of(GoingAroundNotification.GoAroundReason.unstabilizedHeading);
+
+    double dalt = rdr.getSha().getAltitude() - Context.getArea().getAirport().getAltitude();
+    if (dalt > 100)
+      return Optional.of(GoingAroundNotification.GoAroundReason.unstabilizedAltitude);
+
+    return Optional.empty();
   }
 
   private void flyLandingBehavior(LandingBehavior beh) {
