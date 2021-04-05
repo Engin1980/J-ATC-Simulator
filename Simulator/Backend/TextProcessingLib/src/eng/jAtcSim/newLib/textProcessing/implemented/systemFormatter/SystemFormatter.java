@@ -29,7 +29,7 @@ public class SystemFormatter implements ISystemFormatter<String> {
   }
 
   private String formatNormalNotification(ISystemNotification input) {
-    TextSpeechFormatter<? extends ISystemNotification> fmt = formatters.get(input);
+    TextSpeechFormatter<? extends ISystemNotification> fmt = formatters.tryGet(input);
     String ret = fmt.format(input);
     return ret;
   }

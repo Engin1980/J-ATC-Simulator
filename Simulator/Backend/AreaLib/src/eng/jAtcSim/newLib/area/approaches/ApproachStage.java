@@ -15,7 +15,7 @@ import exml.annotations.XIgnored;
 
 public class ApproachStage implements IXPersistable {
   public static ApproachStage create(String name, IApproachBehavior behavior, ICondition exitCondition, ApproachErrorCondition... errorCondition) {
-    ESet<ApproachErrorCondition> set = new ESet<>(errorCondition);
+    ESet<ApproachErrorCondition> set = ESet.of(errorCondition);
     return new ApproachStage(behavior, exitCondition, set, name);
   }
 

@@ -293,9 +293,10 @@ public class TrafficModule extends SimulationModule {
     }
 
     if (entryExitInfo.getRadial() != null) {
-      ret = eeps.getSmallest(q -> Headings.getDifference(entryExitInfo.getRadial(), q.getRadialFromAirport(), true));
+      //TODEL //ret = eeps .getSmallest(q -> Headings.getDifference(entryExitInfo.getRadial(), q.getRadialFromAirport(), true));
+      ret = eeps.getMinimal(q -> Headings.getDifference(entryExitInfo.getRadial(), q.getRadialFromAirport(), true));
     } else if (entryExitInfo.getNavaid() != null) {
-      ret = eeps.tryGetFirst(q -> q.getName().equals(entryExitInfo.getNavaid()));
+      ret = eeps.tryGetFirst(q -> q.getName().equals(entryExitInfo.getNavaid())).orElse(null);
       if (ret == null) {
         Context.getApp().getAppLog().write(ApplicationLog.eType.warning,
                 sf("Plane generation asks for entry point %s, but there is not such " +

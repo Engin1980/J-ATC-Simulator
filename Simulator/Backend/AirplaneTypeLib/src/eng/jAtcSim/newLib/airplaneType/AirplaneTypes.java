@@ -18,7 +18,7 @@ public class AirplaneTypes {
   private final IList<String> typeNamesOnly = new EList<>();
 
   public AirplaneType tryGetByName(String airplaneTypeName) {
-    return inner.tryGetFirst(q->q.name.equals(airplaneTypeName));
+    return inner.tryGetFirst(q->q.name.equals(airplaneTypeName)).orElse(null);
   }
 
   public AirplaneType getByName(String airplaneTypeName) {

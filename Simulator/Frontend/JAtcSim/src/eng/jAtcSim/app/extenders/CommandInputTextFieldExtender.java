@@ -271,7 +271,7 @@ public class CommandInputTextFieldExtender {
 
   private Tuple<Callsign, ErrorType> getCallsignFromString(String callsignString) {
     IReadOnlyList<Callsign> clsgns = this.planeCallsignsProducer.invoke();
-    Callsign ret = clsgns.tryGetFirst(q -> q.toString().equals(callsignString));
+    Callsign ret = clsgns.tryGetFirst(q -> q.toString().equals(callsignString)).orElse(null);
     if (ret == null) {
       IList<Callsign> tmp = clsgns.where(q -> q.getNumber().equals(callsignString));
       if (tmp.count() > 1)

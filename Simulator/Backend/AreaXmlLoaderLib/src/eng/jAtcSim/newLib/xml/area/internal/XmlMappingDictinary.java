@@ -29,6 +29,6 @@ public class XmlMappingDictinary<T> {
   }
 
   private IList<T> getInner(String pt) {
-    return this.inner.tryGet(pt, new EList<>());
+    return this.inner.tryGet(pt).orElseGet(() -> new EList<>());
   }
 }

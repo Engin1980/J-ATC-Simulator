@@ -334,7 +334,7 @@ public class TrafficPanel extends JStartupPanel {
     int c = movementsPerHour[0].count;
     double d = movementsPerHour[0].departureProbability;
     double g = movementsPerHour[0].generalAviationProbability;
-    IList<SimpleGenericTrafficModel.MovementsForHour> lst = new EList<>(movementsPerHour);
+    IList<SimpleGenericTrafficModel.MovementsForHour> lst = EList.of(movementsPerHour);
     if (lst.isAll(
             q -> q.count == c && q.departureProbability == d && q.generalAviationProbability == g
     )) {

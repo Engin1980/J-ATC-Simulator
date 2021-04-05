@@ -67,8 +67,8 @@ public enum AirplaneState {
   holding;
 
   public static AirplaneState[] valuesExcept(AirplaneState... exceptions) {
-    IList<AirplaneState> ret = new EList<>(AirplaneState.values());
-    IList<AirplaneState> exs = new EList<>(exceptions);
+    IList<AirplaneState> ret = EList.of(AirplaneState.values());
+    IList<AirplaneState> exs = EList.of(exceptions);
     ret.removeMany(exs);
     return ret.toArray(AirplaneState.class);
   }

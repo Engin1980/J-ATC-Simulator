@@ -172,7 +172,7 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
       tmp = area.getAirports().select(q ->
               new AirportInfo(q.getIcao(), q.getName() + " [" + q.getIcao() + "]"));
     } else {
-      tmp = new EList<>(new AirportInfo[]{new AirportInfo("----", "(Area not loaded)")});
+      tmp = EList.of(new AirportInfo("----", "(Area not loaded)"));
     }
 
     cmbAirports.clearItems();

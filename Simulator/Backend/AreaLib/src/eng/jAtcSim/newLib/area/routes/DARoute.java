@@ -91,6 +91,7 @@ public class DARoute extends Route {
 
   private IReadOnlyList<Navaid> calculateRouteNavaids() {
     IList<String> navaidNames = this.getRouteCommands()
+            .where(q->q instanceof ToNavaidCommand)
             .whereItemClassIs(ToNavaidCommand.class, true)
             .select(q -> q.getNavaidName());
     IList<Navaid> ret = navaidNames.select(q -> Context.getArea().getNavaids().getWithPBD(q));

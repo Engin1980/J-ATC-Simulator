@@ -37,6 +37,8 @@ import exml.annotations.XConstructor;
 import exml.loading.XLoadContext;
 import exml.saving.XSaveContext;
 
+import java.util.Optional;
+
 public class ApproachPilot extends Pilot {
 
   private static final int MAX_HEADING_DIFFERENCE = 90;
@@ -80,7 +82,7 @@ public class ApproachPilot extends Pilot {
 
     this.threshold = approach.getParent();
     this.type = approach.getType();
-    this.stages = new EList<>(approach.getStages());
+    this.stages = EList.of(approach.getStages());
     this.initialAltitude = approach.getInitialAltitude();
 
     this.stages.insertMany(0, entry.getEntryStages());
@@ -247,9 +249,9 @@ public class ApproachPilot extends Pilot {
       return;
     }
 
-    ApproachErrorCondition err = stage.getErrorConditions().tryGetFirst(q -> isConditionTrue(q.getCondition()), null);
-    if (err != null) {
-      goAround(err.getGoAroundReason());
+    Optional<ApproachErrorCondition> err = stage.getErrorConditions().tryGetFirst(q -> isConditionTrue(q.getCondition()));
+    if (err.isPresent()) {
+      goAround(err.get().getGoAroundReason());
       return;
     }
 

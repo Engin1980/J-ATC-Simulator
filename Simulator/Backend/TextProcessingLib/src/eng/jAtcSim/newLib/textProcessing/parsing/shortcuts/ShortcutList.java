@@ -41,8 +41,9 @@ public class ShortcutList<T> {
     if (inner.containsKey(key)) inner.remove(key);
   }
 
+  //TODo convert to optional too
   public T tryGet(T key) {
-    T ret = inner.tryGet(key);
+    T ret = inner.tryGet(key).orElse(null);
     return ret;
   }
 }

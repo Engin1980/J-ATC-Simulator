@@ -267,12 +267,10 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private void processRadarContactNotificationIfExists(SpeechList<IForPlaneSpeech> speechList) {
     IList<RadarContactConfirmationNotification> radarContacts = speechList
             .whereItemClassIs(RadarContactConfirmationNotification.class, false);
-    RadarContactConfirmationNotification radarContact = radarContacts.tryGetLast();
-
-    if (radarContact != null) {
-      processNormalSpeech(radarContact, CommandSource.atc);
+    radarContacts.tryGetLast().ifPresent(q->{
+      processNormalSpeech(q, CommandSource.atc);
       speechList.removeMany(radarContacts);
-    }
+    });
   }
 
   private SpeechList<IForPlaneSpeech> convertMessagesToSpeechList(IList<IMessageContent> contents) {

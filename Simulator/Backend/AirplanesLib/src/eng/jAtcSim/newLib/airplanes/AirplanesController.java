@@ -71,13 +71,12 @@ public class AirplanesController implements IXPersistable {
   }
 
   public void throwEmergency() {
-    Airplane p = this.planes
-            .where(q -> q.getReader().getState().is(AirplaneState.departingLow,
-                    AirplaneState.departingHigh, AirplaneState.arrivingHigh,
-                    AirplaneState.arrivingLow, AirplaneState.arrivingCloseFaf))
-            .tryGetRandom();
-    if (p != null)
-      p.getWriter().raiseEmergency();
+    this.planes
+      .where(q -> q.getReader().getState().is(AirplaneState.departingLow,
+              AirplaneState.departingHigh, AirplaneState.arrivingHigh,
+              AirplaneState.arrivingLow, AirplaneState.arrivingCloseFaf))
+      .tryGetRandom()
+      .ifPresent(q->q.getWriter().raiseEmergency());
   }
 
   public void unregisterPlane(Callsign callsign) {

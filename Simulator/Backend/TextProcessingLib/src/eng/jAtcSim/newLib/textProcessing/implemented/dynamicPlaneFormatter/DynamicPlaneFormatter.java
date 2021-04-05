@@ -61,7 +61,7 @@ public class DynamicPlaneFormatter implements IPlaneFormatter<String> {
         tmp.set(cls, lst);
         for (XElement sentenceElement : responseElement.getChildren("sentence")) {
           String text = sentenceElement.getContent();
-          String kind = sentenceElement.tryGetAttribute("kind");
+          String kind = sentenceElement.tryGetAttribute("kind").orElse(null);
           Sentence sent = new Sentence(kind, text);
           lst.add(sent);
         }

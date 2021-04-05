@@ -1,10 +1,7 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.formatterHelpers;
 
 import eng.eSystem.collections.*;
-import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.base.ISpeech;
-
-import static eng.eSystem.utilites.FunctionShortcuts.*;
 
 public class TextSpeechFormatterList<T extends ISpeech> {
 
@@ -16,13 +13,13 @@ public class TextSpeechFormatterList<T extends ISpeech> {
     inner.set(type, formatter);
   }
 
-  public TextSpeechFormatter<? extends T> get(ISpeech input) {
+  public TextSpeechFormatter<? extends T> tryGet(ISpeech input) {
     Class<? extends ISpeech> type = input.getClass();
-    return getByType(type);
+    return tryGetByType(type);
   }
 
-  public TextSpeechFormatter<? extends T> getByType(Class<? extends ISpeech> type){
-    TextSpeechFormatter<? extends T> ret = inner.tryGet(type);
+  public TextSpeechFormatter<? extends T> tryGetByType(Class<? extends ISpeech> type){
+    TextSpeechFormatter<? extends T> ret = inner.tryGet(type).orElse(null);
     return ret;
   }
 }

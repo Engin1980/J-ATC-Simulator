@@ -29,7 +29,7 @@ public class BaseAirplaneList<T> extends EDistinctList<T> {
     if (lastGot != null && callsignSelector.invoke(lastGot).equals(callsign))
       ret = lastGot;
     else {
-      ret = this.tryGetFirst(q -> this.callsignSelector.invoke(q).equals(callsign));
+      ret = this.tryGetFirst(q -> this.callsignSelector.invoke(q).equals(callsign)).orElse(null);
       if (ret != null) lastGot = ret;
     }
     EAssert.isNotNull(ret, "AirplaneList did not found matching plane for callsign: " + callsign);
@@ -41,10 +41,10 @@ public class BaseAirplaneList<T> extends EDistinctList<T> {
   }
 
   public T tryGet(Squawk squawk) {
-    return this.tryGetFirst(q->squawkSelector.invoke(q).equals(squawk));
+    return this.tryGetFirst(q->squawkSelector.invoke(q).equals(squawk)).orElse(null);
   }
 
   public T tryGet(Callsign callsign) {
-    return this.tryGetFirst(q->callsignSelector.invoke(q).equals(callsign));
+    return this.tryGetFirst(q->callsignSelector.invoke(q).equals(callsign)).orElse(null);
   }
 }

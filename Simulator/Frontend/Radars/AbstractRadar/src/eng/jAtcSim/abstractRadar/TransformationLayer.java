@@ -131,7 +131,7 @@ class TransformationLayer {
     }
 
     private Rectangle tryGetCollidingRectangle(Rectangle tmr) {
-      Rectangle ret = rectangles.tryGetFirst(q -> tmr.hasUnion(q));
+      Rectangle ret = rectangles.tryGetFirst(q -> tmr.hasUnion(q)).orElse(null);
       return ret;
     }
 
@@ -141,7 +141,7 @@ class TransformationLayer {
     }
 
     private Point tryGetCollidingPoint(Rectangle r) {
-      Point ret = points.tryGetFirst(q -> r.isInside(q));
+      Point ret = points.tryGetFirst(q -> r.isInside(q)).orElse(null);
       return ret;
     }
   }

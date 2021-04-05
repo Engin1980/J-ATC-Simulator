@@ -90,7 +90,7 @@ public class PlaneParser implements IPlaneParser, IWithShortcuts<String>, IWithH
     IList<String> tokens = TextParsing.tokenize(line);
     SpeechList<IForPlaneSpeech> ret = new SpeechList<>();
 
-    IList<String> toDo = new EList<>(tokens);
+    IList<String> toDo = EList.of(tokens);
     IList<String> done = new EList<>();
 
     while (!toDo.isEmpty()) {

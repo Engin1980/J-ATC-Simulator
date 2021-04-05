@@ -13,7 +13,7 @@ public class TextParsing {
     }
     line = line.toUpperCase();
     String[] pts = line.split(" ");
-    ret = new EList<>(pts);
+    ret = EList.of(pts);
     ret.remove(q -> q.length() == 0);
     return ret;
   }

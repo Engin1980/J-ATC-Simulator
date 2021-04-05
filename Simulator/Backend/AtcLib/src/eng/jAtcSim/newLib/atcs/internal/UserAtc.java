@@ -153,17 +153,15 @@ public class UserAtc extends Atc implements IUserAtcInterface {
   @Override
   public void sendPlaneCommand(Callsign toCallsign, SpeechList<IForPlaneSpeech> cmds) {
 
+    cmds.tryGetFirst(q -> q instanceof ContactCommand).ifPresent(q->{
+      processOutgoingContactCommandToPlane(toCallsign, (ContactCommand) q);
+    });
 
-    ContactCommand cc = (ContactCommand) cmds.tryGetFirst(q -> q instanceof ContactCommand);
-    if (cc != null) {
-      processOutgoingContactCommandToPlane(toCallsign, cc);
-    }
-    RadarContactConfirmationNotification rccn = (RadarContactConfirmationNotification) cmds.tryGetFirst(q -> q instanceof RadarContactConfirmationNotification);
-    if (rccn != null) {
+    cmds.tryGetFirst(q -> q instanceof RadarContactConfirmationNotification).ifPresent(q->{
       IAirplane plane = Context.Internal.getPlane(toCallsign);
       if (this.planes.contains(plane) == false)
         this.planes.add(plane);
-    }
+    });
 
 
     eng.jAtcSim.newLib.messaging.Message msg = new eng.jAtcSim.newLib.messaging.Message(

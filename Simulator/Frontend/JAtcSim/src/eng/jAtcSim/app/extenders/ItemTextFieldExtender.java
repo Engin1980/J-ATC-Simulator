@@ -43,13 +43,13 @@ public class ItemTextFieldExtender {
 
   public String[] getItems() {
     String[] tmp = txt.getText().split(";");
-    IList<String> lst = new EList<>(tmp);
+    IList<String> lst = EList.of(tmp);
     tmp = lst.select(q -> q.trim()).where(q -> q.length() > 0).distinct().toArray(String.class);
     return tmp;
   }
 
   public void setItems(String[] items) {
-    IList<String> lst = new EList<>(items);
+    IList<String> lst = EList.of(items);
     EStringBuilder t = new EStringBuilder();
     t.appendItems(lst, q -> q, ";");
     txt.setText(t.toString());

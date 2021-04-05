@@ -14,7 +14,7 @@ public abstract class Route extends Parentable<Airport> {
 
   public Route(IReadOnlyList<ICommand> routeCommands) {
     EAssert.Argument.isNotNull(routeCommands, "routeCommands");
-    this.routeCommands = new EList<>(routeCommands);
+    this.routeCommands = EList.of(routeCommands);
   }
 
   public IReadOnlyList<ICommand> getRouteCommands() {

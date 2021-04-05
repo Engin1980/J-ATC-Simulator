@@ -5,8 +5,8 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.functionalInterfaces.Predicate;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -19,13 +19,8 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
-
 import exml.IXPersistable;
-import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
-import exml.annotations.XIgnored;
-
-import java.util.function.Predicate;
 
 public class AfterCommandList implements IXPersistable {
 
@@ -170,7 +165,7 @@ public class AfterCommandList implements IXPersistable {
                       InternalAcc.getNavaid((ToNavaidCommand) q.consequent).equals(navaid));
       return ret;
     };
-    boolean ret = items.isAny(q -> cond.test(q));
+    boolean ret = items.isAny(q -> cond.invoke(q));
     return ret;
   }
 

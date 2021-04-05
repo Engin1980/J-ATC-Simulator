@@ -66,7 +66,7 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
   }
 
   private int calculateGeographicalRadial() {
-    ApproachStage stage = getStages().tryGetLast(q -> q.getBehavior() instanceof FlyRadialBehavior);
+    ApproachStage stage = getStages().getLast(q -> q.getBehavior() instanceof FlyRadialBehavior);
     FlyRadialBehavior frb = (FlyRadialBehavior) stage.getBehavior();
     int ret = (int) Math.round(frb.getInboundRadialWithDeclination());
     return ret;

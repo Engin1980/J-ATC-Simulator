@@ -39,10 +39,10 @@ public class LayoutFactory {
     Window ret;
     Position position = loadPosition(elm.getChild("position"));
     String title = elm.getAttribute("title");
-    boolean withMenu = elm.tryGetAttribute("withMenu", "false").equalsIgnoreCase("true");
-    boolean onCloseQuit = elm.tryGetAttribute("onCloseQuit", "false").equalsIgnoreCase("true");
+    boolean withMenu = elm.tryGetAttribute("withMenu").orElse("false").equalsIgnoreCase("true");
+    boolean onCloseQuit = elm.tryGetAttribute("onCloseQuit").orElse("false").equalsIgnoreCase("true");
     Block content = loadAnyBlock(elm);
-    String styleS = elm.tryGetAttribute("style", "normal");
+    String styleS = elm.tryGetAttribute("style").orElse("normal");
     Window.WindowStyle style = Window.WindowStyle.parse(styleS);
 
     ret = new Window(position, content, title, style, withMenu, onCloseQuit);
@@ -141,7 +141,7 @@ public class LayoutFactory {
     XElement elm = parentElement.getChild("panel");
 
     String view = elm.getAttribute("view");
-    String id = elm.tryGetAttribute("id", view);
+    String id = elm.tryGetAttribute("id").orElse(view);
 
     IMap<String, String> options = new EMap<>();
     elm.getChildren("option").forEach(q->

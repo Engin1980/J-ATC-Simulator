@@ -10,6 +10,8 @@ import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 import eng.jAtcSim.newLib.xml.speeches.atc2airplane.*;
 import eng.jAtcSim.newLib.xml.speeches.atc2airplane.afterCommands.*;
 
+import java.util.Optional;
+
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class SpeechXmlLoader extends XmlLoader<ICommand> {
@@ -38,13 +40,13 @@ public class SpeechXmlLoader extends XmlLoader<ICommand> {
   @Override
   public ICommand load(XElement source) {
     ICommand ret;
-    XmlLoader<? extends ICommand> xmlLoader = this.loaders.tryGet(source.getName());
-    if (xmlLoader == null) {
+    Optional<XmlLoader<? extends ICommand>> xmlLoader = this.loaders.tryGet(source.getName());
+    if (xmlLoader.isEmpty()) {
       throw new EApplicationException(
               sf("Unable to load command from xml-element '%s'. No loader defined for this element.", source.getName()));
     } else {
       try {
-        ret = xmlLoader.load(source);
+        ret = xmlLoader.get().load(source);
       } catch (Exception e) {
         throw new EApplicationException(
                 sf("Failed to parse speech from xml. XmlLoader: '%s', element: '%s'.", xmlLoader, source), e);

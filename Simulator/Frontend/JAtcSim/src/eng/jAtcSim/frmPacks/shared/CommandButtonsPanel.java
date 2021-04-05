@@ -14,6 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CommandButtonsPanel extends JPanel {
 
@@ -53,11 +54,11 @@ public class CommandButtonsPanel extends JPanel {
   }
 
   public void setPlane(Callsign callsign) {
-    IAirplaneInfo ai = sim.getPlanesToDisplay().tryGetFirst(q -> q.callsign().equals(callsign));
-    if (ai == null)
+    Optional<IAirplaneInfo> ai = sim.getPlanesToDisplay().tryGetFirst(q -> q.callsign().equals(callsign));
+    if (ai.isEmpty())
       setPlane((IAirplaneInfo) null);
     else
-      setPlane(ai);
+      setPlane(ai.get());
   }
 
   private void initComponents() {

@@ -68,10 +68,10 @@ public class AtcProvider implements IXPersistable {
     return ret;
   }
 
-  public AtcId getResponsibleAtc(Callsign callsign) {
+  public AtcId tryGetResponsibleAtc(Callsign callsign) {
     IList<AtcId> responsibleAtcs = atcs.where(q -> q.isResponsibleFor(callsign)).select(q -> q.getAtcId());
     EAssert.isTrue(NumberUtils.isBetweenOrEqual(0, responsibleAtcs.size(), 1));
-    AtcId ret = responsibleAtcs.tryGetFirst();
+    AtcId ret = responsibleAtcs.tryGetFirst().orElse(null);
     return ret;
   }
 

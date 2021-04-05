@@ -20,6 +20,8 @@ import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
 import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 import eng.jAtcSim.newLib.xml.speeches.SpeechXmlLoader;
 
+import java.util.Optional;
+
 public class DARouteXmlLoader extends XmlLoader<DARoute> {
 
   public DARouteXmlLoader(LoadingContext context) {
@@ -80,9 +82,9 @@ public class DARouteXmlLoader extends XmlLoader<DARoute> {
     }
     if (maxMrvaAlt == 0) {
       Navaid routePoint = mainRouteNavaid;
-      Border mrva = mrvas.tryGetFirst(q -> q.isIn(routePoint.getCoordinate()));
-      if (mrva != null)
-        maxMrvaAlt = mrva.getMaxAltitude();
+      Optional<Border> mrva = mrvas.tryGetFirst(q -> q.isIn(routePoint.getCoordinate()));
+      if (mrva.isPresent())
+        maxMrvaAlt = mrva.get().getMaxAltitude();
     }
     return maxMrvaAlt;
   }

@@ -6,10 +6,9 @@ import eng.eSystem.collections.*;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
-
 import exml.IXPersistable;
-import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
+import exml.loading.XLoadContext;
 
 public class RunwayConfiguration implements IXPersistable {
 
@@ -54,6 +53,7 @@ public class RunwayConfiguration implements IXPersistable {
             (float) b.getThresholdB().getCoordinate().getLongitude().get());
     return ret;
   }
+
   private final IList<RunwayThresholdConfiguration> arrivals;
   private IList<ISet<ActiveRunwayThreshold>> crossedThresholdSets = null;
   private final IList<RunwayThresholdConfiguration> departures;
@@ -175,9 +175,7 @@ public class RunwayConfiguration implements IXPersistable {
       ActiveRunway r = rwys.get(0);
       rwys.removeAt(0);
       set.add(r);
-      set.add(
-              rwys.where(q -> isIntersectionBetweenRunways(r, q))
-      );
+      set.addMany(rwys.where(q -> isIntersectionBetweenRunways(r, q)));
       rwys.tryRemoveMany(set);
       crossedRwys.add(set);
     }
@@ -186,7 +184,7 @@ public class RunwayConfiguration implements IXPersistable {
     for (ISet<ActiveRunway> crossedRwy : crossedRwys) {
       set = new ESet<>();
       for (ActiveRunway runway : crossedRwy) {
-        set.add(runway.getThresholds());
+        set.addMany(runway.getThresholds());
       }
       ret.add(set);
     }

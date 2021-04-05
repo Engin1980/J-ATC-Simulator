@@ -110,7 +110,7 @@ public class AirproxController implements IXPersistable {
   }
 
   public AirproxType getAirproxForPlane(IAirplane airplane) {
-    return this.airproxViolatingPlanes.tryGet(airplane.getCallsign(), AirproxType.none);
+    return this.airproxViolatingPlanes.tryGet(airplane.getCallsign()).orElse(AirproxType.none);
   }
 
   public IReadOnlyMap<Callsign, AirproxType> getAirproxViolatingPlanes() {
@@ -119,7 +119,7 @@ public class AirproxController implements IXPersistable {
 
   private void storeAirprox(Callsign callsign, AirproxType airproxType) {
     if (airproxType == AirproxType.none) return;
-    AirproxType current = this.airproxViolatingPlanes.tryGet(callsign, AirproxType.none);
+    AirproxType current = this.airproxViolatingPlanes.tryGet(callsign).orElse(AirproxType.none);
     current = AirproxType.combine(current, airproxType);
     this.airproxViolatingPlanes.set(callsign, current);
   }

@@ -91,7 +91,7 @@ public class NavaidList extends EList<Navaid> {
   }
 
   public Navaid tryGet(String name) {
-    Navaid ret = this.tryGetFirst(q -> q.getName().equals(name));
+    Navaid ret = this.tryGetFirst(q -> q.getName().equals(name)).orElse(null);
     return ret;
   }
 

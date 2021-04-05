@@ -2,6 +2,8 @@ package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.collections.*;
 
+import java.util.Optional;
+
 public class EntryExitPointList {
   private final IList<EntryExitPoint> inner = new EList<>();
 
@@ -12,11 +14,11 @@ public class EntryExitPointList {
   }
 
   public void add(EntryExitPoint eep) {
-    EntryExitPoint eq = inner.tryGetFirst(q -> q.getName().equals(eep.getNavaid().getName()));
-    if (eq == null)
+    Optional<EntryExitPoint> eq = inner.tryGetFirst(q -> q.getName().equals(eep.getNavaid().getName()));
+    if (!eq.isPresent())
       inner.add(eep);
     else
-      eq.adjustBy(eep);
+      eq.get().adjustBy(eep);
   }
 
   public IReadOnlyList<EntryExitPoint> toReadOnlyList() {

@@ -37,7 +37,7 @@ public class AtcList extends EDistinctList<Atc> implements IXPersistable {
     if (lastGot != null && lastGot.getAtcId().getName().equals(atcName))
       ret = lastGot;
     else {
-      ret = this.tryGetFirst(q -> q.getAtcId().getName().equals(atcName));
+      ret = this.tryGetFirst(q -> q.getAtcId().getName().equals(atcName)).orElse(null);
       if (ret != null) lastGot = ret;
     }
     return ret;

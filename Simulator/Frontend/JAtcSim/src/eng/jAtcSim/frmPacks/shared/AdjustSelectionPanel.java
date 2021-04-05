@@ -35,7 +35,7 @@ public class AdjustSelectionPanel<T> extends JPanel {
 
   public void setCheckedItems(Iterable<T> items) {
     this.checkedItems.clear();
-    this.checkedItems.add(items);
+    this.checkedItems.addMany(items);
     lstBox.setCheckedItems(items);
   }
 

@@ -31,7 +31,7 @@ public class AtcFormatter implements IAtcFormatter<String> {
     else
       tmp = input;
 
-    TextSpeechFormatter<? extends IAtcSpeech> fmt = formatters.get(tmp);
+    TextSpeechFormatter<? extends IAtcSpeech> fmt = formatters.tryGet(tmp);
     String ret = fmt.format(tmp);
 
     if (input instanceof AtcConfirmation)

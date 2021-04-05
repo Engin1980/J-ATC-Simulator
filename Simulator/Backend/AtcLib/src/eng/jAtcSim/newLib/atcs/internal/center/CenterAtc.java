@@ -362,14 +362,14 @@ public class CenterAtc extends ComputerAtc {
                     && q.isValidForCategory(type.category)
                     && q.getMaxMrvaAltitude() < currentAltitude
                     && q.getMainNavaid().equals(mainNavaid))
-            .tryGetRandom();
+            .tryGetRandom().orElse(null);
     if (ret == null)
       ret = rt.getRoutes().where(
               q -> q.getType() == DARouteType.star
                       && q.isValidForCategory(type.category)
                       && q.getMaxMrvaAltitude() < currentAltitude
                       && q.getMainNavaid().equals(mainNavaid))
-              .tryGetRandom();
+              .tryGetRandom().orElse(null);
     if (ret == null && canBeVectoring)
       ret = DARoute.createNewVectoringByFix(mainNavaid);
     return ret;
@@ -430,7 +430,7 @@ public class CenterAtc extends ComputerAtc {
               .where(q -> q.isForCategory(plane.getType().category))
               .select(q -> q.getThreshold());
 
-    thresholdsCopy = new EList<>(thresholds);
+    thresholdsCopy = EList.of(thresholds);
     while (r == null && !thresholdsCopy.isEmpty()) {
       rt = thresholdsCopy.getRandom();
       thresholdsCopy.remove(rt);

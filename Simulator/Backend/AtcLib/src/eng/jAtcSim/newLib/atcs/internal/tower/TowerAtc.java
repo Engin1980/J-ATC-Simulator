@@ -459,7 +459,7 @@ public class TowerAtc extends ComputerAtc {
     boolean ret;
     ActiveRunwayThreshold rt = runway.getThresholdA();
     ISet<ActiveRunwayThreshold> crts = inUseInfo.current.getCrossedSetForThreshold(rt);
-    double dist = crts.min(q -> arrivalManager.getClosestLandingPlaneDistanceForThreshold(q), 100d);
+    double dist = crts.min(q -> arrivalManager.getClosestLandingPlaneDistanceForThreshold(q)); //, 100d);
     ret = dist < 2.5;
     return ret;
   }
@@ -544,7 +544,7 @@ public class TowerAtc extends ComputerAtc {
 
   private void processMessageFromAtc(RunwayMaintenanceRequest rrct) {
     if (rrct.type == RunwayMaintenanceRequest.eType.askForTime) {
-      RunwayCheckInfo rc = this.runwayChecks.tryGet(rrct.runway);
+      RunwayCheckInfo rc = this.runwayChecks.tryGet(rrct.runway).orElse(null);
       if (rc != null)
         announceScheduledRunwayCheck(rrct.runway, rc);
       else {
@@ -556,7 +556,7 @@ public class TowerAtc extends ComputerAtc {
     } else if (rrct.type == RunwayMaintenanceRequest.eType.doCheck) {
       //ActiveRunway rwy = rrct.runway;
       String rwyName = rrct.runway;
-      RunwayCheckInfo rc = this.runwayChecks.tryGet(rwyName);
+      RunwayCheckInfo rc = this.runwayChecks.tryGet(rwyName).orElse(null);
       if (rwyName == null && this.runwayChecks.size() == 1) {
         rwyName = this.runwayChecks.getKeys().getFirst();
         rc = this.runwayChecks.get(rwyName);

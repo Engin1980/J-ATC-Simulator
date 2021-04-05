@@ -121,7 +121,7 @@ class DepartureManager implements IXPersistable {
 
   public EDayTimeStamp getLastDepartureTime(ActiveRunwayThreshold rt) {
     EDayTimeStamp ret;
-    ret = this.lastDeparturesTime.tryGet(rt);
+    ret = this.lastDeparturesTime.tryGet(rt).orElse(null);
     if (ret == null)
       ret = new EDayTimeStamp(0);
     return ret;
@@ -148,7 +148,7 @@ class DepartureManager implements IXPersistable {
   public boolean isSomeDepartureOnRunway(String rwyName) {
     ActiveRunway runway = Context.Internal.getRunway(rwyName);
     for (ActiveRunwayThreshold rt : runway.getThresholds()) {
-      IAirplane aip = this.lastDepartingPlane.tryGet(rt);
+      IAirplane aip = this.lastDepartingPlane.tryGet(rt).orElse(null);
       if (aip != null && aip.getState() == AirplaneState.takeOffRoll)
         return true;
     }
@@ -234,7 +234,7 @@ class DepartureManager implements IXPersistable {
 
   public IAirplane tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {
     IAirplane ret;
-    ret = this.lastDepartingPlane.tryGet(rt);
+    ret = this.lastDepartingPlane.tryGet(rt).orElse(null);
     return ret;
   }
 
@@ -249,7 +249,7 @@ class DepartureManager implements IXPersistable {
                     && q.isValidForCategory(type.category)
                     && q.getMaxMrvaAltitude() < type.maxAltitude
                     && q.getMainNavaid().equals(mainNavaid))
-            .tryGetRandom();
+            .tryGetRandom().orElse(null);
     if (ret == null && canBeVectoring)
       ret = DARoute.createNewVectoringByFix(mainNavaid);
     return ret;

@@ -69,9 +69,9 @@ public class BorderXmlLoader extends XmlLoader<Border> {
       points = loadPoints(source.getChild("points").getChildren());
 
     IList<String> disjoints = new EList<>();
-    XElement disjointsElement = source.tryGetChild("disjoints");
-    if (disjointsElement != null)
-      disjointsElement.getChildren().forEach(q -> disjoints.add(q.getContent()));
+    source.tryGetChild("disjoints").ifPresent(q -> {
+      q.getChildren().forEach(p -> disjoints.add(p.getContent()));
+    });
 
 
     Border ret = Border.create(name, type, enclosed, minAltitude, maxAltitude, labelCoordinate, points, disjoints);

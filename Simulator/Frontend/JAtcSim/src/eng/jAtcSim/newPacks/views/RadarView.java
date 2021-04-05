@@ -41,7 +41,7 @@ public class RadarView implements IView {
       IMap<DARoute, IList<ActiveRunwayThreshold>> tmp = new EMap<>();
       for (ActiveRunwayThreshold threshold : simulation.getAirport().getAllThresholds()) {
         for (DARoute route : threshold.getRoutes()) {
-          IList<ActiveRunwayThreshold> lst = tmp.tryGet(route);
+          IList<ActiveRunwayThreshold> lst = tmp.tryGet(route).orElse(null);
           if (lst == null) {
             lst = new EList<>();
             tmp.set(route, lst);
@@ -150,7 +150,7 @@ public class RadarView implements IView {
   }
 
   public IMap<Integer, RadarViewPort> getRadarStoredPositions() {
-    IMap<Integer, RadarViewPort> ret = new EMap<>(this.storedRadarPositions);
+    IMap<Integer, RadarViewPort> ret = EMap.of(this.storedRadarPositions);
     return ret;
   }
 
@@ -179,7 +179,7 @@ public class RadarView implements IView {
     this.parent.add(pnlContent, BorderLayout.CENTER);
     this.parent.add(pnlTop, BorderLayout.PAGE_START);
 
-    if (options.tryGet("showMessages", "false").equals("true"))
+    if (options.tryGet("showMessages").orElse("false").equals("true"))
       this.getBehaviorSettings().setPaintMessages(true);
     else
       this.getBehaviorSettings().setPaintMessages(false);
@@ -332,10 +332,7 @@ public class RadarView implements IView {
   }
 
   private void recallRadarPosition(int index) {
-    RadarViewPort rp = storedRadarPositions.tryGet(index);
-    if (rp != null) {
-      radar.setViewPort(rp);
-    }
+    storedRadarPositions.tryGet(index).ifPresent(q -> radar.setViewPort(q));
   }
 
   private void storeRadarPosition(int index) {

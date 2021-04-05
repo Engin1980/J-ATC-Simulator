@@ -25,7 +25,7 @@ public class InternalAcc {
   }
 
   public static DARoute tryGetDARoute(String routeName) {
-    return Context.getArea().getAirport().getDaRoutes().tryGetFirst(q -> q.getName().equals(routeName));
+    return Context.getArea().getAirport().getDaRoutes().tryGetFirst(q -> q.getName().equals(routeName)).orElse(null);
   }
 
   public static Navaid tryGetNavaid(String navaidName) {
@@ -33,7 +33,7 @@ public class InternalAcc {
   }
 
   public static PublishedHold tryGetPublishedHold(String navaidName) {
-    return Context.getArea().getAirport().getHolds().tryGetFirst(q -> q.getNavaid().getName().equals(navaidName));
+    return Context.getArea().getAirport().getHolds().tryGetFirst(q -> q.getNavaid().getName().equals(navaidName)).orElse(null);
   }
 
   public static ActiveRunwayThreshold tryGetRunwayThreshold(String runwayThresholdName) {

@@ -178,7 +178,7 @@ class ApproachInfoFactory {
     for (ApproachEntry entry : app.getEntries()) {
       IMap<ApproachEntryCondition, Boolean> entryResults = entry
               .getEntryConditions()
-              .toMap(q -> ConditionEvaluator.check(q.getEntryCondition(), airplane));
+              .toMap(q -> q, q -> ConditionEvaluator.check(q.getEntryCondition(), airplane));
       if (entryResults.getValues().isAll(q -> q))
         return new AcceptedApproachInfo(entry, app);
       else {

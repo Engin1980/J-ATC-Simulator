@@ -13,6 +13,8 @@ import eng.jAtcSim.newLib.xml.area.AreaXmlLoader;
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
 
+import java.util.Optional;
+
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class AreaSource extends Source<Area> {
@@ -31,10 +33,10 @@ public class AreaSource extends Source<Area> {
   }
 
   public Airport getActiveAirport() {
-    Airport ret = getContent().getAirports().tryGetFirst(q -> q.getIcao().equals(icao));
-    if (ret == null)
+    Optional<Airport> ret = getContent().getAirports().tryGetFirst(q -> q.getIcao().equals(icao));
+    if (ret.isEmpty())
       throw new EApplicationException("Unable to load airport {" + icao + "} from selected area file.");
-    return ret;
+    return ret.get();
   }
 
   public Area getArea() {

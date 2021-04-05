@@ -53,7 +53,7 @@ public class SystemParser implements ISystemParser, IWithHelp {
     String line = (String) input;
     IList<String> tokens = TextParsing.tokenize(line);
 
-    IList<String> toDo = new EList<>(tokens);
+    IList<String> toDo = EList.of(tokens);
     IList<String> done = new EList<>();
 
     TextSpeechParser<? extends ISystemUserRequest> p = systemParsers.get(toDo);

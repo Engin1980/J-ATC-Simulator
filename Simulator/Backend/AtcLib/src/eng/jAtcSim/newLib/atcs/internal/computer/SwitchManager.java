@@ -79,7 +79,7 @@ class SwitchManager implements IXPersistable {
   }
 
   public void processPlaneSwitchMessage(PlaneSwitchRequest planeSwitchRequest, AtcId sender) {
-    SwitchInfo si = this.outgoingPlanes.tryGet(planeSwitchRequest.getSquawk());
+    SwitchInfo si = this.outgoingPlanes.tryGet(planeSwitchRequest.getSquawk()).orElse(null);
     if (si == null || si.getAtcId().equals(sender) == false)
       this.processIncomingPlaneSwitchMessage(planeSwitchRequest, sender);
     else

@@ -9,9 +9,9 @@ import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import exml.IXPersistable;
-import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
+import exml.loading.XLoadContext;
 
 public class MrvaController implements IXPersistable {
   @XIgnored private final IReadOnlyList<Border> mrvas;
@@ -27,7 +27,7 @@ public class MrvaController implements IXPersistable {
   @XConstructor
   private MrvaController(XLoadContext ctx) {
     this.mrvas = ctx.parents.get(Area.class).getBorders()
-            .where(q->q.getType() == Border.eType.mrva);
+            .where(q -> q.getType() == Border.eType.mrva);
   }
 
   public void evaluateMrvaFails(IReadOnlyList<IAirplane> planes) {
@@ -59,14 +59,14 @@ public class MrvaController implements IXPersistable {
     )) {
       mrvaMaps.tryRemove(airplane);
     } else {
-      Border m = mrvaMaps.tryGet(airplane);
+      Border m = mrvaMaps.tryGet(airplane).orElse(null);
       boolean findNewOne = false;
       if (m == null && airplane.getSha().getVerticalSpeed() <= 0)
         findNewOne = true;
       else if (m != null && m.isIn(airplane.getCoordinate()) == false)
         findNewOne = true;
       if (findNewOne) {
-        m = this.mrvas.tryGetFirst(q -> q.isIn(airplane.getCoordinate()));
+        m = this.mrvas.tryGetFirst(q -> q.isIn(airplane.getCoordinate())).orElse(null);
         if (m != null) mrvaMaps.set(airplane, m);
       }
 

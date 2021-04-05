@@ -48,7 +48,7 @@ public class AtcModule implements IXPersistable {
   }
 
   public AtcId getResponsibleAtc(IAirplane airplane) {
-    return atcProvider.getResponsibleAtc(airplane.getCallsign());
+    return atcProvider.tryGetResponsibleAtc(airplane.getCallsign());
   }
 
   public RunwayConfiguration getRunwayConfiguration() {
@@ -66,7 +66,7 @@ public class AtcModule implements IXPersistable {
   public void init() {
     IAtcAcc atcContext = new AtcAcc(
             this.atcProvider.getAtcIds(),
-            callsign -> this.atcProvider.getResponsibleAtc(callsign));
+            callsign -> this.atcProvider.tryGetResponsibleAtc(callsign));
     ContextManager.setContext(IAtcAcc.class, atcContext);
     this.atcProvider.init();
   }
