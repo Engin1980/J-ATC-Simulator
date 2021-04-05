@@ -22,7 +22,7 @@ public class Snapshot implements IXPersistable {
     ret.holdingPointDelayStats = MMM.createMerge(snapshots.select(q -> q.holdingPointDelayStats));
     ret.mrvaErrorsCount = snapshots.sumInt(q -> q.mrvaErrorsCount);
     ret.airproxErrorsCount = snapshots.sumInt(q -> q.airproxErrorsCount);
-    ret.holdingPointMaximumCount = snapshots.maxInt(q -> q.holdingPointMaximumCount);
+    ret.holdingPointMaximumCount = snapshots.maxInt(q -> q.holdingPointMaximumCount).orElse(0);
 
     return ret;
   }
@@ -56,7 +56,7 @@ public class Snapshot implements IXPersistable {
   }
 
   private static EDayTimeStamp mergeTime(IReadOnlyList<EDayTimeStamp> times) {
-    int meanOfSeconds = (int) times.mean(q -> (double) q.getValue());
+    int meanOfSeconds = (int) times.mean(q -> (double) q.getValue()).orElse(0);
     EDayTimeStamp ret = new EDayTimeStamp(meanOfSeconds);
     return ret;
   }
@@ -71,9 +71,9 @@ public class Snapshot implements IXPersistable {
 
   private static ArrivalDepartureTotalModel<Double> mergeArrivalDepartureTotalModelOfDoubleAsMean(IList<ArrivalDepartureTotalModel<Double>> models) {
     ArrivalDepartureTotalModel<Double> ret = new ArrivalDepartureTotalModel<>(
-        models.select(q -> q.getArrivals()).mean(q -> q),
-        models.select(q -> q.getDepartures()).mean(q -> q),
-        models.select(q -> q.getArrivals()).mean(q -> q));
+        models.select(q -> q.getArrivals()).mean(q -> q).orElse(0),
+        models.select(q -> q.getDepartures()).mean(q -> q).orElse(0),
+        models.select(q -> q.getArrivals()).mean(q -> q).orElse(0));
     return ret;
   }
 
@@ -91,21 +91,21 @@ public class Snapshot implements IXPersistable {
     // arrivals
     tmp = finishedPlanesMoods.getArrivals();
     MMM arrivals = new MMM(
-        tmp.minInt(q -> q.getPoints()),
-        tmp.maxInt(q -> q.getPoints()),
-        tmp.mean(q -> (double) q.getPoints()));
+        tmp.minInt(q -> q.getPoints()).orElse(0),
+        tmp.maxInt(q -> q.getPoints()).orElse(0),
+        tmp.mean(q -> (double) q.getPoints()).orElse(0));
 
     tmp = finishedPlanesMoods.getDepartures();
     MMM departures = new MMM(
-        tmp.minInt(q -> q.getPoints()),
-        tmp.maxInt(q -> q.getPoints()),
-        tmp.mean(q -> (double) q.getPoints()));
+        tmp.minInt(q -> q.getPoints()).orElse(0),
+        tmp.maxInt(q -> q.getPoints()).orElse(0),
+        tmp.mean(q -> (double) q.getPoints()).orElse(0));
 
     tmp = finishedPlanesMoods.getArrivals().union(finishedPlanesMoods.getDepartures());
     MMM total = new MMM(
-        tmp.minInt(q -> q.getPoints()),
-        tmp.maxInt(q -> q.getPoints()),
-        tmp.mean(q -> (double) q.getPoints()));
+        tmp.minInt(q -> q.getPoints()).orElse(0),
+        tmp.maxInt(q -> q.getPoints()).orElse(0),
+        tmp.mean(q -> (double) q.getPoints()).orElse(0));
 
     ArrivalDepartureTotalModel<MMM> ret = new ArrivalDepartureTotalModel<>(
         arrivals, departures, total);

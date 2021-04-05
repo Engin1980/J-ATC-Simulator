@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.Tuple;
@@ -14,10 +8,17 @@ import eng.eSystem.utilites.NumberUtils;
 
 import java.util.Comparator;
 
-/**
- * @author Marek
- */
 public class Border {
+
+  public enum eType {
+    country,
+    tma,
+    ctr,
+    restricted,
+    danger,
+    mrva,
+    other
+  }
 
   public static class ByDisjointsComparator implements Comparator<Border> {
     @Override
@@ -37,7 +38,7 @@ public class Border {
   public static Border create(String name, Border.eType type, boolean enclosed,
                               int minAltitude, int maxAltitude, Coordinate labelCoordinate,
                               IList<BorderPoint> points,
-                              IList<String> disjoints){
+                              IList<String> disjoints) {
     Border ret = new Border();
     ret.name = name;
     ret.type = type;
@@ -58,47 +59,16 @@ public class Border {
 
   //TODO to instance
   private static Coordinate generateLabelCoordinate(IList<BorderPoint> points) {
-    double latMin = points.minDouble(q -> q.getCoordinate().getLatitude().get());
-    double latMax = points.maxDouble(q -> q.getCoordinate().getLatitude().get());
-    double lngMin = points.minDouble(q -> q.getCoordinate().getLongitude().get());
-    double lngMax = points.maxDouble(q -> q.getCoordinate().getLongitude().get());
+    double latMin = points.minDouble(q -> q.getCoordinate().getLatitude().get()).orElseThrow();
+    double latMax = points.maxDouble(q -> q.getCoordinate().getLatitude().get()).orElseThrow();
+    double lngMin = points.minDouble(q -> q.getCoordinate().getLongitude().get()).orElseThrow();
+    double lngMax = points.maxDouble(q -> q.getCoordinate().getLongitude().get()).orElseThrow();
 
     double lat = (latMax + latMin) / 2;
     double lng = (lngMax + lngMin) / 2;
 
     return new Coordinate(lat, lng);
   }
-
-  static class XmlLoader {
-
-
-
-
-
-  }
-
-  public enum eType {
-    country,
-    tma,
-    ctr,
-    restricted,
-    danger,
-    mrva,
-    other
-  }
-
-//
-//  public static IList<Border> loadList(IReadOnlyList<XElement> sources, IReadOnlyList<Navaid> navaids) {
-//    IList<Border> ret = new EList<>();
-//    for (XElement child : sources) {
-//      Border border = Border.load(child, navaids);
-//      ret.add(border);
-//    }
-//    ret.sort(new Border.ByDisjointsComparator());
-//    return ret;
-//  }
-
-
   private String name;
   private eType type;
   private IList<BorderPoint> points;
@@ -217,17 +187,17 @@ public class Border {
 
   private boolean isLineIntersection(Tuple<Coordinate, Coordinate> a, Tuple<Coordinate, Coordinate> b) {
     boolean ret = LineUtils.linesIntersect(
-        a.getA().getLatitude().get(), a.getA().getLongitude().get(),
-        a.getB().getLatitude().get(), a.getB().getLongitude().get(),
-        b.getA().getLatitude().get(), b.getA().getLongitude().get(),
-        b.getB().getLatitude().get(), b.getB().getLongitude().get());
+            a.getA().getLatitude().get(), a.getA().getLongitude().get(),
+            a.getB().getLatitude().get(), a.getB().getLongitude().get(),
+            b.getA().getLatitude().get(), b.getA().getLongitude().get(),
+            b.getB().getLatitude().get(), b.getB().getLongitude().get());
     return ret;
   }
 
   private void updateBoundingBox() {
-    this.globalMinLat = points.minDouble(q -> q.getCoordinate().getLatitude().get());
-    this.globalMaxLat = points.maxDouble(q -> q.getCoordinate().getLatitude().get());
-    this.globalMinLng = points.minDouble(q -> q.getCoordinate().getLongitude().get());
-    this.globalMaxLng = points.maxDouble(q -> q.getCoordinate().getLongitude().get());
+    this.globalMinLat = points.minDouble(q -> q.getCoordinate().getLatitude().get()).orElseThrow();
+    this.globalMaxLat = points.maxDouble(q -> q.getCoordinate().getLatitude().get()).orElseThrow();
+    this.globalMinLng = points.minDouble(q -> q.getCoordinate().getLongitude().get()).orElseThrow();
+    this.globalMaxLng = points.maxDouble(q -> q.getCoordinate().getLongitude().get()).orElseThrow();
   }
 }

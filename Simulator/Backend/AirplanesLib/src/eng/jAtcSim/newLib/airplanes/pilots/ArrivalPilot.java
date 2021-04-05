@@ -1,16 +1,23 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.Tuple;
+import eng.eSystem.collections.IList;
+import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
+import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import exml.loading.XLoadContext; import exml.saving.XSaveContext;
+import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import exml.annotations.XConstructor;
+import exml.loading.XLoadContext;
 
 public class ArrivalPilot extends BasicPilot {
 
   private final static double LOW_SPEED_DOWN_ALTITUDE = 11000;
   private final static double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
+  private static final double DEFAULT_ESTIMATED_FAF_DISTANCE = 8.5;
+  private Tuple<RunwayConfiguration, IList<Coordinate>> estimatedThresholdFafPoints = null;
 
   public ArrivalPilot(Airplane plane) {
     super(plane);
@@ -63,11 +70,27 @@ public class ArrivalPilot extends BasicPilot {
   }
 
   private void setArrivingCloseFafStateIfReady() {
-    double distToFaf = Context.getArea().getCurrentRunwayConfiguration()
-            .getArrivals().where(q -> q.isForCategory(rdr.getType().category))
-            .minDouble(q -> Coordinates.getDistanceInNM(rdr.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
+    if (estimatedThresholdFafPoints == null || Context.getArea().getCurrentRunwayConfiguration() != estimatedThresholdFafPoints.getA())
+      resetEstimatedThresholdFafPoints();
+
+    double distToFaf = estimatedThresholdFafPoints.getB()
+            .minDouble(q -> Coordinates.getDistanceInNM(rdr.getCoordinate(), q)).orElseThrow();
     if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
       wrt.setState(AirplaneState.arrivingCloseFaf);
     }
+  }
+
+  private void resetEstimatedThresholdFafPoints() {
+    this.estimatedThresholdFafPoints = new Tuple<>(
+            Context.getArea().getCurrentRunwayConfiguration(),
+            Context.getArea()
+                    .getCurrentRunwayConfiguration()
+                    .getArrivals()
+                    .where(q -> q.isForCategory(rdr.getType().category))
+                    .select(q ->
+                            Coordinates.getCoordinate(
+                                    q.getThreshold().getCoordinate(),
+                                    Headings.getOpposite(q.getThreshold().getCourse()),
+                                    DEFAULT_ESTIMATED_FAF_DISTANCE)));
   }
 }

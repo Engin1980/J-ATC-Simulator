@@ -9,9 +9,9 @@ import exml.annotations.XConstructor;
 public class MMM implements IXPersistable {
   public static MMM createMerge(IReadOnlyList<MMM> set) {
     MMM ret = new MMM(
-            set.minDouble(q -> q.minimum),
-            set.maxDouble(q -> q.maximum),
-            set.mean(q -> q.mean));
+            set.minDouble(q -> q.minimum).orElse(0),
+            set.maxDouble(q -> q.maximum).orElse(0),
+            set.mean(q -> q.mean).orElse(0));
     return ret;
   }
 

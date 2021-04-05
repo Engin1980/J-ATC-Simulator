@@ -459,7 +459,7 @@ public class TowerAtc extends ComputerAtc {
     boolean ret;
     ActiveRunwayThreshold rt = runway.getThresholdA();
     ISet<ActiveRunwayThreshold> crts = inUseInfo.current.getCrossedSetForThreshold(rt);
-    double dist = crts.min(q -> arrivalManager.getClosestLandingPlaneDistanceForThreshold(q)); //, 100d);
+    double dist = crts.min(q -> arrivalManager.getClosestLandingPlaneDistanceForThreshold(q)).orElse(100d);
     ret = dist < 2.5;
     return ret;
   }

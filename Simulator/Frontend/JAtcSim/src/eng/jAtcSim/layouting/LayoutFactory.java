@@ -84,7 +84,7 @@ public class LayoutFactory {
 
     if (parentElement.getChildren().count() == 0)
       ret = new EmptyBlock();
-    else if (parentElement.tryGetChild("panel") != null)
+    else if (parentElement.tryGetChild("panel").isPresent())
       ret = loadPanel(parentElement);
     else if (parentElement.getChildren("column").count() > 0)
       ret = loadColumns(parentElement);

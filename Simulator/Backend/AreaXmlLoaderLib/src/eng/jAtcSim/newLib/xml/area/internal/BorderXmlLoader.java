@@ -149,7 +149,10 @@ public class BorderXmlLoader extends XmlLoader<Border> {
       BorderPoint afterBorderPoint = index == ret.count() ? ret.get(0) : ret.get(index);
       IList<BorderPoint> arcPoints = generateArcPoints(
               beforeBorderPoint, coordinate, isClockwise, afterBorderPoint);
-      ret.insertMany(index, arcPoints);
+      if (index == ret.size())
+        ret.addMany(arcPoints);
+      else
+        ret.insertMany(index, arcPoints);
     }
 
     return ret;
