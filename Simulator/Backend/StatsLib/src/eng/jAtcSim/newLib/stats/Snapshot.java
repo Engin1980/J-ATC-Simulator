@@ -91,21 +91,21 @@ public class Snapshot implements IXPersistable {
     // arrivals
     tmp = finishedPlanesMoods.getArrivals();
     MMM arrivals = new MMM(
-        tmp.minInt(q -> q.getPoints(), 0),
-        tmp.maxInt(q -> q.getPoints(), 0),
-        tmp.mean(q -> (double) q.getPoints(), 0));
+        tmp.minInt(q -> q.getPoints()),
+        tmp.maxInt(q -> q.getPoints()),
+        tmp.mean(q -> (double) q.getPoints()));
 
     tmp = finishedPlanesMoods.getDepartures();
     MMM departures = new MMM(
-        tmp.minInt(q -> q.getPoints(), 0),
-        tmp.maxInt(q -> q.getPoints(), 0),
-        tmp.mean(q -> (double) q.getPoints(), 0));
+        tmp.minInt(q -> q.getPoints()),
+        tmp.maxInt(q -> q.getPoints()),
+        tmp.mean(q -> (double) q.getPoints()));
 
     tmp = finishedPlanesMoods.getArrivals().union(finishedPlanesMoods.getDepartures());
     MMM total = new MMM(
-        tmp.minInt(q -> q.getPoints(), 0),
-        tmp.maxInt(q -> q.getPoints(), 0),
-        tmp.mean(q -> (double) q.getPoints(), 0));
+        tmp.minInt(q -> q.getPoints()),
+        tmp.maxInt(q -> q.getPoints()),
+        tmp.mean(q -> (double) q.getPoints()));
 
     ArrivalDepartureTotalModel<MMM> ret = new ArrivalDepartureTotalModel<>(
         arrivals, departures, total);

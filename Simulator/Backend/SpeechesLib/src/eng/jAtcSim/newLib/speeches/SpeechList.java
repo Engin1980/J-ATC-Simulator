@@ -21,13 +21,15 @@ public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageC
 
   @SafeVarargs
   public SpeechList(T... speeches) {
-    super(speeches);
+    super();
+    super.addMany(speeches);
     if (this.isAny(q -> q == null))
       throw new EApplicationException("Some speech is null.");
   }
 
   public SpeechList(Iterable<? extends T> lst) {
-    super(lst);
+    super();
+    super.addMany(lst);
     if (this.isAny(q -> q == null))
       throw new EApplicationException("Some speech is null.");
   }

@@ -62,7 +62,7 @@ public class PlaneCategoryDefinitions implements IXPersistable {
   }
 
   public PlaneCategoryDefinitions makeClone() {
-    PlaneCategoryDefinitions ret = new PlaneCategoryDefinitions(new EList(this.inner));
+    PlaneCategoryDefinitions ret = new PlaneCategoryDefinitions(EList.of(this.inner));
     return ret;
   }
 

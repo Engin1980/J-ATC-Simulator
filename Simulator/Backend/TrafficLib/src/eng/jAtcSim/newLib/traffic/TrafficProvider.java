@@ -71,7 +71,7 @@ public class TrafficProvider implements IXPersistable {
 
   private void prepareMovementsForDay(int dayIndex) {
     IReadOnlyList<MovementTemplate> tmp = trafficModel.generateMovementsForOneDay();
-    IList<MovementTemplate> oth = new EList<>(tmp);
+    IList<MovementTemplate> oth = EList.of(tmp);
     movementsForDay.set(dayIndex, oth);
   }
 }

@@ -144,17 +144,14 @@ public class XLoadObjectContext {
   }
 
   private Optional<Class<?>> tryLoadTypeFromElement(XElement elm) {
-    String typeName = elm.tryGetAttribute(Constants.TYPE_ATTRIBUTE);
-    Optional<Class<?>> ret;
-    if (typeName == null) {
-      ret = Optional.empty();
-    } else {
+    Optional<String> typeName = elm.tryGetAttribute(Constants.TYPE_ATTRIBUTE);
+    Optional<Class<?>> ret = typeName.map(q -> {
       try {
-        ret = Optional.of(Class.forName(typeName));
+        return Class.forName(q);
       } catch (ClassNotFoundException e) {
         throw new XLoadException(sf("Failed to load type '%s' required to deserialize element '%s'.", typeName, elm.toXPath()), e, ctx);
       }
-    }
+    });
 
     return ret;
   }

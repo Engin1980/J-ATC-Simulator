@@ -12,7 +12,7 @@ public class DensityBasedTrafficModelXmlLoader {
 
     double defaultGeneralAviationProbability = Double.parseDouble(elm.getAttribute("defaultGeneralAviationProbability"));
     //TODO isFullDayTraffic not implemented
-    boolean isCompaniesFullDayTraffic = elm.getChild("companies").tryGetAttribute("issFullDayTraffic", "false").equals("true");
+    boolean isCompaniesFullDayTraffic = elm.getChild("companies").tryGetAttribute("issFullDayTraffic").orElse("false").equals("true");
 
     IList<DensityBasedTrafficModel.HourBlockMovements> densityLst = new EList<>();
     elm.getChild("density").getChildren("item").forEach(q -> {

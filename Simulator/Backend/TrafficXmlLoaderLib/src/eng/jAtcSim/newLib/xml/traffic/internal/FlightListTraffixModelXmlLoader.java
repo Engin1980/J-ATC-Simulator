@@ -42,8 +42,8 @@ public class FlightListTraffixModelXmlLoader {
             Integer.parseInt(elm.getAttribute("heading")) : null;
 
     Coordinate otherAirportCoordinate = SmartXmlLoaderUtils.loadCoordinate(elm, "otherAirport", null);
-    String airplaneType = elm.tryGetAttribute("planeType", null);
-    String follows = elm.tryGetAttribute("follows", null);
+    String airplaneType = elm.tryGetAttribute("planeType").orElse(null);
+    String follows = elm.tryGetAttribute("follows").orElse(null);
     EAssert.isTrue(airplaneType != null || follows != null,
             sf("Flight '%s' must have type or be following of previous flight.", callsignS));
 

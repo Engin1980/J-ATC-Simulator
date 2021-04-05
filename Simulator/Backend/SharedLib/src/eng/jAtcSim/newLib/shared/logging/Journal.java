@@ -17,7 +17,7 @@ public final class Journal {
 
   public Journal(String name, boolean errorForgiving, ILogWriter... outputStreams) {
     ILogWriter[] writers = Arrays.copyOf(outputStreams, outputStreams.length);
-    this.writers = new EList<>(writers);
+    this.writers = EList.of(writers);
     this.name = name;
     this.errorForgiving = errorForgiving;
   }

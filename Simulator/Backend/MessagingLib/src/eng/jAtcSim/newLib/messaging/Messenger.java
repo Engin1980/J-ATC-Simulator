@@ -60,7 +60,7 @@ public class Messenger {
       } catch (Exception ex) {
         throw new EApplicationException("Listener " + listener.toString() + " has not been registered.");
       }
-      ret = new EList<>(lis.queue);
+      ret = EList.of(lis.queue);
       if (deleteRetrieved) {
         lis.queue.clear();
       }

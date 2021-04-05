@@ -14,12 +14,12 @@ class LoadUtils {
   public static <T> Object loadEnum(String value, Class<T> type) {
     Method parseMethod;
     Object ret;
-    ISet<Method> methods = new ESet<>(type.getDeclaredMethods());
+    ISet<Method> methods = ESet.of(type.getDeclaredMethods());
     parseMethod = methods
             .where(q -> q.getName().equals("parse"))
             .where(q -> Modifier.isPublic(q.getModifiers()) && Modifier.isStatic(q.getModifiers()))
             .where(q -> q.getParameterCount() == 1 && q.getParameters()[0].getType().equals(String.class))
-            .tryGetFirst();
+            .tryGetFirst().orElse(null);
     if (parseMethod != null) {
       try {
         ret = parseMethod.invoke(null, value);

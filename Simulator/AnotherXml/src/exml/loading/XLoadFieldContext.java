@@ -54,7 +54,7 @@ public class XLoadFieldContext {
     usedFieldEvidence.add(obj, field.getName());
     FieldObligation obligation = FieldObligation.getFieldObligation(field);
     if (obligation == FieldObligation.ignored) return;
-    String attributeValue = elm.tryGetAttribute(field.getName());
+    String attributeValue = elm.tryGetAttribute(field.getName()).orElse(null);
     if (attributeValue == null)
       if (obligation == FieldObligation.mandatory)
         throw new XLoadException(sf("Unable to find mandatory attribute for field '%s'.", field.getName()), ctx);
@@ -85,7 +85,7 @@ public class XLoadFieldContext {
     usedFieldEvidence.add(obj, field.getName());
     FieldObligation obligation = FieldObligation.getFieldObligation(field);
     if (obligation == FieldObligation.ignored) return;
-    XElement fieldElement = elm.tryGetChild(field.getName());
+    XElement fieldElement = elm.tryGetChild(field.getName()).orElse(null);
 
     if (fieldElement == null)
       if (obligation == FieldObligation.mandatory)

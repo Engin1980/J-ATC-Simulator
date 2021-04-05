@@ -2,15 +2,12 @@ package eng.jAtcSim.newLib.mood;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.newLib.mood.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import exml.IXPersistable;
-import exml.annotations.XIgnored;
-import exml.loading.XLoadContext;
-import exml.saving.XSaveContext;
+
+import java.util.Optional;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -139,17 +136,15 @@ public class Mood implements IXPersistable {
   private IList<MoodExperienceResult> evaluateArrivals(int delayInMinutes) {
     IList<MoodExperienceResult> ret = new EList<>();
 
-    Experience<ArrivalExperience> tmp;
+    Optional<Experience<ArrivalExperience>> tmp;
     IList<Experience<ArrivalExperience>> tmps;
 
     // positive
     tmp = arrivalExperiences.tryGetFirst(q -> q.type == ArrivalExperience.shortcutToIafAbove100);
-    if (tmp != null)
-      ret.add(new MoodExperienceResult(tmp.time, SHORTCUT_TO_IAF_ABOVE_FL100, 5));
+    tmp.ifPresent(q -> ret.add(new MoodExperienceResult(q.time, SHORTCUT_TO_IAF_ABOVE_FL100, 5)));
 
     tmp = arrivalExperiences.tryGetFirst(q -> q.type == ArrivalExperience.canceledFL100speedRestriction);
-    if (tmp != null)
-      ret.add(new MoodExperienceResult(tmp.time, SPEED_RESTRICTION_UNDER_FL100_CANCELED, 5));
+    tmp.ifPresent(q -> ret.add(new MoodExperienceResult(q.time, SPEED_RESTRICTION_UNDER_FL100_CANCELED, 5)));
 
     if (arrivalExperiences.isNone(q -> q.type == ArrivalExperience.leveledFlight) &&
             arrivalExperiences.isNone(q -> q.type == ArrivalExperience.holdCycleFinished) &&
@@ -157,8 +152,7 @@ public class Mood implements IXPersistable {
       ret.add(new MoodExperienceResult(null, NO_LEVELED_FLIGHT_ON_APPROACH, 20));
 
     tmp = arrivalExperiences.tryGetFirst(q -> q.type == ArrivalExperience.landedAsEmergency);
-    if (tmp != null)
-      ret.add(new MoodExperienceResult(null, LANDED_AS_EMERGENCY, 50));
+    tmp.ifPresent(q -> ret.add(new MoodExperienceResult(null, LANDED_AS_EMERGENCY, 50)));
 
     // negative
     tmps = arrivalExperiences.where(q -> q.type == ArrivalExperience.holdCycleFinished);
@@ -172,14 +166,10 @@ public class Mood implements IXPersistable {
     }
 
     tmp = arrivalExperiences.tryGetFirst(q -> q.type == ArrivalExperience.divertOrderedByAtcWhenNoEmergency);
-    if (tmp != null) {
-      ret.add(new MoodExperienceResult(tmp.time, DIVERT, -20));
-    }
+    tmp.ifPresent(q -> ret.add(new MoodExperienceResult(q.time, DIVERT, -20)));
 
     tmp = arrivalExperiences.tryGetFirst(q -> q.type == ArrivalExperience.divertOrderedByCaptain);
-    if (tmp != null) {
-      ret.add(new MoodExperienceResult(tmp.time, DIVERT, -50));
-    }
+    tmp.ifPresent(q -> ret.add(new MoodExperienceResult(q.time, DIVERT, -50)));
 
     return ret;
   }
@@ -187,32 +177,27 @@ public class Mood implements IXPersistable {
   private IList<MoodExperienceResult> evaluateDepartures(int delayInMinutes) {
     IList<MoodExperienceResult> ret = new EList<>();
 
-    Experience<DepartureExperience> tmp;
+    Optional<Experience<DepartureExperience>> tmp;
     IList<Experience<DepartureExperience>> tmps;
     int cnt;
 
     // positive
-    tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.shortctuToExitPointAbove100);
-    if (tmp != null)
-      ret.add(new MoodExperienceResult(tmp.time, SHORTCUT_TO_EXIT, 5));
-    else {
-      tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.shortcutToExitPointBelow100);
-      if (tmp != null)
-        ret.add(new MoodExperienceResult(tmp.time, SHORTCUT_TO_EXIT, 10));
+    tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.shortcutToExitPointBelow100);
+    tmp.ifPresent(q -> ret.add(new MoodExperienceResult(q.time, SHORTCUT_TO_EXIT, 5)));
+    if (tmp.isEmpty()) {
+      tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.shortctuToExitPointAbove100);
+      tmp.ifPresent(q -> ret.add(new MoodExperienceResult(q.time, SHORTCUT_TO_EXIT, 10)));
     }
 
     tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.departureAltitudeRestrictionCanceled);
-    if (tmp != null)
-      ret.add(new MoodExperienceResult(tmp.time, DEPARTURE_ALTITUDE_RESTRICTION_CANCELED, 5));
+    tmp.ifPresent(q -> ret.add(new MoodExperienceResult(q.time, DEPARTURE_ALTITUDE_RESTRICTION_CANCELED, 5)));
 
     tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.divertedAsEmergency);
-    if (tmp != null)
-      ret.add(new MoodExperienceResult(null, DIVERTED_AS_EMERGENCY, 15));
+    tmp.ifPresent(q -> ret.add(new MoodExperienceResult(null, DIVERTED_AS_EMERGENCY, 15)));
 
     // negative
     tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.leveledFlight);
-    if (tmp != null)
-      ret.add(new MoodExperienceResult(null, NO_CLIMB_DURING_DEPARTURE, -5));
+    tmp.ifPresent(q -> ret.add(new MoodExperienceResult(null, NO_CLIMB_DURING_DEPARTURE, -5)));
 
     tmps = departureExperiences.where(q -> q.type == DepartureExperience.holdCycleFinished);
     for (Experience<DepartureExperience> tm : tmps) {

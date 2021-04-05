@@ -34,7 +34,7 @@ public class RecentStats implements IXPersistable {
   //TODO rename to DelaysInfo
   public class Delays {
     public double getMaximum() {
-      return RecentStats.this.planeDelays.maxInt(q -> q.getValue(), 0);
+      return RecentStats.this.planeDelays.maxInt(q -> q.getValue());
     }
 
     public double getMean() {
@@ -52,11 +52,11 @@ public class RecentStats implements IXPersistable {
     }
 
     public int getMaximum() {
-      return RecentStats.this.holdingPointMaximalCount.maxInt(q -> q.getValue(), 0);
+      return RecentStats.this.holdingPointMaximalCount.maxInt(q -> q.getValue());
     }
 
     public int getMaximumDelay() {
-      return RecentStats.this.holdingPointDelays.maxInt(q -> q.getValue(), 0);
+      return RecentStats.this.holdingPointDelays.maxInt(q -> q.getValue());
     }
   }
 
@@ -95,27 +95,27 @@ public class RecentStats implements IXPersistable {
     }
 
     public int getMaximal() {
-      return maximumPlanes.maxInt(q -> q.getValue(), 0);
+      return maximumPlanes.maxInt(q -> q.getValue());
     }
 
     public int getMaximalArrivals() {
-      return maximumArrivals.maxInt(q -> q.getValue(), 0);
+      return maximumArrivals.maxInt(q -> q.getValue());
     }
 
     public int getMaximalArrivalsUnderApp() {
-      return maximumArrivalsUnderApp.maxInt(q -> q.getValue(), 0);
+      return maximumArrivalsUnderApp.maxInt(q -> q.getValue());
     }
 
     public int getMaximalDepartures() {
-      return maximumDepartures.maxInt(q -> q.getValue(), 0);
+      return maximumDepartures.maxInt(q -> q.getValue());
     }
 
     public int getMaximalDeparturesUnderApp() {
-      return maximumDeparturesUnderApp.maxInt(q -> q.getValue(), 0);
+      return maximumDeparturesUnderApp.maxInt(q -> q.getValue());
     }
 
     public int getMaximalUnderApp() {
-      return maximumPlanesUnderApp.maxInt(q -> q.getValue(), 0);
+      return maximumPlanesUnderApp.maxInt(q -> q.getValue());
     }
   }
 

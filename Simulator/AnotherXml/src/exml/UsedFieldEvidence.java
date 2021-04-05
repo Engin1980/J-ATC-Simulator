@@ -36,7 +36,7 @@ public class UsedFieldEvidence {
 
   public ISet<String> getRemainingFields(Object object) {
     ISet<String> ret = getAllFieldsToPersist(object.getClass());
-    ISet<String> usedFields = inner.tryGet(object, () -> new ESet<>());
+    ISet<String> usedFields = inner.tryGet(object).orElseGet(() -> new ESet<>());
     ret.tryRemoveMany(usedFields);
     return ret;
   }

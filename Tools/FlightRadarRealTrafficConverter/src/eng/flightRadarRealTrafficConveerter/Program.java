@@ -8,7 +8,6 @@ import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.geo.Coordinate;
-import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.geocoding.HereGeocoding;
 import eng.eSystem.geo.geocoding.IGeocoding;
 
@@ -29,7 +28,7 @@ public class Program {
   private static final String OUT_FILE = "out.xml";
   private static final String TYPES_FILE = "..\\db\\typeMaps.csv";
   private static final String HERE_API_FILE = "..\\db\\hereApiKeys.txt";
-
+  private static final NumberFormat nf = NumberFormat.getInstance(Locale.ENGLISH);
   private static IMap<String, Coordinate> cities = null;
   private static IMap<String, String> companies = null;
   private static IMap<String, String> types = null;
@@ -79,9 +78,7 @@ public class Program {
     }
 
     System.out.println("Loading input file...");
-    IList<String> lines = new EList<>(
-        java.nio.file.Files.readAllLines(inPath)
-    );
+    IList<String> lines = EList.of(java.nio.file.Files.readAllLines(inPath));
     System.out.println("... loaded " + lines.size() + " records.");
 
     IList<Item> items = new EList();
@@ -141,11 +138,11 @@ public class Program {
     meta.addElement(new XElement("title", "Automatically generated traffic."));
     meta.addElement(new XElement("author", "Flight radar real traffic converter"));
     meta.addElement(new XElement("description", "Automatically generated flight-list-traffic generated on " +
-        java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("d. MMMM yyyy, HH:mm:ss"))
-        + "."));
+            java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("d. MMMM yyyy, HH:mm:ss"))
+            + "."));
     meta.addElement(new XElement("date",
-        java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        ));
+            java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+    ));
     trafficDefinition.addElement(meta);
 
     XElement flightListTraffic = new XElement("flightListTraffic");
@@ -208,23 +205,22 @@ public class Program {
     }
   }
 
-  private static final NumberFormat nf = NumberFormat.getInstance(Locale.ENGLISH);
   private static XElement createElement(Item item) {
     XElement ret = new XElement("flight");
 
     ret.setAttribute("time",
-        item.time.format(DateTimeFormatter.ofPattern("H:mm")));
+            item.time.format(DateTimeFormatter.ofPattern("H:mm")));
     ret.setAttribute("callsign",
-        item.callsignCompany + item.callsignNumber);
+            item.callsignCompany + item.callsignNumber);
     ret.setAttribute("kind",
-        item.arrival ? "arrival" : "departure");
+            item.arrival ? "arrival" : "departure");
     String coordString = nf.format(item.otherAirportCoordinate.getLatitude().get()) + " " +
-        nf.format(item.otherAirportCoordinate.getLongitude().get());
+            nf.format(item.otherAirportCoordinate.getLongitude().get());
     ret.setAttribute("otherAirport", coordString);
     ret.setAttribute("planeType", item.type);
     if (item.previousItem != null)
       ret.setAttribute("follows",
-          item.callsignCompany + item.callsignNumber);
+              item.callsignCompany + item.callsignNumber);
 
     return ret;
   }
@@ -238,8 +234,7 @@ public class Program {
       if (item.arrival) {
         tmp.set(reg, item);
       } else {
-        Item other = tmp.tryGet(reg);
-        if (other != null) item.previousItem = other;
+        item.previousItem = tmp.tryGet(reg).orElse(item.previousItem);
       }
     }
   }
@@ -254,8 +249,8 @@ public class Program {
 
     Item ret = new Item();
     ret.time = java.time.LocalTime.of(
-        Integer.parseInt(m.group(2)),
-        Integer.parseInt(m.group(3)));
+            Integer.parseInt(m.group(2)),
+            Integer.parseInt(m.group(3)));
     String clsgn = m.group(4);
     ret.callsignCompany = clsgn.substring(0, 2);
     ret.callsignNumber = clsgn.substring(2);

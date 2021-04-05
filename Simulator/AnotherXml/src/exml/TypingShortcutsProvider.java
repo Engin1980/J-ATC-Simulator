@@ -34,7 +34,7 @@ public class TypingShortcutsProvider {
   }
 
   private static void expandTypesByElement(XElement elm, IMap<String, String> typeDecodes) {
-    String t = elm.tryGetAttribute(Constants.TYPE_ATTRIBUTE);
+    String t = elm.tryGetAttribute(Constants.TYPE_ATTRIBUTE).orElse(null);
     if (t != null) {
       String typeName = typeDecodes.get(t);
       elm.setAttribute(Constants.TYPE_ATTRIBUTE, typeName);
@@ -45,7 +45,7 @@ public class TypingShortcutsProvider {
   }
 
   private static void collapseTypesByElement(XElement elm, IMap<String, String> typeEncodes) {
-    String t = elm.tryGetAttribute(Constants.TYPE_ATTRIBUTE);
+    String t = elm.tryGetAttribute(Constants.TYPE_ATTRIBUTE).orElse(null);
     if (t != null) {
       if (typeEncodes.containsKey(t) == false)
         registerTypeShortName(t, typeEncodes);

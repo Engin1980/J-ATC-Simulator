@@ -130,7 +130,7 @@ public class StatsProvider implements IXPersistable {
       collectors.add(c);
       nextCollectorStartTime = now.addMinutes(statsSnapshotDistanceInMinutes);
     } else if (now.isAfterOrEq(this.nextCollectorStartTime)) {
-      Collector c = collectors.tryGetFirst(q -> q.getToTime().isBeforeOrEq(now));
+      Collector c = collectors.tryGetFirst(q -> q.getToTime().isBeforeOrEq(now)).orElse(null);
       if (c != null) {
         Snapshot s = Snapshot.of(c);
         collectors.remove(c);

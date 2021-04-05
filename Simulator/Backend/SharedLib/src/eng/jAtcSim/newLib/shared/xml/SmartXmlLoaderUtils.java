@@ -408,7 +408,7 @@ public abstract class SmartXmlLoaderUtils {
 
   private static void checkValueIsInPossibilities(String content, String[] possibleValues) {
     if (content != null && possibleValues != null) {
-      IList<String> tmp = new EList<>(possibleValues);
+      IList<String> tmp = EList.of(possibleValues);
       if (tmp.contains(content) == false)
         throw new EApplicationException("Error in loading - string does not match any of required values.");
     }
@@ -417,14 +417,9 @@ public abstract class SmartXmlLoaderUtils {
   private static String readValueFromXml(XElement source, String key) {
     if (printLogToConsole)
       System.out.println("XmlLoader - loading value  " + context.toXmlPath(true) + " -- looking for " + key);
-    String ret = source.tryGetAttribute(key);
-    if (ret == null) {
-      XElement child = source.tryGetChild(key);
-      if (child == null)
-        ret = null;
-      else
-        ret = child.getContent();
-    }
+    String ret = source.tryGetAttribute(key)
+            .or(() -> source.tryGetChild(key).map(q->q.getName()))
+            .orElse(null);
     return ret;
   }
 

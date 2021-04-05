@@ -20,11 +20,6 @@ public abstract class Fleets<T> {
     this.defaultItem = defaultItem;
   }
 
-//  public IList<CompanyFleet> getCompaniesByIcao(String[] companies) {
-//    return inner.where(q ->
-//        ArrayUtils.contains(companies, q.getIcao()));
-//  }
-
   public T getDefault() {
     return defaultItem;
   }
@@ -40,7 +35,7 @@ public abstract class Fleets<T> {
   }
 
   public T tryGetByIcao(String icao) {
-    T ret = this.inner.tryGetFirst(q -> byIcaoSelector.invoke(q).equals(icao));
+    T ret = this.inner.tryGetFirst(q -> byIcaoSelector.invoke(q).equals(icao)).orElse(null);
     return ret;
   }
 

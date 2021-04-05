@@ -21,6 +21,8 @@ import exml.IXPersistable;
 import exml.loading.XLoadContext;
 import exml.saving.XSaveContext;
 
+import java.util.Optional;
+
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 /**
@@ -184,17 +186,27 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
   public Approach tryGetHighestApproachExceptVisuals() {
     Approach ret;
 
-    ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ils_III);
-    if (ret == null)
-      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ils_II);
-    if (ret == null)
-      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ils_I);
-    if (ret == null)
-      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.gnss);
-    if (ret == null)
-      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.vor);
-    if (ret == null)
-      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ndb);
+    ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ils_III)
+            .or(() -> this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ils_II))
+            .or(()->this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ils_I))
+            .or(()->this.approaches.tryGetFirst(q -> q.getType() == ApproachType.gnss))
+            .or(()->this.approaches.tryGetFirst(q -> q.getType() == ApproachType.vor))
+            .or(()->this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ndb))
+            .orElse(null);
+
+    //TODEL del after check if is working
+//
+//    ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ils_III);
+//    if (ret == null)
+//      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ils_II);
+//    if (ret == null)
+//      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ils_I);
+//    if (ret == null)
+//      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.gnss);
+//    if (ret == null)
+//      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.vor);
+//    if (ret == null)
+//      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ndb);
 
     return ret;
   }

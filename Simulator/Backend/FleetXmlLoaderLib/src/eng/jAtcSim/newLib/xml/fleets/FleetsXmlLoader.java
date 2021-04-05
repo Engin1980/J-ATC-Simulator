@@ -48,7 +48,7 @@ public class FleetsXmlLoader {
     elm.getChildren("company").forEach(q ->
             lst.add(loadCompanyFleet(
                     q.getAttribute("icao"),
-                    q.tryGetAttribute("name", ""),
+                    q.tryGetAttribute("name").orElse(""),
                     q.getChildren("type"),
                     ctx)));
     CompanyFleet def = loadCompanyFleet(
@@ -88,7 +88,7 @@ public class FleetsXmlLoader {
     elm.getChildren("country").forEach(q -> lst.add(loadCountryFleet(
             q.getAttribute("code"),
             q.getAttribute("aircraftPrefix"),
-            q.tryGetAttribute("name", ""),
+            q.tryGetAttribute("name").orElse(""),
             q.getChildren("type"),
             ctx)));
     CountryFleet def = loadCountryFleet(
