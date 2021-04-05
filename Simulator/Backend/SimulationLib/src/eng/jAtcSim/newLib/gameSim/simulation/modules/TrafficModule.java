@@ -294,7 +294,7 @@ public class TrafficModule extends SimulationModule {
 
     if (entryExitInfo.getRadial() != null) {
       //TODEL //ret = eeps .getSmallest(q -> Headings.getDifference(entryExitInfo.getRadial(), q.getRadialFromAirport(), true));
-      ret = eeps.getMinimal(q -> Headings.getDifference(entryExitInfo.getRadial(), q.getRadialFromAirport(), true));
+      ret = eeps.getMinimal(q -> Headings.getDifference(entryExitInfo.getRadial(), q.getRadialFromAirport(), true)).orElseThrow();
     } else if (entryExitInfo.getNavaid() != null) {
       ret = eeps.tryGetFirst(q -> q.getName().equals(entryExitInfo.getNavaid())).orElse(null);
       if (ret == null) {
@@ -309,7 +309,7 @@ public class TrafficModule extends SimulationModule {
       ret = eeps.getMinimal(q -> {
         double pointHeading = Coordinates.getBearing(q.getNavaid().getCoordinate(), Context.getArea().getAirport().getLocation());
         return Headings.getDifference(heading, pointHeading, true);
-      });
+      }).orElseThrow();
     } else
       ret = eeps.getRandom();
 

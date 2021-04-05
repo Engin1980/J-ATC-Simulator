@@ -99,7 +99,7 @@ public class NavaidList extends EList<Navaid> {
     if (declinations.isEmpty())
       throw new ERuntimeException("Unable to get nearest declination. Any declination is registered.");
     Coordinate nearestCoordinate = declinations.getKeys().getMinimal(q ->
-        Coordinates.getDistanceInNM(coordinate, q));
+        Coordinates.getDistanceInNM(coordinate, q)).orElseThrow();
     double ret = declinations.get(nearestCoordinate);
     return ret;
   }
