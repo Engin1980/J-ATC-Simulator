@@ -12,7 +12,6 @@ import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.panels.*;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
-import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.FlightListTrafficModel;
@@ -210,33 +209,31 @@ public class FrmStartupSettings extends JPanel {
       }
     }
 
-    if (ss.traffic.type == StartupSettings.Traffic.eTrafficType.xml) {
-      TrafficSource traffics = SourceFactory.createTrafficXmlSource(ss.files.trafficXmlFile);
-      try {
-        traffics.init();
-      } catch (Exception ex) {
-        Context.getApp().getAppLog().write(LogItemType.warning, "Failed to load traffic from '%s'. '%s'", ss.files.trafficXmlFile,
-                ExceptionUtils.toFullString(ex));
-        MessageBox.show("Failed to load traffic from file " + ss.files.trafficXmlFile + ". " + ex.getMessage(), "Error...");
+    TrafficSource traffics = SourceFactory.createTrafficXmlSource(ss.files.trafficXmlFile);
+    try {
+      traffics.init();
+    } catch (Exception ex) {
+      Context.getApp().getAppLog().write(LogItemType.warning, "Failed to load traffic from '%s'. '%s'", ss.files.trafficXmlFile,
+              ExceptionUtils.toFullString(ex));
+      MessageBox.show("Failed to load traffic from file " + ss.files.trafficXmlFile + ". " + ex.getMessage(), "Error...");
+      btnValidate.setEnabled(true);
+      return;
+    }
+
+    ITrafficModel tm = traffics.getContent();
+    if (tm instanceof FlightListTrafficModel) {
+      FlightListTrafficModel fltm = (FlightListTrafficModel) tm;
+      IReadOnlyList<String> requiredPlaneTypes = fltm.getRequiredPlaneTypes();
+      IReadOnlyList<String> knownPlaneTypes = types.getContent().getTypeNames();
+      IReadOnlyList<String> unknownPlaneTypes = requiredPlaneTypes
+              .where(q -> knownPlaneTypes.contains(q) == false);
+      for (String unknownPlaneType : unknownPlaneTypes) {
+        Context.getApp().getAppLog().write(LogItemType.warning, "Required plane kind '%s' not found in known plane types.", unknownPlaneType);
+      }
+      if (unknownPlaneTypes.isEmpty() == false) {
+        MessageBox.show("Some airplane types required by the traffic file are missing.", "Error...");
         btnValidate.setEnabled(true);
         return;
-      }
-
-      ITrafficModel tm = traffics.getContent();
-      if (tm instanceof FlightListTrafficModel) {
-        FlightListTrafficModel fltm = (FlightListTrafficModel) tm;
-        IReadOnlyList<String> requiredPlaneTypes = fltm.getRequiredPlaneTypes();
-        IReadOnlyList<String> knownPlaneTypes = types.getContent().getTypeNames();
-        IReadOnlyList<String> unknownPlaneTypes = requiredPlaneTypes
-                .where(q -> knownPlaneTypes.contains(q) == false);
-        for (String unknownPlaneType : unknownPlaneTypes) {
-          Context.getApp().getAppLog().write(LogItemType.warning, "Required plane kind '%s' not found in known plane types.", unknownPlaneType);
-        }
-        if (unknownPlaneTypes.isEmpty() == false) {
-          MessageBox.show("Some airplane types required by the traffic file are missing.", "Error...");
-          btnValidate.setEnabled(true);
-          return;
-        }
       }
     }
 
