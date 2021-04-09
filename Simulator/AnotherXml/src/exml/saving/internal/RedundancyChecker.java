@@ -1,9 +1,7 @@
 package exml.saving.internal;
 
 import eng.eSystem.collections.EList;
-import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.ISet;
 import eng.eSystem.utilites.ReflectionUtils;
 import exml.saving.XSaveContext;
 import exml.saving.XSaveException;
@@ -13,7 +11,7 @@ import java.util.Objects;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class RedundancyChecker {
-  private static class Record{
+  private static class Record {
     public final String key;
     public final Object object;
 
@@ -47,15 +45,24 @@ public class RedundancyChecker {
     if (!isObjectToCheckCyclicSave(obj)) return;
 
     Record r = new Record(key, obj);
-    if (processedObjects.contains(r))
-      throw new XSaveException(sf("Object '%s' (%s) is already being saved (cyclic dependency).", obj, obj.getClass()), ctx);
-    else
+    if (processedObjects.contains(r)) {
+      StringBuilder sb = new StringBuilder();
+      for (Record processedObject : processedObjects) {
+        if (sb.length() > 0)
+          sb.append(" ==> ");
+        sb.append(sf("[%s] %s", processedObject.key, processedObject.object));
+      }
+      throw new XSaveException(sf("Object '%s' (%s) is already being saved (cyclic dependency). Sequence: %s",
+              obj,
+              obj.getClass(),
+              sb.toString()), ctx);
+    } else
       processedObjects.add(r);
   }
 
   public void remove(String key, Object obj) {
-    if (isObjectToCheckCyclicSave(obj)){
-      Record r = processedObjects.getFirst(q->q.key.equals(key) && q.object == obj);
+    if (isObjectToCheckCyclicSave(obj)) {
+      Record r = processedObjects.getFirst(q -> q.key.equals(key) && q.object == obj);
       processedObjects.remove(r);
     }
   }
