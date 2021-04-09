@@ -149,8 +149,8 @@ public class ApproachPilot extends Pilot {
   @Override
   public void xSave(XElement elm, XSaveContext ctx) {
     super.xSave(elm, ctx);
-    ctx.saveFieldItems(this, "stages", ApproachStage.class, elm);
-    ctx.saveFieldItems(this, "gaRouteCommands", ICommand.class, elm);
+    ctx.fields.saveFieldItems(this, "stages", ApproachStage.class, elm);
+    ctx.fields.saveFieldItems(this, "gaRouteCommands", ICommand.class, elm);
   }
 
   @Override

@@ -32,6 +32,7 @@ import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.LogItemType;
+import eng.jAtcSim.newLib.shared.logging.ProgressInfo;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
@@ -54,12 +55,17 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class GameFactoryAndRepository {
 
   public Game create(GameStartupInfo gsi) {
+    return create(gsi, new ProgressInfo());
+  }
+
+  public Game create(GameStartupInfo gsi, ProgressInfo pi) {
     Game game;
     ApplicationLog appLog = Context.getApp().getAppLog();
 
     Simulation simulation;
 
     try {
+      pi.increase("Initializing area");
       appLog.write(LogItemType.info, "Loading area");
       EAssert.isNotNull(gsi.areaSource, "Area-Source not set.");
       gsi.areaSource.init();
@@ -68,6 +74,7 @@ public class GameFactoryAndRepository {
     }
 
     try {
+      pi.increase("Initializing airplane types");
       appLog.write(LogItemType.info, "Loading plane types");
       EAssert.isNotNull(gsi.airplaneTypesSource, "Airplane-Type-Source not set.");
       gsi.airplaneTypesSource.init();
@@ -76,6 +83,7 @@ public class GameFactoryAndRepository {
     }
 
     try {
+      pi.increase("Initializing fleets");
       appLog.write(LogItemType.info, "Loading fleets");
       EAssert.isNotNull(gsi.fleetsSource, "Fleet-Source not set.");
       gsi.fleetsSource.init();
@@ -84,6 +92,7 @@ public class GameFactoryAndRepository {
     }
 
     try {
+      pi.increase("Initializing traffic");
       appLog.write(LogItemType.info, "Loading traffic");
       EAssert.isNotNull(gsi.trafficSource, "Traffic-Source not set.");
       gsi.trafficSource.init();
@@ -92,6 +101,7 @@ public class GameFactoryAndRepository {
     }
 
     try {
+      pi.increase("Initializing weather");
       appLog.write(LogItemType.info, "Initializing weather");
       EAssert.isNotNull(gsi.weatherSource, "Weather-Source not set.");
       gsi.weatherSource.init();
@@ -99,8 +109,11 @@ public class GameFactoryAndRepository {
       throw new EApplicationException("Unable to load, download or initialize weather.", ex);
     }
 
+
+
     PostContracts.checkAndClear();
 
+    pi.increase("Creating the simulation");
     try {
       appLog.write(LogItemType.info, "Creating the simulation");
       SimulationStartupContext simulationContext = new SimulationStartupContext(
@@ -128,12 +141,13 @@ public class GameFactoryAndRepository {
               gsi.weatherSource,
               simulation
       );
-      appLog.write(LogItemType.info, "Initializing the simulation");
     } catch (Exception ex) {
       throw new EApplicationException("Unable to create or initialize the simulation.", ex);
     }
 
     PostContracts.checkAndClear();
+
+    pi.increase("Game load completed, initializing...");
 
     return game;
   }

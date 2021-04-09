@@ -27,5 +27,6 @@
     <orderEntry type="module" module-name="AtcLib" />
     <orderEntry type="module" module-name="MessagingLib" />
     <orderEntry type="module" module-name="WeatherLib" />
+    <orderEntry type="module" module-name="AreaXmlLoaderLib" />
   </component>
 </module>

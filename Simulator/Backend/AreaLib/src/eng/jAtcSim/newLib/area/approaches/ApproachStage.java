@@ -75,7 +75,7 @@ public class ApproachStage implements IXPersistable {
 
   @Override
   public void xSave(XElement elm, XSaveContext ctx) {
-    ctx.saveFieldItems(this, "errorConditions",
+    ctx.fields.saveFieldItems(this, "errorConditions",
             ApproachErrorCondition.class, elm);
   }
 }

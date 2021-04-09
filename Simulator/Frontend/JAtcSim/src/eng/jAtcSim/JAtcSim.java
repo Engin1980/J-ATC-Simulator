@@ -32,6 +32,7 @@ import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 import eng.jAtcSim.newLib.weather.Weather;
+import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
 import eng.jAtcSim.newPacks.NewPack;
 import eng.jAtcSim.settings.AppSettings;
 import exml.loading.XLoadContext;
@@ -121,9 +122,10 @@ public class JAtcSim {
     g.getSimulation().start();
   }
 
-  /**
-   * @param args the command line arguments
-   */
+  private static void areaXmlLoader_log(String msg){
+    Context.getApp().getAppLog().write(LogItemType.verbose, "XmlLoader", msg);
+  }
+
   public static void main(String[] args) {
 
     AppSettings.init();
@@ -137,6 +139,7 @@ public class JAtcSim {
     appSettings = AppSettings.loadOrCreate();
     appContext.updateLogPath(appSettings.logFolder);
     ensureLogPathExists(appSettings.logFolder);
+    XmlLoader.onLog.add(JAtcSim::areaXmlLoader_log);
 
     // various inits
     FileHistoryManager.init();
@@ -184,7 +187,7 @@ public class JAtcSim {
     ProgressInfo pi = new ProgressInfo();
     FrmProgress frm = new FrmProgress(pi);
     frm.setVisible(true);
-    pi.init(10);
+    pi.init(19);
 
     pi.increase("Saving current startup settings");
     try {
@@ -230,7 +233,7 @@ public class JAtcSim {
         gsi.trafficSettings.trafficDelayStep = 0;
       }
 
-      pi.increase("Loading fleets");
+      pi.increase("Loading fleets settings");
       gsi.fleetsSource = SourceFactory.createFleetsSource(startupSettings.files.generalAviationFleetsXmlFile,
               startupSettings.files.companiesFleetsXmlFile);
       gsi.airplaneTypesSource = SourceFactory.createAirplaneTypesSource(startupSettings.files.planesXmlFile);
@@ -280,7 +283,7 @@ public class JAtcSim {
 
       pi.increase("Creating game");
       IGame g;
-      g = new GameFactoryAndRepository().create(gsi);
+      g = new GameFactoryAndRepository().create(gsi, pi);
 
       // enable duplicates
       //TODO fix the following

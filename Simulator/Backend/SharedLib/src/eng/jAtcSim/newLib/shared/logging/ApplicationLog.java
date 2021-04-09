@@ -66,9 +66,9 @@ public class ApplicationLog {
 
   private void writeConsoleAndOptionallyFile(LogItemType type, String sender, String text, boolean writeToFile) {
     String txt = String.format(
-            "%s [%-8s]; %-10s; %s",
+            "%s %-12s; %-10s; %s",
             java.time.LocalDateTime.now().format(DATE_TIME_FORMATTER),
-            type,
+            "[" + type + "]",
             sender != null ? sender : "",
             text);
 

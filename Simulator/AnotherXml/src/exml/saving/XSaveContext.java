@@ -1,26 +1,18 @@
 package exml.saving;
 
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IMap;
-import eng.eSystem.collections.IReadOnlyMap;
+import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.functionalInterfaces.Consumer2;
 import eng.eSystem.functionalInterfaces.Selector;
 import exml.base.XContext;
+
+import java.util.Map;
 
 public class XSaveContext extends XContext {
   private final IMap<Class<?>, Consumer2<?, XElement>> serializers = new EMap<>();
   private final IMap<Class<?>, Selector<?, String>> formatters = new EMap<>();
   public final XSaveFieldContext fields = new XSaveFieldContext(this);
   public final XSaveObjectContext objects = new XSaveObjectContext(this);
-
-  public IReadOnlyMap<Class<?>, Consumer2<?, XElement>> getSerializers() {
-    return serializers;
-  }
-
-  public IReadOnlyMap<Class<?>, Selector<?, String>> getFormatters() {
-    return formatters;
-  }
 
   public void addDefaultFormatters() {
     this.setFormatter(short.class, q -> Short.toString(q));
@@ -42,12 +34,29 @@ public class XSaveContext extends XContext {
     this.setFormatter(String.class, q -> q);
   }
 
-  public void saveFieldItems(Object obj, String fieldName, Class<?> expectedItemType, XElement elm) {
-    this.fields.saveFieldItems(obj, fieldName, expectedItemType, elm);
+  public IReadOnlyMap<Class<?>, Selector<?, String>> getFormatters() {
+    return formatters;
+  }
+
+  public IReadOnlyMap<Class<?>, Consumer2<?, XElement>> getSerializers() {
+    return serializers;
   }
 
   public void saveObject(Object obj, XElement elm) {
-    this.objects.saveObject(obj, elm);
+    if (obj instanceof Map)
+      this.objects.saveEntries(((java.util.Map) obj).entrySet(), Object.class, Object.class, elm);
+    else if (obj instanceof IMap)
+      this.objects.saveEntries(((IMap) obj).getEntries(), Object.class, Object.class, elm);
+    else if (obj instanceof IList)
+      this.objects.saveItems((IList) obj, Object.class, elm);
+    else if (obj instanceof java.util.List)
+      this.objects.saveItems((java.util.List) obj, Object.class, elm);
+    else if (obj instanceof ISet)
+      this.objects.saveItems((ISet) obj, Object.class, elm);
+    else if (obj instanceof java.util.Set)
+      this.objects.saveItems((java.util.Set) obj, Object.class, elm);
+    else
+      this.objects.saveObject(obj, elm);
   }
 
   public XElement saveObject(Object obj, String elementName) {

@@ -167,17 +167,17 @@ public class RecentStats implements IXPersistable {
   @Override
   public void xSave(XElement elm, XSaveContext ctx) {
     // explicitly set here to specify exact IList item type
-    ctx.saveFieldItems(this, "mrvaErrors", TimedValue.class, elm);
-    ctx.saveFieldItems(this, "airproxErrors", TimedValue.class, elm);
-    ctx.saveFieldItems(this, "planeDelays", TimedValue.class, elm);
-    ctx.saveFieldItems(this, "holdingPointMaximalCount", TimedValue.class, elm);
-    ctx.saveFieldItems(this, "holdingPointDelays", TimedValue.class, elm);
-    ctx.saveFieldItems(this, "maximumArrivals", TimedValue.class, elm);
-    ctx.saveFieldItems(this, "maximumDepartures", TimedValue.class, elm);
-    ctx.saveFieldItems(this, "maximumPlanes", TimedValue.class, elm);
-    ctx.saveFieldItems(this, "maximumArrivalsUnderApp", TimedValue.class, elm);
-    ctx.saveFieldItems(this, "maximumDeparturesUnderApp", TimedValue.class, elm);
-    ctx.saveFieldItems(this, "maximumPlanesUnderApp", TimedValue.class, elm);
+    ctx.fields.saveFieldItems(this, "mrvaErrors", TimedValue.class, elm);
+    ctx.fields.saveFieldItems(this, "airproxErrors", TimedValue.class, elm);
+    ctx.fields.saveFieldItems(this, "planeDelays", TimedValue.class, elm);
+    ctx.fields.saveFieldItems(this, "holdingPointMaximalCount", TimedValue.class, elm);
+    ctx.fields.saveFieldItems(this, "holdingPointDelays", TimedValue.class, elm);
+    ctx.fields.saveFieldItems(this, "maximumArrivals", TimedValue.class, elm);
+    ctx.fields.saveFieldItems(this, "maximumDepartures", TimedValue.class, elm);
+    ctx.fields.saveFieldItems(this, "maximumPlanes", TimedValue.class, elm);
+    ctx.fields.saveFieldItems(this, "maximumArrivalsUnderApp", TimedValue.class, elm);
+    ctx.fields.saveFieldItems(this, "maximumDeparturesUnderApp", TimedValue.class, elm);
+    ctx.fields.saveFieldItems(this, "maximumPlanesUnderApp", TimedValue.class, elm);
   }
 
   @Override

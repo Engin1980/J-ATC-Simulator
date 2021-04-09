@@ -47,7 +47,7 @@ public class XLoadFieldContext {
   public void loadField(Object obj, String fieldName, XElement elm) {
     Field field = SharedUtils.getField(obj.getClass(), fieldName);
 
-    ctx.getLog().logField(obj, fieldName);
+    ctx.getLog().logField(obj.getClass(), fieldName);
     ctx.getLog().increaseIndent();
     FieldSource source = FieldSource.getFieldSource(field);
     if (source == FieldSource.attribute)

@@ -28,10 +28,10 @@
         </column>
     </window>
 
-    <window title="Additional view" style="minimized">
-        <position x="0px" y="0px" width="40px" height="40px"/>
-        <panel view="radarView"/>
-    </window>
+<!--    <window title="Additional view" style="minimized">-->
+<!--        <position x="0px" y="0px" width="40px" height="40px"/>-->
+<!--        <panel view="radarView"/>-->
+<!--    </window>-->
 
     <window title="Log view" style="minimized">
         <position x="0px" y="0px" width="400px" height="300px" />

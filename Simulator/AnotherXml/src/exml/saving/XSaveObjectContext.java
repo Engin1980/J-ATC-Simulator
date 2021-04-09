@@ -30,7 +30,7 @@ public class XSaveObjectContext {
   }
 
   public <K, V> void saveEntries(Iterable<Map.Entry<K, V>> entries, Class<K> keyType, Class<V> valueType, XElement elm) {
-    doBeforeObjectSave(entries);
+    doBeforeObjectSave("saveEntries(...)", entries);
 
     for (Map.Entry<K, V> entry : entries) {
       K key = entry.getKey();
@@ -48,7 +48,7 @@ public class XSaveObjectContext {
       elm.addElement(entryElement);
     }
 
-    doAfterObjectSave(entries);
+    doAfterObjectSave("saveEntries(...)", entries);
   }
 
   public <K, V> XElement saveEntries(Iterable<Map.Entry<K, V>> entries, Class<K> keyType, Class<V> valueType, String entriesElementName) {
@@ -63,7 +63,7 @@ public class XSaveObjectContext {
   }
 
   public void saveItems(Iterable<?> items, Class<?> itemType, XElement elm) {
-    doBeforeObjectSave(items);
+    doBeforeObjectSave("saveItems(...)", items);
 
     for (Object item : items) {
       XElement itemElement = new XElement(Constants.ITEM_ELEMENT);
@@ -71,7 +71,7 @@ public class XSaveObjectContext {
       elm.addElement(itemElement);
     }
 
-    doAfterObjectSave(items);
+    doAfterObjectSave("saveItems(...)", items);
   }
 
   public XElement saveItems(Iterable<?> items, Class<?> itemType, String itemsElementName) {
@@ -86,7 +86,7 @@ public class XSaveObjectContext {
   }
 
   public void saveObject(Object obj, XElement elm) {
-    doBeforeObjectSave(obj);
+    doBeforeObjectSave("saveObject(...)", obj);
 
     if (obj == null) {
       elm.setContent(Constants.NULL);
@@ -110,25 +110,25 @@ public class XSaveObjectContext {
       throw new XSaveException(sf("Don't know how to save an instance of '%s'.", obj.getClass()), ctx);
     }
 
-    doAfterObjectSave(obj);
+    doAfterObjectSave("saveObject(...)", obj);
   }
 
   public void saveObjectTypeToElement(XElement elm, Class<?> type) {
     elm.setAttribute(Constants.TYPE_ATTRIBUTE, type.getName());
   }
 
-  private void doBeforeObjectSave(Object obj) {
-    redundancyChecker.add(obj);
+  private void doBeforeObjectSave(String key, Object obj) {
+    redundancyChecker.add(key, obj);
 
     ctx.getLog().logObject(obj);
     ctx.getLog().increaseIndent();
     ctx.getCurrentObject().push(obj);
   }
 
-  private void doAfterObjectSave(Object obj) {
+  private void doAfterObjectSave(String key, Object obj) {
     EAssert.isTrue(ctx.getCurrentObject().pop() == obj, "Current object stack does not contain the correct object on the top!");
     ctx.getLog().decreaseIndent();
-    redundancyChecker.remove(obj);
+    redundancyChecker.remove(key, obj);
   }
 
   private void addTypeAttributeIfRequired(XElement elm, Object obj, Class<?> itemType) {

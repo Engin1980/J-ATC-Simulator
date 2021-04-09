@@ -1,33 +1,63 @@
 package exml.saving.internal;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.ESet;
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.utilites.ReflectionUtils;
 import exml.saving.XSaveContext;
 import exml.saving.XSaveException;
 
+import java.util.Objects;
+
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class RedundancyChecker {
+  private static class Record{
+    public final String key;
+    public final Object object;
+
+    public Record(String key, Object object) {
+      this.key = key;
+      this.object = object;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Record record = (Record) o;
+      return key.equals(record.key) && object.equals(record.object);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(key, object);
+    }
+  }
+
   private final XSaveContext ctx;
-  private final ISet<Object> processedObjects = new ESet<>();
+  private final IList<Record> processedObjects = new EList<>();
 
   public RedundancyChecker(XSaveContext ctx) {
     this.ctx = ctx;
   }
 
-  public void add(Object obj) {
+  public void add(String key, Object obj) {
     if (!isObjectToCheckCyclicSave(obj)) return;
 
-    if (processedObjects.contains(obj))
+    Record r = new Record(key, obj);
+    if (processedObjects.contains(r))
       throw new XSaveException(sf("Object '%s' (%s) is already being saved (cyclic dependency).", obj, obj.getClass()), ctx);
     else
-      processedObjects.add(obj);
+      processedObjects.add(r);
   }
 
-  public void remove(Object obj) {
-    if (isObjectToCheckCyclicSave(obj))
-      processedObjects.remove(obj);
+  public void remove(String key, Object obj) {
+    if (isObjectToCheckCyclicSave(obj)){
+      Record r = processedObjects.getFirst(q->q.key.equals(key) && q.object == obj);
+      processedObjects.remove(r);
+    }
   }
 
   private boolean isObjectToCheckCyclicSave(Object obj) {

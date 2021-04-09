@@ -87,6 +87,16 @@ public class Log {
     logInternal(Type.field, msg);
   }
 
+  public void logField(Class<?> cls, String fieldName) {
+    IMap<String, String> mp = EMap.of(
+            PACKAGE_KEY, cls.getPackageName(),
+            TO_STRING_KEY, cls.toString(),
+            CLASS_NAME_KEY, cls.getSimpleName(),
+            FIELD_NAME_KEY, fieldName);
+    String msg = replaceKeys(fieldMessageFormat, mp);
+    logInternal(Type.field, msg);
+  }
+
   public void logObject(Object obj) {
     IMap<String, String> mp = EMap.of(
             PACKAGE_KEY, obj == null ? "" : obj.getClass().getPackageName(),
