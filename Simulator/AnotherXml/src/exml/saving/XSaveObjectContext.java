@@ -1,15 +1,15 @@
 package exml.saving;
 
-import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.functionalInterfaces.Consumer2;
 import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.utilites.ReflectionUtils;
+import eng.eSystem.validation.EAssert;
 import exml.Constants;
 import exml.IXPersistable;
-import exml.SharedUtils;
+import exml.internal.SharedUtils;
+import exml.saving.internal.RedundancyChecker;
 
 import java.util.Map;
 
@@ -17,10 +17,11 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class XSaveObjectContext {
   private final XSaveContext ctx;
-  private final ISet<Object> processedObjects = new ESet<>();
+  private final RedundancyChecker redundancyChecker;
 
   XSaveObjectContext(XSaveContext ctx) {
     this.ctx = ctx;
+    this.redundancyChecker = new RedundancyChecker(ctx);
   }
 
   public <K, V> void saveEntries(Iterable<Map.Entry<K, V>> entries, Class<K> keyType, Class<V> valueType, XElement parentElement, String itemsElementName) {
@@ -29,6 +30,8 @@ public class XSaveObjectContext {
   }
 
   public <K, V> void saveEntries(Iterable<Map.Entry<K, V>> entries, Class<K> keyType, Class<V> valueType, XElement elm) {
+    doBeforeObjectSave(entries);
+
     for (Map.Entry<K, V> entry : entries) {
       K key = entry.getKey();
       XElement keyElement = new XElement(Constants.KEY_ELEMENT);
@@ -44,6 +47,8 @@ public class XSaveObjectContext {
 
       elm.addElement(entryElement);
     }
+
+    doAfterObjectSave(entries);
   }
 
   public <K, V> XElement saveEntries(Iterable<Map.Entry<K, V>> entries, Class<K> keyType, Class<V> valueType, String entriesElementName) {
@@ -58,11 +63,15 @@ public class XSaveObjectContext {
   }
 
   public void saveItems(Iterable<?> items, Class<?> itemType, XElement elm) {
+    doBeforeObjectSave(items);
+
     for (Object item : items) {
       XElement itemElement = new XElement(Constants.ITEM_ELEMENT);
       saveObject(item, itemElement, itemType);
       elm.addElement(itemElement);
     }
+
+    doAfterObjectSave(items);
   }
 
   public XElement saveItems(Iterable<?> items, Class<?> itemType, String itemsElementName) {
@@ -71,30 +80,21 @@ public class XSaveObjectContext {
     return elm;
   }
 
-
   public void saveObject(Object obj, XElement elm, Class<?> expectedObjectType) {
     saveObject(obj, elm);
     addTypeAttributeIfRequired(elm, obj, expectedObjectType);
   }
 
   public void saveObject(Object obj, XElement elm) {
-    if (isObjectToCheckCyclicSave(obj)) {
-      if (processedObjects.contains(obj))
-        throw new XSaveException(sf("Object '%s' (%s) is already being saved (cyclic dependency).", obj, obj.getClass()), ctx);
-      else
-        processedObjects.add(obj);
-    }
-
-    ctx.log.log("%s", obj);
-    ctx.log.increaseIndent();
+    doBeforeObjectSave(obj);
 
     if (obj == null) {
       elm.setContent(Constants.NULL);
-    } else if (ctx.serializers.containsKey(obj.getClass())) {
-      Consumer2<Object, XElement> serializer = (Consumer2<Object, XElement>) ctx.serializers.get(obj.getClass());
+    } else if (ctx.getSerializers().containsKey(obj.getClass())) {
+      Consumer2<Object, XElement> serializer = (Consumer2<Object, XElement>) ctx.getSerializers().get(obj.getClass());
       serializer.invoke(obj, elm);
-    } else if (ctx.formatters.containsKey(obj.getClass())) {
-      Selector<Object, String> formatter = (Selector<Object, String>) ctx.formatters.get(obj.getClass());
+    } else if (ctx.getFormatters().containsKey(obj.getClass())) {
+      Selector<Object, String> formatter = (Selector<Object, String>) ctx.getFormatters().get(obj.getClass());
       String s = formatter.invoke(obj);
       elm.setContent(s);
     } else if (obj.getClass().isEnum()) {
@@ -107,27 +107,44 @@ public class XSaveObjectContext {
       persistable.xSave(elm, this.ctx); // calls custom overload
       ctx.fields.saveRemainingFields(persistable, elm); // calls global save
     } else {
-      throw new XSaveException(sf("Don't know how to save instance of '%s'.", obj.getClass()), ctx);
+      throw new XSaveException(sf("Don't know how to save an instance of '%s'.", obj.getClass()), ctx);
     }
 
-    ctx.log.decreaseIndent();
-    if (isObjectToCheckCyclicSave(obj))
-      processedObjects.remove(obj);
+    doAfterObjectSave(obj);
   }
 
   public void saveObjectTypeToElement(XElement elm, Class<?> type) {
     elm.setAttribute(Constants.TYPE_ATTRIBUTE, type.getName());
   }
 
-  private boolean isObjectToCheckCyclicSave(Object obj) {
-    return obj != null
-            && obj.getClass().isEnum() == false
-            && (obj instanceof String) == false
-            && ReflectionUtils.ClassUtils.isPrimitiveOrWrappedPrimitive(obj.getClass()) == false;
+  private void doBeforeObjectSave(Object obj) {
+    redundancyChecker.add(obj);
+
+    ctx.getLog().logObject(obj);
+    ctx.getLog().increaseIndent();
+    ctx.getCurrentObject().push(obj);
+  }
+
+  private void doAfterObjectSave(Object obj) {
+    EAssert.isTrue(ctx.getCurrentObject().pop() == obj, "Current object stack does not contain the correct object on the top!");
+    ctx.getLog().decreaseIndent();
+    redundancyChecker.remove(obj);
   }
 
   private void addTypeAttributeIfRequired(XElement elm, Object obj, Class<?> itemType) {
-    if (obj != null && itemType != null && SaveUtils.isTypeSame(obj.getClass(), itemType) == false)
+    if (obj != null && itemType != null && isTypeSame(obj.getClass(), itemType) == false)
       saveObjectTypeToElement(elm, obj.getClass());
+  }
+
+  private boolean isTypeSame(Class<?> a, Class<?> b) {
+    if (a.isPrimitive())
+      if (b.isPrimitive())
+        return a.equals(b);
+      else
+        return ReflectionUtils.ClassUtils.tryWrapPrimitive(a).equals(b);
+    else if (b.isPrimitive())
+      return a.equals(ReflectionUtils.ClassUtils.tryWrapPrimitive(b));
+    else
+      return a.equals(b);
   }
 }

@@ -1,7 +1,6 @@
 package eng.jAtcSim;
 
 import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
@@ -9,7 +8,7 @@ import eng.eSystem.exceptions.*;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.app.FrmIntro;
-import eng.jAtcSim.app.FrmStartupProgress;
+import eng.jAtcSim.app.FrmProgress;
 import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.contextLocal.Context;
@@ -27,8 +26,9 @@ import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.context.AppAcc;
 import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.logging.LogItemType;
+import eng.jAtcSim.newLib.shared.logging.ProgressInfo;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
-import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 import eng.jAtcSim.newLib.weather.Weather;
@@ -70,42 +70,55 @@ public class JAtcSim {
 
   public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
 
-    Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Loading simulation game");
+    Context.getApp().getAppLog().write(LogItemType.info, "Loading simulation game");
 
     IMap<String, Object> map = new EMap<>();
 
-    FrmStartupProgress frm = new FrmStartupProgress(16);
+    ProgressInfo pi = new ProgressInfo();
+    FrmProgress frm = new FrmProgress(pi);
     frm.setVisible(true);
+    pi.init(16);
 
     Game g;
 
     try {
+      pi.increase();
+      Context.getApp().getAppLog().write(LogItemType.info, "Loading game from '%s'", xmlFileName);
       g = new GameFactoryAndRepository().load(xmlFileName);
 
-      Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Initializing sound environment");
+      pi.increase("Initializing sound environment");
+      Context.getApp().getAppLog().write(LogItemType.info, "Initializing sound environment");
       // sound
       SoundManager.init(appSettings.soundFolder.toString());
 
-      Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Starting a GUI");
+      pi.increase("Starting a GUI");
 
     } catch (Exception ex) {
       throw ex;
     } finally {
-      frm.setVisible(false);
+      //TODEL
+      //frm.setVisible(false);
     }
 
     // starting pack & simulation
+    pi.increase("Loading layout");
+    Context.getApp().getAppLog().write(LogItemType.info, "Loading layout from '%s'", startupSettings.layout.layoutXmlFile);
     String layoutFile = startupSettings.layout.layoutXmlFile;
     Layout layout = new LayoutFactory().loadFromXml(layoutFile);
+
+    pi.increase("Building GUI");
+    Context.getApp().getAppLog().write(LogItemType.info, "Building GUI");
     NewPack pack = new NewPack();
     pack.init(g, layout, appSettings);
     pack.show();
 
-    g.getSimulation().start();
 
-    System.out.println("!! TODO apply stored data");
+    Context.getApp().getAppLog().write(LogItemType.warning, "!! TODO apply stored data");
     //simPack.applyStoredData(map);
 
+    pi.done();
+
+    g.getSimulation().start();
   }
 
   /**
@@ -140,7 +153,7 @@ public class JAtcSim {
         startupSettings = ctx.loadObject(doc.getRoot(), StartupSettings.class);
       } catch (Exception ex) {
         Context.getApp().getAppLog().write(
-                ApplicationLog.eType.warning,
+                LogItemType.warning,
                 "Failed to load startup settings from " + appSettings.startupSettingsFile.toString() +
                         ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n\t"));
         startupSettings = new StartupSettings();
@@ -168,7 +181,12 @@ public class JAtcSim {
   }
 
   public static void startSimulation(StartupSettings startupSettings) {
+    ProgressInfo pi = new ProgressInfo();
+    FrmProgress frm = new FrmProgress(pi);
+    frm.setVisible(true);
+    pi.init(10);
 
+    pi.increase("Saving current startup settings");
     try {
       resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
       startupSettings.files.normalizeSlashes();
@@ -182,22 +200,24 @@ public class JAtcSim {
       throw new EApplicationException("Failed to normalize or save default settings.", ex);
     }
 
-    FrmStartupProgress frm = new FrmStartupProgress(10);
-    frm.setVisible(true);
-    Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Starting new simulation game");
+    pi.increase("Loading simulation");
+    Context.getApp().getAppLog().write(LogItemType.info, "Starting new simulation game");
     try {
       GameStartupInfo gsi = new GameStartupInfo();
 
+      pi.increase("Loading area");
       gsi.areaSource = SourceFactory.createAreaSource(
               startupSettings.files.areaXmlFile,
               startupSettings.recent.icao
       );
 
+      pi.increase("Loading simulation settings");
       gsi.simulationSettings = new SimulationSettings();
       gsi.simulationSettings.secondLengthInMs = startupSettings.simulation.secondLengthInMs;
       gsi.simulationSettings.startTime = new ETimeStamp(startupSettings.recent.time);
       gsi.simulationSettings.statsSnapshotDistanceInMinutes = appSettings.stats.snapshotIntervalDistance;
 
+      pi.increase("Loading traffic settings");
       gsi.trafficSettings = new TrafficSettings();
       gsi.trafficSettings.emergencyPerDayProbability = startupSettings.traffic.emergencyPerDayProbability;
       gsi.trafficSettings.maxTrafficPlanes = startupSettings.traffic.maxPlanes;
@@ -210,10 +230,12 @@ public class JAtcSim {
         gsi.trafficSettings.trafficDelayStep = 0;
       }
 
+      pi.increase("Loading fleets");
       gsi.fleetsSource = SourceFactory.createFleetsSource(startupSettings.files.generalAviationFleetsXmlFile,
               startupSettings.files.companiesFleetsXmlFile);
       gsi.airplaneTypesSource = SourceFactory.createAirplaneTypesSource(startupSettings.files.planesXmlFile);
 
+      pi.increase("Loading traffic");
       gsi.trafficSource = SourceFactory.createTrafficXmlSource(startupSettings.files.trafficXmlFile);
 
       //TODEL
@@ -226,6 +248,7 @@ public class JAtcSim {
 //        gsi.trafficSource.trafficXmlFile = startupSettings.files.trafficXmlFile;
 //      }
 
+      pi.increase("Loading/downloading weather");
       Weather customWeather = convertStartupWeatherToInitialWeather(startupSettings.weather);
       switch (startupSettings.weather.type) {
         case user:
@@ -241,16 +264,6 @@ public class JAtcSim {
           throw new EEnumValueUnsupportedException(startupSettings.weather.type);
       }
 
-      // TOTO je nový způsob nahrávání
-      // IMap<Class<?>, IList<Sentence>> speechResponses = appSettings.getDynamicPlaneFormatter();
-      // TOTO je starý způsob nahrávání:
-//      try {
-//        XmlSerializer ser = XmlSerializationFactory.createForSpeechResponses();
-//        speechResponses = XmlSerialization.loadFromFile(ser, appSettings.speechFormatterFile.toString(), IMap.class);
-//      } catch (EApplicationException ex) {
-//        throw new EApplicationException(
-//                sf("Unable to load speech responses from xml file '%s'.", appSettings.speechFormatterFile), ex);
-//      }
       //TODO do somehow configurable - nahore se to nahrava. Nevim k cemu se to tady pouziva.
 //      gsi.parserFormatterStartInfo = new ParserFormatterStartInfo(
 //          new ParserFormatterStartInfo.Parsers(
@@ -265,7 +278,7 @@ public class JAtcSim {
 //          )
 //      );
 
-
+      pi.increase("Creating game");
       IGame g;
       g = new GameFactoryAndRepository().create(gsi);
 
@@ -277,18 +290,24 @@ public class JAtcSim {
 //        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
 //      }
 
-      Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Initializing sound environment");
+      pi.increase("Initializing sound");
+      Context.getApp().getAppLog().write(LogItemType.info, "Initializing sound environment");
       // sound
       SoundManager.init(appSettings.soundFolder.toString());
 
-      Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Starting a GUI");
+
+      Context.getApp().getAppLog().write(LogItemType.info, "Starting a GUI");
       // starting pack & simulation
 
+      pi.increase("Loading layout");
       String layoutFile = startupSettings.layout.layoutXmlFile;
       Layout layout = new LayoutFactory().loadFromXml(layoutFile);
+      pi.increase("Starting GUI");
       NewPack pack = new NewPack();
       pack.init(g, layout, appSettings);
       pack.show();
+
+      pi.done();
 
       g.getSimulation().start();
 
@@ -447,7 +466,7 @@ public class JAtcSim {
   private static void initStartupProgress() {
     Stylist.add(
             "Startup progress form background dark",
-            new Stylist.TypeFilter(FrmStartupProgress.class, true),
+            new Stylist.TypeFilter(FrmProgress.class, true),
             q -> q.setBackground(Color.DARK_GRAY)
     );
 
@@ -455,7 +474,7 @@ public class JAtcSim {
             "Startup progress - panels dark",
             new Stylist.AndFilter(
                     new Stylist.TypeFilter(javax.swing.JPanel.class, false),
-                    new Stylist.ParentTypeFilter(FrmStartupProgress.class, true)
+                    new Stylist.ParentTypeFilter(FrmProgress.class, true)
             )
             ,
             q -> q.setBackground(Color.DARK_GRAY));

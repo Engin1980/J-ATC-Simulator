@@ -5,6 +5,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class AppAcc implements IAppAcc {
   private final ApplicationLog applicationLog;
@@ -36,5 +37,11 @@ public class AppAcc implements IAppAcc {
   public void updateLogPath(Path logFolder) {
     EAssert.Argument.isNotNull(logFolder, "logFolder");
     this.logPath = logFolder;
+    this.applicationLog.updateOutputFilePath(
+            Paths.get(
+                    logFolder.toString(),
+                    "app_log.txt"
+            ).toString()
+    );
   }
 }

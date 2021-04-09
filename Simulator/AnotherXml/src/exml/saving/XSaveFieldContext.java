@@ -5,7 +5,12 @@ import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.validation.EAssert;
-import exml.*;
+import exml.Constants;
+import exml.IXPersistable;
+import exml.internal.FieldObligation;
+import exml.internal.FieldSource;
+import exml.internal.SharedUtils;
+import exml.internal.UsedFieldEvidence;
 
 import java.lang.reflect.Field;
 
@@ -51,8 +56,7 @@ public class XSaveFieldContext {
   public void saveField(Object obj, String fieldName, XElement elm) {
     Field field = SharedUtils.getField(obj.getClass(), fieldName);
 
-    ctx.log.log("." + fieldName);
-    ctx.log.increaseIndent();
+    doBeforeField(obj, fieldName);
 
     FieldSource source = FieldSource.getFieldSource(field);
     if (source == FieldSource.attribute)
@@ -60,12 +64,17 @@ public class XSaveFieldContext {
     else
       saveFieldToElement(obj, fieldName, elm);
 
-    ctx.log.decreaseIndent();
+    doAfterField();
   }
 
   @Deprecated
   public void saveFieldEntries(Object obj, String entriesFieldName, Class<?> keyType, Class<?> valueType, XElement elm) {
+    doBeforeField(obj, entriesFieldName);
+
     throw new UnsupportedOperationException("I think this is not used.");
+
+    // doAfterField();
+
 //    FieldUtils.saveFieldEntries(obj, entriesFieldName, keyType, valueType, elm, ctx);
 //    usedFields.getOrSet(obj, () -> new ESet<>()).add(entriesFieldName);
   }
@@ -75,22 +84,28 @@ public class XSaveFieldContext {
     if (pfi.processField == false)
       return;
 
+    doBeforeField(obj, itemsFieldName);
+
     XElement fieldElement = new XElement(pfi.field.getName());
     EAssert.Argument.isTrue(pfi.value instanceof Iterable,
             sf("Value of '%s.%s' must be Iterable, found '%s'.", obj.getClass(), itemsFieldName, pfi.value));
     Iterable<?> items = (Iterable<?>) pfi.value;
     ctx.objects.saveItems(items, itemType, fieldElement);
     elm.addElement(fieldElement);
+
+    doAfterField();
   }
 
   public void saveFieldToAttribute(Object obj, String fieldName, XElement elm) {
     ProcessFieldInfo pfi = prepareFieldToProcess(obj, fieldName);
     if (pfi.processField == false) return;
 
+    doBeforeField(obj, fieldName);
+
     if (pfi.value == null) {
       elm.setAttribute(pfi.field.getName(), Constants.NULL);
-    } else if (ctx.formatters.containsKey(pfi.value.getClass())) {
-      Selector<Object, String> formatter = (Selector<Object, String>) ctx.formatters.get(pfi.value.getClass());
+    } else if (ctx.getFormatters().containsKey(pfi.value.getClass())) {
+      Selector<Object, String> formatter = (Selector<Object, String>) ctx.getFormatters().get(pfi.value.getClass());
       String s = formatter.invoke(pfi.value);
       elm.setAttribute(pfi.field.getName(), s);
     } else if (pfi.value.getClass().isEnum()) {
@@ -106,6 +121,8 @@ public class XSaveFieldContext {
     } else {
       throw new XSaveException(sf("Don't know how to save instance of '%s'.", pfi.value.getClass()), ctx);
     }
+
+    doAfterField();
   }
 
   public void saveFieldToElement(Object obj, String fieldName, XElement elm) {
@@ -113,9 +130,22 @@ public class XSaveFieldContext {
     if (pfi.processField == false)
       return;
 
+    doBeforeField(obj, fieldName);
+
     XElement fieldElement = new XElement(pfi.field.getName());
     ctx.objects.saveObject(pfi.value, fieldElement, pfi.field.getType());
     elm.addElement(fieldElement);
+
+    doAfterField();
+  }
+
+  private void doBeforeField(Object obj, String fieldName) {
+    ctx.getLog().logField(obj, fieldName);
+    ctx.getLog().increaseIndent();
+  }
+
+  private void doAfterField() {
+    ctx.getLog().decreaseIndent();
   }
 
   void saveRemainingFields(IXPersistable obj, XElement elm) {
@@ -157,7 +187,10 @@ public class XSaveFieldContext {
       ret = field.get(obj);
       field.setAccessible(false);
     } catch (IllegalAccessException e) {
-      throw new XSaveException(sf("Failed to load field '%s' value from '%s'.", field.getName(), obj.getClass()), e, ctx);
+      throw new XSaveException(
+              sf("Failed to read field value from '%s.%s'.", obj.getClass(), field.getName()),
+              e,
+              ctx);
     }
     return ret;
   }

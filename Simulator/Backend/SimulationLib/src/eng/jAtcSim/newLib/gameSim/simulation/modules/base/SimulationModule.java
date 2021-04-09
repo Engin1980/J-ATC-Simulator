@@ -15,7 +15,7 @@ public abstract class SimulationModule implements IXPersistable {
   }
 
   protected SimulationModule(XLoadContext ctx) {
-    this.parent = ctx.parents.get(Simulation.class);
+    this.parent = ctx.getParents().get(Simulation.class);
     EAssert.isNotNull(this.parent); // TODO sometimes this parent for AirplanesModule is null. Remove this after fix
   }
 }

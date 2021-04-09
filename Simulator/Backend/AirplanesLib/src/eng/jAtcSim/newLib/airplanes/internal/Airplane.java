@@ -584,7 +584,7 @@ public class Airplane implements IXPersistable {
     this.sha = null;
     this.squawk = null;
 
-    ctx.parents.set(this);
+    ctx.getParents().set(this);
   }
 
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk squawk, AirplaneType airplaneType,

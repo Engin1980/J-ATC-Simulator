@@ -1,49 +1,90 @@
 package eng.jAtcSim.newLib.shared.logging;
 
-
 import eng.eSystem.events.EventAnonymous;
-import eng.jAtcSim.newLib.shared.logging.writers.AutoNewLineLogWriter;
-import eng.jAtcSim.newLib.shared.logging.writers.ConsoleWriter;
-import eng.jAtcSim.newLib.shared.logging.writers.RealTimePipeLogWriter;
+import eng.eSystem.utilites.ExceptionUtils;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class ApplicationLog {
 
   public static class AppLogMessage {
     public final String text;
-    public final eType type;
+    public final LogItemType type;
 
-    public AppLogMessage(String text, eType type) {
+    private AppLogMessage(LogItemType type, String text) {
       this.text = text;
       this.type = type;
     }
   }
 
-  private final Journal journal;
-
-  public enum eType {
-    info,
-    warning,
-    critical
-  }
-
-  public EventAnonymous<AppLogMessage> onNewMessage = new EventAnonymous<>();
+  private static final java.time.format.DateTimeFormatter DATE_TIME_FORMATTER =
+          java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+  //  private Journal journal;
+  public final EventAnonymous<AppLogMessage> onNewMessage = new EventAnonymous<>();
+  private LogFile logFile;
 
   public ApplicationLog() {
-    this.journal = new Journal(
-        "Application log",
-        false,
-        new AutoNewLineLogWriter(
-            new RealTimePipeLogWriter(
-                new ConsoleWriter())));
+    this.logFile = null;
   }
 
-  public EventAnonymous<AppLogMessage> getOnNewMessage() {
-    return onNewMessage;
+  public void updateOutputFilePath(String fileName) {
+    try {
+      this.logFile = new LogFile(fileName);
+    } catch (Exception e) {
+      writeConsoleAndOptionallyFile(
+              LogItemType.critical,
+              "AppLog",
+              sf(
+                      "Failed to open log file '%s'. Reason: %s",
+                      fileName,
+                      ExceptionUtils.toFullString(e)),
+              false
+      );
+      this.logFile = null;
+    }
   }
 
-  public void write(eType type, String format, Object... params) {
-    String s = String.format(format, params);
-    this.journal.write("JAtcSim - %s: %s", type, s);
-    onNewMessage.raise(new AppLogMessage(s, type));
+  public void write(LogItemType type, String text) {
+    this.write(type, null, text);
+  }
+
+  public void write(LogItemType type, String format, Object... params) {
+    this.write(type, String.format(format, params));
+  }
+
+  public void write(LogItemType type, String sender, String text) {
+    this.writeConsoleAndOptionallyFile(
+            type, sender, text, true);
+  }
+
+  public void write(LogItemType type, String sender, String format, Object... params) {
+    this.write(type, sender, String.format(format, params));
+  }
+
+  private void writeConsoleAndOptionallyFile(LogItemType type, String sender, String text, boolean writeToFile) {
+    String txt = String.format(
+            "%s [%-8s]; %-10s; %s",
+            java.time.LocalDateTime.now().format(DATE_TIME_FORMATTER),
+            type,
+            sender != null ? sender : "",
+            text);
+
+
+    if (writeToFile && logFile != null) {
+      try {
+        logFile.write(txt);
+      } catch (Exception e) {
+        writeConsoleAndOptionallyFile(
+                LogItemType.critical,
+                "AppLog", ExceptionUtils.toFullString(e, "==>"), false);
+      }
+    } // writeToFile
+
+    System.out.println(txt);
+
+    this.onNewMessage.raise(new AppLogMessage(type, txt));
   }
 }

@@ -1,4 +1,4 @@
-package exml;
+package exml.internal;
 
 import exml.annotations.XIgnored;
 import exml.annotations.XOptional;

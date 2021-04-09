@@ -14,6 +14,7 @@ import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.gameSim.game.sources.AreaSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.SourceFactory;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.shared.MessageBox;
 
 import javax.swing.*;
@@ -152,7 +153,7 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     try {
       area.init();
     } catch (Exception ex) {
-      Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to area from '%s'. '%s'", fleFleet.getFileName(),
+      Context.getApp().getAppLog().write(LogItemType.warning, "Failed to area from '%s'. '%s'", fleFleet.getFileName(),
               ExceptionUtils.toFullString(ex));
       MessageBox.show("Failed to load area from file " + fleFleet.getFileName() + ". " + ex.getMessage(), "Error...");
       btnLoadArea.setEnabled(true);

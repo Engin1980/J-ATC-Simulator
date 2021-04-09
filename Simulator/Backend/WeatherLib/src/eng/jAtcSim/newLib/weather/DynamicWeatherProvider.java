@@ -6,14 +6,13 @@
 package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.utilites.Action;
+import eng.eSystem.functionalInterfaces.Consumer;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.validation.EAssert;
-import eng.eSystem.validation.Validator;
+import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.newLib.weather.contextLocal.Context;
 import eng.jAtcSim.newLib.weather.downloaders.MetarDownloader;
-import eng.jAtcSim.newLib.shared.InstanceProviderDictionary;
-import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 /**
  * @author Marek Vajgl
@@ -38,9 +37,9 @@ public class DynamicWeatherProvider extends WeatherProvider {
   static class UpdateThread extends Thread {
     private final MetarDownloader downloader;
     private final String icao;
-    private Action<UpdateResult> onFinished;
+    private Consumer<UpdateResult> onFinished;
 
-    public UpdateThread(String icao, MetarDownloader downloader, Action<UpdateResult> onFinished) {
+    public UpdateThread(String icao, MetarDownloader downloader, Consumer<UpdateResult> onFinished) {
       EAssert.Argument.isNotNull(icao);
       EAssert.Argument.isNotNull(downloader);
       EAssert.Argument.isNotNull(onFinished);
@@ -58,7 +57,7 @@ public class DynamicWeatherProvider extends WeatherProvider {
       } catch (Exception ex) {
         res = new UpdateResult(ex);
       }
-      onFinished.apply(res);
+      onFinished.invoke(res);
     }
   }
 
@@ -109,27 +108,27 @@ public class DynamicWeatherProvider extends WeatherProvider {
     return ret;
   }
 
-  private ApplicationLog getLog(){
+  private ApplicationLog getLog() {
     return Context.getApp().getAppLog();
   }
 
   private void newMetarDownloaded(UpdateResult result) {
     if (result.exception != null && !hasFailedAlready) {
-      this.getLog().write(ApplicationLog.eType.warning,
-          "Failed to download metar using %s. Reason: %s.",
-          this.downloader.getClass().getName(),
-          ExceptionUtils.toFullString(result.exception));
+      this.getLog().write(LogItemType.warning,
+              "Failed to download metar using %s. Reason: %s.",
+              this.downloader.getClass().getName(),
+              ExceptionUtils.toFullString(result.exception));
       hasFailedAlready = true;
     } else {
       hasFailedAlready = false;
-      this.getLog().write(ApplicationLog.eType.info,
-          "Metar downloaded successfully: %s", result.metar);
+      this.getLog().write(LogItemType.info,
+              "Metar downloaded successfully: %s", result.metar);
       try {
         this.updatedWeather = super.decodeFromMetar(result.metar);
       } catch (Exception ex) {
-        this.getLog().write(ApplicationLog.eType.warning,
-            "Failed to decode weather. Reason: %s.",
-            ExceptionUtils.toFullString(result.exception));
+        this.getLog().write(LogItemType.warning,
+                "Failed to decode weather. Reason: %s.",
+                ExceptionUtils.toFullString(result.exception));
       }
     }
     inUpdate = false;

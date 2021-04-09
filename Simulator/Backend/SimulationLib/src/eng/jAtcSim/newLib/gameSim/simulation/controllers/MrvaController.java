@@ -26,7 +26,7 @@ public class MrvaController implements IXPersistable {
 
   @XConstructor
   private MrvaController(XLoadContext ctx) {
-    this.mrvas = ctx.parents.get(Area.class).getBorders()
+    this.mrvas = ctx.getParents().get(Area.class).getBorders()
             .where(q -> q.getType() == Border.eType.mrva);
   }
 

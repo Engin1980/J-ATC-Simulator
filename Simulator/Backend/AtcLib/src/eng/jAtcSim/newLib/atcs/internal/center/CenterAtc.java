@@ -218,7 +218,7 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   public void xLoad(XElement elm, XLoadContext ctx) {
-    IAirplaneList planes = ctx.values.get(IAirplaneList.class);
+    IAirplaneList planes = ctx.getValues().get(IAirplaneList.class);
 
     ctx.objects
             .loadItems(elm.getChild("closeArrivals"), Callsign.class)

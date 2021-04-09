@@ -26,6 +26,7 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.CallsignFactory;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.traffic.movementTemplating.*;
@@ -261,7 +262,7 @@ public class TrafficModule extends SimulationModule {
     for (MovementTemplate newMovement : newMovements) {
       TryResult<AirplaneTemplate> res = convertMovementToAirplane(newMovement);
       if (res.getException() != null)
-        Context.getApp().getAppLog().write(ApplicationLog.eType.warning,
+        Context.getApp().getAppLog().write(LogItemType.warning,
                 sf("Unable to create a flight, error when creating instance: %s.",
                         res.getException().getMessage()));
       else
@@ -285,7 +286,7 @@ public class TrafficModule extends SimulationModule {
     eeps = eeps.where(q -> q.getMaxMrvaAltitudeOrHigh() < pt.maxAltitude);
 
     if (eeps.isEmpty()) {
-      Context.getApp().getAppLog().write(ApplicationLog.eType.warning,
+      Context.getApp().getAppLog().write(LogItemType.warning,
               sf("There are no available entry/exit points for plane of kind %s with service ceiling at %d ft. " +
                               "Flight must be cancelled.",
                       pt.name, pt.maxAltitude));
@@ -298,7 +299,7 @@ public class TrafficModule extends SimulationModule {
     } else if (entryExitInfo.getNavaid() != null) {
       ret = eeps.tryGetFirst(q -> q.getName().equals(entryExitInfo.getNavaid())).orElse(null);
       if (ret == null) {
-        Context.getApp().getAppLog().write(ApplicationLog.eType.warning,
+        Context.getApp().getAppLog().write(LogItemType.warning,
                 sf("Plane generation asks for entry point %s, but there is not such " +
                                 "entry-exit point available.",
                         entryExitInfo.getNavaid()));

@@ -15,7 +15,7 @@ public class Values {
 
   public <T> T get(Class<T> type) {
 
-    T ret = null;
+    T ret;
     try {
       ret = (T) typeInner.get(type);
     } catch (Exception e) {

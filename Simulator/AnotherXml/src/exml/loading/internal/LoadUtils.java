@@ -1,7 +1,8 @@
-package exml.loading;
+package exml.loading.internal;
 
 import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.ISet;
+import exml.loading.XLoadException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,7 +10,7 @@ import java.lang.reflect.Modifier;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-class LoadUtils {
+public class LoadUtils {
 
   public static <T> Object loadEnum(String value, Class<T> type) {
     Method parseMethod;

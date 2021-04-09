@@ -29,6 +29,7 @@ import eng.jAtcSim.newLib.gameSim.game.sources.FleetsSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.SourceFactory;
 import eng.jAtcSim.newLib.gameSim.game.sources.TrafficSource;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 import eng.jAtcSim.shared.MessageBox;
@@ -134,7 +135,7 @@ public class TrafficPanel extends JStartupPanel {
     try {
       tfc = getCurrentTraffic();
     } catch (Exception e) {
-      Context.getApp().getAppLog().write(ApplicationLog.eType.critical, "Failed to load traffic. " + ExceptionUtils.toFullString(e));
+      Context.getApp().getAppLog().write(LogItemType.critical, "Failed to load traffic. " + ExceptionUtils.toFullString(e));
       MessageBox.show("Failed to obtain the traffic. Check the app log for more info.", "Failed to load traffic...");
       return;
     }

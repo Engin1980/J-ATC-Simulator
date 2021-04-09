@@ -13,6 +13,7 @@ import eng.jAtcSim.newLib.area.InitialPosition;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.logging.LogItemType;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -88,7 +89,7 @@ public class Recording {
           break;
       }
     } catch (Exception e) {
-      Context.getApp().getAppLog().write(ApplicationLog.eType.critical,
+      Context.getApp().getAppLog().write(LogItemType.critical,
               "Recording error. " + ExceptionUtils.toFullString(e, "\n\t"));
       this.stop();
     }

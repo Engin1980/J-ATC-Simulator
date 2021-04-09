@@ -31,6 +31,7 @@ import eng.jAtcSim.newLib.shared.context.ISharedAcc;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
@@ -59,7 +60,7 @@ public class GameFactoryAndRepository {
     Simulation simulation;
 
     try {
-      appLog.write(ApplicationLog.eType.info, "Loading area");
+      appLog.write(LogItemType.info, "Loading area");
       EAssert.isNotNull(gsi.areaSource, "Area-Source not set.");
       gsi.areaSource.init();
     } catch (Exception ex) {
@@ -67,7 +68,7 @@ public class GameFactoryAndRepository {
     }
 
     try {
-      appLog.write(ApplicationLog.eType.info, "Loading plane types");
+      appLog.write(LogItemType.info, "Loading plane types");
       EAssert.isNotNull(gsi.airplaneTypesSource, "Airplane-Type-Source not set.");
       gsi.airplaneTypesSource.init();
     } catch (Exception ex) {
@@ -75,7 +76,7 @@ public class GameFactoryAndRepository {
     }
 
     try {
-      appLog.write(ApplicationLog.eType.info, "Loading fleets");
+      appLog.write(LogItemType.info, "Loading fleets");
       EAssert.isNotNull(gsi.fleetsSource, "Fleet-Source not set.");
       gsi.fleetsSource.init();
     } catch (Exception ex) {
@@ -83,7 +84,7 @@ public class GameFactoryAndRepository {
     }
 
     try {
-      appLog.write(ApplicationLog.eType.info, "Loading traffic");
+      appLog.write(LogItemType.info, "Loading traffic");
       EAssert.isNotNull(gsi.trafficSource, "Traffic-Source not set.");
       gsi.trafficSource.init();
     } catch (Exception ex) {
@@ -91,7 +92,7 @@ public class GameFactoryAndRepository {
     }
 
     try {
-      appLog.write(ApplicationLog.eType.info, "Initializing weather");
+      appLog.write(LogItemType.info, "Initializing weather");
       EAssert.isNotNull(gsi.weatherSource, "Weather-Source not set.");
       gsi.weatherSource.init();
     } catch (Exception ex) {
@@ -101,7 +102,7 @@ public class GameFactoryAndRepository {
     PostContracts.checkAndClear();
 
     try {
-      appLog.write(ApplicationLog.eType.info, "Creating the simulation");
+      appLog.write(LogItemType.info, "Creating the simulation");
       SimulationStartupContext simulationContext = new SimulationStartupContext(
               gsi.areaSource.getContent(),
               gsi.areaSource.getIcao(),
@@ -127,7 +128,7 @@ public class GameFactoryAndRepository {
               gsi.weatherSource,
               simulation
       );
-      appLog.write(ApplicationLog.eType.info, "Initializing the simulation");
+      appLog.write(LogItemType.info, "Initializing the simulation");
     } catch (Exception ex) {
       throw new EApplicationException("Unable to create or initialize the simulation.", ex);
     }
@@ -167,19 +168,19 @@ public class GameFactoryAndRepository {
     gsi.trafficSource.init();
     gsi.weatherSource.init();
 
-    ctx.parents.set(gsi.areaSource.getArea());
-    ctx.parents.set(gsi.areaSource.getActiveAirport());
+    ctx.getParents().set(gsi.areaSource.getArea());
+    ctx.getParents().set(gsi.areaSource.getActiveAirport());
 
     AtcIdList atcIdList = new AtcIdList();
     atcIdList.addMany(gsi.areaSource.getActiveAirport().getAtcTemplates().select(qq -> qq.toAtcId()));
 
-    ctx.values.set(atcIdList);
-    ctx.values.set(gsi.areaSource.getArea().getNavaids());
-    ctx.values.set(gsi.airplaneTypesSource.getContent());
-    ctx.values.set(gsi.fleetsSource.getContent().companyFleets);
-    ctx.values.set(gsi.fleetsSource.getContent().gaFleets);
-    ctx.values.set(ITrafficModel.class, gsi.trafficSource.getClass());
-    ctx.values.set(WeatherProvider.class, gsi.weatherSource.getContent());
+    ctx.getValues().set(atcIdList);
+    ctx.getValues().set(gsi.areaSource.getArea().getNavaids());
+    ctx.getValues().set(gsi.airplaneTypesSource.getContent());
+    ctx.getValues().set(gsi.fleetsSource.getContent().companyFleets);
+    ctx.getValues().set(gsi.fleetsSource.getContent().gaFleets);
+    ctx.getValues().set(ITrafficModel.class, gsi.trafficSource.getClass());
+    ctx.getValues().set(WeatherProvider.class, gsi.weatherSource.getContent());
 
     SharedAcc sharedContext = new SharedAcc(
             gsi.areaSource.getActiveAirport().getIcao(),
@@ -337,15 +338,15 @@ public class GameFactoryAndRepository {
     ctx.setParser(Squawk.class, v -> Squawk.create(v.toCharArray()));
 
     // area
-    ctx.setParser(Navaid.class, v -> ctx.values.get(NavaidList.class).get(v));
-    ctx.setParser(ActiveRunwayThreshold.class, v -> ctx.parents.get(Airport.class).getRunwayThreshold(v));
+    ctx.setParser(Navaid.class, v -> ctx.getValues().get(NavaidList.class).get(v));
+    ctx.setParser(ActiveRunwayThreshold.class, v -> ctx.getParents().get(Airport.class).getRunwayThreshold(v));
 
     // airplane type
-    ctx.setParser(AirplaneType.class, v -> ctx.values.get(AirplaneTypes.class).getByName(v));
+    ctx.setParser(AirplaneType.class, v -> ctx.getValues().get(AirplaneTypes.class).getByName(v));
 
     // atc
     ctx.setParser(AtcId.class, v -> {
-      AtcIdList atcIds = ctx.values.get(AtcIdList.class);
+      AtcIdList atcIds = ctx.getValues().get(AtcIdList.class);
       return atcIds.getFirst(q -> q.getName().equals(v));
     });
   }

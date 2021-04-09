@@ -1,55 +1,24 @@
 package exml.loading;
 
-import eng.eSystem.collections.*;
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.functionalInterfaces.Selector;
-import exml.Log;
 import exml.Values;
+import exml.base.XContext;
 
-public class XLoadContext {
+public class XLoadContext extends XContext {
 
-  protected final Log log = new Log();
-  protected final IMap<Class<?>, Producer<?>> factories = new EMap<>();
-  protected final IMap<Class<?>, Selector<String, ?>> parsers = new EMap<>();
-  protected final IMap<Class<?>, Selector<XElement, ?>> deserializers = new EMap<>();
-  public final Values values = new Values();
-  public final Values parents = new Values();
-  public final XLoadFieldContext fields= new XLoadFieldContext(this);
+  private final IMap<Class<?>, Producer<?>> factories = new EMap<>();
+  private final IMap<Class<?>, Selector<String, ?>> parsers = new EMap<>();
+  private final IMap<Class<?>, Selector<XElement, ?>> deserializers = new EMap<>();
+  private final Values parents = new Values();
+  public final XLoadFieldContext fields = new XLoadFieldContext(this);
   public final XLoadObjectContext objects = new XLoadObjectContext(this);
-  protected XElement currentElement;
-  protected Object currentObject;
 
-  public void ingoreFields(Object obj, String... fieldNames) {
-    this.fields.ignoreFields(obj, fieldNames);
-  }
-
-  public void loadItems(XElement elm, Object target, Class<?> expectedItemType) {
-    this.objects.loadItems(elm, target, expectedItemType);
-  }
-
-  public <T> T loadObject(XElement elm, Class<T> type) {
-    return this.objects.loadObject(elm, type);
-  }
-
-  public Object loadObject(XElement elm) {
-    return this.objects.loadObject(elm, null);
-  }
-
-  public <T> void setDeserializer(Class<?> type, Selector<XElement, T> deserializer) {
-    deserializers.set(type, deserializer);
-  }
-
-  public <T> void setParser(Class<T> type, Selector<String, T> parser) {
-    this.parsers.set(type, parser);
-  }
-
-  public XLoadContext withDefaultParsers(){
-    this.addDefaultParsers();
-    return this;
-  }
-
-  public void addDefaultParsers(){
+  public void addDefaultParsers() {
     this.setParser(short.class, q -> Short.valueOf(q));
     this.setParser(byte.class, q -> Byte.valueOf(q));
     this.setParser(int.class, q -> Integer.valueOf(q));
@@ -69,5 +38,52 @@ public class XLoadContext {
     this.setParser(String.class, q -> q);
   }
 
+  public IReadOnlyMap<Class<?>, Selector<XElement, ?>> getDeserializers() {
+    return deserializers;
+  }
 
+  public IReadOnlyMap<Class<?>, Producer<?>> getFactories() {
+    return factories;
+  }
+
+  public Values getParents() {
+    return parents;
+  }
+
+  public IReadOnlyMap<Class<?>, Selector<String, ?>> getParsers() {
+    return parsers;
+  }
+
+  public void ignoreFields(Object obj, String... fieldNames) {
+    this.fields.ignoreFields(obj, fieldNames);
+  }
+
+  public void loadItems(XElement elm, Object target, Class<?> expectedItemType) {
+    this.objects.loadItems(elm, target, expectedItemType);
+  }
+
+  public Object loadObject(XElement elm) {
+    return this.objects.loadObject(elm, null);
+  }
+
+  public <T> T loadObject(XElement elm, Class<T> type) {
+    return this.objects.loadObject(elm, type);
+  }
+
+  public <T> void setDeserializer(Class<?> type, Selector<XElement, T> deserializer) {
+    deserializers.set(type, deserializer);
+  }
+
+  public <T> void setFactory(Class<T> type, Producer<T> factory) {
+    this.factories.set(type, factory);
+  }
+
+  public <T> void setParser(Class<T> type, Selector<String, T> parser) {
+    this.parsers.set(type, parser);
+  }
+
+  public XLoadContext withDefaultParsers() {
+    this.addDefaultParsers();
+    return this;
+  }
 }

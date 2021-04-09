@@ -1,37 +1,33 @@
 package eng.jAtcSim.newLib.airplanes.other;
 
 import eng.eSystem.EStringBuilder;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.logging.Journal;
-import eng.jAtcSim.newLib.shared.logging.writers.*;
+import eng.jAtcSim.newLib.shared.logging.LogFile;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.base.ISpeech;
 
 public class CockpitVoiceRecorder extends AirplaneRecorder {
 
   private final static String SEPARATOR = " ; ";
-  private final Journal journal;
+  private final LogFile logFile;
 
   public CockpitVoiceRecorder(Callsign callsign) {
     super(callsign);
-    ILogWriter wrt;
 
-    wrt = FileWriter.createToDefaultFolder(callsign.toString() + ".cvr.txt");
-    wrt = new AutoNewLineLogWriter(wrt);
-    wrt = new SimTimePipeLogWriter(wrt);
-    wrt = new RealTimePipeLogWriter(wrt);
-    this.journal = new Journal(callsign.toString() + " (CVR)", true, wrt);
+    this.logFile = LogFile.openInDefaultPath(callsign.toString() + ".cvr.txt");
   }
 
   public void log(Message m) {
 
     String src = m.getSource().toString();
     String trg = m.getTarget().toString();
-    String cnt = m.getContent().toString(); //toLogString();
+    String cnt = m.getContent().toString();
 
-    journal.write(
-            "FROM: %s %s TO: %s %s %s",
+    logFile.write(
+            "%s\tFROM: %s %s TO: %s %s %s%n",
+            Context.getShared().getNow().toString(),
             src, SEPARATOR, trg, SEPARATOR, cnt);
   }
 
@@ -43,7 +39,7 @@ public class CockpitVoiceRecorder extends AirplaneRecorder {
         ISpeech cmd = cmds.get(i);
         sb.appendLine("\t").appendLine(cmd.toString()).appendLine();
       }
-      journal.write(sb.toString());
+      logFile.write(sb.toString());
     }
   }
 
@@ -55,7 +51,7 @@ public class CockpitVoiceRecorder extends AirplaneRecorder {
         ISpeech sp = current.get(i);
         sb.append("\t").append(sp.toString()).appendLine();
       }
-      journal.write(sb.toString());
+      logFile.write(sb.toString());
     }
   }
 

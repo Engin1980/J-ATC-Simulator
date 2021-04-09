@@ -43,7 +43,7 @@ public class HoldPilot extends Pilot {
 
   @XConstructor
   private HoldPilot(XLoadContext ctx) {
-    super(ctx.parents.get(Airplane.class));
+    super(ctx.getParents().get(Airplane.class));
   }
 
   public HoldPilot(Airplane plane, Navaid navaid, int inboundRadial, LeftRight turn) {

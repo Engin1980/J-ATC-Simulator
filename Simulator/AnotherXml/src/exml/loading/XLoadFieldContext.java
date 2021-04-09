@@ -5,7 +5,14 @@ import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.validation.EAssert;
-import exml.*;
+import exml.Constants;
+import exml.IXPersistable;
+import exml.internal.FieldObligation;
+import exml.internal.FieldSource;
+import exml.internal.SharedUtils;
+import exml.internal.UsedFieldEvidence;
+import exml.loading.internal.ConstructionUtils;
+import exml.loading.internal.LoadUtils;
 
 import java.lang.reflect.Field;
 
@@ -40,14 +47,14 @@ public class XLoadFieldContext {
   public void loadField(Object obj, String fieldName, XElement elm) {
     Field field = SharedUtils.getField(obj.getClass(), fieldName);
 
-    ctx.log.log("." + fieldName);
-    ctx.log.increaseIndent();
+    ctx.getLog().logField(obj, fieldName);
+    ctx.getLog().increaseIndent();
     FieldSource source = FieldSource.getFieldSource(field);
     if (source == FieldSource.attribute)
       loadFieldFromAttribute(obj, field, elm);
     else
       loadFieldFromElement(obj, field, elm);
-    ctx.log.decreaseIndent();
+    ctx.getLog().decreaseIndent();
   }
 
   public void loadFieldFromAttribute(Object obj, Field field, XElement elm) {
@@ -64,8 +71,8 @@ public class XLoadFieldContext {
     Object value;
     if (attributeValue.equals(Constants.NULL)) {
       value = null;
-    } else if (ctx.parsers.containsKey(field.getType())) {
-      Selector<String, ?> parser = ctx.parsers.get(field.getType());
+    } else if (ctx.getParsers().containsKey(field.getType())) {
+      Selector<String, ?> parser = ctx.getParsers().get(field.getType());
       value = parser.invoke(attributeValue);
     } else if (field.getType().isEnum()) {
       value = LoadUtils.loadEnum(attributeValue, field.getType());

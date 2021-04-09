@@ -72,7 +72,7 @@ public class RunwayConfiguration implements IXPersistable {
     windSpeedTo = 0;
     windTo = 0;
 
-    ctx.parents.set(this);
+    ctx.getParents().set(this);
   }
 
   public RunwayConfiguration(int windFrom, int windTo, int windSpeedFrom, int windSpeedTo,

@@ -15,7 +15,7 @@
 //    sb.append(String.format(format, params));
 //    if (VERBOSE_LOG) {
 //      Context.getApp().getAppLog().write(
-//          ApplicationLog.eType.info, sb.toString());
+//          LogItemType.info, sb.toString());
 //    }
 //  }
 //}

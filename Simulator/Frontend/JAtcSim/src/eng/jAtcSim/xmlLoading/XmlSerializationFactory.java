@@ -101,13 +101,13 @@
 //    if (e.type == Log.Type.progressObject && !VERBOSE_PROGRESS_OBJECT) return;
 //    if (e.type == Log.Type.progressSerializer && !VERBOSE_PROGRESS_SERIALIZER) return;
 //
-//    ApplicationLog.eType logType;
+//    LogItemType logType;
 //    if (e.type == Log.Type.error)
-//      logType = ApplicationLog.eType.critical;
+//      logType = LogItemType.critical;
 //    else if (e.type == Log.Type.warning)
-//      logType = ApplicationLog.eType.warning;
+//      logType = LogItemType.warning;
 //    else
-//      logType = ApplicationLog.eType.info;
+//      logType = LogItemType.info;
 //
 //    String sb = "XML " +
 //            String.format("%-20s", e.type) +

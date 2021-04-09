@@ -69,7 +69,7 @@
 //    JScrollBar bar = scr.getVerticalScrollBar();
 //    bar.setValue(bar.getMaximum());
 //
-//    if (message.type != ApplicationLog.eType.info) {
+//    if (message.type != LogItemType.info) {
 //      this.setVisible(true);
 //      this.requestFocus();
 //    }

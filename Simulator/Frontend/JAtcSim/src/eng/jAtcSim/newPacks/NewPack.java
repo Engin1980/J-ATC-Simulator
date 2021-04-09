@@ -137,7 +137,7 @@ public class NewPack {
         pb.start();
       } catch (IOException e) {
         //TODO
-        //Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
+        //Context.getApp().getAppLog().write(LogItemType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
       }
     });
     menuSimProxy.onSimSpeed.add(q -> sim.sendSystemCommandAnonymous(TickSpeedRequest.createSet(q)));

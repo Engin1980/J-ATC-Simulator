@@ -7,6 +7,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.app.controls.ImagePanel;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GenericCommercialMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GenericGeneralAviationMovementTemplate;
@@ -100,8 +101,10 @@ public class FrmTrafficBarGraph extends JFrame {
 
     dts = new EList<>();
 
-    Context.getApp().getAppLog().write(ApplicationLog.eType.info,
+    Context.getApp().getAppLog().write(LogItemType.info,
             "Implementation of type categories overview is not realized.");
+
+    //TODEL ?
 //    for (int i = 0; i < 23; i++) {
 //      String domain = i + ":00 - " + i + ":59";
 //      int ii = i;

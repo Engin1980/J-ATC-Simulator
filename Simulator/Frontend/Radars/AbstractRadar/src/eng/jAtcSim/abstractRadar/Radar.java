@@ -35,6 +35,7 @@ import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcFormatter.AtcFormatter;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
@@ -118,7 +119,7 @@ public class Radar {
         formatters);
     if (this.styleSettings.displayTextDelay > Global.REPEATED_SWITCH_REQUEST_SECONDS ||
         this.styleSettings.displayTextDelay > Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS) {
-      simulation.getAppLog().write(ApplicationLog.eType.warning,
+      simulation.getAppLog().write(LogItemType.warning,
           "Radar message display interval in seconds (%d) is higher than plane repeated " +
               "radar-contact request interval (%d) or ATC repeated request switch interval (%d). " + "" +
               "The repetition messages will overlap.",

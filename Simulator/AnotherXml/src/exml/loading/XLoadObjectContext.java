@@ -6,7 +6,9 @@ import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.validation.EAssert;
 import exml.Constants;
 import exml.IXPersistable;
-import exml.SharedUtils;
+import exml.internal.SharedUtils;
+import exml.loading.internal.ConstructionUtils;
+import exml.loading.internal.LoadUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -91,12 +93,12 @@ public class XLoadObjectContext {
   }
 
   public <T> T loadObject(XElement elm, Class<T> type) {
-    ctx.log.log("%s (%s)", elm, type == null ? "?" : type.getSimpleName());
+    ctx.getLog().logElement(elm);
     if (elm.getContent().equals(Constants.NULL)) {
       return null;
     }
 
-    ctx.log.increaseIndent();
+    ctx.getLog().increaseIndent();
 
     Object ret;
     Optional<Class<?>> tmp = tryLoadTypeFromElement(elm);
@@ -107,14 +109,13 @@ public class XLoadObjectContext {
 
     if (elm.getContent().equals(Constants.NULL)) {
       ret = null;
-    } else if (ctx.deserializers.containsKey(type)) {
-      Selector<XElement, T> deserializer = (Selector<XElement, T>) ctx.deserializers.get(type);
-      XElement pce = this.ctx.currentElement;
-      this.ctx.currentElement = elm;
+    } else if (ctx.getDeserializers().containsKey(type)) {
+      Selector<XElement, T> deserializer = (Selector<XElement, T>) ctx.getDeserializers().get(type);
+      this.ctx.getCurrentElement().push(elm);
       ret = deserializer.invoke(elm);
-      this.ctx.currentElement = pce;
-    } else if (ctx.parsers.containsKey(type)) {
-      Selector<String, T> parser = (Selector<String, T>) ctx.parsers.get(type);
+      this.ctx.getCurrentElement().pop();
+    } else if (ctx.getParsers().containsKey(type)) {
+      Selector<String, T> parser = (Selector<String, T>) ctx.getParsers().get(type);
       ret = parser.invoke(elm.getContent());
     } else if (type.isEnum()) {
       ret = LoadUtils.loadEnum(elm.getContent(), type);
@@ -127,7 +128,7 @@ public class XLoadObjectContext {
       throw new XLoadException(sf("No deserializer/parser specified for type '%s' loaded from '%s'.", type, elm.toXPath()), ctx);
     }
 
-    ctx.log.decreaseIndent();
+    ctx.getLog().decreaseIndent();
 
     return (T) ret;
   }

@@ -18,7 +18,7 @@ public abstract class Module implements IXPersistable {
 
   @XConstructor
   protected Module(XLoadContext ctx){
-    this(ctx.parents.get(Airplane.class));
+    this(ctx.getParents().get(Airplane.class));
   }
 
   protected Module(Airplane plane) {

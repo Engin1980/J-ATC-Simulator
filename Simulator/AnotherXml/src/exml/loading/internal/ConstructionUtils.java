@@ -1,6 +1,8 @@
-package exml.loading;
+package exml.loading.internal;
 
 import exml.annotations.XConstructor;
+import exml.loading.XLoadContext;
+import exml.loading.XLoadException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -10,7 +12,7 @@ import java.util.Optional;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-class ConstructionUtils {
+public class ConstructionUtils {
   public static Object provideInstance(Class<?> type, XLoadContext ctx) {
     Object ret;
     if (type.equals(int.class) || type.equals(Integer.class))
@@ -40,7 +42,7 @@ class ConstructionUtils {
 
     T ret;
 
-    if (ctx.factories.containsKey(type))
+    if (ctx.getFactories().containsKey(type))
       ret = getInstanceViaFactory(type, ctx);
     else {
       Constructor<T> ctor;
@@ -57,7 +59,7 @@ class ConstructionUtils {
   private static <T> T getInstanceViaFactory(Class<T> type, XLoadContext ctx) {
     T ret;
     try {
-      ret = (T) ctx.factories.get(type).invoke();
+      ret = (T) ctx.getFactories().get(type).invoke();
     } catch (Exception e) {
       throw new XLoadException(sf("Failed to create a new instance of '%s' via custom factory.", type), e, ctx);
     }

@@ -116,7 +116,7 @@ public class UserAtc extends Atc implements IUserAtcInterface {
   public void xLoad(XElement elm, XLoadContext ctx) {
     super.xLoad(elm, ctx);
 
-    IAirplaneList planes = ctx.values.get(IAirplaneList.class);
+    IAirplaneList planes = ctx.getValues().get(IAirplaneList.class);
 
     ctx.objects
             .loadItems(elm.getChild("planes"), Callsign.class)

@@ -4,6 +4,7 @@ import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.newPacks.IView;
 
 import javax.swing.*;
@@ -54,7 +55,7 @@ public class AppLogView implements IView {
 
     txt.setBackground(bgColor);
 
-    Context.getApp().getAppLog().getOnNewMessage().add(this::newLogMessage);
+    Context.getApp().getAppLog().onNewMessage.add(this::newLogMessage);
   }
 
   private void newLogMessage(ApplicationLog.AppLogMessage message) {
@@ -86,7 +87,7 @@ public class AppLogView implements IView {
     JScrollBar bar = scr.getVerticalScrollBar();
     bar.setValue(bar.getMaximum());
 
-    if (message.type != ApplicationLog.eType.info) {
+    if (message.type != LogItemType.info) {
       forceShowMyFrame();
     }
   }

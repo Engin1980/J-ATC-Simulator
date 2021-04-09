@@ -1,4 +1,4 @@
-package exml;
+package exml.internal;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.ESet;
@@ -6,6 +6,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.utilites.ReflectionUtils;
 import exml.annotations.XIgnored;
+import exml.Constants;
 
 import java.lang.reflect.Modifier;
 

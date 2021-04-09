@@ -1,4 +1,4 @@
-package exml;
+package exml.internal;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;

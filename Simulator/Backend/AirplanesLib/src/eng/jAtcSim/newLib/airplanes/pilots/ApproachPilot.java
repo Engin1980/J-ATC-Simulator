@@ -63,7 +63,7 @@ public class ApproachPilot extends Pilot {
 
   @XConstructor
   private ApproachPilot(XLoadContext ctx) {
-    super(ctx.parents.get(Airplane.class));
+    super(ctx.getParents().get(Airplane.class));
     this.stages = null;
     this.gaRouteCommands = null;
     this.threshold = null;

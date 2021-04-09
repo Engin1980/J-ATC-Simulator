@@ -19,7 +19,7 @@ public class WeatherManager implements IXPersistable {
   @XConstructor
 
   private WeatherManager(XLoadContext ctx) {
-    provider = ctx.values.get(WeatherProvider.class);
+    provider = ctx.getValues().get(WeatherProvider.class);
   }
 
   public WeatherManager(WeatherProvider provider) {

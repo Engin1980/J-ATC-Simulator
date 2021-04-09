@@ -26,7 +26,7 @@ public abstract class Pilot implements IXPersistable {
 
   @XConstructor
   protected Pilot(XLoadContext ctx) {
-    this(ctx.parents.get(Airplane.class));
+    this(ctx.getParents().get(Airplane.class));
   }
 
   public Pilot(Airplane plane) {

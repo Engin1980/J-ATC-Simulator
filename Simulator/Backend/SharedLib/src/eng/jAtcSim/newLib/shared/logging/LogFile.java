@@ -1,5 +1,6 @@
-package eng.jAtcSim.newLib.shared.logging.writers;
+package eng.jAtcSim.newLib.shared.logging;
 
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
 
@@ -10,27 +11,27 @@ import java.nio.file.Paths;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class FileWriter implements ILogWriter {
-  public static FileWriter createToDefaultFolder(String fileName) {
-    return createToDefaultFolder(fileName, true);
+public class LogFile implements AutoCloseable {
+  public static LogFile openInDefaultPath(String fileName) {
+    return openInDefaultPath(fileName, true);
   }
-
-  public static FileWriter createToDefaultFolder(String fileName, boolean autoFlush) {
+  public static LogFile openInDefaultPath(String fileName, boolean autoFlush) {
     Path logPath = Context.getApp().getLogPath();
     Path tmp = logPath.resolve(fileName);
-    return new FileWriter(tmp.toString(), autoFlush);
+    LogFile ret = new LogFile(tmp.toString(), autoFlush);
+    return ret;
   }
   private final boolean autoFlush;
   private BufferedWriter bw = null;
   private final String fileName;
 
-  public FileWriter(String fileName, boolean autoFlush) {
+  public LogFile(String fileName, boolean autoFlush) {
     EAssert.isNotNull(fileName, "Value of {fileName} cannot not be null.");
     this.fileName = fileName;
     this.autoFlush = autoFlush;
   }
 
-  public FileWriter(String fileName) {
+  public LogFile(String fileName) {
     this(fileName, true);
   }
 
@@ -45,18 +46,19 @@ public class FileWriter implements ILogWriter {
       }
   }
 
-//  @Override
-//  public void newLine() throws IOException {
-//    bw.newLine();
-//    if (autoFlush) bw.flush();
-//  }
+  public void write(String format, Object...params){
+    this.write(String.format(format, params));
+  }
 
-  @Override
-  public void write(String text) throws IOException {
-    if (bw == null)
-      openWriter();
-    bw.write(text);
-    if (autoFlush) bw.flush();
+  public void write(String text) {
+    try {
+      if (bw == null)
+        openWriter();
+      bw.write(text);
+      if (autoFlush) bw.flush();
+    } catch (IOException e) {
+      throw new EApplicationException("Failed to write into log file.", e);
+    }
   }
 
   private String getFullFileName() {

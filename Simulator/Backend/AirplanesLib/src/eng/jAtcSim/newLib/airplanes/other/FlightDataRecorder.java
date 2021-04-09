@@ -7,26 +7,17 @@ import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.logging.Journal;
-import eng.jAtcSim.newLib.shared.logging.writers.*;
+import eng.jAtcSim.newLib.shared.logging.LogFile;
 
-/**
- * @author Marek Vajgl
- */
 public class FlightDataRecorder extends AirplaneRecorder {
 
   private final static int DEFAULT_STRING_BUILDER_SIZE = 256;
   private final static String SEPARATOR = ";";
-  private final Journal journal;
+  private final LogFile logFile;
 
   public FlightDataRecorder(Callsign callsign) {
     super(callsign);
-    ILogWriter wrt = FileWriter.createToDefaultFolder(callsign.toString() + ".fdr.txt");
-    wrt = new AutoNewLineLogWriter(wrt);
-    wrt = new SimTimePipeLogWriter(wrt);
-    wrt = new RealTimePipeLogWriter(wrt);
-
-    this.journal = new Journal(callsign.toString() + " (CVR)", true, wrt);
+    this.logFile = LogFile.openInDefaultPath(callsign.toString() + ".fdr.txt");
   }
 
   public void log(Coordinate coordinate,
@@ -35,6 +26,9 @@ public class FlightDataRecorder extends AirplaneRecorder {
                   int speed, int groundSpeed, int targetSpeed,
                   AirplaneState state, Navigator navigator) {
     EStringBuilder sb = new EStringBuilder(DEFAULT_STRING_BUILDER_SIZE);
+
+    sb.appendFormat("%s \t", Context.getShared().getNow().toString());
+
     sb.appendFormat(" %s ", this.callsign.toString()).append(SEPARATOR);
 
     // coord
@@ -69,6 +63,6 @@ public class FlightDataRecorder extends AirplaneRecorder {
 //    // from pilot
 //    sb.appendFormat(" BEH: {%s} ", plane.getBehaviorModule().get().toLogString());
 
-    journal.write(sb.toString());
+    logFile.write(sb.toString());
   }
 }

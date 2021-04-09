@@ -4,7 +4,6 @@ module JAtcSim.Modules.Backend.SharedLib {
   exports eng.jAtcSim.newLib.shared;
   exports eng.jAtcSim.newLib.shared.time;
   exports eng.jAtcSim.newLib.shared.logging;
-  exports eng.jAtcSim.newLib.shared.logging.writers;
   exports eng.jAtcSim.newLib.shared.enums;
   exports eng.jAtcSim.newLib.shared.context to
       JAtcSim.Modules.Backend.MoodLib,

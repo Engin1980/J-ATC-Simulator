@@ -1,9 +1,6 @@
 package eng.jAtcSim.newLib.messaging;
 
-import eng.jAtcSim.newLib.shared.logging.Journal;
-import eng.jAtcSim.newLib.shared.logging.writers.AutoNewLineLogWriter;
-import eng.jAtcSim.newLib.shared.logging.writers.FileWriter;
-import eng.jAtcSim.newLib.shared.logging.writers.SimTimePipeLogWriter;
+import eng.jAtcSim.newLib.shared.logging.LogFile;
 
 public class MessengerLog {
 
@@ -15,13 +12,10 @@ public class MessengerLog {
     REGISTER,
     UNREGISTER
   }
-  private Journal journal;
+  private final LogFile logFile;
 
   public MessengerLog(String file) {
-    this.journal = new Journal("Messenger log", true,
-        new AutoNewLineLogWriter(
-            new SimTimePipeLogWriter(
-                FileWriter.createToDefaultFolder(file))));
+    this.logFile = LogFile.openInDefaultPath (file);
   }
 
   public void recordRegistratin(eRegistrationAction action, Object key) {
@@ -30,17 +24,17 @@ public class MessengerLog {
         action.toString(),
         key.toString()
     );
-    this.journal.write(line);
+    this.logFile.write(line);
   }
 
   public void recordMessage(eMessageAction action, Message msg) {
     String line = String.format(
-        "%S || FROM: %-10s; TO: %-10s; CONTENT: %s",
+        "%S || FROM: %-10s; TO: %-10s; CONTENT: %s %n",
         action.toString(),
         msg.getSource().toString(),
         msg.getTarget().toString(),
         msg.getContent().toString()
     );
-    this.journal.write(line);
+    this.logFile.write(line);
   }
 }

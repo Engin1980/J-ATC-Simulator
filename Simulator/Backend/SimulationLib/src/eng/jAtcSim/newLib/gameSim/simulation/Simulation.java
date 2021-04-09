@@ -35,6 +35,7 @@ import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.context.ISharedAcc;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
@@ -225,11 +226,11 @@ public class Simulation implements IXPersistable {
     this.weatherModule = null;
 
     this.worldModule = new WorldModule(this,
-            ctx.parents.get(Area.class),
-            ctx.parents.get(Airport.class),
-            ctx.values.get(AirplaneTypes.class),
-            ctx.values.get(AirlinesFleets.class),
-            ctx.values.get(GeneralAviationFleets.class));
+            ctx.getParents().get(Area.class),
+            ctx.getParents().get(Airport.class),
+            ctx.getValues().get(AirplaneTypes.class),
+            ctx.getValues().get(AirlinesFleets.class),
+            ctx.getValues().get(GeneralAviationFleets.class));
   }
 
   public Simulation(
@@ -329,12 +330,12 @@ public class Simulation implements IXPersistable {
 
   @Override
   public void xLoad(XElement elm, XLoadContext ctx) {
-    ctx.parents.set(this);
+    ctx.getParents().set(this);
 
     ctx.fields.loadField(this, "airplanesModule", elm);
     IAirplaneList lst = new IAirplaneList();
     lst.addMany(this.airplanesModule.getPlanes());
-    ctx.values.set(lst);
+    ctx.getValues().set(lst);
   }
 
   //TODEL
@@ -353,7 +354,7 @@ public class Simulation implements IXPersistable {
 
     if (isElapseSecondCalculationRunning) {
       Context.getApp().getAppLog().write(
-              ApplicationLog.eType.warning,
+              LogItemType.warning,
               "elapseSecond() called before the previous one was finished!");
       return;
     }

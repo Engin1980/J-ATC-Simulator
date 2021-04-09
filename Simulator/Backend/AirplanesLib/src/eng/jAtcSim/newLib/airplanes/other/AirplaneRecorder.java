@@ -4,6 +4,7 @@ import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.logging.LogItemType;
 
 public abstract class AirplaneRecorder {
   protected final Callsign callsign;
@@ -20,6 +21,6 @@ public abstract class AirplaneRecorder {
       sb.append("Exception object is null.");
     else
       sb.append(ex.getMessage()).append(":: " ).append(ExceptionUtils.toFullString(ex));
-    Context.getApp().getAppLog().write(ApplicationLog.eType.critical, sb.toString());
+    Context.getApp().getAppLog().write(LogItemType.critical, sb.toString());
   }
 }
