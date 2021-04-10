@@ -14,6 +14,7 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
+import eng.jAtcSim.newLib.speeches.system.StringMessage;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.AtcParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.PlaneParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.SystemParser;
@@ -111,7 +112,7 @@ public class TextInputView implements IView {
 
   private JTextField buildTextField() {
     JTextField txtInput = new JTextField();
-    Font font = new Font("Courier New", Font.BOLD, txtInput.getFont().getSize()+8); //todo magic number hack, implement differently
+    Font font = new Font("Courier New", Font.BOLD, txtInput.getFont().getSize() + 8); //todo magic number hack, implement differently
     txtInput.setFont(font);
 
     this.commandInputTextFieldExtender = new CommandInputTextFieldExtender(txtInput,
@@ -127,37 +128,42 @@ public class TextInputView implements IView {
     return txtInput;
   }
 
-  private void processError(CommandInputTextFieldExtender commandInputTextFieldExtender, CommandInputTextFieldExtender.ErrorEventArgs e) {
-    String s = convertErrorToString(e.error, e.arguments);
-    throw new ToDoException("Somehow let error in this is propagated let radar can show it.");
-//    this.radar.showMessageOnScreen(s);
+  private void processError(CommandInputTextFieldExtender commandInputTextFieldExtender,
+                            CommandInputTextFieldExtender.ErrorEventArgs eea) {
+    String s = convertErrorToString(eea);
+    StringMessage smn = new StringMessage(s);
+    this.sim.sendSystemCommandAnonymous(this.userAtcId, smn);
   }
 
-  private String convertErrorToString(CommandInputTextFieldExtender.ErrorType errorType, IReadOnlyMap<String, Object> arguments) {
+  private String convertErrorToString(CommandInputTextFieldExtender.ErrorEventArgs eea) {
     EStringBuilder sb = new EStringBuilder();
 
-    switch (errorType) {
-      case atcUnableDecide:
-        sb.appendFormat("Unable to decide target ATC from '%s'.", arguments.get("command"));
-        break;
-      case atcUnableParse:
-        sb.appendFormat("Unable to parse ATC command from '%s'.", arguments.get("command"));
-        break;
-      case planeMultipleCallsignMatches:
-        sb.appendFormat("Multiple planes matches callsign shortcut from '%s'.", arguments.get("callsign"));
-        break;
-      case planeNoneCallsignMatch:
-        sb.appendFormat("No plane matches callsign/shortcut '%s'.", arguments.get("callsign"));
-        break;
-      case planeUnableParse:
-        sb.appendFormat("Unable to parse plane command for plane '%s' from '%s'.", arguments.get("callsign"), arguments.get("command"));
-        break;
-      case systemUnableParse:
-        sb.appendFormat("Unable to parse system command from '%s.", arguments.get("command"));
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(errorType);
-    }
+    sb.append(eea.message).append(" (Command: ").append(eea.command).append(")");
+
+
+    //TODEL if not used
+//    switch (eea.error) {
+//      case atcUnableDecide:
+//        sb.appendFormat("Unable to decide target ATC from '%s'.", arguments.get("command"));
+//        break;
+//      case atcUnableParse:
+//        sb.appendFormat("Unable to parse ATC command from '%s'.", arguments.get("command"));
+//        break;
+//      case planeMultipleCallsignMatches:
+//        sb.appendFormat("Multiple planes matches callsign shortcut from '%s'.", arguments.get("callsign"));
+//        break;
+//      case planeNoneCallsignMatch:
+//        sb.appendFormat("No plane matches callsign/shortcut '%s'.", arguments.get("callsign"));
+//        break;
+//      case planeUnableParse:
+//        sb.appendFormat("Unable to parse plane command for plane '%s' from '%s'.", arguments.get("callsign"), arguments.get("command"));
+//        break;
+//      case systemUnableParse:
+//        sb.appendFormat("Unable to parse system command from '%s.", arguments.get("command"));
+//        break;
+//      default:
+//        throw new EEnumValueUnsupportedException(errorType);
+//    }
 
     return sb.toString();
   }

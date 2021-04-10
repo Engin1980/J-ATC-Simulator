@@ -58,6 +58,8 @@ public interface ISimulation {
 
   void sendSystemCommand(AtcId fromAtcId, ISystemSpeech speech);
 
+  void sendSystemCommandAnonymous(AtcId toAtcId, ISystemSpeech speech);
+
   void sendSystemCommandAnonymous(ISystemSpeech speech);
 
   void start();

@@ -24,36 +24,9 @@ public class Callsign {
     if (value.length() < 4)
       throw new IllegalArgumentException("Callsign string must be at least 4 chars long.");
 
-    this.company = value.substring(0, 3).toUpperCase();
+    this.company = value.substring(0, 3).trim().toUpperCase();
     this.number = value.substring(3).trim().toUpperCase();
   }
-
-//  public static String getRandomNumber(boolean isIfr, boolean useExtendedCallsigns) {
-//    StringBuilder sb = new StringBuilder();
-//    if (isIfr) {
-//      if (useExtendedCallsigns && Acc.rnd().nextDouble() < EXTENDED_CALLSIGN_PROBABILITY) {
-//        sb.append(getRandomChar('0', '9'));
-//        sb.append(getRandomChar('A', 'Z'));
-//        sb.append(getRandomChar('A', 'Z'));
-//      } else {
-//        sb.append(getRandomChar('0', '9'));
-//        sb.append(getRandomChar('0', '9'));
-//        sb.append(getRandomChar('0', '9'));
-//        sb.append(getRandomChar('0', '9'));
-//      }
-//    } else {
-//      sb.append(getRandomChar('A', 'Z'));
-//      sb.append(getRandomChar('A', 'Z'));
-//      sb.append(getRandomChar('A', 'Z'));
-//    }
-//    return sb.toString();
-//  }
-//
-//  private static char getRandomChar(char from, char to) {
-//    int val = Acc.rnd().nextInt(from, to + 1);
-//    char ret = (char) val;
-//    return ret;
-//  }
 
   @Override
   public boolean equals(Object obj) {
@@ -89,11 +62,6 @@ public class Callsign {
     return hash;
   }
 
-  /**
-   * Returns company and number together, without separating space, e.g. EZY5405.
-   *
-   * @return Company and number together
-   */
   @Override
   public String toString() {
     return company + " " + number;

@@ -289,7 +289,7 @@ public class ApproachPilot extends Pilot {
       return Optional.empty();
 
     double dist = Coordinates.getDistanceInNM(rdr.getCoordinate(), this.getRunwayThreshold().getCoordinate());
-    if (dist > 0.05)
+    if (dist > 0.1)
       return Optional.of(GoingAroundNotification.GoAroundReason.unstabilizedHeading);
 
     double dalt = rdr.getSha().getAltitude() - Context.getArea().getAirport().getAltitude();

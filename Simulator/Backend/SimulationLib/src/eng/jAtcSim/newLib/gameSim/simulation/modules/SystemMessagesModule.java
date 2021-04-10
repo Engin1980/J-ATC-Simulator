@@ -11,6 +11,7 @@ import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.speeches.system.ISystemNotification;
+import eng.jAtcSim.newLib.speeches.system.StringMessage;
 import eng.jAtcSim.newLib.speeches.system.system2user.*;
 import eng.jAtcSim.newLib.speeches.system.user2system.*;
 
@@ -44,6 +45,10 @@ public class SystemMessagesModule extends SimulationModule {
     } catch (Exception ex) {
       sendMessage(source, new SystemRejection(content, ex.getMessage()));
     }
+  }
+
+  private void processStringMessage(StringMessage msg){
+    sendMessage(Participant.createSystem(), msg);
   }
 
   private void processGetHelpRequest(GetHelpRequest content, Participant targetAtc) {
@@ -86,6 +91,8 @@ public class SystemMessagesModule extends SimulationModule {
       processGetHelpRequest((GetHelpRequest) content, m.getSource());
     else if (content instanceof DeletePlaneRequest)
       processDeletePlaneRequest((DeletePlaneRequest) content, m.getSource());
+    else if (content instanceof StringMessage)
+      processStringMessage((StringMessage) content);
     else
       throw new UnsupportedOperationException("Unknown system message content of type " + content.getClass().getName());
   }

@@ -28,7 +28,7 @@ public class DensityBasedTrafficModelXmlLoader {
     IList<DensityBasedTrafficModel.Company> companies = new EList<>();
     elm.getChild("companies").getChildren("company").forEach(q -> {
       DensityBasedTrafficModel.Company c = new DensityBasedTrafficModel.Company(
-              q.getAttribute("name"),
+              q.getAttribute("icao"),
               SmartXmlLoaderUtils.loadInteger(q, "weight"));
       companies.add(c);
     });
@@ -36,7 +36,7 @@ public class DensityBasedTrafficModelXmlLoader {
     IList<DensityBasedTrafficModel.Company> countries = new EList<>();
     elm.getChild("countries").getChildren("country").forEach(q -> {
       DensityBasedTrafficModel.Company c = new DensityBasedTrafficModel.Company(
-              q.getAttribute("name"),
+              q.getAttribute("icao"),
               SmartXmlLoaderUtils.loadInteger(q, "weight"));
       companies.add(c);
     });

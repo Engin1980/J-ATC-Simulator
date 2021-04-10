@@ -52,7 +52,6 @@ import exml.IXPersistable;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
 import exml.loading.XLoadContext;
-import exml.saving.XSaveContext;
 
 public class Simulation implements IXPersistable {
 
@@ -114,6 +113,11 @@ public class Simulation implements IXPersistable {
     }
 
     @Override
+    public boolean isRunning() {
+      return Simulation.this.getTimerModule().isRunning();
+    }
+
+    @Override
     public void pauseUnpauseSim() {
       if (Simulation.this.getTimerModule().isRunning())
         this.stop();
@@ -152,8 +156,14 @@ public class Simulation implements IXPersistable {
     }
 
     @Override
+    public void sendSystemCommandAnonymous(AtcId toAtcId, ISystemSpeech speech) {
+      Simulation.this.getIoModule().sendSystemCommandByGame(toAtcId, speech);
+    }
+
+    @Override
     public void sendSystemCommandAnonymous(ISystemSpeech speech) {
-      Simulation.this.getIoModule().sendSystemCommandByGame(speech);
+      Simulation.this.atcModule.getUserAtcIds().forEach(q ->
+              Simulation.this.getIoModule().sendSystemCommandByGame(q, speech));
     }
 
     @Override
@@ -174,11 +184,6 @@ public class Simulation implements IXPersistable {
     @Override
     public void unregisterOnSecondElapsed(int simulationSecondListenerHandlerId) {
       Simulation.this.getTimerModule().unregisterOnTickListener(simulationSecondListenerHandlerId);
-    }
-
-    @Override
-    public boolean isRunning() {
-      return Simulation.this.getTimerModule().isRunning();
     }
   }
 

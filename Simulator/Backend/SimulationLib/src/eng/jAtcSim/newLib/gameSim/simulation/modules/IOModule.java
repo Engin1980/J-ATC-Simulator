@@ -82,11 +82,11 @@ public class IOModule extends SimulationModule {
     humanAtc.sendSystemCommand(systemSpeech);
   }
 
-  public void sendSystemCommandByGame(ISystemSpeech systemSpeech) {
+  public void sendSystemCommandByGame(AtcId targetAtcId, ISystemSpeech systemSpeech) {
     messenger.send(
             new Message(
                     Participant.createSystem(),
-                    Participant.createSystem(),
+                    Participant.createAtc(targetAtcId),
                     systemSpeech));
   }
 

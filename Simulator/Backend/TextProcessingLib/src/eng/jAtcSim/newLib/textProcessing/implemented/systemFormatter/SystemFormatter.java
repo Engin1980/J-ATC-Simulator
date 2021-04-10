@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.systemFormatter;
 
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.speeches.system.ISystemNotification;
 import eng.jAtcSim.newLib.speeches.system.system2user.SystemRejection;
 import eng.jAtcSim.newLib.textProcessing.formatting.ISystemFormatter;
@@ -7,6 +8,7 @@ import eng.jAtcSim.newLib.textProcessing.implemented.formatterHelpers.TextSpeech
 import eng.jAtcSim.newLib.textProcessing.implemented.formatterHelpers.TextSpeechFormatterList;
 import eng.jAtcSim.newLib.textProcessing.implemented.systemFormatter.formatters.CurrentTickNotificationFormatter;
 import eng.jAtcSim.newLib.textProcessing.implemented.systemFormatter.formatters.MetarNotificationFormatter;
+import eng.jAtcSim.newLib.textProcessing.implemented.systemFormatter.formatters.StringMessageFormatter;
 
 public class SystemFormatter implements ISystemFormatter<String> {
 
@@ -16,6 +18,7 @@ public class SystemFormatter implements ISystemFormatter<String> {
     formatters = new TextSpeechFormatterList<>();
     formatters.add(new CurrentTickNotificationFormatter());
     formatters.add(new MetarNotificationFormatter());
+    formatters.add(new StringMessageFormatter());
   }
 
   @Override
@@ -30,6 +33,7 @@ public class SystemFormatter implements ISystemFormatter<String> {
 
   private String formatNormalNotification(ISystemNotification input) {
     TextSpeechFormatter<? extends ISystemNotification> fmt = formatters.tryGet(input);
+    EAssert.isNotNull(fmt);
     String ret = fmt.format(input);
     return ret;
   }

@@ -165,6 +165,11 @@ public class JAtcSim {
 
     FrmIntro frmIntro = new FrmIntro(startupSettings);
     Stylist.apply(frmIntro, true);
+    try {
+      Thread.sleep(300);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     frmIntro.setVisible(true);
   }
 

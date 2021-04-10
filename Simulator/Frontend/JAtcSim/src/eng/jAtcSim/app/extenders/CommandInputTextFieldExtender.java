@@ -1,6 +1,5 @@
 package eng.jAtcSim.app.extenders;
 
-import eng.eSystem.Tuple;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
@@ -25,6 +24,8 @@ import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
 public class CommandInputTextFieldExtender {
 
   public enum SpecialCommandType {
@@ -35,7 +36,26 @@ public class CommandInputTextFieldExtender {
 
   public enum ErrorType {
     atcUnableParse,
-    systemUnableParse, planeMultipleCallsignMatches, planeNoneCallsignMatch, planeUnableParse, atcUnableDecide
+    systemUnableParse, planeMultipleCallsignMatches, planeNoneCallsignMatch, planeUnableParse, planeUnableFindCallsign, atcUnableDecide
+  }
+
+  private static class InputFormatException extends RuntimeException {
+    private final String command;
+    private final ErrorType type;
+
+    public InputFormatException(ErrorType type, String command, String message, Throwable cause) {
+      super(message, cause);
+      this.command = command;
+      this.type = type;
+    }
+
+    public String getCommand() {
+      return command;
+    }
+
+    public ErrorType getType() {
+      return type;
+    }
   }
 
   public static class SpecialCommandEventArgs {
@@ -60,13 +80,15 @@ public class CommandInputTextFieldExtender {
 
   public static class ErrorEventArgs {
     public final ErrorType error;
-    public final IReadOnlyMap<String, Object> arguments;
+    public final String message;
+    public final String command;
+    public final String cause;
 
-    public ErrorEventArgs(ErrorType error, IReadOnlyMap<String, Object> arguments) {
-      EAssert.Argument.isNotNull(arguments, "arguments");
-
+    public ErrorEventArgs(ErrorType error, String message, String command, String cause) {
       this.error = error;
-      this.arguments = arguments;
+      this.message = message;
+      this.command = command;
+      this.cause = cause;
     }
   }
 
@@ -233,21 +255,26 @@ public class CommandInputTextFieldExtender {
       } else {
         processPlaneMessage(msg);
       }
+    } catch (InputFormatException e) {
+      raiseError(e);
     } catch (Throwable t) {
-      throw new ERuntimeException("Message invocation failed for item: " + msg, t);
+      throw new ERuntimeException(sf("Uncaptured error occured in '%s': %s", this.getClass().getName(), msg), t);
     }
   }
 
   private void processPlaneMessage(String msg) {
-    String[] pts = splitCallsignAndMessage(msg);
+    String[] pts;
+    try {
+      pts = splitCallsignAndMessage(msg);
+    } catch (Exception e) {
+      throw new InputFormatException(ErrorType.planeUnableFindCallsign, msg, "Unable to find callsign at the beginning of the command.", e);
+    }
+
     Callsign callsign;
-    {
-      Tuple<Callsign, ErrorType> t = getCallsignFromString(pts[0]);
-      if (t.getB() != null) {
-        raiseError(t.getB(), EMap.of("callsign", pts[0]));
-        return;
-      }
-      callsign = t.getA();
+    try {
+      callsign = getCallsignFromStringOrThrowError(pts[0]);
+    } catch (InputFormatException e) {
+      throw new InputFormatException(e.type, msg, e.getMessage(), e.getCause());
     }
 
     IPlaneParser parser = parsers.planeParser;
@@ -255,8 +282,7 @@ public class CommandInputTextFieldExtender {
     try {
       cmds = parser.parse(pts[1]);
     } catch (Exception e) {
-      raiseError(ErrorType.planeUnableParse, EMap.of("callsign", pts[0], "command", pts[1]));
-      return;
+      throw new InputFormatException(ErrorType.planeUnableParse, pts[1], "Unable to understand message for '" + callsign.toString() + "'.", e);
     }
 
     raisePlaneCommand(callsign, cmds);
@@ -269,20 +295,22 @@ public class CommandInputTextFieldExtender {
     this.onPlaneCommand.raise(e);
   }
 
-  private Tuple<Callsign, ErrorType> getCallsignFromString(String callsignString) {
+  private Callsign getCallsignFromStringOrThrowError(String callsignString) {
     IReadOnlyList<Callsign> clsgns = this.planeCallsignsProducer.invoke();
     Callsign ret = clsgns.tryGetFirst(q -> q.toString().equals(callsignString)).orElse(null);
     if (ret == null) {
       IList<Callsign> tmp = clsgns.where(q -> q.getNumber().equals(callsignString));
       if (tmp.count() > 1)
-        return new Tuple<>(null, ErrorType.planeMultipleCallsignMatches);
+        throw new InputFormatException(ErrorType.planeMultipleCallsignMatches, callsignString,
+                sf("Multiple plane matches callsign string '%s'.", callsignString), null);
       else if (tmp.count() == 0)
-        return new Tuple<>(null, ErrorType.planeNoneCallsignMatch);
+        throw new InputFormatException(ErrorType.planeNoneCallsignMatch, callsignString,
+                sf("No plane matches callsign string '%s'.", callsignString), null);
       else
         ret = tmp.getFirst();
     }
     EAssert.isNotNull(ret);
-    return new Tuple<>(ret, null);
+    return ret;
   }
 
   private String[] splitCallsignAndMessage(String msg) {
@@ -295,12 +323,11 @@ public class CommandInputTextFieldExtender {
   private void processSystemMessage(String msg) {
     msg = msg.substring(1);
     ISystemParser parser = parsers.systemParser;
-    ISystemSpeech speech = null;
+    ISystemSpeech speech;
     try {
       speech = parser.parse(msg);
     } catch (Exception e) {
-      raiseError(ErrorType.systemUnableParse, EMap.of("command", msg));
-      return;
+      throw new InputFormatException(ErrorType.systemUnableParse, msg, "Unable to understand system message.", e);
     }
     raiseSystemCommand(speech);
     this.clear();
@@ -327,15 +354,13 @@ public class CommandInputTextFieldExtender {
     try {
       speech = parser.parse(msg);
     } catch (Exception e) {
-      this.raiseError(ErrorType.atcUnableParse, EMap.of("command", msg, "cause", e));
-      return;
+      throw new InputFormatException(ErrorType.atcUnableParse, msg, "Unable to understand the message for ATC.", e);
     }
     AtcId id;
     try {
       id = this.atcIdsProducer.invoke().getFirst(q -> q.getType() == atcType);
     } catch (Exception e) {
-      this.raiseError(ErrorType.atcUnableDecide, EMap.of("command", msg, "cause", e));
-      return;
+      throw new InputFormatException(ErrorType.atcUnableDecide, msg, "Unable to decide among available ATCs.", e);
     }
 
     this.raiseAtcCommand(id, speech);
@@ -352,8 +377,8 @@ public class CommandInputTextFieldExtender {
     this.txt.setText("");
   }
 
-  private void raiseError(ErrorType type, EMap<String, Object> arguments) {
-    ErrorEventArgs e = new ErrorEventArgs(type, arguments);
-    this.onError.raise(e);
+  private void raiseError(InputFormatException e) {
+    ErrorEventArgs eea = new ErrorEventArgs(e.getType(), e.getMessage(), e.command, e.getCause().getMessage());
+    this.onError.raise(eea);
   }
 }
