@@ -6,6 +6,8 @@
 
 package eng.jAtcSim.newLib.shared;
 
+import eng.eSystem.validation.EAssert;
+
 import java.util.Objects;
 
 public class Callsign {
@@ -24,8 +26,20 @@ public class Callsign {
     if (value.length() < 4)
       throw new IllegalArgumentException("Callsign string must be at least 4 chars long.");
 
-    this.company = value.substring(0, 3).trim().toUpperCase();
-    this.number = value.substring(3).trim().toUpperCase();
+    int indexOfDigitOrSpace = -1;
+    for (int i = 0; i < value.length(); i++) {
+      char c = value.charAt(i);
+      if (c == ' ' || (c >= '0' && c <= '9')) {
+        indexOfDigitOrSpace = i;
+        break;
+      }
+    }
+
+    this.company = value.substring(0, indexOfDigitOrSpace).trim().toUpperCase();
+    this.number = value.substring(indexOfDigitOrSpace).trim().toUpperCase();
+
+    EAssert.matchPattern(this.company, "[A-Z]+");
+    EAssert.matchPattern(this.number, "[A-Z0-9]+");
   }
 
   @Override

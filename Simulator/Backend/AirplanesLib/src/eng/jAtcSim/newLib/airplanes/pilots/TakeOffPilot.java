@@ -73,6 +73,7 @@ public class TakeOffPilot extends Pilot {
   @Override
   protected AirplaneState[] getValidStates() {
     return new AirplaneState[]{
+            AirplaneState.takeOffRoll,
             AirplaneState.takeOff
     };
   }
