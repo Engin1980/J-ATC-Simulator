@@ -19,6 +19,10 @@ import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.AtcParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.PlaneParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.SystemParser;
 import eng.jAtcSim.newPacks.IView;
+import eng.jAtcSim.newPacks.context.Events;
+import eng.jAtcSim.newPacks.context.ViewContext;
+import eng.jAtcSim.newPacks.utils.GlobalKeyStrokes;
+import eng.jAtcSim.newPacks.utils.ViewGameInfo;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,71 +55,104 @@ public class TextInputView implements IView {
 
   private JPanel parent;
   private CommandInputTextFieldExtender commandInputTextFieldExtender;
+  private JTextField txt;
   private ISimulation sim;
   private AtcId userAtcId;
+  private ViewContext viewContext;
 
   @Override
-  public void init(JPanel panel, ViewInitInfo initInfo, IReadOnlyMap<String, String> options) {
+  public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options,
+                   ViewContext context) {
     this.parent = panel;
     this.sim = initInfo.getSimulation();
     this.userAtcId = initInfo.getUserAtcId();
+    this.viewContext = context;
 
-    JTextField txt = this.buildTextField();
+    this.buildTextField();
     this.parent.setLayout(new BorderLayout());
     this.parent.add(txt, BorderLayout.CENTER);
+
+    registerKeyStrokes();
+    context.events.onUnhandledKeyPress.add(q ->{
+      commandInputTextFieldExtender.appendText(Character.toString(q.keyCode), false);
+      commandInputTextFieldExtender.focus();
+    });
   }
 
-  @Override
-  public void postInit() {
-    Component cmp;
-    cmp = this.parent;
-    while (cmp instanceof JFrame == false)
-      cmp = cmp.getParent();
+  private void registerKeyStrokes() {
 
-    //TODO fixed here, but should be somehow set-able using layout.xml
-    ComponentUtils.adjustComponentTree(cmp,
-            q -> q.getClass().equals(JTextField.class) == false,
-            q -> q.addKeyListener(new KeyAdapter() {
-              @Override
-              public void keyReleased(KeyEvent e) {
-                commandInputTextFieldExtender.appendText(Character.toString(e.getKeyChar()), false);
-                commandInputTextFieldExtender.focus();
-              }
-            })
-    );
+    commandInputTextFieldExtender.registerKeyStroke(
+            GlobalKeyStrokes.STORE_BANK_2,
+            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+                    this,
+                    Events.RadarPositionStoreRestoreEventArgs.EventAction.store,
+                    2)));
+    commandInputTextFieldExtender.registerKeyStroke(
+            GlobalKeyStrokes.RESTORE_BANK_2,
+            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+                    this,
+                    Events.RadarPositionStoreRestoreEventArgs.EventAction.restore,
+                    2)));
+
+    commandInputTextFieldExtender.registerKeyStroke(
+            GlobalKeyStrokes.STORE_BANK_3,
+            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+                    this,
+                    Events.RadarPositionStoreRestoreEventArgs.EventAction.store,
+                    3)));
+    commandInputTextFieldExtender.registerKeyStroke(
+            GlobalKeyStrokes.RESTORE_BANK_3,
+            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+                    this,
+                    Events.RadarPositionStoreRestoreEventArgs.EventAction.restore,
+                    3)));
+
+    commandInputTextFieldExtender.registerKeyStroke(
+            GlobalKeyStrokes.STORE_BANK_4,
+            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+                    this,
+                    Events.RadarPositionStoreRestoreEventArgs.EventAction.store,
+                    4)));
+    commandInputTextFieldExtender.registerKeyStroke(
+            GlobalKeyStrokes.RESTORE_BANK_4,
+            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+                    this,
+                    Events.RadarPositionStoreRestoreEventArgs.EventAction.restore,
+                    4)));
+
+    commandInputTextFieldExtender.registerKeyStroke(
+            GlobalKeyStrokes.STORE_BANK_5,
+            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+                    this,
+                    Events.RadarPositionStoreRestoreEventArgs.EventAction.store,
+                    5)));
+    commandInputTextFieldExtender.registerKeyStroke(
+            GlobalKeyStrokes.RESTORE_BANK_5,
+            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+                    this,
+                    Events.RadarPositionStoreRestoreEventArgs.EventAction.restore,
+                    5)));
+
+    commandInputTextFieldExtender.registerKeyStroke(
+            GlobalKeyStrokes.STORE_BANK_6,
+            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+                    this,
+                    Events.RadarPositionStoreRestoreEventArgs.EventAction.store,
+                    6)));
+    commandInputTextFieldExtender.registerKeyStroke(
+            GlobalKeyStrokes.RESTORE_BANK_6,
+            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+                    this,
+                    Events.RadarPositionStoreRestoreEventArgs.EventAction.restore,
+                    6)));
   }
 
-  //TODEL use or delete
-  //
-  //  public class CommandInputWrapper {
-//    public void addCommandTextToLine(char keyChar) {
-//      SwingRadarPanel.this.commandInputTextFieldExtender.appendText(Character.toString(keyChar), false);
-//    }
-//
-//    public void addCommandTextToLine(String text) {
-//      SwingRadarPanel.this.commandInputTextFieldExtender.appendText(text, true);
-//    }
-//
-//    public void eraseCommand() {
-//      SwingRadarPanel.this.commandInputTextFieldExtender.erase();
-//    }
-//
-//    public void sendCommand() {
-//      SwingRadarPanel.this.commandInputTextFieldExtender.send();
-//    }
-//
-//    public void setFocus() {
-//      SwingRadarPanel.this.commandInputTextFieldExtender.focus();
-//
-//    }
-//  }
+  private void buildTextField() {
+    this.txt = new JTextField();
+    Font font = new Font("Courier New", Font.BOLD, txt.getFont().getSize() + 8); //todo magic number hack, implement differently
+    txt.setFont(font);
 
-  private JTextField buildTextField() {
-    JTextField txtInput = new JTextField();
-    Font font = new Font("Courier New", Font.BOLD, txtInput.getFont().getSize() + 8); //todo magic number hack, implement differently
-    txtInput.setFont(font);
-
-    this.commandInputTextFieldExtender = new CommandInputTextFieldExtender(txtInput,
+    this.commandInputTextFieldExtender = new CommandInputTextFieldExtender(txt,
             this.buildParsers(),
             () -> this.sim.getAtcs(),
             () -> this.sim.getPlanesToDisplay().select(q -> q.callsign()));
@@ -124,8 +161,6 @@ public class TextInputView implements IView {
     this.commandInputTextFieldExtender.onPlaneCommand.add(this::sendPlaneCommand);
     this.commandInputTextFieldExtender.onSpecialCommand.add(this::processSpecialCommand);
     this.commandInputTextFieldExtender.onError.add(this::processError);
-
-    return txtInput;
   }
 
   private void processError(CommandInputTextFieldExtender commandInputTextFieldExtender,

@@ -1,4 +1,4 @@
-package eng.jAtcSim.newPacks.views;
+package eng.jAtcSim.newPacks.utils;
 
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
@@ -6,14 +6,14 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 import eng.jAtcSim.settings.AppSettings;
 
-public class ViewInitInfo {
+public class ViewGameInfo {
   private ISimulation simulation;
   private AppSettings settings;
   private AtcId userAtcId;
   private Airport airport;
   private DynamicPlaneFormatter dynamicAirplaneSpeechFormatter;
 
-  public ViewInitInfo() {
+  public ViewGameInfo() {
   }
 
   public Airport getAirport() {

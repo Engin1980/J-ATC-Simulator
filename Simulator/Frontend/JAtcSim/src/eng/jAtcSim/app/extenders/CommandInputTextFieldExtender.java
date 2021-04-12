@@ -1,11 +1,9 @@
 package eng.jAtcSim.app.extenders;
 
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.collections.IReadOnlyMap;
+import eng.eSystem.collections.*;
 import eng.eSystem.events.Event;
 import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.functionalInterfaces.Action;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParsersSet;
@@ -102,6 +100,7 @@ public class CommandInputTextFieldExtender {
   private final JTextField txt;
   private final ParsersSet parsers;
   private boolean isCtr = false;
+  private final IMap<eng.jAtcSim.newPacks.utils.KeyStroke, Action> keyStrokes = new EMap<>();
 
   public CommandInputTextFieldExtender(JTextField txt,
                                        ParsersSet parsers,
@@ -111,7 +110,7 @@ public class CommandInputTextFieldExtender {
     this.parsers = parsers;
     this.atcIdsProducer = atcIdsProducer;
     this.planeCallsignsProducer = planeCallsignsProducer;
-    this.assignListeners();
+    this.assignKeyListeners();
   }
 
   public CommandInputTextFieldExtender(ParsersSet parsers,
@@ -141,6 +140,10 @@ public class CommandInputTextFieldExtender {
     return this.txt;
   }
 
+  public void registerKeyStroke(eng.jAtcSim.newPacks.utils.KeyStroke keyStroke, Action a) {
+    keyStrokes.set(keyStroke, a);
+  }
+
   public void send() {
     this.sendMessageFromText();
   }
@@ -150,7 +153,7 @@ public class CommandInputTextFieldExtender {
     this.onSpecialCommand.raise(e);
   }
 
-  private void assignListeners() {
+  private void assignKeyListeners() {
     this.txt.addKeyListener(new KeyListener() {
 
       @Override
@@ -177,39 +180,10 @@ public class CommandInputTextFieldExtender {
           case java.awt.event.KeyEvent.VK_ENTER:
             sendMessageFromText();
             break;
-          case KeyEvent.VK_F1:
-            raiseSpecialCommand(SpecialCommandType.toggleSimulatorRun, new EMap<>());
-            break;
-          case KeyEvent.VK_F2:
-            if (isCtr)
-              raiseSpecialCommand(SpecialCommandType.storeRadarPosition, EMap.of("bank", 2));
-            else
-              raiseSpecialCommand(SpecialCommandType.recallRadarPosition, EMap.of("bank", 2));
-            break;
-          case KeyEvent.VK_F3:
-            if (isCtr)
-              raiseSpecialCommand(SpecialCommandType.storeRadarPosition, EMap.of("bank", 3));
-            else
-              raiseSpecialCommand(SpecialCommandType.recallRadarPosition, EMap.of("bank", 3));
-            break;
-          case KeyEvent.VK_F4:
-            if (isCtr)
-              raiseSpecialCommand(SpecialCommandType.storeRadarPosition, EMap.of("bank", 4));
-            else
-              raiseSpecialCommand(SpecialCommandType.recallRadarPosition, EMap.of("bank", 4));
-            break;
-          case KeyEvent.VK_F5:
-            if (isCtr)
-              raiseSpecialCommand(SpecialCommandType.storeRadarPosition, EMap.of("bank", 5));
-            else
-              raiseSpecialCommand(SpecialCommandType.recallRadarPosition, EMap.of("bank", 5));
-            break;
-          case KeyEvent.VK_F6:
-            if (isCtr)
-              raiseSpecialCommand(SpecialCommandType.storeRadarPosition, EMap.of("bank", 6));
-            else
-              raiseSpecialCommand(SpecialCommandType.recallRadarPosition, EMap.of("bank", 6));
-            break;
+          default:
+            keyStrokes.getKeys().tryGetFirst(q->
+                    q.isCtr == isCtr && q.keyCode == e.getKeyCode())
+                    .ifPresent(q -> keyStrokes.get(q).invoke());
         }
       }
 
@@ -272,7 +246,7 @@ public class CommandInputTextFieldExtender {
 
     Callsign callsign;
     try {
-      callsign = getCallsignFromStringOrThrowError(pts[0]);
+      callsign = getCallsignFromStringOrThrowError(pts[0].toUpperCase());
     } catch (InputFormatException e) {
       throw new InputFormatException(e.type, msg, e.getMessage(), e.getCause());
     }
@@ -297,7 +271,7 @@ public class CommandInputTextFieldExtender {
 
   private Callsign getCallsignFromStringOrThrowError(String callsignString) {
     IReadOnlyList<Callsign> clsgns = this.planeCallsignsProducer.invoke();
-    Callsign ret = clsgns.tryGetFirst(q -> q.toString().equals(callsignString)).orElse(null);
+    Callsign ret = clsgns.tryGetFirst(q -> q.toString(false).equals(callsignString)).orElse(null);
     if (ret == null) {
       IList<Callsign> tmp = clsgns.where(q -> q.getNumber().equals(callsignString));
       if (tmp.count() > 1)
@@ -378,7 +352,8 @@ public class CommandInputTextFieldExtender {
   }
 
   private void raiseError(InputFormatException e) {
-    ErrorEventArgs eea = new ErrorEventArgs(e.getType(), e.getMessage(), e.command, e.getCause().getMessage());
+    ErrorEventArgs eea = new ErrorEventArgs(e.getType(), e.getMessage(), e.command,
+            e.getCause() == null ? null : e.getCause().getMessage());
     this.onError.raise(eea);
   }
 }

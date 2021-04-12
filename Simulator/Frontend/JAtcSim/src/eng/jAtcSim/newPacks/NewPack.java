@@ -2,7 +2,6 @@ package eng.jAtcSim.newPacks;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
-import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
@@ -17,17 +16,13 @@ import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.GameFactoryAndRepository;
 import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
-import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
-import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
-import eng.jAtcSim.newPacks.views.ViewInitInfo;
+import eng.jAtcSim.newPacks.context.ViewContext;
+import eng.jAtcSim.newPacks.utils.ViewGameInfo;
 import eng.jAtcSim.settings.AppSettings;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.nio.file.Path;
-
-import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class NewPack {
   private IGame game;
@@ -66,15 +61,17 @@ public class NewPack {
       Stylist.apply(frame.getFrame(), true);
     }
 
-    ViewInitInfo vii = new ViewInitInfo();
+    ViewGameInfo vii = new ViewGameInfo();
     vii.setSimulation(this.sim);
     vii.setAirport(this.aip);
     vii.setSettings(this.settings);
     vii.setUserAtcId(this.sim.getUserAtcIds().get(0));
     vii.setDynamicAirplaneSpeechFormatter(this.settings.getDynamicPlaneFormatter()); //TODO improve somehow
 
+    ViewContext viewContext = new ViewContext(view2panelMap.select(q-> q.getA()));
+
     for (Tuple<IView, JFrameFactory.JPanelInfo> item : view2panelMap) {
-      item.getA().init(item.getB().getPanel(), vii, item.getB().getOptions());
+      item.getA().init(item.getB().getPanel(), vii, item.getB().getOptions(), viewContext);
     }
 
     for (Tuple<IView, JFrameFactory.JPanelInfo> item : view2panelMap) {

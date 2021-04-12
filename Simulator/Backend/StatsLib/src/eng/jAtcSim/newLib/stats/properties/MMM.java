@@ -20,7 +20,6 @@ public class MMM implements IXPersistable {
   private final double mean;
 
   @XConstructor
-
   private MMM() {
     minimum = Double.NaN;
     maximum = Double.NaN;

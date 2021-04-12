@@ -5,8 +5,10 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.functionalInterfaces.Action;
 import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.swing.LayoutManager;
+import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
 import eng.jAtcSim.abstractRadar.Radar;
 import eng.jAtcSim.abstractRadar.RadarViewPort;
@@ -21,15 +23,26 @@ import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.speeches.system.StringMessage;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 import eng.jAtcSim.newPacks.IView;
+import eng.jAtcSim.newPacks.context.Events;
+import eng.jAtcSim.newPacks.context.ViewContext;
+import eng.jAtcSim.newPacks.utils.GlobalKeyStrokes;
+import eng.jAtcSim.newPacks.utils.KeyStroke;
+import eng.jAtcSim.newPacks.utils.ViewGameInfo;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
+import java.util.Optional;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class RadarView implements IView {
   class RoutesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<DARoute> {
@@ -134,12 +147,16 @@ public class RadarView implements IView {
   );
   private InitialPosition initialPosition;
   private Radar radar;
+  private JPanel pnlRadarContent;
   private ISimulation sim;
   private final IMap<Integer, RadarViewPort> storedRadarPositions = new EMap<>();
   private RadarStyleSettings radarStyleSettings;
   private AdjustSelectionPanelWrapper<Approach> wrpApproaches;
   private AdjustSelectionPanelWrapper<DARoute> wrpRoutes;
   private DynamicPlaneFormatter dynamicPlaneFormatter;
+  private final IMap<KeyStroke, Action> keyStrokes = new EMap<>();
+  private ViewContext viewContext;
+  private boolean isCtr = false;
 
   public RadarBehaviorSettings getBehaviorSettings() {
     return behaviorSettings;
@@ -160,7 +177,7 @@ public class RadarView implements IView {
   }
 
   @Override
-  public void init(JPanel panel, ViewInitInfo initInfo, IReadOnlyMap<String, String> options) {
+  public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options, ViewContext context) {
     this.parent = panel;
 
     this.sim = initInfo.getSimulation();
@@ -170,28 +187,86 @@ public class RadarView implements IView {
     this.radarStyleSettings = initInfo.getSettings().getRadarStyleSettings();
     this.displaySettings = initInfo.getSettings().getRadarDisplaySettings();
     this.dynamicPlaneFormatter = initInfo.getDynamicAirplaneSpeechFormatter();
+    this.viewContext = context;
 
     this.parent.setLayout(new BorderLayout());
 
     JPanel pnlTop = this.buildTopPanel();
-    JPanel pnlContent = this.buildRadarPanel();
+    this.pnlRadarContent = this.buildRadarPanel();
+    this.pnlRadarContent.setFocusable(true);
 
-    this.parent.add(pnlContent, BorderLayout.CENTER);
+    this.parent.add(pnlRadarContent, BorderLayout.CENTER);
     this.parent.add(pnlTop, BorderLayout.PAGE_START);
 
-    if (options.tryGet("showMessages").orElse("false").equals("true"))
-      this.getBehaviorSettings().setPaintMessages(true);
-    else
-      this.getBehaviorSettings().setPaintMessages(false);
+    this.getBehaviorSettings().setPaintMessages(
+            options.tryGet("showMessages").orElse("false").equals("true"));
 
-    // TODO solve somehow key presses
-//    this.parent.addFocusListener(new FocusAdapter() {
-//      @Override
-//      public void focusGained(FocusEvent e) {
-//        SwingRadarPanel.this.commandInputTextFieldExtender.getControl().requestFocus();
-//      }
-//    });
+    context.events.onRadarPositionStoreRestore.add(this::context_onRadarPositionStoreRestore);
+    registerKeyStrokes();
+    assignKeyListener();
   }
+
+  private void assignKeyListener() {
+    ComponentUtils.adjustComponentTree(this.parent,
+            q -> q.addKeyListener(new KeyListener() {
+
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
+          isCtr = true;
+        } else {
+          Optional<KeyStroke> ks = keyStrokes.getKeys().tryGetFirst(q ->
+                  q.isCtr == isCtr && q.keyCode == e.getKeyCode());
+          if (ks.isPresent())
+            keyStrokes.get(ks.get()).invoke();
+          else
+            RadarView.this.viewContext.events.onUnhandledKeyPress.raise(
+                    new Events.UnhandledKeyPressEventArgs(RadarView.this, e.getKeyCode(), isCtr)
+            );
+        }
+      }
+
+      @Override
+      public void keyReleased(KeyEvent e) {
+        switch (e.getKeyCode()) {
+          case KeyEvent.VK_CONTROL:
+            isCtr = false;
+            break;
+        }
+      }
+
+      @Override
+      public void keyTyped(KeyEvent e) {
+
+      }
+    }));
+  }
+
+  private void registerKeyStrokes() {
+    keyStrokes.set(GlobalKeyStrokes.STORE_BANK_2, () -> storeRadarPosition(2));
+    keyStrokes.set(GlobalKeyStrokes.RESTORE_BANK_2, () -> restoreRadarPosition(2));
+    keyStrokes.set(GlobalKeyStrokes.STORE_BANK_3, () -> storeRadarPosition(3));
+    keyStrokes.set(GlobalKeyStrokes.RESTORE_BANK_3, () -> restoreRadarPosition(3));
+    keyStrokes.set(GlobalKeyStrokes.STORE_BANK_4, () -> storeRadarPosition(4));
+    keyStrokes.set(GlobalKeyStrokes.RESTORE_BANK_4, () -> restoreRadarPosition(4));
+    keyStrokes.set(GlobalKeyStrokes.STORE_BANK_5, () -> storeRadarPosition(5));
+    keyStrokes.set(GlobalKeyStrokes.RESTORE_BANK_5, () -> restoreRadarPosition(5));
+    keyStrokes.set(GlobalKeyStrokes.STORE_BANK_6, () -> storeRadarPosition(6));
+    keyStrokes.set(GlobalKeyStrokes.RESTORE_BANK_6, () -> restoreRadarPosition(6));
+  }
+
+  private void context_onRadarPositionStoreRestore(
+          Events.RadarPositionStoreRestoreEventArgs e) {
+    if (e.sender == this) return;
+
+    if (e.action == Events.RadarPositionStoreRestoreEventArgs.EventAction.store)
+      this.storeRadarPosition(e.bank);
+    else if (e.action == Events.RadarPositionStoreRestoreEventArgs.EventAction.restore)
+      this.restoreRadarPosition(e.bank);
+    else
+      throw new EEnumValueUnsupportedException(e.action);
+  }
+
 
   private Tuple<JPanel, JButton[]> buildButtonBlock(
           String btnLabel, Object targetObject, String propertyName) {
@@ -331,13 +406,23 @@ public class RadarView implements IView {
     return ret;
   }
 
-  private void recallRadarPosition(int index) {
+  private void restoreRadarPosition(int index) {
     storedRadarPositions.tryGet(index).ifPresent(q -> radar.setViewPort(q));
+
+    this.sim.sendSystemCommandAnonymous(
+            this.userAtcId,
+            new StringMessage(sf("Radar position '%d' restored.", index))
+    );
   }
 
   private void storeRadarPosition(int index) {
     RadarViewPort rp = this.radar.getViewPort();
     this.storedRadarPositions.set(index, rp);
+
+    this.sim.sendSystemCommandAnonymous(
+            this.userAtcId,
+            new StringMessage(sf("Radar position '%d' stored.", index))
+    );
   }
 }
 

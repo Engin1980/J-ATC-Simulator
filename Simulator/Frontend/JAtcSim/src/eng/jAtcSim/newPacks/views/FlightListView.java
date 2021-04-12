@@ -14,6 +14,8 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Format;
 import eng.jAtcSim.newPacks.ICanSelectCallsign;
 import eng.jAtcSim.newPacks.IView;
+import eng.jAtcSim.newPacks.context.ViewContext;
+import eng.jAtcSim.newPacks.utils.ViewGameInfo;
 import eng.jAtcSim.settings.FlightStripSettings;
 
 import javax.swing.*;
@@ -44,7 +46,7 @@ public class FlightListView implements IView, ICanSelectCallsign {
   }
 
   @Override
-  public void init(JPanel panel, ViewInitInfo initInfo, IReadOnlyMap<String, String> options) {
+  public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options, ViewContext context) {
     this.parent = panel;
     this.sim = initInfo.getSimulation();
     FlightStripPanel.setStripSettings(initInfo.getSettings().getFlightStripSettings());
