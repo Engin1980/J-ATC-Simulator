@@ -193,7 +193,13 @@ public class RadarView implements IView {
 
     JPanel pnlTop = this.buildTopPanel();
     this.pnlRadarContent = this.buildRadarPanel();
-    this.pnlRadarContent.setFocusable(true);
+    this.radar.onSelectedAirplaneChangedEvent.add((sender, callsign) -> context.events.onSelectedCallsignChanged.raise(
+            new Events.SelectedCallsignChangedEventArgs(this, callsign)
+    ));
+    context.events.onSelectedCallsignChanged.add(q -> {
+      if (q.sender == this) return;
+      this.radar.setSelectedCallsign(q.callsign);
+    });
 
     this.parent.add(pnlRadarContent, BorderLayout.CENTER);
     this.parent.add(pnlTop, BorderLayout.PAGE_START);
@@ -210,36 +216,36 @@ public class RadarView implements IView {
     ComponentUtils.adjustComponentTree(this.parent,
             q -> q.addKeyListener(new KeyListener() {
 
-      @Override
-      public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
-          isCtr = true;
-        } else {
-          Optional<KeyStroke> ks = keyStrokes.getKeys().tryGetFirst(q ->
-                  q.isCtr == isCtr && q.keyCode == e.getKeyCode());
-          if (ks.isPresent())
-            keyStrokes.get(ks.get()).invoke();
-          else
-            RadarView.this.viewContext.events.onUnhandledKeyPress.raise(
-                    new Events.UnhandledKeyPressEventArgs(RadarView.this, e.getKeyCode(), isCtr)
-            );
-        }
-      }
+              @Override
+              public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
+                  isCtr = true;
+                } else {
+                  Optional<KeyStroke> ks = keyStrokes.getKeys().tryGetFirst(q ->
+                          q.isCtr == isCtr && q.keyCode == e.getKeyCode());
+                  if (ks.isPresent())
+                    keyStrokes.get(ks.get()).invoke();
+                  else
+                    RadarView.this.viewContext.events.onUnhandledKeyPress.raise(
+                            new Events.UnhandledKeyPressEventArgs(RadarView.this, e.getKeyCode(), isCtr)
+                    );
+                }
+              }
 
-      @Override
-      public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()) {
-          case KeyEvent.VK_CONTROL:
-            isCtr = false;
-            break;
-        }
-      }
+              @Override
+              public void keyReleased(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                  case KeyEvent.VK_CONTROL:
+                    isCtr = false;
+                    break;
+                }
+              }
 
-      @Override
-      public void keyTyped(KeyEvent e) {
+              @Override
+              public void keyTyped(KeyEvent e) {
 
-      }
-    }));
+              }
+            }));
   }
 
   private void registerKeyStrokes() {

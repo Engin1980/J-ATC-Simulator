@@ -17,20 +17,13 @@ public class Events {
     }
   }
 
-  public static class PlaneSelectionChangedEventArgs extends EventsEventArgs {
-
-    public enum EventAction {
-      SELECTED,
-      DESELECTED
-    }
+  public static class SelectedCallsignChangedEventArgs extends EventsEventArgs {
 
     public final Callsign callsign;
-    public final EventAction action;
 
-    public PlaneSelectionChangedEventArgs(IView sender, Callsign callsign, EventAction action) {
+    public SelectedCallsignChangedEventArgs(IView sender, Callsign callsign) {
       super(sender);
       this.callsign = callsign;
-      this.action = action;
     }
   }
 
@@ -61,7 +54,7 @@ public class Events {
     }
   }
 
-  public EventAnonymous<PlaneSelectionChangedEventArgs> onPlaneSelectionChanged = new EventAnonymous<PlaneSelectionChangedEventArgs>();
+  public EventAnonymous<SelectedCallsignChangedEventArgs> onSelectedCallsignChanged = new EventAnonymous<SelectedCallsignChangedEventArgs>();
   public EventAnonymous<RadarPositionStoreRestoreEventArgs> onRadarPositionStoreRestore = new EventAnonymous<RadarPositionStoreRestoreEventArgs>();
-  public EventAnonymous<UnhandledKeyPressEventArgs> onUnhandledKeyPress = new EventAnonymous<UnhandledKeyPressEventArgs>();
+  public EventAnonymous<UnhandledKeyPressEventArgs> onUnhandledKeyPress = new EventAnonymous<>();
 }

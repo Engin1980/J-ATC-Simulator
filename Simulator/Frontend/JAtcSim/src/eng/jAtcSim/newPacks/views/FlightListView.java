@@ -12,8 +12,8 @@ import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Format;
-import eng.jAtcSim.newPacks.ICanSelectCallsign;
 import eng.jAtcSim.newPacks.IView;
+import eng.jAtcSim.newPacks.context.Events;
 import eng.jAtcSim.newPacks.context.ViewContext;
 import eng.jAtcSim.newPacks.utils.ViewGameInfo;
 import eng.jAtcSim.settings.FlightStripSettings;
@@ -23,24 +23,24 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class FlightListView implements IView, ICanSelectCallsign {
+public class FlightListView implements IView {
   private static IList<IAirplaneInfo> plns;
-  private final Event<IView, Callsign> selectedCallsignChanged = new Event(this);
   private ISimulation sim;
   private JPanel pnlContent;
   private Callsign selectedCallsign;
   private JPanel parent;
+  private ViewContext viewContext;
 
   public Callsign getSelectedCallsign() {
     return selectedCallsign;
   }
 
-  @Override
   public void setSelectedCallsign(Callsign selectedCallsign) {
     Callsign bef = this.selectedCallsign;
     this.selectedCallsign = selectedCallsign;
     if (bef != this.selectedCallsign) {
-      selectedCallsignChanged.raise(this.selectedCallsign);
+      this.viewContext.events.onSelectedCallsignChanged.raise(
+              new Events.SelectedCallsignChangedEventArgs(this, this.selectedCallsign));
       updateList();
     }
   }
@@ -49,6 +49,7 @@ public class FlightListView implements IView, ICanSelectCallsign {
   public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options, ViewContext context) {
     this.parent = panel;
     this.sim = initInfo.getSimulation();
+    this.viewContext = context;
     FlightStripPanel.setStripSettings(initInfo.getSettings().getFlightStripSettings());
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
@@ -64,11 +65,11 @@ public class FlightListView implements IView, ICanSelectCallsign {
     pnlContent.setBackground(new Color(50, 50, 50));
 
     this.sim.registerOnSecondElapsed(s -> updateList());
-  }
 
-  @Override
-  public Event<IView, Callsign> onSelectedCallsignChanged() {
-    return selectedCallsignChanged;
+    context.events.onSelectedCallsignChanged.add(q -> {
+      if (q.sender == this) return;
+      this.setSelectedCallsign(q.callsign);
+    });
   }
 
   private void updateList() {
@@ -92,7 +93,7 @@ public class FlightListView implements IView, ICanSelectCallsign {
       FlightStripPanel pnlItem = createFlightStrip(pln);
       pnlItem.setName("FlightStrip_" + pln.callsign());
       pnlContent.add(pnlItem);
-      pnlItem.getClickEvent().add((sender, callsign) -> {
+      pnlItem.onClickEvent.add((sender, callsign) -> {
         if (this.getSelectedCallsign() == callsign)
           this.setSelectedCallsign(null);
         else
@@ -129,7 +130,7 @@ class FlightStripPanel extends JPanel {
     index = 0;
   }
 
-  private final Event<FlightStripPanel, Callsign> clickEvent = new Event<>(this);
+  public final Event<FlightStripPanel, Callsign> onClickEvent = new Event<>(this);
   private final Callsign callsign;
   private final FlightListView parent;
 
@@ -151,13 +152,9 @@ class FlightStripPanel extends JPanel {
     this.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        clickEvent.raise(FlightStripPanel.this.callsign);
+        onClickEvent.raise(FlightStripPanel.this.callsign);
       }
     });
-  }
-
-  public Event<FlightStripPanel, Callsign> getClickEvent() {
-    return clickEvent;
   }
 
   private Color getColor(IAirplaneInfo ai) {

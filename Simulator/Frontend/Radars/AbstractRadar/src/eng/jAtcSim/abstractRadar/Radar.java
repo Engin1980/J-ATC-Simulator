@@ -5,7 +5,6 @@ import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -34,18 +33,13 @@ import eng.jAtcSim.newLib.shared.Global;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
-import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcFormatter.AtcFormatter;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
-import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
 import eng.jAtcSim.newLib.textProcessing.implemented.systemFormatter.SystemFormatter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class Radar {
 
@@ -69,7 +63,7 @@ public class Radar {
   private final AirplaneDisplayInfoList planeInfos = new AirplaneDisplayInfoList();
   private Counter planeRedrawCounter;
   private Counter radarRedrawCounter;
-  private final Event<Radar, Callsign> selectedAirplaneChangedEvent = new Event<>(this);
+  public final Event<Radar, Callsign> onSelectedAirplaneChangedEvent = new Event<>(this);
   private Callsign selectedCallsign;
   private final ISimulation simulation;
   private int simulationSecondListenerHandler = -1;
@@ -196,10 +190,6 @@ public class Radar {
     return ret;
   }
 
-  public Event<Radar, Callsign> getSelectedAirplaneChangedEvent() {
-    return selectedAirplaneChangedEvent;
-  }
-
   public Callsign getSelectedCallsign() {
     return selectedCallsign;
   }
@@ -207,8 +197,10 @@ public class Radar {
   public void setSelectedCallsign(Callsign selectedCallsign) {
     Callsign bef = this.selectedCallsign;
     this.selectedCallsign = selectedCallsign;
-    if (bef != this.selectedCallsign)
-      this.selectedAirplaneChangedEvent.raise(this.selectedCallsign);
+    if (bef != this.selectedCallsign) {
+      this.redraw(true);
+      this.onSelectedAirplaneChangedEvent.raise(this.selectedCallsign);
+    }
   }
 
   public RadarViewPort getViewPort() {
