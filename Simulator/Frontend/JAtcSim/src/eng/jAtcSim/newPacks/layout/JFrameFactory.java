@@ -1,76 +1,27 @@
-package eng.jAtcSim.layouting;
+package eng.jAtcSim.newPacks.layout;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.ESet;
-import eng.eSystem.collections.IReadOnlyMap;
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.layouting.Panel;
+import eng.jAtcSim.layouting.Window;
+import eng.jAtcSim.layouting.*;
+import eng.jAtcSim.newPacks.IView;
+import eng.jAtcSim.newPacks.ViewFactory;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class JFrameFactory {
 
-  public static class JFrameInfo {
-    private final JFrame frame;
-    private final ISet<JPanelInfo> panels;
-    private final MenuFactory.MenuSimProxy menuSimProxy;
-
-    public JFrameInfo(JFrame frame, ISet<JPanelInfo> panels, MenuFactory.MenuSimProxy menuSimProxy) {
-      EAssert.Argument.isNotNull(frame, "frame");
-      EAssert.Argument.isNotNull(panels, "panels");
-
-      this.frame = frame;
-      this.panels = panels;
-      this.menuSimProxy = menuSimProxy;
-    }
-
-    public JFrame getFrame() {
-      return frame;
-    }
-
-    public MenuFactory.MenuSimProxy getMenuSimProxy() {
-      return menuSimProxy;
-    }
-
-    public ISet<JPanelInfo> getPanels() {
-      return panels;
-    }
-  }
-
-  public static class JPanelInfo {
-    private final JPanel panel;
-    private final String viewName;
-    private final IReadOnlyMap<String, String> options;
-
-    public JPanelInfo(JPanel panel, String viewName, IReadOnlyMap<String, String> options) {
-      EAssert.Argument.isNotNull(panel, "panel");
-      EAssert.Argument.isNonemptyString(viewName, "viewName");
-      EAssert.Argument.isNotNull(options, "options");
-
-      this.panel = panel;
-      this.viewName = viewName;
-      this.options = options;
-    }
-
-    public IReadOnlyMap<String, String> getOptions() {
-      return options;
-    }
-
-    public JPanel getPanel() {
-      return panel;
-    }
-
-    public String getViewName() {
-      return viewName;
-    }
-  }
-
   public static final boolean COLORIZE_PANELS = false;
 
-  public ISet<JFrameInfo> build(Layout layout) {
+  public IList<JFrameInfo> buildFrames(Layout layout) {
     EAssert.Argument.isNotNull(layout, "layout");
 
-    ISet<JFrameInfo> ret = new ESet<>();
+    IList<JFrameInfo> ret = new EList<>();
     for (Window window : layout.getWindows()) {
       JFrameInfo frameInfo = buildFrame(window);
       ret.add(frameInfo);
@@ -104,7 +55,7 @@ public class JFrameFactory {
     frame.setLocation(rect.getLocation());
     frame.setSize(rect.getSize());
 
-    ISet<JPanelInfo> panelInfos = new ESet<>();
+    IList<JPanelInfo> panelInfos = new EList<>();
 
     buildContent((JPanel) frame.getContentPane(), window.getContent(), panelInfos);
 
@@ -130,7 +81,7 @@ public class JFrameFactory {
     return ret;
   }
 
-  private void buildContent(JPanel pane, Block content, ISet<JPanelInfo> panelInfos) {
+  private void buildContent(JPanel pane, Block content, IList<JPanelInfo> panelInfos) {
     if (content instanceof Panel)
       buildPanelContent(pane, (Panel) content, panelInfos);
     else if (content instanceof ColumnList)
@@ -143,11 +94,13 @@ public class JFrameFactory {
       throw new UnsupportedOperationException();
   }
 
-  private void buildPanelContent(JPanel pane, Panel content, ISet<JPanelInfo> panelInfos) {
-    panelInfos.add(new JPanelInfo(pane, content.getView(), content.getOptions()));
+  private void buildPanelContent(JPanel pane, Panel content, IList<JPanelInfo> panelInfos) {
+    String viewName = content.getView();
+    IView view = ViewFactory.getView(viewName);
+    panelInfos.add(new JPanelInfo(pane, view, content.getOptions()));
   }
 
-  private void buildPanelContent(JPanel parent, ColumnList columns, ISet<JPanelInfo> panelInfos) {
+  private void buildPanelContent(JPanel parent, ColumnList columns, IList<JPanelInfo> panelInfos) {
     Value[] blocks = columns.getColumns().select(q -> q.getWidth()).toArray(Value.class);
     parent.setLayout(new ColRowLayoutManager(Orientation.columns, parent.getHeight(), blocks));
     for (Column column : columns.getColumns()) {
@@ -158,7 +111,7 @@ public class JFrameFactory {
     }
   }
 
-  private void buildPanelContent(JPanel parent, RowList rows, ISet<JPanelInfo> panelInfos) {
+  private void buildPanelContent(JPanel parent, RowList rows, IList<JPanelInfo> panelInfos) {
     Value[] blocks = rows.getRows().select(q -> q.getHeight()).toArray(Value.class);
     parent.setLayout(new ColRowLayoutManager(Orientation.rows, parent.getHeight(), blocks));
 
@@ -184,25 +137,4 @@ public class JFrameFactory {
   }
 }
 
-class ColorProvider {
-  private static final Color[] colors = {
-          Color.CYAN,
-          Color.BLUE,
-          Color.DARK_GRAY,
-          Color.GREEN,
-          Color.MAGENTA,
-          Color.ORANGE,
-          Color.PINK,
-          Color.RED,
-          Color.WHITE,
-          Color.YELLOW
-  };
-  private static int index = 0;
 
-  public static Color nextColor() {
-    Color ret = colors[index];
-    index++;
-    if (index >= colors.length) index = 0;
-    return ret;
-  }
-}

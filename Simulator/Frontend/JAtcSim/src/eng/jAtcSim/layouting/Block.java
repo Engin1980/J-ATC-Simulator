@@ -1,4 +1,4 @@
 package eng.jAtcSim.layouting;
 
-abstract class Block {
+public abstract class Block {
 }

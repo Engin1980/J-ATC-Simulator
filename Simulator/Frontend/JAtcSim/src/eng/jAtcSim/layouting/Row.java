@@ -2,7 +2,7 @@ package eng.jAtcSim.layouting;
 
 import eng.eSystem.validation.EAssert;
 
-class Row {
+public class Row {
   private final Value height;
   private final Block content;
 

@@ -12,7 +12,7 @@ public class Layout {
     this.windows = windows;
   }
 
-  IReadOnlySet<Window> getWindows() {
+  public IReadOnlySet<Window> getWindows() {
     return windows;
   }
 }

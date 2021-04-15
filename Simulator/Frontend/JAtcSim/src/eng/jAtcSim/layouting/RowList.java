@@ -4,7 +4,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.EAssert;
 
-class RowList extends Block {
+public class RowList extends Block {
   private final IList<Row> rows;
 
   public RowList(IList<Row> rows) {

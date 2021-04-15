@@ -317,8 +317,6 @@ public class RadarView implements IView {
     this.radar.start(1, 3);
 
     ret.add(canvas.getGuiControl());
-    // TODO this redirects text events to jtextfield. However not working now.
-//    canvas.getGuiControl().addKeyListener(new MyKeyListener(this.txtInput));
     return ret;
   }
 

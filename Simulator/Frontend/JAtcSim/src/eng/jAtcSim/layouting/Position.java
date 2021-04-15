@@ -2,7 +2,7 @@ package eng.jAtcSim.layouting;
 
 import eng.eSystem.validation.EAssert;
 
-class Position {
+public class Position {
   private final Value x;
   private final Value y;
   private final Value width;

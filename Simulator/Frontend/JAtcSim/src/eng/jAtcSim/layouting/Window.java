@@ -2,7 +2,7 @@ package eng.jAtcSim.layouting;
 
 import eng.eSystem.validation.EAssert;
 
-class Window {
+public class Window {
 
   public enum WindowStyle {
     minimized,

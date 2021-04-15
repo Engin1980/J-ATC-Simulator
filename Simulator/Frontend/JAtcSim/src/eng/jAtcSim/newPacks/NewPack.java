@@ -1,13 +1,14 @@
 package eng.jAtcSim.newPacks;
 
-import eng.eSystem.Tuple;
-import eng.eSystem.collections.*;
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.ISet;
 import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.app.FrmAbout;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
-import eng.jAtcSim.layouting.JFrameFactory;
 import eng.jAtcSim.layouting.Layout;
 import eng.jAtcSim.layouting.MenuFactory;
 import eng.jAtcSim.newLib.area.Airport;
@@ -17,6 +18,9 @@ import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.GameFactoryAndRepository;
 import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
 import eng.jAtcSim.newPacks.context.ViewContext;
+import eng.jAtcSim.newPacks.layout.JFrameFactory;
+import eng.jAtcSim.newPacks.layout.JFrameInfo;
+import eng.jAtcSim.newPacks.layout.JPanelInfo;
 import eng.jAtcSim.newPacks.utils.ViewGameInfo;
 import eng.jAtcSim.settings.AppSettings;
 
@@ -24,13 +28,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
 public class NewPack {
   private IGame game;
   private ISimulation sim;
   private Area area;
   private Airport aip;
   private AppSettings settings;
-  private ISet<JFrameFactory.JFrameInfo> frameInfos;
+  private IList<JFrameInfo> frameInfos;
   private String lastGameFileName;
 
   public void init(IGame game, Layout layout, AppSettings appSettings) {
@@ -43,23 +49,14 @@ public class NewPack {
     this.aip = sim.getAirport();
 
     JFrameFactory frameFactory = new JFrameFactory();
-    //TODO how to set menu?
-    frameInfos = frameFactory.build(layout);
+    frameInfos = frameFactory.buildFrames(layout);
 
-    ISet<Tuple<IView, JFrameFactory.JPanelInfo>> view2panelMap = new ESet<>();
-    for (JFrameFactory.JFrameInfo frame : frameInfos) {
-      for (JFrameFactory.JPanelInfo panel : frame.getPanels()) {
-        panel.getPanel().setBackground(Color.blue);
-        String viewName = panel.getViewName();
-        IView view = ViewFactory.getView(viewName);
-        view2panelMap.add(new Tuple<>(view, panel));
-      }
-
-      if (frame.getMenuSimProxy() != null)
-        bindMenuProxy(frame.getMenuSimProxy(), this.sim);
-
-      Stylist.apply(frame.getFrame(), true);
-    }
+    IList<JPanelInfo> allPanels = frameInfos.selectMany(q-> q.getPanels());
+    ViewContext viewContext = new ViewContext(allPanels.select(q->q.getView()));
+    frameInfos
+            .where(q->q.getMenuSimProxy()!=null)
+            .forEach(q->bindMenuProxy(q.getMenuSimProxy(), this.sim));
+    frameInfos.forEach(q->Stylist.apply(q.getFrame(), true));
 
     ViewGameInfo vii = new ViewGameInfo();
     vii.setSimulation(this.sim);
@@ -68,21 +65,14 @@ public class NewPack {
     vii.setUserAtcId(this.sim.getUserAtcIds().get(0));
     vii.setDynamicAirplaneSpeechFormatter(this.settings.getDynamicPlaneFormatter()); //TODO improve somehow
 
-    ViewContext viewContext = new ViewContext(view2panelMap.select(q-> q.getA()));
-
-    for (Tuple<IView, JFrameFactory.JPanelInfo> item : view2panelMap) {
-      item.getA().init(item.getB().getPanel(), vii, item.getB().getOptions(), viewContext);
-    }
-
-    for (Tuple<IView, JFrameFactory.JPanelInfo> item : view2panelMap) {
-      item.getA().postInit();
-    }
+    allPanels.forEach(q->q.getView().init(q.getPanel(), vii, q.getOptions(), viewContext));
+    allPanels.forEach(q->q.getView().postInit());
 
     //printSummary(frames);
   }
 
   public void quit() {
-    for (JFrameFactory.JFrameInfo frame : frameInfos) {
+    for (JFrameInfo frame : frameInfos) {
       frame.getFrame().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.getFrame().setVisible(false);
     }
@@ -103,7 +93,7 @@ public class NewPack {
         fileName += SwingFactory.SAVED_SIMULATION_EXTENSION;
 
       //TODO implement custom object saving
-      IMap<String, Object> customData = new EMap<>(); //this.parent.getDataToStore();
+      IMap<String, Object> customData = collectCustomData();
 
       new GameFactoryAndRepository().save(this.game, customData, fileName);
       lastGameFileName = fileName;
@@ -118,6 +108,24 @@ public class NewPack {
   public void show() {
     frameInfos.forEach(q -> q.getFrame().setVisible(true));
     System.out.println("Viewed:");
+  }
+
+  private IMap<String, Object> collectCustomData() {
+    EMap<String, Object> ret = new EMap<>();
+
+    int fi = 0;
+    for (JFrameInfo frameInfo : this.frameInfos) {
+      int pi = 0;
+      for (JPanelInfo panel : frameInfo.getPanels()) {
+        String key = sf("%d;%d", fi, pi);
+        Object value = panel.getView().getCustomDataToSave();
+        ret.set(key, value);
+        pi++;
+      }
+      fi++;
+    }
+
+    return ret;
   }
 
   private void bindMenuProxy(MenuFactory.MenuSimProxy menuSimProxy, ISimulation sim) {
@@ -154,8 +162,8 @@ public class NewPack {
     });
   }
 
-  private void printSummary(ISet<JFrameFactory.JFrameInfo> frames) {
-    for (JFrameFactory.JFrameInfo frame : frames) {
+  private void printSummary(ISet<JFrameInfo> frames) {
+    for (JFrameInfo frame : frames) {
       System.out.println("Layout summary");
       System.out.println("Frame " + frame.getFrame().getTitle());
       printSummaryPanel((JPanel) frame.getFrame().getContentPane(), 0);

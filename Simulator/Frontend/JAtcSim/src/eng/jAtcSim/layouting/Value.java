@@ -1,6 +1,6 @@
 package eng.jAtcSim.layouting;
 
-class Value {
+public class Value {
   public enum Unit {
     pixel,
     percentage
