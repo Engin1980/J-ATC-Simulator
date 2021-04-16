@@ -12,10 +12,6 @@ public interface IView {
             IReadOnlyMap<String, String> options,
             ViewContext context);
 
-  Object getCustomDataToSave();
-
-  void setCustomDataOnLoad(Object data);
-
   default void postInit() {
   }
 }

@@ -4,19 +4,20 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.*;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.app.FrmIntro;
 import eng.jAtcSim.app.FrmProgress;
 import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
+import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.contextLocal.Context;
-import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.layouting.Layout;
 import eng.jAtcSim.layouting.LayoutFactory;
 import eng.jAtcSim.newLib.gameSim.IGame;
-import eng.jAtcSim.newLib.gameSim.game.Game;
 import eng.jAtcSim.newLib.gameSim.game.GameFactoryAndRepository;
 import eng.jAtcSim.newLib.gameSim.game.sources.SourceFactory;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.GameStartupInfo;
@@ -29,12 +30,12 @@ import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.newLib.shared.logging.ProgressInfo;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
-import eng.jAtcSim.newLib.traffic.ITrafficModel;
-import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
+import eng.jAtcSim.newLib.speeches.system.StringMessage;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
 import eng.jAtcSim.newPacks.NewPack;
 import eng.jAtcSim.settings.AppSettings;
+import eng.jAtcSim.shared.MessageBox;
 import exml.loading.XLoadContext;
 import exml.saving.XSaveContext;
 
@@ -42,8 +43,6 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,12 +53,9 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class JAtcSim {
 
-  private static final boolean FAST_START = false;
-  private static final ITrafficModel enginSpecificTraffic =
-          //new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
-          //new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
-          null;
   private static AppSettings appSettings;
+  private static NewPack pack;
+  private static String lastGameFileName;
 
   public static JLabel getAppImage(JFrame frm) {
     URL url = frm.getClass().getResource("/intro.png");
@@ -73,33 +69,30 @@ public class JAtcSim {
 
     Context.getApp().getAppLog().write(LogItemType.info, "Loading simulation game");
 
-    IMap<String, Object> map = new EMap<>();
+    IMap<String, Object> customData = new EMap<>();
 
     ProgressInfo pi = new ProgressInfo();
     FrmProgress frm = new FrmProgress(pi);
     frm.setVisible(true);
     pi.init(16);
 
-    Game g;
+    GameFactoryAndRepository.LoadResult gfrlr;
 
     try {
       pi.increase();
       Context.getApp().getAppLog().write(LogItemType.info, "Loading game from '%s'", xmlFileName);
-      g = new GameFactoryAndRepository().load(xmlFileName);
-
-      pi.increase("Initializing sound environment");
-      Context.getApp().getAppLog().write(LogItemType.info, "Initializing sound environment");
-      // sound
-      SoundManager.init(appSettings.soundFolder.toString());
-
-      pi.increase("Starting a GUI");
-
-    } catch (Exception ex) {
-      throw ex;
-    } finally {
-      //TODEL
-      //frm.setVisible(false);
+      gfrlr = new GameFactoryAndRepository().load(xmlFileName);
+    } catch (GameFactoryAndRepository.GFRException ex) {
+      Context.getApp().getAppLog().write(LogItemType.warning, sf("Loading game from '%s' failed. %s",
+              xmlFileName, ExceptionUtils.toFullString(ex)));
+      MessageBox.show(sf("Loading game from '%s' failed. %s", xmlFileName, ex.getMessage()), "Loading failed.");
+      pi.done();
+      return;
     }
+
+    pi.increase("Initializing sound environment");
+    Context.getApp().getAppLog().write(LogItemType.info, "Initializing sound environment");
+    SoundManager.init(appSettings.soundFolder.toString());
 
     // starting pack & simulation
     pi.increase("Loading layout");
@@ -109,21 +102,22 @@ public class JAtcSim {
 
     pi.increase("Building GUI");
     Context.getApp().getAppLog().write(LogItemType.info, "Building GUI");
-    NewPack pack = new NewPack();
-    pack.init(g, layout, appSettings);
+    pack = new NewPack();
+    pack.init(gfrlr.game, layout, appSettings);
+    pack.onSave.add(JAtcSim::saveSimulation);
+    pack.onQuit.add(JAtcSim::quit);
+
+    try {
+      pack.applyCustomData(gfrlr.customData);
+    } catch (Exception e) {
+      Context.getApp().getAppLog().write(LogItemType.warning,
+              sf("Applying custom saved data on pack failed. %s", ExceptionUtils.toFullString(e)));
+    }
+
     pack.show();
-
-
-    Context.getApp().getAppLog().write(LogItemType.warning, "!! TODO apply stored data");
-    //simPack.applyStoredData(map);
-
     pi.done();
 
-    g.getSimulation().start();
-  }
-
-  private static void areaXmlLoader_log(String msg){
-    Context.getApp().getAppLog().write(LogItemType.verbose, "XmlLoader", msg);
+    pack.getGame().getSimulation().start();
   }
 
   public static void main(String[] args) {
@@ -188,9 +182,45 @@ public class JAtcSim {
     frm.setIconImage(img);
   }
 
+  public static void saveSimulation() {
+    boolean wasRunning = pack.getGame().getSimulation().isRunning();
+    pack.getGame().getSimulation().stop();
+
+    JFileChooser jf = SwingFactory.createFileDialog(SwingFactory.FileDialogType.game, lastGameFileName);
+    int res = jf.showSaveDialog(null);
+    if (res != JFileChooser.APPROVE_OPTION) return;
+
+    String fileName = jf.getSelectedFile().getAbsolutePath();
+
+    if (!fileName.endsWith(SwingFactory.SAVED_SIMULATION_EXTENSION))
+      fileName += SwingFactory.SAVED_SIMULATION_EXTENSION;
+
+    Context.getApp().getAppLog().write(LogItemType.info, sf("Trying save game to '%s'.", fileName));
+
+    Context.getApp().getAppLog().write(LogItemType.info, "Collecting custom data for game-save.");
+    IMap<String, Object> customData = pack.collectCustomData();
+
+    Context.getApp().getAppLog().write(LogItemType.info, "Saving game to xml.");
+    try {
+      new GameFactoryAndRepository().save(pack.getGame(), customData, fileName);
+    } catch (Exception ex) {
+      Context.getApp().getAppLog().write(LogItemType.warning, "Game save failed. " +
+              ExceptionUtils.toFullString(ex));
+      MessageBox.show("Game save failed. " + ex.getMessage(), "Game save failed.");
+      return;
+    }
+
+    lastGameFileName = fileName;
+    pack.getGame().getSimulation().sendSystemCommandAnonymous(new StringMessage("Game saved."));
+
+    if (wasRunning)
+      pack.getGame().getSimulation().start();
+  }
+
   public static void startSimulation(StartupSettings startupSettings) {
     ProgressInfo pi = new ProgressInfo();
     FrmProgress frm = new FrmProgress(pi);
+    IGame g;
     frm.setVisible(true);
     pi.init(19);
 
@@ -246,16 +276,6 @@ public class JAtcSim {
       pi.increase("Loading traffic");
       gsi.trafficSource = SourceFactory.createTrafficXmlSource(startupSettings.files.trafficXmlFile);
 
-      //TODEL
-      //FIXME local debug hack, should be removed in future
-//      if (enginSpecificTraffic != null) {
-//        gsi.trafficSource.specificTraffic = enginSpecificTraffic;
-//        gsi.trafficSource.trafficXmlFile = null;
-//      } else {
-//        gsi.trafficSource.specificTraffic = null;
-//        gsi.trafficSource.trafficXmlFile = startupSettings.files.trafficXmlFile;
-//      }
-
       pi.increase("Loading/downloading weather");
       Weather customWeather = convertStartupWeatherToInitialWeather(startupSettings.weather);
       switch (startupSettings.weather.type) {
@@ -287,7 +307,7 @@ public class JAtcSim {
 //      );
 
       pi.increase("Creating game");
-      IGame g;
+
       g = new GameFactoryAndRepository().create(gsi, pi);
 
       // enable duplicates
@@ -303,27 +323,31 @@ public class JAtcSim {
       // sound
       SoundManager.init(appSettings.soundFolder.toString());
 
-
-      Context.getApp().getAppLog().write(LogItemType.info, "Starting a GUI");
-      // starting pack & simulation
-
+      Context.getApp().getAppLog().write(LogItemType.info, "Loading layout & pack");
       pi.increase("Loading layout");
       String layoutFile = startupSettings.layout.layoutXmlFile;
       Layout layout = new LayoutFactory().loadFromXml(layoutFile);
       pi.increase("Starting GUI");
-      NewPack pack = new NewPack();
+      pack = new NewPack();
       pack.init(g, layout, appSettings);
+      pack.onSave.add(JAtcSim::saveSimulation);
+      pack.onQuit.add(JAtcSim::quit);
       pack.show();
 
-      pi.done();
-
-      g.getSimulation().start();
-
-    } catch (Exception ex) {
-      throw ex;
-    } finally {
-      frm.setVisible(false);
+    } catch (GameFactoryAndRepository.GFRException ex) {
+      Context.getApp().getAppLog().write(
+              LogItemType.warning,
+              "Failed to init new game. " + ExceptionUtils.toFullString(ex));
+      return;
     }
+    pi.done();
+    g.getSimulation().start();
+    frm.setVisible(false);
+    pack.focus();
+  }
+
+  private static void areaXmlLoader_log(String msg) {
+    Context.getApp().getAppLog().write(LogItemType.verbose, "XmlLoader", msg);
   }
 
   private static Weather convertStartupWeatherToInitialWeather(StartupSettings.Weather weather) {
@@ -352,21 +376,6 @@ public class JAtcSim {
     return ret;
   }
 
-  private static Pack createPackInstance(String packTypeName) {
-    Class<?> clazz;
-    Object object;
-    try {
-      clazz = Class.forName(packTypeName);
-      Constructor<?> ctor = clazz.getConstructor();
-      object = ctor.newInstance();
-    } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-      throw new ERuntimeException(
-              sf("Failed to create instance of radar pack '%s'.", packTypeName), ex);
-    }
-    Pack ret = (Pack) object;
-    return ret;
-  }
-
   private static void ensureLogPathExists(Path path) {
     if (java.nio.file.Files.exists(path) == false) {
       try {
@@ -376,21 +385,6 @@ public class JAtcSim {
                 "Failed to create/use log path '%s'", path.toString()), e);
       }
     }
-  }
-
-  private static SimpleGenericTrafficModel generateCustomTraffic(StartupSettings.Traffic trf) {
-    throw new ToDoException();
-//    SimpleGenericTrafficModel ret = SimpleGenericTrafficModel.create(
-//        trf.customTraffic.companies, trf.customTraffic.countryCodes,
-//        trf.customTraffic.movementsPerHour,
-//        trf.customTraffic.arrivals2departuresRatio / 10d,
-//        trf.customTraffic.nonCommercialFlightProbability,
-//        trf.customTraffic.weightTypeA,
-//        trf.customTraffic.weightTypeB,
-//        trf.customTraffic.weightTypeC,
-//        trf.customTraffic.weightTypeD,
-//        trf.customTraffic.useExtendedCallsigns);
-//    return ret;
   }
 
   private static void initDefault() {

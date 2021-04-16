@@ -10,9 +10,6 @@ public class FlyRadialBehavior implements IApproachBehavior {
   private final Coordinate coordinate;
   private final double inboundRadialWithDeclination;
 
-  private String tag;
-
-
   @XConstructor
   protected FlyRadialBehavior() {
     this.coordinate = null;
@@ -33,10 +30,5 @@ public class FlyRadialBehavior implements IApproachBehavior {
 
   public double getInboundRadialWithDeclination() {
     return inboundRadialWithDeclination;
-  }
-
-  public FlyRadialBehavior withTag(String value) {
-    this.tag = value;
-    return this;
   }
 }

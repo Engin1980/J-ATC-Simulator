@@ -21,7 +21,6 @@ public class TrafficProvider implements IXPersistable {
   private final IMap<Integer, IList<MovementTemplate>> movementsForDay = new EMap<>();
 
   @XConstructor
-
   private TrafficProvider() {
     this.trafficModel = null;
   }
@@ -58,7 +57,7 @@ public class TrafficProvider implements IXPersistable {
   public void init() {
     if (movementsForDay.getKeys().isEmpty()) {
       prepareTrafficForDay(0);
-      movementsForDay.get(0).remove(q->q.getAppearanceTime().isBefore(Context.getShared().getNow().getTime()));
+      movementsForDay.get(0).remove(q->q.getAppearanceTime().isBefore(Context.getShared().getNow().addMinutes(-5).getTime()));
     }
   }
 

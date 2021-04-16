@@ -54,11 +54,31 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class GameFactoryAndRepository {
 
-  public Game create(GameStartupInfo gsi) {
+  public static class GFRException extends Exception {
+    public GFRException(String message) {
+      super(message);
+    }
+
+    public GFRException(String message, Throwable cause) {
+      super(message, cause);
+    }
+  }
+
+  public static class LoadResult {
+    public final Game game;
+    public final IMap<String, Object> customData;
+
+    public LoadResult(Game game, IMap<String, Object> customData) {
+      this.game = game;
+      this.customData = customData;
+    }
+  }
+
+  public Game create(GameStartupInfo gsi) throws GFRException {
     return create(gsi, new ProgressInfo());
   }
 
-  public Game create(GameStartupInfo gsi, ProgressInfo pi) {
+  public Game create(GameStartupInfo gsi, ProgressInfo pi) throws GFRException {
     Game game;
     ApplicationLog appLog = Context.getApp().getAppLog();
 
@@ -70,7 +90,7 @@ public class GameFactoryAndRepository {
       EAssert.isNotNull(gsi.areaSource, "Area-Source not set.");
       gsi.areaSource.init();
     } catch (Exception ex) {
-      throw new EApplicationException("Unable to load or initialize area.", ex);
+      throw new GFRException("Unable to load or initialize area.", ex);
     }
 
     try {
@@ -79,7 +99,7 @@ public class GameFactoryAndRepository {
       EAssert.isNotNull(gsi.airplaneTypesSource, "Airplane-Type-Source not set.");
       gsi.airplaneTypesSource.init();
     } catch (Exception ex) {
-      throw new EApplicationException("Unable to load or initialize plane types.", ex);
+      throw new GFRException("Unable to load or initialize plane types.", ex);
     }
 
     try {
@@ -88,7 +108,7 @@ public class GameFactoryAndRepository {
       EAssert.isNotNull(gsi.fleetsSource, "Fleet-Source not set.");
       gsi.fleetsSource.init();
     } catch (Exception ex) {
-      throw new EApplicationException("Unable to load or initialize fleets.", ex);
+      throw new GFRException("Unable to load or initialize fleets.", ex);
     }
 
     try {
@@ -97,7 +117,7 @@ public class GameFactoryAndRepository {
       EAssert.isNotNull(gsi.trafficSource, "Traffic-Source not set.");
       gsi.trafficSource.init();
     } catch (Exception ex) {
-      throw new EApplicationException("Unable to load or initialize traffic.", ex);
+      throw new GFRException("Unable to load or initialize traffic.", ex);
     }
 
     try {
@@ -106,11 +126,10 @@ public class GameFactoryAndRepository {
       EAssert.isNotNull(gsi.weatherSource, "Weather-Source not set.");
       gsi.weatherSource.init();
     } catch (Exception ex) {
-      throw new EApplicationException("Unable to load, download or initialize weather.", ex);
+      throw new GFRException("Unable to load, download or initialize weather.", ex);
     }
 
-
-
+    //TODO remove if not used anymore
     PostContracts.checkAndClear();
 
     pi.increase("Creating the simulation");
@@ -142,9 +161,10 @@ public class GameFactoryAndRepository {
               simulation
       );
     } catch (Exception ex) {
-      throw new EApplicationException("Unable to create or initialize the simulation.", ex);
+      throw new GFRException("Unable to create or initialize the simulation.", ex);
     }
 
+    //TODO remove if not used anymore
     PostContracts.checkAndClear();
 
     pi.increase("Game load completed, initializing...");
@@ -152,42 +172,66 @@ public class GameFactoryAndRepository {
     return game;
   }
 
-  public Game load(String fileName) {
-    //TODO update with custom data
-    IMap<String, Object> customData = new EMap<>();
+  public LoadResult load(String fileName) throws GFRException {
+    IMap<String, Object> customData;
 
     XDocument doc;
     try {
       doc = XDocument.load(fileName);
     } catch (EXmlException e) {
-      throw new EApplicationException("Unable to load xml document.", e);
+      throw new GFRException("Unable to load xml document.", e);
     }
 
     XElement root = doc.getRoot();
-    TypingShortcutsProvider.expandTypes(root);
+    try {
+      TypingShortcutsProvider.expandTypes(root);
+    } catch (Exception e) {
+      throw new GFRException("Failed to expand types in stored data.", e);
+    }
 
     XLoadContext ctx = new XLoadContext();
-    initLoadingContext(ctx);
+    try {
+      initLoadingContext(ctx);
+    } catch (Exception e) {
+      throw new GFRException("Failed to init xml-loading context.", e);
+    }
 
     GameStartupInfo gsi = new GameStartupInfo();
-    gsi.areaSource = ctx.loadObject(root.getChild("areaSource"), AreaSource.class);
-    gsi.airplaneTypesSource = ctx.loadObject(root.getChild("airplaneTypesSource"), AirplaneTypesSource.class);
-    gsi.fleetsSource = ctx.loadObject(root.getChild("fleetsSource"), FleetsSource.class);
-    gsi.trafficSource = ctx.loadObject(root.getChild("trafficSource"), null); // type derived by xml
-    gsi.weatherSource = ctx.loadObject(root.getChild("weatherSource"), null); // type derived by xml
-
-    gsi.areaSource.init();
-    gsi.airplaneTypesSource.init();
-    gsi.fleetsSource.init();
-    gsi.trafficSource.init();
-    gsi.weatherSource.init();
+    try {
+      gsi.areaSource = ctx.loadObject(root.getChild("areaSource"), AreaSource.class);
+      gsi.areaSource.init();
+    } catch (Exception e) {
+      throw new GFRException("Failed to load area source.", e);
+    }
+    try {
+      gsi.airplaneTypesSource = ctx.loadObject(root.getChild("airplaneTypesSource"), AirplaneTypesSource.class);
+      gsi.airplaneTypesSource.init();
+    } catch (Exception e) {
+      throw new GFRException("Failed to load airplane types source.");
+    }
+    try {
+      gsi.fleetsSource = ctx.loadObject(root.getChild("fleetsSource"), FleetsSource.class);
+      gsi.fleetsSource.init();
+    } catch (Exception e) {
+      throw new GFRException("Failed to load fleets source.");
+    }
+    try {
+      gsi.trafficSource = ctx.loadObject(root.getChild("trafficSource"), null); // type derived by xml
+      gsi.trafficSource.init();
+    } catch (Exception e) {
+      throw new GFRException("Failed to load traffic source.");
+    }
+    try {
+      gsi.weatherSource = ctx.loadObject(root.getChild("weatherSource"), null); // type derived by xml
+      gsi.weatherSource.init();
+    } catch (Exception e) {
+      throw new GFRException("Failed to load weather source.");
+    }
 
     ctx.getParents().set(gsi.areaSource.getArea());
     ctx.getParents().set(gsi.areaSource.getActiveAirport());
-
     AtcIdList atcIdList = new AtcIdList();
     atcIdList.addMany(gsi.areaSource.getActiveAirport().getAtcTemplates().select(qq -> qq.toAtcId()));
-
     ctx.getValues().set(atcIdList);
     ctx.getValues().set(gsi.areaSource.getArea().getNavaids());
     ctx.getValues().set(gsi.airplaneTypesSource.getContent());
@@ -204,9 +248,15 @@ public class GameFactoryAndRepository {
     );
     ContextManager.setContext(ISharedAcc.class, sharedContext);
 
-    Simulation simulation = ctx.loadObject(root.getChild("simulation"), Simulation.class);
-    simulation.init();
+    Simulation simulation;
+    try {
+      simulation = ctx.loadObject(root.getChild("simulation"), Simulation.class);
+      simulation.init();
+    } catch (Exception e) {
+      throw new GFRException("Failed to load simulation.", e);
+    }
 
+    //TODEL used or unused?
     PostContracts.checkAndClear();
 
     Game game = new Game(
@@ -218,28 +268,49 @@ public class GameFactoryAndRepository {
             simulation
     );
 
-    return game;
+    try {
+      customData = (IMap<String, Object>) ctx.loadObject(root.getChild("customData"));
+    } catch (Exception e) {
+      throw new GFRException("Failed to load custom data.", e);
+    }
+
+    return new LoadResult(game, customData);
   }
 
-  public void save(IGame game, IMap<String, Object> customData, String fileName) {
+  public void save(IGame game, IMap<String, Object> customData, String fileName) throws GFRException {
     XElement root = new XElement("game");
 
     XSaveContext ctx = new XSaveContext();
-    initSavingContext(ctx);
+    try {
+      initSavingContext(ctx);
+    } catch (Exception e) {
+      throw new GFRException("Failed to init xml-saving context.", e);
+    }
 
     try {
       ctx.saveObject(game, root);
+    } catch (Exception ex) {
+      throw new GFRException("Failed to save game into xml.", ex);
+    }
+
+    try {
+      XElement cd = ctx.saveObject(customData, "customData");
+      root.addElement(cd);
+    } catch (Exception ex) {
+      throw new GFRException("Failed to save custom-data into xml.", ex);
+    }
+
+    try {
       TypingShortcutsProvider.collapseTypes(root);
     } catch (Exception ex) {
-      System.out.println("Failed to save the whole save file");
-      ex.printStackTrace(System.out);
+      throw new GFRException("Failed to collapse types when saving data.", ex);
     }
 
     XDocument doc = new XDocument(root);
     try {
       doc.save(fileName);
     } catch (EXmlException e) {
-      throw new EApplicationException("Failed to save simulation.", e);
+      throw new GFRException(sf("Failed to xml to file '%s'.", fileName), e);
     }
   }
 

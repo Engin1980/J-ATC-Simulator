@@ -26,6 +26,7 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.speeches.system.StringMessage;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 import eng.jAtcSim.newPacks.IView;
+import eng.jAtcSim.newPacks.IViewWithCustomData;
 import eng.jAtcSim.newPacks.context.Events;
 import eng.jAtcSim.newPacks.context.ViewContext;
 import eng.jAtcSim.newPacks.utils.GlobalKeyStrokes;
@@ -44,7 +45,7 @@ import java.util.Optional;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class RadarView implements IView {
+public class RadarView implements IViewWithCustomData {
   class RoutesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<DARoute> {
 
     @Override
@@ -162,6 +163,11 @@ public class RadarView implements IView {
     return behaviorSettings;
   }
 
+  @Override
+  public Object getCustomDataToSave() {
+    return this.storedRadarPositions;
+  }
+
   public Radar getRadar() {
     return this.radar;
   }
@@ -169,11 +175,6 @@ public class RadarView implements IView {
   public IMap<Integer, RadarViewPort> getRadarStoredPositions() {
     IMap<Integer, RadarViewPort> ret = EMap.of(this.storedRadarPositions);
     return ret;
-  }
-
-  public void setRadarStoredPositions(IMap<Integer, RadarViewPort> positions) {
-    //FIXME fix this
-    //this.storedRadarPositions.setMany(positions);
   }
 
   @Override
@@ -210,6 +211,13 @@ public class RadarView implements IView {
     context.events.onRadarPositionStoreRestore.add(this::context_onRadarPositionStoreRestore);
     registerKeyStrokes();
     assignKeyListener();
+  }
+
+  @Override
+  public void setCustomDataOnLoad(Object data) {
+    IMap<Integer, RadarViewPort> tmp = (IMap<Integer, RadarViewPort>) data;
+    this.storedRadarPositions.clear();
+    this.storedRadarPositions.setMany(tmp.getEntries());
   }
 
   private void assignKeyListener() {
@@ -272,7 +280,6 @@ public class RadarView implements IView {
     else
       throw new EEnumValueUnsupportedException(e.action);
   }
-
 
   private Tuple<JPanel, JButton[]> buildButtonBlock(
           String btnLabel, Object targetObject, String propertyName) {

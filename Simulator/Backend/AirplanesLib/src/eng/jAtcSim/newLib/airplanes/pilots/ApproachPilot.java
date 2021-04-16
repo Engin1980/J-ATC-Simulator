@@ -49,8 +49,6 @@ public class ApproachPilot extends Pilot {
   private static final int LONG_FINAL_DISTANCE = 6;
   private static final int TOUCHDOWN_SIMULATED_HEIGHT = 20;
 
-  //TODEL probably unused
-  private ApproachType type;
   private final IList<ApproachStage> stages;
   private final IList<ICommand> gaRouteCommands;
   private final ActiveRunwayThreshold threshold;
@@ -81,7 +79,6 @@ public class ApproachPilot extends Pilot {
     EAssert.Argument.isTrue(approach.getEntries().contains(entry));
 
     this.threshold = approach.getParent();
-    this.type = approach.getType();
     this.stages = EList.of(approach.getStages());
     this.initialAltitude = approach.getInitialAltitude();
 

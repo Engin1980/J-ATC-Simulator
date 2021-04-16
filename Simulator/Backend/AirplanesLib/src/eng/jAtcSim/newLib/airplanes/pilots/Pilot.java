@@ -9,6 +9,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.IAirplaneWriter;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.Restriction;
 import exml.IXPersistable;
@@ -20,6 +21,12 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public abstract class Pilot implements IXPersistable {
 
+  /**
+   * This is used to recognize if the airplane is in some approach stage, but for now
+   * to high to be really be close to approach. Typical situation is when overflying
+   * IAF or runway threshold at high altitude.
+   */
+  private static final int TO_HIGH_TO_BE_APPROACHING = 3000;
   @XIgnored protected final IAirplane rdr;
   @XIgnored protected final IAirplaneWriter wrt;
   private boolean isFirstElapseSecond = true;
@@ -88,7 +95,10 @@ public abstract class Pilot implements IXPersistable {
         break;
       case arrivingCloseFaf:
       case flyingIaf2Faf:
-        ts = NumberUtils.boundBetween(minOrdered, Math.min(287, rdr.getType().vMinClean + 15), maxOrdered);
+        if (rdr.getSha().getAltitude() - Context.getArea().getAirport().getAltitude() > TO_HIGH_TO_BE_APPROACHING)
+          ts = NumberUtils.boundBetween(minOrdered, Math.min(287, rdr.getType().vCruise), maxOrdered);
+        else
+          ts = NumberUtils.boundBetween(minOrdered, Math.min(287, rdr.getType().vMinClean + 15), maxOrdered);
         break;
       case approachEntry:
         ts = NumberUtils.boundBetween(minOrdered, Math.min(rdr.getType().vMaxApp, rdr.getType().vMinClean), maxOrdered);

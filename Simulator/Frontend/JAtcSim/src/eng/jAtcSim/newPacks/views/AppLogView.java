@@ -95,13 +95,12 @@ public class AppLogView implements IView {
   }
 
   private void forceShowMyFrame() {
-    JFrame frm = null;
     Component c = this.parent;
     while (c instanceof JFrame == false) {
       c = c.getParent();
     }
 
-    frm = (JFrame) c;
+    JFrame frm = (JFrame) c;
     frm.setVisible(true);
     frm.requestFocus();
   }
