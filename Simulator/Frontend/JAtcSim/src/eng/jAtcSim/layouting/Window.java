@@ -7,7 +7,8 @@ public class Window {
   public enum WindowStyle {
     minimized,
     normal,
-    maximized;
+    maximized,
+    hidden;
 
     public static WindowStyle parse(String text) {
       if (text.toLowerCase().trim().equals("minimized"))
@@ -16,6 +17,8 @@ public class Window {
         return maximized;
       else if (text.toLowerCase().trim().equals("normal"))
         return normal;
+      else if (text.toLowerCase().trim().equals("hidden"))
+        return hidden;
       else
         throw new IllegalArgumentException("Invalid value " + text);
     }

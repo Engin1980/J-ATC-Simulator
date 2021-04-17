@@ -4,7 +4,6 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
-import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.app.extenders.CommandInputTextFieldExtender;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParsersSet;
@@ -19,15 +18,12 @@ import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.AtcParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.PlaneParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.SystemParser;
 import eng.jAtcSim.newPacks.IView;
-import eng.jAtcSim.newPacks.context.Events;
-import eng.jAtcSim.newPacks.context.ViewContext;
+import eng.jAtcSim.newPacks.context.ViewGlobalEventContext;
 import eng.jAtcSim.newPacks.utils.GlobalKeyStrokes;
 import eng.jAtcSim.newPacks.utils.ViewGameInfo;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class TextInputView implements IView {
 
@@ -58,22 +54,22 @@ public class TextInputView implements IView {
   private JTextField txt;
   private ISimulation sim;
   private AtcId userAtcId;
-  private ViewContext viewContext;
+  private ViewGlobalEventContext viewGlobalEventContext;
 
   @Override
   public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options,
-                   ViewContext context) {
+                   ViewGlobalEventContext context) {
     this.parent = panel;
     this.sim = initInfo.getSimulation();
     this.userAtcId = initInfo.getUserAtcId();
-    this.viewContext = context;
+    this.viewGlobalEventContext = context;
 
     this.buildTextField();
     this.parent.setLayout(new BorderLayout());
     this.parent.add(txt, BorderLayout.CENTER);
 
     registerKeyStrokes();
-    context.events.onUnhandledKeyPress.add(q ->{
+    context.onUnhandledKeyPress.add(q -> {
       commandInputTextFieldExtender.appendText(Character.toString(q.keyCode), false);
       commandInputTextFieldExtender.focus();
     });
@@ -83,67 +79,67 @@ public class TextInputView implements IView {
 
     commandInputTextFieldExtender.registerKeyStroke(
             GlobalKeyStrokes.STORE_BANK_2,
-            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+            () -> viewGlobalEventContext.onRadarPositionStoreRestore.raise(new ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs(
                     this,
-                    Events.RadarPositionStoreRestoreEventArgs.EventAction.store,
+                    ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs.EventAction.store,
                     2)));
     commandInputTextFieldExtender.registerKeyStroke(
             GlobalKeyStrokes.RESTORE_BANK_2,
-            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+            () -> viewGlobalEventContext.onRadarPositionStoreRestore.raise(new ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs(
                     this,
-                    Events.RadarPositionStoreRestoreEventArgs.EventAction.restore,
+                    ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs.EventAction.restore,
                     2)));
 
     commandInputTextFieldExtender.registerKeyStroke(
             GlobalKeyStrokes.STORE_BANK_3,
-            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+            () -> viewGlobalEventContext.onRadarPositionStoreRestore.raise(new ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs(
                     this,
-                    Events.RadarPositionStoreRestoreEventArgs.EventAction.store,
+                    ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs.EventAction.store,
                     3)));
     commandInputTextFieldExtender.registerKeyStroke(
             GlobalKeyStrokes.RESTORE_BANK_3,
-            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+            () -> viewGlobalEventContext.onRadarPositionStoreRestore.raise(new ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs(
                     this,
-                    Events.RadarPositionStoreRestoreEventArgs.EventAction.restore,
+                    ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs.EventAction.restore,
                     3)));
 
     commandInputTextFieldExtender.registerKeyStroke(
             GlobalKeyStrokes.STORE_BANK_4,
-            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+            () -> viewGlobalEventContext.onRadarPositionStoreRestore.raise(new ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs(
                     this,
-                    Events.RadarPositionStoreRestoreEventArgs.EventAction.store,
+                    ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs.EventAction.store,
                     4)));
     commandInputTextFieldExtender.registerKeyStroke(
             GlobalKeyStrokes.RESTORE_BANK_4,
-            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+            () -> viewGlobalEventContext.onRadarPositionStoreRestore.raise(new ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs(
                     this,
-                    Events.RadarPositionStoreRestoreEventArgs.EventAction.restore,
+                    ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs.EventAction.restore,
                     4)));
 
     commandInputTextFieldExtender.registerKeyStroke(
             GlobalKeyStrokes.STORE_BANK_5,
-            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+            () -> viewGlobalEventContext.onRadarPositionStoreRestore.raise(new ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs(
                     this,
-                    Events.RadarPositionStoreRestoreEventArgs.EventAction.store,
+                    ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs.EventAction.store,
                     5)));
     commandInputTextFieldExtender.registerKeyStroke(
             GlobalKeyStrokes.RESTORE_BANK_5,
-            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+            () -> viewGlobalEventContext.onRadarPositionStoreRestore.raise(new ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs(
                     this,
-                    Events.RadarPositionStoreRestoreEventArgs.EventAction.restore,
+                    ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs.EventAction.restore,
                     5)));
 
     commandInputTextFieldExtender.registerKeyStroke(
             GlobalKeyStrokes.STORE_BANK_6,
-            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+            () -> viewGlobalEventContext.onRadarPositionStoreRestore.raise(new ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs(
                     this,
-                    Events.RadarPositionStoreRestoreEventArgs.EventAction.store,
+                    ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs.EventAction.store,
                     6)));
     commandInputTextFieldExtender.registerKeyStroke(
             GlobalKeyStrokes.RESTORE_BANK_6,
-            () -> viewContext.events.onRadarPositionStoreRestore.raise(new Events.RadarPositionStoreRestoreEventArgs(
+            () -> viewGlobalEventContext.onRadarPositionStoreRestore.raise(new ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs(
                     this,
-                    Events.RadarPositionStoreRestoreEventArgs.EventAction.restore,
+                    ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs.EventAction.restore,
                     6)));
   }
 

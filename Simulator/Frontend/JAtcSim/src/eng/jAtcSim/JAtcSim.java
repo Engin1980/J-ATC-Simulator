@@ -34,6 +34,7 @@ import eng.jAtcSim.newLib.speeches.system.StringMessage;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
 import eng.jAtcSim.newPacks.NewPack;
+import eng.jAtcSim.newPacks.layout.JFrameInfo;
 import eng.jAtcSim.settings.AppSettings;
 import eng.jAtcSim.shared.MessageBox;
 import exml.loading.XLoadContext;
@@ -56,6 +57,7 @@ public class JAtcSim {
   private static AppSettings appSettings;
   private static NewPack pack;
   private static String lastGameFileName;
+  private static FrmIntro frmIntro;
 
   public static JLabel getAppImage(JFrame frm) {
     URL url = frm.getClass().getResource("/intro.png");
@@ -157,7 +159,7 @@ public class JAtcSim {
       }
     }
 
-    FrmIntro frmIntro = new FrmIntro(startupSettings);
+    frmIntro = new FrmIntro(startupSettings);
     Stylist.apply(frmIntro, true);
     try {
       Thread.sleep(300);
@@ -338,6 +340,8 @@ public class JAtcSim {
       Context.getApp().getAppLog().write(
               LogItemType.warning,
               "Failed to init new game. " + ExceptionUtils.toFullString(ex));
+      pi.done();
+      frmIntro.setVisible(true);
       return;
     }
     pi.done();

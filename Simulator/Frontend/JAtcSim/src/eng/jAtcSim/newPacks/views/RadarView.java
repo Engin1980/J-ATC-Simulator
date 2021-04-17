@@ -25,10 +25,9 @@ import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.speeches.system.StringMessage;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
-import eng.jAtcSim.newPacks.IView;
 import eng.jAtcSim.newPacks.IViewWithCustomData;
 import eng.jAtcSim.newPacks.context.Events;
-import eng.jAtcSim.newPacks.context.ViewContext;
+import eng.jAtcSim.newPacks.context.ViewGlobalEventContext;
 import eng.jAtcSim.newPacks.utils.GlobalKeyStrokes;
 import eng.jAtcSim.newPacks.utils.KeyStroke;
 import eng.jAtcSim.newPacks.utils.ViewGameInfo;
@@ -156,7 +155,7 @@ public class RadarView implements IViewWithCustomData {
   private AdjustSelectionPanelWrapper<DARoute> wrpRoutes;
   private DynamicPlaneFormatter dynamicPlaneFormatter;
   private final IMap<KeyStroke, Action> keyStrokes = new EMap<>();
-  private ViewContext viewContext;
+  private ViewGlobalEventContext viewGlobalEventContext;
   private boolean isCtr = false;
 
   public RadarBehaviorSettings getBehaviorSettings() {
@@ -178,7 +177,7 @@ public class RadarView implements IViewWithCustomData {
   }
 
   @Override
-  public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options, ViewContext context) {
+  public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options, ViewGlobalEventContext context) {
     this.parent = panel;
 
     this.sim = initInfo.getSimulation();
@@ -188,16 +187,16 @@ public class RadarView implements IViewWithCustomData {
     this.radarStyleSettings = initInfo.getSettings().getRadarStyleSettings();
     this.displaySettings = initInfo.getSettings().getRadarDisplaySettings();
     this.dynamicPlaneFormatter = initInfo.getDynamicAirplaneSpeechFormatter();
-    this.viewContext = context;
+    this.viewGlobalEventContext = context;
 
     this.parent.setLayout(new BorderLayout());
 
     JPanel pnlTop = this.buildTopPanel();
     this.pnlRadarContent = this.buildRadarPanel();
-    this.radar.onSelectedAirplaneChangedEvent.add((sender, callsign) -> context.events.onSelectedCallsignChanged.raise(
-            new Events.SelectedCallsignChangedEventArgs(this, callsign)
+    this.radar.onSelectedAirplaneChangedEvent.add((sender, callsign) -> context.onSelectedCallsignChanged.raise(
+            new ViewGlobalEventContext.SelectedCallsignChangedEventArgs(this, callsign)
     ));
-    context.events.onSelectedCallsignChanged.add(q -> {
+    context.onSelectedCallsignChanged.add(q -> {
       if (q.sender == this) return;
       this.radar.setSelectedCallsign(q.callsign);
     });
@@ -208,7 +207,7 @@ public class RadarView implements IViewWithCustomData {
     this.getBehaviorSettings().setPaintMessages(
             options.tryGet("showMessages").orElse("false").equals("true"));
 
-    context.events.onRadarPositionStoreRestore.add(this::context_onRadarPositionStoreRestore);
+    context.onRadarPositionStoreRestore.add(this::context_onRadarPositionStoreRestore);
     registerKeyStrokes();
     assignKeyListener();
   }
@@ -234,8 +233,8 @@ public class RadarView implements IViewWithCustomData {
                   if (ks.isPresent())
                     keyStrokes.get(ks.get()).invoke();
                   else
-                    RadarView.this.viewContext.events.onUnhandledKeyPress.raise(
-                            new Events.UnhandledKeyPressEventArgs(RadarView.this, e.getKeyCode(), isCtr)
+                    RadarView.this.viewGlobalEventContext.onUnhandledKeyPress.raise(
+                            new ViewGlobalEventContext.UnhandledKeyPressEventArgs(RadarView.this, e.getKeyCode(), isCtr)
                     );
                 }
               }
@@ -270,12 +269,12 @@ public class RadarView implements IViewWithCustomData {
   }
 
   private void context_onRadarPositionStoreRestore(
-          Events.RadarPositionStoreRestoreEventArgs e) {
+          ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs e) {
     if (e.sender == this) return;
 
-    if (e.action == Events.RadarPositionStoreRestoreEventArgs.EventAction.store)
+    if (e.action == ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs.EventAction.store)
       this.storeRadarPosition(e.bank);
-    else if (e.action == Events.RadarPositionStoreRestoreEventArgs.EventAction.restore)
+    else if (e.action == ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs.EventAction.restore)
       this.restoreRadarPosition(e.bank);
     else
       throw new EEnumValueUnsupportedException(e.action);

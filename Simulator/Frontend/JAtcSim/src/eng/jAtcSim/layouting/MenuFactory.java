@@ -1,6 +1,7 @@
 package eng.jAtcSim.layouting;
 
 import eng.eSystem.Tuple;
+import eng.eSystem.collections.ISet;
 import eng.eSystem.events.EventAnonymous;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.functionalInterfaces.Consumer;
@@ -15,7 +16,6 @@ public class MenuFactory {
     public enum ViewRequest {
       FLIGHT_STRIP,
       STATS,
-      RADAR,
       MOODS,
       SCHEDULED
     }
@@ -33,6 +33,7 @@ public class MenuFactory {
     public final EventAnonymousSimple onShowProject = new EventAnonymousSimple();
     public final EventAnonymousSimple onTogglePause = new EventAnonymousSimple();
     public final EventAnonymousSimple onToggleSound = new EventAnonymousSimple();
+    public final EventAnonymous<String> onOpenWindow = new EventAnonymous<>();
 
     public void setSimulationSpeed(int speedInMs) {
       this.onSimSpeed.raise(speedInMs);
@@ -112,13 +113,13 @@ public class MenuFactory {
     }
   }
 
-  public static MenuSimProxy buildMenu(JFrame frame) {
-    Tuple<JMenuBar, MenuSimProxy> tmp = buildMenu();
+  public static MenuSimProxy buildMenu(JFrame frame, ISet<String> frameNames) {
+    Tuple<JMenuBar, MenuSimProxy> tmp = buildMenu(frameNames);
     frame.setJMenuBar(tmp.getA());
     return tmp.getB();
   }
 
-  private static Tuple<JMenuBar, MenuSimProxy> buildMenu() {
+  private static Tuple<JMenuBar, MenuSimProxy> buildMenu(ISet<String> frameNames) {
     JMenuBar ret = new JMenuBar();
     MenuSimProxy sp = new MenuSimProxy();
 
@@ -174,7 +175,13 @@ public class MenuFactory {
       mnuView.addSeparator();
       buildMenuItem(mnuView, "Show mood results", null, s -> sp.viewRequest(MenuSimProxy.ViewRequest.MOODS));
       buildMenuItem(mnuView, "Show stats graphs", null, s -> sp.viewRequest(MenuSimProxy.ViewRequest.STATS));
-      buildMenuItem(mnuView, "Add new radar view", 'r', s -> sp.viewRequest(MenuSimProxy.ViewRequest.RADAR));
+      {
+        JMenu mnu = new JMenu("Open window");
+        mnuView.add(mnu);
+        for (String frameName : frameNames) {
+          buildMenuItem(mnu, frameName, null, s -> sp.onOpenWindow.raise(frameName));
+        }
+      }
     }
 
     {

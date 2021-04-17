@@ -4,6 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.layouting.Panel;
 import eng.jAtcSim.layouting.Window;
@@ -16,21 +17,30 @@ import java.awt.*;
 
 public class JFrameFactory {
 
-  public static final boolean COLORIZE_PANELS = false;
+  private static final boolean COLORIZE_PANELS = false;
+
+  public JFrameInfo buildFrame(Layout layout, String frameName) {
+    Window window = layout.getWindows()
+            .tryGetFirst(q -> q.getTitle().equals(frameName))
+            .orElseThrow(() -> new EApplicationException("Unable to find frame titled " + frameName));
+    JFrameInfo ret = buildFrame(window, new ESet<>());
+    return ret;
+  }
 
   public IList<JFrameInfo> buildFrames(Layout layout) {
     EAssert.Argument.isNotNull(layout, "layout");
 
     IList<JFrameInfo> ret = new EList<>();
     for (Window window : layout.getWindows()) {
-      JFrameInfo frameInfo = buildFrame(window);
+      if (window.getStyle() == Window.WindowStyle.hidden) continue;
+      JFrameInfo frameInfo = buildFrame(window, layout.getWindows().select(q -> q.getTitle()));
       ret.add(frameInfo);
     }
 
     return ret;
   }
 
-  private JFrameInfo buildFrame(Window window) {
+  private JFrameInfo buildFrame(Window window, ISet<String> windowNames) {
     EAssert.Argument.isNotNull(window, "window");
     JFrame frame = new JFrame();
     MenuFactory.MenuSimProxy menuSimProxy;
@@ -38,7 +48,7 @@ public class JFrameFactory {
     frame.setTitle(window.getTitle() + " [jAtcSim]");
 
     if (window.isWithMenu()) {
-      menuSimProxy = MenuFactory.buildMenu(frame);
+      menuSimProxy = MenuFactory.buildMenu(frame, windowNames);
     } else
       menuSimProxy = null;
 

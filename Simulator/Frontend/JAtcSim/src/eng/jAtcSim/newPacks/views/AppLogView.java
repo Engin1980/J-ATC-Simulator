@@ -6,7 +6,7 @@ import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.newPacks.IView;
-import eng.jAtcSim.newPacks.context.ViewContext;
+import eng.jAtcSim.newPacks.context.ViewGlobalEventContext;
 import eng.jAtcSim.newPacks.utils.ViewGameInfo;
 
 import javax.swing.*;
@@ -49,7 +49,7 @@ public class AppLogView implements IView {
   private final Color criticalColor = Color.RED;
 
   @Override
-  public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options, ViewContext context) {
+  public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options, ViewGlobalEventContext context) {
     this.parent = panel;
     parent.add(scr);
     // keeps window on top; disabled

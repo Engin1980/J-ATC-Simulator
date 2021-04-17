@@ -8,7 +8,7 @@ import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 import eng.jAtcSim.newPacks.IView;
-import eng.jAtcSim.newPacks.context.ViewContext;
+import eng.jAtcSim.newPacks.context.ViewGlobalEventContext;
 import eng.jAtcSim.newPacks.utils.ViewGameInfo;
 import eng.jAtcSim.settings.FlightStripSettings;
 
@@ -26,7 +26,7 @@ public class ScheduledListView implements IView {
   private JPanel parent;
 
   @Override
-  public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options, ViewContext context) {
+  public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options, ViewGlobalEventContext context) {
     this.parent = panel;
     this.sim = initInfo.getSimulation();
     ScheduledFlightStripPanel.setStripSettings(initInfo.getSettings().getFlightStripSettings());

@@ -13,8 +13,7 @@ import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Format;
 import eng.jAtcSim.newPacks.IView;
-import eng.jAtcSim.newPacks.context.Events;
-import eng.jAtcSim.newPacks.context.ViewContext;
+import eng.jAtcSim.newPacks.context.ViewGlobalEventContext;
 import eng.jAtcSim.newPacks.utils.ViewGameInfo;
 import eng.jAtcSim.settings.FlightStripSettings;
 
@@ -29,7 +28,7 @@ public class FlightListView implements IView {
   private JPanel pnlContent;
   private Callsign selectedCallsign;
   private JPanel parent;
-  private ViewContext viewContext;
+  private ViewGlobalEventContext viewGlobalEventContext;
 
   public Callsign getSelectedCallsign() {
     return selectedCallsign;
@@ -39,17 +38,17 @@ public class FlightListView implements IView {
     Callsign bef = this.selectedCallsign;
     this.selectedCallsign = selectedCallsign;
     if (bef != this.selectedCallsign) {
-      this.viewContext.events.onSelectedCallsignChanged.raise(
-              new Events.SelectedCallsignChangedEventArgs(this, this.selectedCallsign));
+      this.viewGlobalEventContext.onSelectedCallsignChanged.raise(
+              new ViewGlobalEventContext.SelectedCallsignChangedEventArgs(this, this.selectedCallsign));
       updateList();
     }
   }
 
   @Override
-  public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options, ViewContext context) {
+  public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options, ViewGlobalEventContext context) {
     this.parent = panel;
     this.sim = initInfo.getSimulation();
-    this.viewContext = context;
+    this.viewGlobalEventContext = context;
     FlightStripPanel.setStripSettings(initInfo.getSettings().getFlightStripSettings());
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
@@ -66,7 +65,7 @@ public class FlightListView implements IView {
 
     this.sim.registerOnSecondElapsed(s -> updateList());
 
-    context.events.onSelectedCallsignChanged.add(q -> {
+    context.onSelectedCallsignChanged.add(q -> {
       if (q.sender == this) return;
       this.setSelectedCallsign(q.callsign);
     });

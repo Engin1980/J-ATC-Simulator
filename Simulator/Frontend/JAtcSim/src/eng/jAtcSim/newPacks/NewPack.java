@@ -6,6 +6,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.ToDoException;
+import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.app.FrmAbout;
@@ -15,13 +16,15 @@ import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.shared.logging.LogItemType;
 import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
-import eng.jAtcSim.newPacks.context.ViewContext;
+import eng.jAtcSim.newPacks.context.ViewGlobalEventContext;
 import eng.jAtcSim.newPacks.layout.JFrameFactory;
 import eng.jAtcSim.newPacks.layout.JFrameInfo;
 import eng.jAtcSim.newPacks.layout.JPanelInfo;
 import eng.jAtcSim.newPacks.utils.ViewGameInfo;
 import eng.jAtcSim.settings.AppSettings;
+import eng.jAtcSim.shared.MessageBox;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,9 +38,12 @@ public class NewPack {
   private Area area;
   private Airport aip;
   private AppSettings settings;
+  private Layout layout;
   private IList<JFrameInfo> frameInfos;
+  private final ViewGlobalEventContext viewGlobalEventContext = new ViewGlobalEventContext();
   public final EventAnonymousSimple onSave = new EventAnonymousSimple();
   public final EventAnonymousSimple onQuit = new EventAnonymousSimple();
+  private ViewGameInfo vii;
 
   public void applyCustomData(IMap<String, Object> customData) {
     int fi = 0;
@@ -82,7 +88,8 @@ public class NewPack {
   }
 
   public void init(IGame game, Layout layout, AppSettings appSettings) {
-    settings = appSettings;
+    this.settings = appSettings;
+    this.layout = layout;
 
     // init sim & area
     this.game = game;
@@ -94,21 +101,19 @@ public class NewPack {
     frameInfos = frameFactory.buildFrames(layout);
 
     IList<JPanelInfo> allPanels = frameInfos.selectMany(q -> q.getPanels());
-    ViewContext viewContext = new ViewContext(allPanels.select(q -> q.getView()));
     frameInfos
             .where(q -> q.getMenuSimProxy() != null)
             .forEach(q -> bindMenuProxy(q.getMenuSimProxy(), this.sim));
     frameInfos.forEach(q -> Stylist.apply(q.getFrame(), true));
 
-    ViewGameInfo vii = new ViewGameInfo();
+    vii = new ViewGameInfo();
     vii.setSimulation(this.sim);
     vii.setAirport(this.aip);
     vii.setSettings(this.settings);
     vii.setUserAtcId(this.sim.getUserAtcIds().get(0));
     vii.setDynamicAirplaneSpeechFormatter(this.settings.getDynamicPlaneFormatter()); //TODO improve somehow
 
-    allPanels.forEach(q -> q.getView().init(q.getPanel(), vii, q.getOptions(), viewContext));
-    allPanels.forEach(q -> q.getView().postInit());
+    allPanels.forEach(q -> q.getView().init(q.getPanel(), vii, q.getOptions(), viewGlobalEventContext));
 
     //printSummary(frames);
   }
@@ -143,8 +148,8 @@ public class NewPack {
       try {
         pb.start();
       } catch (IOException e) {
-        //TODO
-        //Context.getApp().getAppLog().write(LogItemType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
+        this.sim.getAppLog().write(LogItemType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
+        MessageBox.show("Failed to open web url.", "Failed to open web");
       }
     });
     menuSimProxy.onSimSpeed.add(q -> sim.sendSystemCommandAnonymous(TickSpeedRequest.createSet(q)));
@@ -162,6 +167,19 @@ public class NewPack {
     menuSimProxy.onSave.add(() -> {
       this.save();
     });
+    menuSimProxy.onOpenWindow.add(this::onOpenWindow);
+  }
+
+  private void onOpenWindow(String windowName) {
+    JFrameFactory frameFactory = new JFrameFactory();
+    JFrameInfo fi = frameFactory.buildFrame(layout, windowName);
+
+    if (fi.getMenuSimProxy() != null)
+      bindMenuProxy(fi.getMenuSimProxy(), this.sim);
+    Stylist.apply(fi.getFrame(), true);
+
+    fi.getPanels().forEach(q -> q.getView().init(q.getPanel(), vii, q.getOptions(), viewGlobalEventContext));
+    fi.getFrame().setVisible(true);
   }
 
   private void printSummary(ISet<JFrameInfo> frames) {
