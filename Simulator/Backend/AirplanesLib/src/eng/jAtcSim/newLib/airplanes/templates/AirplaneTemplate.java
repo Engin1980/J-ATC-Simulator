@@ -6,8 +6,10 @@ import eng.jAtcSim.newLib.area.EntryExitPoint;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-
 import exml.annotations.XConstructor;
+import exml.annotations.XIgnored;
+
+import java.util.Comparator;
 
 public abstract class AirplaneTemplate {
   private final Callsign callsign;
@@ -16,7 +18,15 @@ public abstract class AirplaneTemplate {
   private final EDayTimeStamp expectedExitTime;
   private final EDayTimeStamp entryTime;
   private final int entryDelay;
+  @XIgnored private EDayTimeStamp entryTimeWithEntryDelay = null;
 
+  public static class ByEntryTimeWithEntryDelayComparer implements Comparator<AirplaneTemplate>{
+
+    @Override
+    public int compare(AirplaneTemplate a, AirplaneTemplate b) {
+      return Integer.compare(a.getEntryTimeWithEntryDelay().getValue(), b.getEntryTimeWithEntryDelay().getValue());
+    }
+  }
 
   @XConstructor
   protected AirplaneTemplate() {
@@ -69,7 +79,18 @@ public abstract class AirplaneTemplate {
     return entryTime;
   }
 
+  public EDayTimeStamp getEntryTimeWithEntryDelay() {
+    if (entryTimeWithEntryDelay == null)
+      entryTimeWithEntryDelay = this.entryTime.addMinutes(this.entryDelay);
+    return entryTimeWithEntryDelay;
+  }
+
   public EDayTimeStamp getExpectedExitTime() {
     return expectedExitTime;
+  }
+
+  @Override
+  public String toString() {
+    return "{" + this.getClass().getSimpleName() + "} " + this.getCallsign();
   }
 }

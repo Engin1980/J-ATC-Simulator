@@ -30,6 +30,10 @@ public class TrafficProvider implements IXPersistable {
     this.trafficModel = trafficModel;
   }
 
+  public int getDayIndexOfLastPreparedTraffic() {
+    return movementsForDay.getKeys().maxInt(q->q).getAsInt();
+  }
+
   public IReadOnlyList<ExpectedMovement> getExpectedTimesForDay(int dayIndex) {
     throw new ToDoException();
   }

@@ -37,7 +37,7 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class TrafficModule extends SimulationModule {
   private static final int MAX_ALLOWED_DELAY = 120;
-  private static final int MINUTES_TO_SHOW_PLANE_BEFORE_APPEARANCE_TIME = 20;
+  private static final int MINUTES_TO_SHOW_PLANE_BEFORE_APPEARANCE_TIME = 30;
 
   private final TrafficProvider trafficProvider;
   private final CallsignFactory callsignFactory;
@@ -271,7 +271,8 @@ public class TrafficModule extends SimulationModule {
         newTemplates.add(res.getValue());
     }
     parent.getAirplanesModule().addNewPreparedPlanes(newTemplates);
-    if (Context.getShared().getNow().getHours() == 20 && Context.getShared().getNow().getMinutes() == 0 && Context.getShared().getNow().getSeconds() == 0)
+    if (Context.getShared().getNow().getHours() > 20 &&
+            this.trafficProvider.getDayIndexOfLastPreparedTraffic() <= Context.getShared().getNow().getDays())
       this.trafficProvider.prepareTrafficForDay(Context.getShared().getNow().getDays() + 1);
   }
 

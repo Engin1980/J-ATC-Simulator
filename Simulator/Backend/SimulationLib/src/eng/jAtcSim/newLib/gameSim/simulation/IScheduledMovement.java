@@ -8,7 +8,9 @@ import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 public interface IScheduledMovement {
   AirplaneType getAirplaneType();
 
-  EDayTimeStamp getAppExpectedTime();
+  EDayTimeStamp getScheduledTime();
+
+  EDayTimeStamp getScheduledTimeWithDelay();
 
   Callsign getCallsign();
 

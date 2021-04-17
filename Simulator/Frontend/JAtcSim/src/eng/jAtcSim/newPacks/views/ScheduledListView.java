@@ -49,7 +49,7 @@ public class ScheduledListView implements IView {
   private void updateList() {
     if (refreshNeeded()) {
       IReadOnlyList<IScheduledMovement> movements =
-              this.sim.getScheduledMovements().orderBy(q -> q.getAppExpectedTime().getValue());
+              this.sim.getScheduledMovements().orderBy(q -> q.getScheduledTimeWithDelay().getValue());
 
       pnlContent.removeAll();
       ScheduledFlightStripPanel.resetIndex();
@@ -148,7 +148,7 @@ class ScheduledFlightStripPanel extends JPanel {
     JLabel lblTypeName = new JLabel(movement.getAirplaneType().name);
     setLabelFixedSize(lblTypeName, CALLSIGN_DIMENSION);
 
-    JLabel lblTime = new JLabel(movement.getAppExpectedTime().toTimeString());
+    JLabel lblTime = new JLabel(movement.getScheduledTime().toHourMinuteString());
     setLabelFixedSize(lblTime, TIME_DIMENSION);
     JLabel lblDelay = new JLabel("+" + movement.getDelayInMinutes());
     setLabelFixedSize(lblDelay, DELAY_DIMENSION);

@@ -82,6 +82,7 @@ public class AirplanesModule extends SimulationModule {
 
   public void addNewPreparedPlanes(IList<AirplaneTemplate> newTemplates) {
     this.planesPrepared.addMany(newTemplates);
+    this.planesPrepared.sort(new AirplaneTemplate.ByEntryTimeWithEntryDelayComparer());
   }
 
   public void deletePlane(Squawk squawk) {
@@ -242,6 +243,7 @@ public class AirplanesModule extends SimulationModule {
     int index = 0;
     while (index < planesPrepared.count()) {
       AirplaneTemplate at = planesPrepared.get(index);
+      if (at.getEntryTimeWithEntryDelay().isAfter(Context.getShared().getNow())) break; // the first incoming plane is after now
       if (at instanceof ArrivalAirplaneTemplate && isInSeparationConflictWithTraffic((ArrivalAirplaneTemplate) at))
         index++;
       else {

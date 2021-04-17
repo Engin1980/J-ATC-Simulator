@@ -33,9 +33,9 @@
   <navAirport color="AAAAFF" width="7" borderWidth="0" borderDistance="0"/>
 
   <borderCountry color="4444FF" width="1"/>
-  <borderCtr color="0000A0" width="1"/>
-  <borderTma color="0000A0" width="1"/>
-  <borderMrva color="555555" width="1">
+  <borderCtr color="000070" width="1"/>
+  <borderTma color="000070" width="1"/>
+  <borderMrva color="333333" width="1">
     <font family="Inconsolata" size="14" style="0"/>
   </borderMrva>
   <borderRestricted color="FF0000" width="1">
@@ -48,8 +48,8 @@
 
   <mapBackcolor>000000</mapBackcolor>
 
-  <star color="990099" width="1"/>
-  <sid color="009900" width="1"/>
+  <star color="550055" width="1"/>
+  <sid color="005500" width="1"/>
 
   <!-- style: 0=plain, 1=bold, 2=italic -->
   <atc color="DDDDDD">
