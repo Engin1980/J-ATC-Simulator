@@ -37,6 +37,7 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class TrafficModule extends SimulationModule {
   private static final int MAX_ALLOWED_DELAY = 120;
+  private static final int MINUTES_TO_SHOW_PLANE_BEFORE_APPEARANCE_TIME = 20;
 
   private final TrafficProvider trafficProvider;
   private final CallsignFactory callsignFactory;
@@ -257,7 +258,8 @@ public class TrafficModule extends SimulationModule {
   }
 
   private void introduceNewPlanes() {
-    IReadOnlyList<MovementTemplate> newMovements = this.trafficProvider.getMovementsUntilTime(Context.getShared().getNow());
+    IReadOnlyList<MovementTemplate> newMovements = this.trafficProvider.getMovementsUntilTime(
+            Context.getShared().getNow().addMinutes(MINUTES_TO_SHOW_PLANE_BEFORE_APPEARANCE_TIME));
     IList<AirplaneTemplate> newTemplates = new EList<>();
     for (MovementTemplate newMovement : newMovements) {
       TryResult<AirplaneTemplate> res = convertMovementToAirplane(newMovement);
