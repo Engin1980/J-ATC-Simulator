@@ -48,6 +48,7 @@ public class ApproachPilot extends Pilot {
   private static final int LONG_FINAL_HEIGHT = 2000;
   private static final int LONG_FINAL_DISTANCE = 6;
   private static final int TOUCHDOWN_SIMULATED_HEIGHT = 20;
+  public static final double DEFAULT_FINAL_VISUAL_SLOPE = 0.05235987753;
 
   private final IList<ApproachStage> stages;
   private final IList<ICommand> gaRouteCommands;
@@ -324,7 +325,7 @@ public class ApproachPilot extends Pilot {
     hdg = updateHeadingByWind(hdg);
 
     double distance = Coordinates.getDistanceInNM(this.getRunwayThreshold().getCoordinate(), rdr.getCoordinate());
-    double altitudeDouble = Context.getArea().getAirport().getAltitude() + 0.05235987753 * 6076.1 * distance; // http://www.aviationchief.com/ils.html
+    double altitudeDouble = Context.getArea().getAirport().getAltitude() + DEFAULT_FINAL_VISUAL_SLOPE * 6076.1 * distance; // http://www.aviationchief.com/ils.html
     int altitudeInt = (int) Math.round(altitudeDouble);
     if (altitudeInt < rdr.getSha().getTargetAltitude())
       wrt.setTargetAltitude(altitudeInt);
