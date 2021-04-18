@@ -99,7 +99,7 @@ public class AirproxController implements IXPersistable {
         if (at == AirproxType.full) {
           AtcId atcIda = Context.getAtc().getResponsibleAtcId(a.getCallsign());
           AtcId atcIdb = Context.getAtc().getResponsibleAtcId(b.getCallsign());
-          if (atcIda == null || atcIda.getType() == AtcType.app || atcIdb == null || atcIdb.getType() == AtcType.app)
+          if (!(atcIda == null || atcIda.getType() == AtcType.app || atcIdb == null || atcIdb.getType() == AtcType.app))
             at = AirproxType.partial;
         }
 

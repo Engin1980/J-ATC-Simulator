@@ -287,16 +287,10 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
           restrictedDescentRate = 2000;
           break;
         case longFinal:
-          // maxNegativeVerticalSpeedMustBeSet
-//          ApproachPilot ap = plane.getPilot
-//          eng.jAtcSim.newLib.area.airplanes.behaviors.NewApproachBehavior nab = this.parent.getBehaviorModule().getAs(eng.jAtcSim.newLib.area.airplanes.behaviors.NewApproachBehavior.class);
-//          restrictedDescentRate = nab.getApproachInfo().getType() == Approach.ApproachType.visual ?
-//              2000 : 1300;
-//          break;
-          restrictedDescentRate = 1700;
+          restrictedDescentRate = 1500;
           break;
         case shortFinal:
-          restrictedDescentRate = 1300;
+          restrictedDescentRate = 1000;
           break;
         default:
           throw new UnsupportedOperationException("This situation is not supported.");

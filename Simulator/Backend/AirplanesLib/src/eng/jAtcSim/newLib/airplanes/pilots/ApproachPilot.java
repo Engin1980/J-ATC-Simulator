@@ -285,7 +285,7 @@ public class ApproachPilot extends Pilot {
       // still before threshold
       return Optional.empty();
 
-    double dist = Coordinates.getDistanceInNM(rdr.getCoordinate(), this.getRunwayThreshold().getCoordinate());
+    double dist = Coordinates.getDistanceToRadialInNM(rdr.getCoordinate(), this.getRunwayThreshold().getCoordinate(), this.getRunwayThreshold().getCourse());
     if (dist > 0.1)
       return Optional.of(GoingAroundNotification.GoAroundReason.unstabilizedHeading);
 
@@ -321,8 +321,13 @@ public class ApproachPilot extends Pilot {
     double hdg = RadialCalculator.getHeadingToFollowRadial(rdr.getCoordinate(),
             rdr.getRouting().getAssignedRunwayThreshold().getOtherThreshold().getCoordinate(),
             rdr.getRouting().getAssignedRunwayThreshold().getCourse(), rdr.getSha().getSpeed());
-
     hdg = updateHeadingByWind(hdg);
+
+    double distance = Coordinates.getDistanceInNM(this.getRunwayThreshold().getCoordinate(), rdr.getCoordinate());
+    double altitudeDouble = Context.getArea().getAirport().getAltitude() + 0.05235987753 * 6076.1 * distance; // http://www.aviationchief.com/ils.html
+    int altitudeInt = (int) Math.round(altitudeDouble);
+    if (altitudeInt < rdr.getSha().getTargetAltitude())
+      wrt.setTargetAltitude(altitudeInt);
 
     wrt.setTargetHeading(new HeadingNavigator(hdg, LeftRightAny.any));
   }

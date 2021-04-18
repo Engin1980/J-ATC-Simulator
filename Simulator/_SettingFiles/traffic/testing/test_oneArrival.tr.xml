@@ -7,7 +7,7 @@
     <date>2020-07-27</date>
   </meta>
   <flightListTraffic>
-    <flight time="7:00" callsign="EZY070" kind="arrival" heading="180" planeType="A319" />
+    <flight time="6:27" callsign="EZY070" kind="arrival" heading="180" planeType="A319" />
     <flight time="8:00" callsign="EZY080" kind="arrival" heading="090" planeType="A319" />
     <flight time="8:00" callsign="EZY081" kind="arrival" heading="180" planeType="A319" />
     <flight time="8:00" callsign="EZY082" kind="arrival" heading="270" planeType="A319" />

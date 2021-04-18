@@ -26,6 +26,7 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
     throw new UnsupportedOperationException("This method is here not supported. Use 'loadBoth()' instead.");
   }
 
+  //todel
 //  private Approach generateDefaultVisualApproach() {
 //
 //    final double VISUAL_DISTANCE = 8;

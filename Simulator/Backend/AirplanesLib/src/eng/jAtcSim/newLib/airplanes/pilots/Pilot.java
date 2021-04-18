@@ -26,7 +26,7 @@ public abstract class Pilot implements IXPersistable {
    * to high to be really be close to approach. Typical situation is when overflying
    * IAF or runway threshold at high altitude.
    */
-  private static final int TO_HIGH_TO_BE_APPROACHING = 3000;
+  private static final int TO_HIGH_TO_BE_APPROACHING = 7000;
   @XIgnored protected final IAirplane rdr;
   @XIgnored protected final IAirplaneWriter wrt;
   private boolean isFirstElapseSecond = true;

@@ -85,11 +85,13 @@ public class JAtcSim {
       Context.getApp().getAppLog().write(LogItemType.info, "Loading game from '%s'", xmlFileName);
       gfrlr = new GameFactoryAndRepository().load(xmlFileName);
     } catch (GameFactoryAndRepository.GFRException ex) {
-      Context.getApp().getAppLog().write(LogItemType.warning, sf("Loading game from '%s' failed. %s",
-              xmlFileName, ExceptionUtils.toFullString(ex)));
+      Context.getApp().getAppLog().write(LogItemType.warning, sf("Loading game from '%s' failed. %s. %s",
+              xmlFileName, ExceptionUtils.toFullString(ex) , ExceptionUtils.stackToString(ex, " \tat\t ")));
       MessageBox.show(sf("Loading game from '%s' failed. %s", xmlFileName, ex.getMessage()), "Loading failed.");
       pi.done();
-      return;
+      throw new EApplicationException("Load error", ex);
+      //TODO fix this
+      //return;
     }
 
     pi.increase("Initializing sound environment");
@@ -207,7 +209,7 @@ public class JAtcSim {
       new GameFactoryAndRepository().save(pack.getGame(), customData, fileName);
     } catch (Exception ex) {
       Context.getApp().getAppLog().write(LogItemType.warning, "Game save failed. " +
-              ExceptionUtils.toFullString(ex));
+              ExceptionUtils.toFullString(ex) + ExceptionUtils.stackToString(ex, " \tat\t "));
       MessageBox.show("Game save failed. " + ex.getMessage(), "Game save failed.");
       return;
     }
