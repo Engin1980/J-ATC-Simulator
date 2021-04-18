@@ -18,5 +18,5 @@
                      fix="true" routeFix="true" minorFix="false" rings="true" history="true" headingLine="true"
                      minAltitude="0" maxAltitude="99000"/>
   </radar>
-  <autosave intervalInSeconds="300" path="./temp/jatcAutoSave" />
+  <autosave intervalInSeconds="60" path="R:/jatcAutoSave" />
 </settings>

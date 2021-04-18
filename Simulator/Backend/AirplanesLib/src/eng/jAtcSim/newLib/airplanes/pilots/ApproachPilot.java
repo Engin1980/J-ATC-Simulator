@@ -4,6 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
@@ -22,7 +23,6 @@ import eng.jAtcSim.newLib.area.approaches.conditions.FlyRouteBehaviorEmptyCondit
 import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 import eng.jAtcSim.newLib.shared.PostContracts;
 import eng.jAtcSim.newLib.shared.RadialCalculator;
-import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -203,17 +203,29 @@ public class ApproachPilot extends Pilot {
   }
 
   private void flyRadialWithDescentBehavior(FlyRadialWithDescentBehavior behavior) {
-    double distance = Coordinates.getDistanceInNM(behavior.getCoordinate(), rdr.getCoordinate());
-    double altitudeDouble = behavior.getAltitudeFixValue() + behavior.getSlope() * 6076.1 * distance; // http://www.aviationchief.com/ils.html
-    int altitudeInt = (int) Math.round(altitudeDouble);
-    if (altitudeInt < rdr.getSha().getTargetAltitude())
-      wrt.setTargetAltitude(altitudeInt);
+    //TODEL
+//    double distance = Coordinates.getDistanceInNM(behavior.getCoordinate(), rdr.getCoordinate());
+//    double altitudeDouble = behavior.getAltitudeFixValue() + behavior.getSlope() * 6076.1 * distance; // http://www.aviationchief.com/ils.html
+//    int altitudeInt = (int) Math.round(altitudeDouble);
+//    if (altitudeInt < rdr.getSha().getTargetAltitude())
+//      wrt.setTargetAltitude(altitudeInt);
+    flyDescendPartOfBehavior(behavior.getCoordinate(), behavior.getAltitudeFixValue(), behavior.getSlope());
   }
 
   private void flyToPointWithDescentBehavior(FlyToPointWithDescentBehavior behavior) {
     //TODO vyřešit identické s radialou
-    double distance = Coordinates.getDistanceInNM(behavior.getCoordinate(), rdr.getCoordinate());
-    double altitudeDouble = behavior.getAltitudeFixValue() + behavior.getSlope() * 6076.1 * distance; // http://www.aviationchief.com/ils.html
+    //TODEL
+//    double distance = Coordinates.getDistanceInNM(behavior.getCoordinate(), rdr.getCoordinate());
+//    double altitudeDouble = behavior.getAltitudeFixValue() + behavior.getSlope() * 6076.1 * distance; // http://www.aviationchief.com/ils.html
+//    int altitudeInt = (int) Math.round(altitudeDouble);
+//    if (altitudeInt < rdr.getSha().getTargetAltitude())
+//      wrt.setTargetAltitude(altitudeInt);
+    flyDescendPartOfBehavior(behavior.getCoordinate(), behavior.getAltitudeFixValue(), behavior.getSlope());
+  }
+
+  private void flyDescendPartOfBehavior(Coordinate coordinate, double altitude, double slope) {
+    double distance = Coordinates.getDistanceInNM(coordinate, rdr.getCoordinate());
+    double altitudeDouble = altitude + slope * 6076.1 * distance; // http://www.aviationchief.com/ils.html
     int altitudeInt = (int) Math.round(altitudeDouble);
     if (altitudeInt < rdr.getSha().getTargetAltitude())
       wrt.setTargetAltitude(altitudeInt);
@@ -265,7 +277,7 @@ public class ApproachPilot extends Pilot {
 
     {
       Optional<GoingAroundNotification.GoAroundReason> ga = getReasonForGoAroundIfIsAfterThresholdOnLanding();
-      if (ga.isPresent()){
+      if (ga.isPresent()) {
         goAround(ga.get());
         return;
       }
@@ -278,7 +290,7 @@ public class ApproachPilot extends Pilot {
     IApproachBehavior beh = stages.getFirst().getBehavior();
     if ((beh instanceof FlyRadialWithDescentBehavior || beh instanceof LandingBehavior) == false)
       // not on final approach
-      return  Optional.empty();
+      return Optional.empty();
 
     double crs = Coordinates.getBearing(rdr.getCoordinate(), this.getRunwayThreshold().getCoordinate());
     double dcrs = Headings.getDifference(crs, this.getRunwayThreshold().getCourse(), true);
@@ -324,11 +336,16 @@ public class ApproachPilot extends Pilot {
             rdr.getRouting().getAssignedRunwayThreshold().getCourse(), rdr.getSha().getSpeed());
     hdg = updateHeadingByWind(hdg);
 
-    double distance = Coordinates.getDistanceInNM(this.getRunwayThreshold().getCoordinate(), rdr.getCoordinate());
-    double altitudeDouble = Context.getArea().getAirport().getAltitude() + DEFAULT_FINAL_VISUAL_SLOPE * 6076.1 * distance; // http://www.aviationchief.com/ils.html
-    int altitudeInt = (int) Math.round(altitudeDouble);
-    if (altitudeInt < rdr.getSha().getTargetAltitude())
-      wrt.setTargetAltitude(altitudeInt);
+    flyDescendPartOfBehavior(this.getRunwayThreshold().getCoordinate(),
+            Context.getArea().getAirport().getAltitude(),
+            DEFAULT_FINAL_VISUAL_SLOPE);
+
+    //TODEL
+//    double distance = Coordinates.getDistanceInNM(this.getRunwayThreshold().getCoordinate(), rdr.getCoordinate());
+//    double altitudeDouble = Context.getArea().getAirport().getAltitude() + DEFAULT_FINAL_VISUAL_SLOPE * 6076.1 * distance; // http://www.aviationchief.com/ils.html
+//    int altitudeInt = (int) Math.round(altitudeDouble);
+//    if (altitudeInt < rdr.getSha().getTargetAltitude())
+//      wrt.setTargetAltitude(altitudeInt);
 
     wrt.setTargetHeading(new HeadingNavigator(hdg, LeftRightAny.any));
   }

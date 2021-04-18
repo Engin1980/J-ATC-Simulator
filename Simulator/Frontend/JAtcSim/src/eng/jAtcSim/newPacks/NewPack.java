@@ -5,6 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.events.EventAnonymousSimple;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.Stylist;
@@ -17,6 +18,7 @@ import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.shared.logging.LogItemType;
+import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
 import eng.jAtcSim.newPacks.context.ViewGlobalEventContext;
 import eng.jAtcSim.newPacks.layout.JFrameFactory;
@@ -29,6 +31,8 @@ import eng.jAtcSim.shared.MessageBox;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -36,12 +40,13 @@ public class NewPack {
   private IGame game;
   private ISimulation sim;
   private Area area;
-  private Airport aip;
-  private AppSettings settings;
+  private Airport airport;
+  private AppSettings appSettings;
   private Layout layout;
   private IList<JFrameInfo> frameInfos;
   private final ViewGlobalEventContext viewGlobalEventContext = new ViewGlobalEventContext();
   public final EventAnonymousSimple onSave = new EventAnonymousSimple();
+  public final EventAnonymousSimple onAutoSave = new EventAnonymousSimple();
   public final EventAnonymousSimple onQuit = new EventAnonymousSimple();
   private ViewGameInfo vii;
 
@@ -88,14 +93,14 @@ public class NewPack {
   }
 
   public void init(IGame game, Layout layout, AppSettings appSettings) {
-    this.settings = appSettings;
+    this.appSettings = appSettings;
     this.layout = layout;
 
     // init sim & area
     this.game = game;
     this.sim = game.getSimulation();
     this.area = game.getSimulation().getArea();
-    this.aip = sim.getAirport();
+    this.airport = sim.getAirport();
 
     JFrameFactory frameFactory = new JFrameFactory();
     frameInfos = frameFactory.buildFrames(layout);
@@ -108,14 +113,18 @@ public class NewPack {
 
     vii = new ViewGameInfo();
     vii.setSimulation(this.sim);
-    vii.setAirport(this.aip);
-    vii.setSettings(this.settings);
+    vii.setAirport(this.airport);
+    vii.setSettings(this.appSettings);
     vii.setUserAtcId(this.sim.getUserAtcIds().get(0));
-    vii.setDynamicAirplaneSpeechFormatter(this.settings.getDynamicPlaneFormatter()); //TODO improve somehow
+    vii.setDynamicAirplaneSpeechFormatter(this.appSettings.getDynamicPlaneFormatter()); //TODO improve somehow
 
     allPanels.forEach(q -> q.getView().init(q.getPanel(), vii, q.getOptions(), viewGlobalEventContext));
 
     //printSummary(frames);
+
+    if (appSettings.autosave.intervalInSeconds > 0)
+      this.sim.registerOnSecondElapsed(s -> {
+        if (this.sim.getNow().getValue() % appSettings.autosave.intervalInSeconds == 0) this.onAutoSave.raise();});
   }
 
   public void quit() {

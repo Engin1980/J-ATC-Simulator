@@ -41,7 +41,6 @@ class SwitchManager implements IXPersistable {
   private Producer<IReadOnlyList<Message>> delayedMessagesProducer;
 
   @XConstructor
-
   SwitchManager() {
     PostContracts.register(this, () -> parent != null);
   }

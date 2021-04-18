@@ -73,7 +73,7 @@ public class FrmIntro extends JFrame {
     this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     this.setVisible(false);
     try {
-      JAtcSim.startSimulation(this.startupSettings);
+      JAtcSim.InitLoadSaveSimulation.startSimulation(this.startupSettings);
     } catch (Exception ex) {
       ex.printStackTrace();
       MessageBox.show("Failed to start up the simulation. Something is wrong. Check the app settings. \n\n" +
@@ -91,7 +91,7 @@ public class FrmIntro extends JFrame {
 
     this.setVisible(false);
     try {
-      JAtcSim.loadSimulation(this.startupSettings, jf.getSelectedFile().getAbsolutePath());
+      JAtcSim.InitLoadSaveSimulation.loadSimulation(this.startupSettings, jf.getSelectedFile().getAbsolutePath());
 
       // on successful load update files history
       FileHistoryManager.updateHistory(SwingFactory.FileDialogType.game.toString(), jf.getSelectedFile().toPath().toString());
