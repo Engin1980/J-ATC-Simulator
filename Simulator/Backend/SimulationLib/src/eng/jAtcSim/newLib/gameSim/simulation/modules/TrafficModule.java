@@ -82,6 +82,9 @@ public class TrafficModule extends SimulationModule {
       GenericCommercialMovementTemplate gcmt = (GenericCommercialMovementTemplate) m;
 
       CompanyFleet companyFleet = parent.getWorldModule().getAirlinesFleets().tryGetByIcaoOrDefault(gcmt.getCompanyIcao());
+      if (companyFleet.getIcao().equals("DEF"))
+        Context.getApp().getAppLog().write(LogItemType.warning, "TrafficModule",
+                sf("Default company fleet used for '%s'.",gcmt.getCompanyIcao()));
       callsign = this.callsignFactory.generateCommercial(gcmt.getCompanyIcao());
       IList<TypeAndWeight> availableTypes = companyFleet.getTypes()
               .where(q -> parent.getWorldModule().getAirplaneTypes()

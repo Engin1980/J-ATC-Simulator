@@ -139,30 +139,6 @@ public class NewPack {
   }
 
   public void show() {
-    frameInfos.forEach(q -> {
-      eng.eSystem.utilites.awt.ComponentUtils.adjustComponentTree(
-              q.getFrame(),
-              new ComponentUtils.IComponentAdjuster() {
-                @Override
-                public void adjust(Component component) {
-                  component.addFocusListener(new FocusAdapter() {
-                    @Override
-                    public void focusGained(FocusEvent e) {
-                      System.out.println("I've got focus! " + component.getName() + " - " + component.getClass().getSimpleName());
-                    }
-                  });
-                }
-              }
-      );
-    });
-    frameInfos.forEach(w -> w.getPanels().tryGetFirst(q -> q.isFocus()).ifPresent(q -> {
-      w.getFrame().addWindowListener(new WindowAdapter() {
-        @Override
-        public void windowOpened(WindowEvent e) {
-          q.getPanel().requestFocus();
-        }
-      });
-    }));
     frameInfos.forEach(q -> q.getFrame().setVisible(true));
     System.out.println("Viewed:");
   }

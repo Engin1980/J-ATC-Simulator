@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.atcs.internal.tower;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
@@ -22,16 +23,45 @@ import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToRouteCommand;
-
 import exml.IXPersistable;
-import exml.loading.XLoadContext; import exml.saving.XSaveContext;
 import exml.annotations.XConstructor;
 import exml.annotations.XIgnored;
+import exml.loading.XLoadContext;
+import exml.saving.XSaveContext;
 
 import java.util.function.Consumer;
 
 // region Inner
 class DepartureManager implements IXPersistable {
+
+  private static class LastDepartureInfo implements IXPersistable {
+    @XIgnored public IAirplane plane;
+    @XIgnored public EDayTimeStamp time;
+
+    @XConstructor
+    public LastDepartureInfo(IAirplane plane, EDayTimeStamp time) {
+      this.plane = plane;
+      this.time = time;
+    }
+
+    @Override
+    public void xLoad(XElement elm, XLoadContext ctx) {
+      String callsignS = elm.getAttribute("callsign");
+      Callsign callsign = new Callsign(callsignS);
+      this.plane = ctx.getValues().get(IAirplaneList.class).get(callsign);
+
+      String timeS = elm.getAttribute("time");
+      this.time = (EDayTimeStamp) ctx.getParsers().get(EDayTimeStamp.class).invoke(timeS);
+    }
+
+    @Override
+    public void xSave(XElement elm, XSaveContext ctx) {
+      elm.setAttribute("callsign", this.plane.getCallsign().toString());
+
+      Selector<EDayTimeStamp, String> timeFormatter = (Selector<EDayTimeStamp, String>) ctx.getFormatters().get(EDayTimeStamp.class);
+      elm.setAttribute("time", timeFormatter.invoke(this.time));
+    }
+  }
 
   @XIgnored
   private TowerAtc parent;
@@ -50,11 +80,9 @@ class DepartureManager implements IXPersistable {
   @XIgnored
   private final IMap<IAirplane, EDayTimeStamp> holdingPointWaitingTimeMap = new EMap<>();
   @XIgnored
-  private final IMap<ActiveRunwayThreshold, IAirplane> lastDepartingPlane = new EMap<>();
-  private final IMap<ActiveRunwayThreshold, EDayTimeStamp> lastDeparturesTime = new EMap<>();
+  private final IMap<ActiveRunwayThreshold, LastDepartureInfo> lastDepartures = new EMap<>();
 
   @XConstructor
-
   DepartureManager() {
     PostContracts.register(this, () -> parent != null);
   }
@@ -76,20 +104,15 @@ class DepartureManager implements IXPersistable {
     holdingPointWaitingForAppSwitchConfirmation.tryRemove(plane);
     holdingPointReady.tryRemove(plane);
     departing.tryRemove(plane);
-    for (ActiveRunwayThreshold rt : this.lastDepartingPlane.getKeys()) {
-      if (this.lastDepartingPlane.containsKey(rt) && plane.equals(this.lastDepartingPlane.get(rt))) {
-        this.lastDepartingPlane.set(rt, null);
-        this.lastDeparturesTime.set(rt, null);
-      }
-    }
+
+    this.lastDepartures.remove(q -> q.getValue().plane.equals(plane));
     holdingPointWaitingTimeMap.tryRemove(plane);
   }
 
   public void departAndGetHoldingPointEntryTime(IAirplane plane, ActiveRunwayThreshold th, double switchAltitude) {
     this.holdingPointReady.remove(plane);
     this.departing.add(plane);
-    this.lastDepartingPlane.set(th, plane);
-    this.lastDeparturesTime.set(th, Context.getShared().getNow().toStamp());
+    this.lastDepartures.set(th, new LastDepartureInfo(plane, Context.getShared().getNow().toStamp()));
     this.departureSwitchAltitude.set(plane, switchAltitude);
   }
 
@@ -120,10 +143,7 @@ class DepartureManager implements IXPersistable {
   }
 
   public EDayTimeStamp getLastDepartureTime(ActiveRunwayThreshold rt) {
-    EDayTimeStamp ret;
-    ret = this.lastDeparturesTime.tryGet(rt).orElse(null);
-    if (ret == null)
-      ret = new EDayTimeStamp(0);
+    EDayTimeStamp ret = this.lastDepartures.tryGet(rt).map(q -> q.time).orElse(new EDayTimeStamp(0));
     return ret;
   }
 
@@ -148,11 +168,41 @@ class DepartureManager implements IXPersistable {
   public boolean isSomeDepartureOnRunway(String rwyName) {
     ActiveRunway runway = Context.Internal.getRunway(rwyName);
     for (ActiveRunwayThreshold rt : runway.getThresholds()) {
-      IAirplane aip = this.lastDepartingPlane.tryGet(rt).orElse(null);
-      if (aip != null && aip.getState() == AirplaneState.takeOffRoll)
-        return true;
+      return this.lastDepartures
+              .tryGet(rt)
+              .map(q -> q.plane.getState() == AirplaneState.takeOffRoll)
+              .orElse(false);
     }
     return false;
+  }
+
+  public void movePlanesToHoldingPoint() {
+    for (IAirplane plane : holdingPointNotAssigned.where(q -> q.getRouting().getAssignedRunwayThreshold() != null)) {
+      this.holdingPointNotAssigned.remove(plane);
+      this.holdingPointWaitingForAppSwitchConfirmation.add(plane);
+      this.holdingPointWaitingTimeMap.set(plane, Context.getShared().getNow().toStamp());
+    }
+  }
+
+  public void registerNewDeparture(IAirplane plane, ActiveRunwayThreshold runwayThreshold) {
+    EAssert.Argument.isTrue(plane.getState() == AirplaneState.holdingPoint);
+    this.holdingPointNotAssigned.add(plane);
+    DARoute r = getDepartureRouteForPlane(runwayThreshold, plane.getType(), plane.getRouting().getEntryExitPoint(), true);
+    Message m = new Message(
+            Participant.createAtc(this.parent.getAtcId()),
+            Participant.createAirplane(plane.getCallsign()),
+            new SpeechList<ICommand>(ClearedToRouteCommand.create(r.getName(), r.getType(), runwayThreshold.getName())));
+    this.messageSenderConsumer.accept(m);
+  }
+
+  public IAirplane tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {
+    IAirplane ret = this.lastDepartures.tryGet(rt).map(q -> q.plane).orElse(null);
+    return ret;
+  }
+
+  public void unregisterFinishedDeparture(IAirplane plane) {
+    departing.remove(plane);
+    lastDepartures.remove(q -> q.getValue().plane.equals(plane));
   }
 
   @Override
@@ -176,11 +226,10 @@ class DepartureManager implements IXPersistable {
             .forEach(q -> this.departing.add(planes.get(q)));
 
     ctx.objects
-            .loadEntries(elm.getChild("lastDepartingPlane"), String.class, Callsign.class)
+            .loadEntries(elm.getChild("lastDepartures"), String.class, LastDepartureInfo.class)
             .forEach(q -> {
               ActiveRunwayThreshold k = ctx.getParents().get(Airport.class).getRunwayThreshold(q.getKey());
-              IAirplane v = ctx.getValues().get(IAirplaneList.class).get(q.getValue());
-              this.lastDepartingPlane.set(k, v);
+              this.lastDepartures.set(k, q.getValue());
             });
 
     ctx.objects
@@ -198,25 +247,6 @@ class DepartureManager implements IXPersistable {
             });
   }
 
-  public void movePlanesToHoldingPoint() {
-    for (IAirplane plane : holdingPointNotAssigned.where(q -> q.getRouting().getAssignedRunwayThreshold() != null)) {
-      this.holdingPointNotAssigned.remove(plane);
-      this.holdingPointWaitingForAppSwitchConfirmation.add(plane);
-      this.holdingPointWaitingTimeMap.set(plane, Context.getShared().getNow().toStamp());
-    }
-  }
-
-  public void registerNewDeparture(IAirplane plane, ActiveRunwayThreshold runwayThreshold) {
-    EAssert.Argument.isTrue(plane.getState() == AirplaneState.holdingPoint);
-    this.holdingPointNotAssigned.add(plane);
-    DARoute r = getDepartureRouteForPlane(runwayThreshold, plane.getType(), plane.getRouting().getEntryExitPoint(), true);
-    Message m = new Message(
-            Participant.createAtc(this.parent.getAtcId()),
-            Participant.createAirplane(plane.getCallsign()),
-            new SpeechList<ICommand>(ClearedToRouteCommand.create(r.getName(), r.getType(), runwayThreshold.getName())));
-    this.messageSenderConsumer.accept(m);
-  }
-
   @Override
   public void xSave(XElement elm, XSaveContext ctx) {
     ctx.objects.saveItems(holdingPointNotAssigned.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointNotAssigned");
@@ -224,23 +254,12 @@ class DepartureManager implements IXPersistable {
     ctx.objects.saveItems(holdingPointReady.select(q -> q.getCallsign()), Callsign.class, elm, "holdingPointReady");
     ctx.objects.saveItems(departing.select(q -> q.getCallsign()), Callsign.class, elm, "departing");
 
-    ctx.objects.saveEntries(this.lastDepartingPlane.select(q -> q.getName(), q -> q.getCallsign()),
-            String.class, Callsign.class, elm, "lastDepartingPlane");
+    ctx.objects.saveEntries(this.lastDepartures.select(q -> q.getName(), q -> q),
+            String.class, LastDepartureInfo.class, elm, "lastDepartures");
     ctx.objects.saveEntries(this.holdingPointWaitingTimeMap.select(q -> q.getCallsign(), q -> q),
             Callsign.class, EDayTimeStamp.class, elm, "holdingPointWaitingTimeMap");
     ctx.objects.saveEntries(this.departureSwitchAltitude.select(q -> q.getCallsign(), q -> q),
             Callsign.class, Double.class, elm, "departureSwitchAltitude");
-  }
-
-  public IAirplane tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {
-    IAirplane ret;
-    ret = this.lastDepartingPlane.tryGet(rt).orElse(null);
-    return ret;
-  }
-
-  public void unregisterFinishedDeparture(IAirplane plane) {
-    departing.remove(plane);
-    lastDepartingPlane.remove(q -> q.getValue() == plane);
   }
 
   private DARoute getDepartureRouteForPlane(ActiveRunwayThreshold rt, AirplaneType type, Navaid mainNavaid, boolean canBeVectoring) {

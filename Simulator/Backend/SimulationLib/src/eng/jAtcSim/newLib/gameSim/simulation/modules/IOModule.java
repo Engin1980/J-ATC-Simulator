@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.atcs.IUserAtcInterface;
@@ -20,12 +21,43 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
+import exml.IXPersistable;
 
 public class IOModule extends SimulationModule {
+
+  private static class OnlyOnePlaneMessageAtOnceProxy implements IXPersistable {
+    private static final int DELAY_BETWEEN_PLANE_MESSAGES_IN_SECONDS = 6;
+    private int counter = 0;
+    private final IList<Message> inner = new EList<>();
+
+    public void processMessages(IList<Message> lst) {
+      filterOutPlaneMessages(lst);
+      appendPlaneMessageIfReady(lst);
+    }
+
+    private void appendPlaneMessageIfReady(IList<Message> lst) {
+      if (inner.size() > 0) {
+        if (counter <= 0) {
+          Message msg = inner.get(0);
+          inner.removeAt(0);
+          lst.add(msg);
+          counter = DELAY_BETWEEN_PLANE_MESSAGES_IN_SECONDS;
+        }
+      }
+      counter--;
+    }
+
+    private void filterOutPlaneMessages(IList<Message> lst) {
+      IList<Message> tmp = lst.where(q -> q.getSource().getType() == Participant.eType.airplane);
+      lst.removeMany(tmp);
+      inner.addMany(tmp);
+    }
+  }
 
   private final KeyShortcutManager keyShortcutManager;
   private final Messenger messenger;
   private final SystemMessagesModule systemMessagesModule;
+  private final OnlyOnePlaneMessageAtOnceProxy onlyOnePlaneMessageAtOnceProxy = new OnlyOnePlaneMessageAtOnceProxy();
 
   public IOModule(
           Simulation parent,
@@ -50,6 +82,7 @@ public class IOModule extends SimulationModule {
 
   public IList<Message> getMessagesByKey(Object listener) {
     IList<eng.jAtcSim.newLib.messaging.Message> tmp = this.messenger.getMessagesByListener(listener, true);
+    this.onlyOnePlaneMessageAtOnceProxy.processMessages(tmp);
     return tmp;
   }
 
