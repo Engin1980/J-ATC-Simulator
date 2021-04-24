@@ -24,6 +24,8 @@ import eng.jAtcSim.newPacks.utils.ViewGameInfo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class TextInputView implements IView {
 
@@ -73,6 +75,21 @@ public class TextInputView implements IView {
       commandInputTextFieldExtender.appendText(Character.toString(q.keyCode), false);
       commandInputTextFieldExtender.focus();
     });
+
+    if (options.tryGet("requestFocus").orElse("false").equals("true"))
+      addFocusRequestOnFrameOpen();
+  }
+
+  private void addFocusRequestOnFrameOpen() {
+    {
+      JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this.parent);
+      frame.addWindowListener(new WindowAdapter() {
+        @Override
+        public void windowOpened(WindowEvent e) {
+          TextInputView.this.txt.requestFocus();
+        }
+      });
+    }
   }
 
   private void registerKeyStrokes() {

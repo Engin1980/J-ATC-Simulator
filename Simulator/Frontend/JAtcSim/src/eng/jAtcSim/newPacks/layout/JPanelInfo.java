@@ -7,18 +7,24 @@ import eng.jAtcSim.newPacks.IView;
 import javax.swing.*;
 
 public class JPanelInfo {
-  private IView view;
+  private final IView view;
+  private final boolean focus;
   private final JPanel panel;
   private final IReadOnlyMap<String, String> options;
 
-  public JPanelInfo(JPanel panel, IView view, IReadOnlyMap<String, String> options) {
+  public JPanelInfo(JPanel panel, IView view, boolean focus, IReadOnlyMap<String, String> options) {
     EAssert.Argument.isNotNull(panel, "panel");
     EAssert.Argument.isNotNull(view, "view");
     EAssert.Argument.isNotNull(options, "options");
 
     this.panel = panel;
     this.view = view;
+    this.focus = focus;
     this.options = options;
+  }
+
+  public boolean isFocus() {
+    return focus;
   }
 
   public IReadOnlyMap<String, String> getOptions() {

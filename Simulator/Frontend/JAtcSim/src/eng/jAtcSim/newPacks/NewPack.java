@@ -8,6 +8,7 @@ import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.utilites.ExceptionUtils;
+import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.app.FrmAbout;
@@ -18,7 +19,6 @@ import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.shared.logging.LogItemType;
-import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
 import eng.jAtcSim.newPacks.context.ViewGlobalEventContext;
 import eng.jAtcSim.newPacks.layout.JFrameFactory;
@@ -30,9 +30,11 @@ import eng.jAtcSim.shared.MessageBox;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -124,7 +126,8 @@ public class NewPack {
 
     if (appSettings.autosave.intervalInSeconds > 0)
       this.sim.registerOnSecondElapsed(s -> {
-        if (this.sim.getNow().getValue() % appSettings.autosave.intervalInSeconds == 0) this.onAutoSave.raise();});
+        if (this.sim.getNow().getValue() % appSettings.autosave.intervalInSeconds == 0) this.onAutoSave.raise();
+      });
   }
 
   public void quit() {
@@ -136,6 +139,30 @@ public class NewPack {
   }
 
   public void show() {
+    frameInfos.forEach(q -> {
+      eng.eSystem.utilites.awt.ComponentUtils.adjustComponentTree(
+              q.getFrame(),
+              new ComponentUtils.IComponentAdjuster() {
+                @Override
+                public void adjust(Component component) {
+                  component.addFocusListener(new FocusAdapter() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                      System.out.println("I've got focus! " + component.getName() + " - " + component.getClass().getSimpleName());
+                    }
+                  });
+                }
+              }
+      );
+    });
+    frameInfos.forEach(w -> w.getPanels().tryGetFirst(q -> q.isFocus()).ifPresent(q -> {
+      w.getFrame().addWindowListener(new WindowAdapter() {
+        @Override
+        public void windowOpened(WindowEvent e) {
+          q.getPanel().requestFocus();
+        }
+      });
+    }));
     frameInfos.forEach(q -> q.getFrame().setVisible(true));
     System.out.println("Viewed:");
   }

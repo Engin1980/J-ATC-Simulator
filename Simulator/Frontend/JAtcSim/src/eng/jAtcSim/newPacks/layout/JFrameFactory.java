@@ -106,8 +106,10 @@ public class JFrameFactory {
 
   private void buildPanelContent(JPanel pane, Panel content, IList<JPanelInfo> panelInfos) {
     String viewName = content.getView();
+    pane.setName(viewName);
+    boolean focus = content.isFocus();
     IView view = ViewFactory.getView(viewName);
-    panelInfos.add(new JPanelInfo(pane, view, content.getOptions()));
+    panelInfos.add(new JPanelInfo(pane, view, focus, content.getOptions()));
   }
 
   private void buildPanelContent(JPanel parent, ColumnList columns, IList<JPanelInfo> panelInfos) {

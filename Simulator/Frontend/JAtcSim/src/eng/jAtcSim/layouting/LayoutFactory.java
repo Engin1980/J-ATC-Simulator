@@ -142,6 +142,7 @@ public class LayoutFactory {
 
     String view = elm.getAttribute("view");
     String id = elm.tryGetAttribute("id").orElse(view);
+    boolean focus = elm.tryGetAttribute("focus").orElse("false").equals("true");
 
     IMap<String, String> options = new EMap<>();
     elm.getChildren("option").forEach(q->
@@ -151,7 +152,7 @@ public class LayoutFactory {
       options.set(k,v);
     });
 
-    Panel panel = new Panel(view, id, options);
+    Panel panel = new Panel(view, id, focus, options);
 
     return panel;
   }
