@@ -60,7 +60,7 @@ public class SystemMessagesModule extends SimulationModule {
   }
 
   private void processShortcutRequest(ShortcutRequest content, Participant source) {
-    if (parent.getIoModule().getKeyShortcutManager().isShortcutAvailable() == false) {
+    if (parent.getIoModule().getKeyShortcutManager() == null) {
       sendMessage(source, new SystemRejection(content, "Shortcuts are not available in the current mode."));
       return;
     }

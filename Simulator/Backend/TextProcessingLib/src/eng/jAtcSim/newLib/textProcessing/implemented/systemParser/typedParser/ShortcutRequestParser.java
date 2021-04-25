@@ -6,28 +6,33 @@ import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechPar
 
 public class ShortcutRequestParser extends TextSpeechParser<ShortcutRequest> {
   private static final String[][] patterns = {
-      {"SHORTCUT", "SET", "[A-Z0-9]+", ".+"},
-      {"SHORTCUT", "DEL", "[A-Z0-9]+"},
-      {"SHORTCUT"}
+          {"SHORTCUT", "SET", "[A-Z0-9]+", ".+"},
+          {"SHORTCUT", "DEL", "[A-Z0-9]+"},
+          {"SHORTCUT"}
   };
 
   @Override
   public String getHelp() {
     return super.buildHelpString(
-        "Shortcut management",
-        "SHORTCUT - print all shortcuts\n" +
-            "SHORTCUT SET {template} {replacement commands} - defines a new shortcut replacing template with replacement (overwrites if exists)\n" +
-            "SHORTCUT DEL {template} - deletes old shortcut (if exists)",
-        "Defines shortcuts, which can be used instead of standard commands and are expanded before execution",
-        "-SHORTCUT - prints all shortcuts\n" +
-            "-SHORTCUT SET SCI DM 50 TR 240 T C I 24 - defines command SCI as a sequence of DM 50 TR 240 T C I 24\n" +
-            "-SHORTCUT DEL SCI - deletes SCI shortcut"
+            "Shortcut management",
+            "SHORTCUT - print all shortcuts\n" +
+                    "SHORTCUT SET {template} {replacement commands} - defines a new shortcut replacing template with replacement (overwrites if exists)\n" +
+                    "SHORTCUT DEL {template} - deletes old shortcut (if exists)",
+            "Defines shortcuts, which can be used instead of standard commands and are expanded before execution",
+            "-SHORTCUT - prints all shortcuts\n" +
+                    "-SHORTCUT SET SCI DM 50 TR 240 T C I 24 - defines command SCI as a sequence of DM 50 TR 240 T C I 24\n" +
+                    "-SHORTCUT DEL SCI - deletes SCI shortcut"
     );
   }
 
   @Override
   public String[][] getPatterns() {
     return patterns;
+  }
+
+  @Override
+  public boolean ifMatchCollectAllThatLeft() {
+    return true;
   }
 
   @Override

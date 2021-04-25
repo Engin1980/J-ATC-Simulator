@@ -39,6 +39,11 @@ public class TextParsing {
         done.add(s);
         ret.add(s);
       }
+      if (p.ifMatchCollectAllThatLeft()){
+        done.addMany(toDo);
+        ret.addMany(toDo);
+        toDo.clear();
+      }
     }
     return ret;
   }

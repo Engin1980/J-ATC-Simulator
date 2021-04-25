@@ -1,31 +1,23 @@
 package eng.jAtcSim.newLib.gameSim.simulation.controllers;
 
-import eng.eSystem.collections.*;
-import eng.eSystem.exceptions.ToDoException;
-
-import static eng.eSystem.utilites.FunctionShortcuts.*;
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.IReadOnlyMap;
 
 public class KeyShortcutManager {
-  public boolean isShortcutAvailable() {
-    //TODO Implement this:
-    throw new ToDoException("");
-  }
+
+  private IMap<String, String> inner = new EMap<>();
 
   public void shortcutDeletion(String key) {
-    //TODO Implement this:
-    throw new ToDoException("");
-
+    this.inner.tryRemove(key);
   }
 
   public IReadOnlyMap<String, String> shortcutList() {
-    //TODO Implement this:
-    throw new ToDoException("");
+    return this.inner;
 
   }
 
   public void shortcutSet(String key, String value) {
-    //TODO Implement this:
-    throw new ToDoException("");
-
+    this.inner.set(key, value);
   }
 }

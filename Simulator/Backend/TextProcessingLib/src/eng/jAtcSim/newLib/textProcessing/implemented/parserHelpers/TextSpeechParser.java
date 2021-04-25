@@ -11,6 +11,10 @@ import java.util.Arrays;
 
 public abstract class TextSpeechParser<T extends ISpeech> {
 
+  public boolean ifMatchCollectAllThatLeft(){
+    return false;
+  }
+
   public final String[] getPrefixes() {
     //TODO optimalize according to kind, as this method always returns the same for the same class kind
     String[] ret = new String[getPatterns().length];
