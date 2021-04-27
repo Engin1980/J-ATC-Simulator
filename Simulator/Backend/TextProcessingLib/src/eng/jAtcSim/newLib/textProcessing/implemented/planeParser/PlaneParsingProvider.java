@@ -90,13 +90,13 @@ public class PlaneParsingProvider implements IPlaneParsingProvider, IWithShortcu
 
   @Override
   public final SpeechList<IForPlaneSpeech> parse(Object input) {
-    String line = (String) input;
+    String line = (String) input.toString().toUpperCase();
     StringBuilder todo = new StringBuilder(line);
     StringBuilder done = new StringBuilder();
     SpeechList<IForPlaneSpeech> ret = new SpeechList<>();
 
     while (todo.length() > 0) {
-      ISet<TextSpeechParser<? extends IForPlaneSpeech>> parsers = planeParsers.get(todo.toString());
+      ISet<TextSpeechParser<? extends IForPlaneSpeech>> parsers = planeParsers.getAllByPrefixes(todo.toString());
 
       if (parsers.isEmpty()) {
         if (tryExpandByShortcut(todo)) continue;
@@ -121,18 +121,18 @@ public class PlaneParsingProvider implements IPlaneParsingProvider, IWithShortcu
     todo = todo.delete(0, trgs.getC());
     trimStringBuilder(todo);
 
-    if (done.charAt(done.length() - 1) != ' ')
+    if (done.length() > 0 && done.charAt(done.length() - 1) != ' ')
       done.append(" ");
-    done.append(" ").append(done);
+    done.append(done);
 
     IForPlaneSpeech ret = parser.parse(trgs.getA(), trgs.getB());
     return ret;
   }
 
   protected void trimStringBuilder(StringBuilder sb) {
-    while (sb.charAt(0) == ' ')
+    while (sb.length() > 0 && sb.charAt(0) == ' ')
       sb.delete(0, 1);
-    while (sb.charAt(sb.length() - 1) == ' ')
+    while (sb.length() > 0 && sb.charAt(sb.length() - 1) == ' ')
       sb.delete(sb.length() - 1, sb.length());
   }
 
@@ -142,7 +142,7 @@ public class PlaneParsingProvider implements IPlaneParsingProvider, IWithShortcu
       Pattern p = Pattern.compile(parser.getPatterns().get(i));
       Matcher m = p.matcher(todo);
       if (m.find()) {
-        ret = new Triple<>(i, new RegexUtils.RegexGroups(m), m.group(0).length());
+        ret = new Triple<>(i, new RegexUtils.RegexGroups(m, true), m.group(0).length());
         break;
       }
     }

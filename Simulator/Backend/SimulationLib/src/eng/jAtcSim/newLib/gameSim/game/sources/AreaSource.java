@@ -23,7 +23,6 @@ public class AreaSource extends Source<Area> {
   private String icao;
 
   @XConstructor
-
   private AreaSource() {
   }
 

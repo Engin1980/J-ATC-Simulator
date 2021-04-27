@@ -68,7 +68,7 @@ public class AtcParsingProvider implements IAtcParsingProvider, IWithShortcuts<S
     StringBuilder todo = new StringBuilder(line);
     StringBuilder done = new StringBuilder();
 
-    ISet<TextSpeechParser<? extends IAtcSpeech>> parsers = atcParsers.get(todo.toString());
+    ISet<TextSpeechParser<? extends IAtcSpeech>> parsers = atcParsers.getAllByPatterns(todo.toString());
     if (parsers.size() == 0)
       throw new EInvalidCommandException("Failed to parse command prefix.",
               done.toString(), todo.toString());
@@ -86,9 +86,9 @@ public class AtcParsingProvider implements IAtcParsingProvider, IWithShortcuts<S
     todo = todo.delete(0, trgs.getC());
     trimStringBuilder(todo);
 
-    if (done.charAt(done.length() - 1) != ' ')
+    if (done.length() > 0 && done.charAt(done.length() - 1) != ' ')
       done.append(" ");
-    done.append(" ").append(done);
+    done.append(done);
 
     IAtcSpeech ret = parser.parse(trgs.getA(), trgs.getB());
     return ret;
@@ -100,7 +100,7 @@ public class AtcParsingProvider implements IAtcParsingProvider, IWithShortcuts<S
       Pattern p = Pattern.compile(parser.getPatterns().get(i));
       Matcher m = p.matcher(todo);
       if (m.find()) {
-        ret = new Triple<>(i, new RegexUtils.RegexGroups(m), m.group(0).length());
+        ret = new Triple<>(i, new RegexUtils.RegexGroups(m, true), m.group(0).length());
         break;
       }
     }
@@ -111,9 +111,9 @@ public class AtcParsingProvider implements IAtcParsingProvider, IWithShortcuts<S
   }
 
   protected void trimStringBuilder(StringBuilder sb) {
-    while (sb.charAt(0) == ' ')
+    while (sb.length() > 0 && sb.charAt(0) == ' ')
       sb.delete(0, 1);
-    while (sb.charAt(sb.length() - 1) == ' ')
+    while (sb.length() > 0 && sb.charAt(sb.length() - 1) == ' ')
       sb.delete(sb.length() - 1, sb.length());
   }
 

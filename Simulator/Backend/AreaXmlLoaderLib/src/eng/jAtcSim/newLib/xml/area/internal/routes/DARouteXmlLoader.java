@@ -40,12 +40,12 @@ public class DARouteXmlLoader extends XmlLoader<DARoute> {
     Integer entryAltitude = SmartXmlLoaderUtils.loadAltitude("entryFL", null);
     String mainFixName = SmartXmlLoaderUtils.loadString("mainFix", null);
     Navaid mainNavaid = mainFixName != null ?
-        context.area.navaids.get(mainFixName) :
-        getMainRouteNavaidFromRouteName(name);
+            context.area.navaids.get(mainFixName) :
+            getMainRouteNavaidFromRouteName(name);
 
     IList<ICommand> commands = SmartXmlLoaderUtils.loadList(
-        source.getChildren(),
-        new SpeechXmlLoader(this.context)::load
+            source.getChildren(),
+            new SpeechXmlLoader(this.context)::load
     );
 
     IReadOnlyList<Navaid> routeNavaids = getNavaidsFromCommands(commands);
@@ -108,15 +108,15 @@ public class DARouteXmlLoader extends XmlLoader<DARoute> {
   }
 
   private Navaid getMainRouteNavaidFromRouteName(String routeName) {
-    String name = RegexUtils.extractGroupContent(routeName, "^([A-Z]+)(\\d.+)?", 1);
+    String name = RegexUtils.extractGroup(routeName, "^([A-Z]+)(\\d.+)?", 1);
     Navaid ret = context.area.navaids.get(name);
     return ret;
   }
 
   private IReadOnlyList<Navaid> getNavaidsFromCommands(IReadOnlyList<ICommand> commands) {
     IList<String> navaidNames = commands
-        .where(q -> q instanceof ToNavaidCommand)
-        .select(q -> ((ToNavaidCommand) q).getNavaidName());
+            .where(q -> q instanceof ToNavaidCommand)
+            .select(q -> ((ToNavaidCommand) q).getNavaidName());
     IList<Navaid> ret = navaidNames.select(q -> context.area.navaids.getWithPBD(q));
     return ret;
   }

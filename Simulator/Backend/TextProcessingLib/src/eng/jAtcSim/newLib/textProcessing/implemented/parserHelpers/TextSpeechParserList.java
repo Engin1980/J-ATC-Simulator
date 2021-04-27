@@ -5,6 +5,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.ISet;
+import eng.eSystem.utilites.RegexUtils;
 import eng.jAtcSim.newLib.speeches.base.ISpeech;
 
 import java.util.Arrays;
@@ -18,27 +19,17 @@ public class TextSpeechParserList<T extends ISpeech> {
     inner.add(parser);
   }
 
-  public ISet<TextSpeechParser<? extends T>> get(String txt) {
-    String beginning = txt.contains(" ") ? txt.substring(0, txt.indexOf(' ')) : txt;
-    ISet<TextSpeechParser<? extends T>> ret = inner.where(q -> q.getPrefixes().contains(beginning)).toSet();
+  public ISet<TextSpeechParser<? extends T>> getAllByPatterns(String txt) {
+    ISet<TextSpeechParser<? extends T>> ret = inner
+            .where(q -> q.getPatterns()
+                    .isAny(p -> RegexUtils.isMatch(txt, p))).toSet();
     return ret;
   }
 
-  public IReadOnlyList<TextSpeechParser<? extends T>> getAll() {
-    return inner;
-  }
-
-  public TextSpeechParser<? extends T> getByPrefix(
-          String prefix) {
-    for (TextSpeechParser<? extends T> tmp : inner) {
-      for (String s : tmp.getPrefixes()) {
-        Pattern p = Pattern.compile("^(" + s + ")$");
-        if (p.matcher(prefix).find()) {
-          return tmp;
-        }
-      }
-    }
-    return null;
+  public ISet<TextSpeechParser<? extends T>> getAllByPrefixes(String txt) {
+    String beginning = txt.contains(" ") ? txt.substring(0, txt.indexOf(' ')) : txt;
+    ISet<TextSpeechParser<? extends T>> ret = inner.where(q -> q.getPrefixes().contains(beginning)).toSet();
+    return ret;
   }
 
   public String getHelp() {
@@ -58,5 +49,22 @@ public class TextSpeechParserList<T extends ISpeech> {
       return null;
     else
       return p.getHelp();
+  }
+
+  private IReadOnlyList<TextSpeechParser<? extends T>> getAll() {
+    return inner;
+  }
+
+  private TextSpeechParser<? extends T> getByPrefix(
+          String prefix) {
+    for (TextSpeechParser<? extends T> tmp : inner) {
+      for (String s : tmp.getPrefixes()) {
+        Pattern p = Pattern.compile("^(" + s + ")$");
+        if (p.matcher(prefix).find()) {
+          return tmp;
+        }
+      }
+    }
+    return null;
   }
 }
