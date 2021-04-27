@@ -4,9 +4,11 @@ import eng.eSystem.Triple;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.utilites.RegexUtils;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemUserRequest;
 import eng.jAtcSim.newLib.textProcessing.IWithHelp;
+import eng.jAtcSim.newLib.textProcessing.implemented.ParsingProviderUtils;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParserList;
 import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.typedParser.*;
@@ -54,56 +56,19 @@ public class SystemParsingProvider implements ISystemParsingProvider, IWithHelp 
 
   @Override
   public ISystemSpeech parse(Object input) {
-    String line = (String) input;
-    StringBuilder todo = new StringBuilder(line);
+    StringBuilder todo = new StringBuilder();
     StringBuilder done = new StringBuilder();
+    ParsingProviderUtils.prepareStringBuilders(input, todo, done);
 
     ISet<TextSpeechParser<? extends ISystemUserRequest>> parsers = systemParsers.getAllByPatterns(todo.toString());
     if (parsers.size() == 0)
-      throw new EInvalidCommandException("Failed to parse command prefix.",
+      throw new EInvalidCommandException("Failed to parse system command.",
               done.toString(), todo.toString());
     else if (parsers.size() > 1)
-      throw new EInvalidCommandException("There are multiple ways to parse command prefix (probably internal error?).",
+      throw new EInvalidCommandException("There are multiple ways to parse system command (probably internal error?).",
               done.toString(), todo.toString());
 
-    ISystemSpeech ret = this.parseWithParser(parsers.getFirst(), todo, done);
+    ISystemSpeech ret = ParsingProviderUtils.parseWithParser(parsers.getFirst(), todo, done);
     return ret;
-  }
-
-  private ISystemSpeech parseWithParser(TextSpeechParser<? extends ISystemUserRequest> parser, StringBuilder todo, StringBuilder done) {
-    Triple<Integer, RegexUtils.RegexGroups, Integer> trgs = findFirstMatchingGroupSet(parser, todo.toString());
-
-    todo = todo.delete(0, trgs.getC());
-    trimStringBuilder(todo);
-
-    if (done.length() > 0 && done.charAt(done.length() - 1) != ' ')
-      done.append(" ");
-    done.append(done);
-
-    ISystemSpeech ret = parser.parse(trgs.getA(), trgs.getB());
-    return ret;
-  }
-
-  private Triple<Integer, RegexUtils.RegexGroups, Integer> findFirstMatchingGroupSet(TextSpeechParser<? extends ISystemUserRequest> parser, String todo) {
-    Triple<Integer, RegexUtils.RegexGroups, Integer> ret = null;
-    for (int i = 0; i < parser.getPatterns().size(); i++) {
-      Pattern p = Pattern.compile(parser.getPatterns().get(i));
-      Matcher m = p.matcher(todo);
-      if (m.find()) {
-        ret = new Triple<>(i, new RegexUtils.RegexGroups(m, true), m.group(0).length());
-        break;
-      }
-    }
-
-    EAssert.isNotNull(ret);
-
-    return ret;
-  }
-
-  protected void trimStringBuilder(StringBuilder sb) {
-    while (sb.length() > 0 && sb.charAt(0) == ' ')
-      sb.delete(0, 1);
-    while (sb.length() > 0 && sb.charAt(sb.length() - 1) == ' ')
-      sb.delete(sb.length() - 1, sb.length());
   }
 }

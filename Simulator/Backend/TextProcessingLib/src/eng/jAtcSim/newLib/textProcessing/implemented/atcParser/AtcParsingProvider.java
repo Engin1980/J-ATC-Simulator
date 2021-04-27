@@ -1,11 +1,9 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.atcParser;
 
-import eng.eSystem.Triple;
 import eng.eSystem.collections.ISet;
-import eng.eSystem.utilites.RegexUtils;
-import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.textProcessing.IWithHelp;
+import eng.jAtcSim.newLib.textProcessing.implemented.ParsingProviderUtils;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers.PlaneSwitchRequestParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers.RunwayInUseRequestParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers.RunwayMaintenanceRequestParser;
@@ -15,9 +13,6 @@ import eng.jAtcSim.newLib.textProcessing.parsing.EInvalidCommandException;
 import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParsingProvider;
 import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.IWithShortcuts;
 import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.ShortcutList;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class AtcParsingProvider implements IAtcParsingProvider, IWithShortcuts<String>, IWithHelp {
 
@@ -64,57 +59,19 @@ public class AtcParsingProvider implements IAtcParsingProvider, IWithShortcuts<S
 
   @Override
   public IAtcSpeech parse(Object input) {
-    String line = (String) input;
-    StringBuilder todo = new StringBuilder(line);
+    StringBuilder todo = new StringBuilder();
     StringBuilder done = new StringBuilder();
+    ParsingProviderUtils.prepareStringBuilders(input, todo, done);
 
     ISet<TextSpeechParser<? extends IAtcSpeech>> parsers = atcParsers.getAllByPatterns(todo.toString());
     if (parsers.size() == 0)
-      throw new EInvalidCommandException("Failed to parse command prefix.",
-              done.toString(), todo.toString());
+      throw new EInvalidCommandException("Failed to parse atc command.", done.toString(), todo.toString());
     else if (parsers.size() > 1)
-      throw new EInvalidCommandException("There are multiple ways to parse command prefix (probably internal error?).",
+      throw new EInvalidCommandException("There are multiple ways to parse atc command (probably internal error?).",
               done.toString(), todo.toString());
 
-    IAtcSpeech ret = this.parseWithParser(parsers.getFirst(), todo, done);
+    IAtcSpeech ret = ParsingProviderUtils.parseWithParser(parsers.getFirst(), todo, done);
     return ret;
-  }
-
-  private IAtcSpeech parseWithParser(TextSpeechParser<? extends IAtcSpeech> parser, StringBuilder todo, StringBuilder done) {
-    Triple<Integer, RegexUtils.RegexGroups, Integer> trgs = findFirstMatchingGroupSet(parser, todo.toString());
-
-    todo = todo.delete(0, trgs.getC());
-    trimStringBuilder(todo);
-
-    if (done.length() > 0 && done.charAt(done.length() - 1) != ' ')
-      done.append(" ");
-    done.append(done);
-
-    IAtcSpeech ret = parser.parse(trgs.getA(), trgs.getB());
-    return ret;
-  }
-
-  private Triple<Integer, RegexUtils.RegexGroups, Integer> findFirstMatchingGroupSet(TextSpeechParser<? extends IAtcSpeech> parser, String todo) {
-    Triple<Integer, RegexUtils.RegexGroups, Integer> ret = null;
-    for (int i = 0; i < parser.getPatterns().size(); i++) {
-      Pattern p = Pattern.compile(parser.getPatterns().get(i));
-      Matcher m = p.matcher(todo);
-      if (m.find()) {
-        ret = new Triple<>(i, new RegexUtils.RegexGroups(m, true), m.group(0).length());
-        break;
-      }
-    }
-
-    EAssert.isNotNull(ret);
-
-    return ret;
-  }
-
-  protected void trimStringBuilder(StringBuilder sb) {
-    while (sb.length() > 0 && sb.charAt(0) == ' ')
-      sb.delete(0, 1);
-    while (sb.length() > 0 && sb.charAt(sb.length() - 1) == ' ')
-      sb.delete(sb.length() - 1, sb.length());
   }
 
 }

@@ -1,13 +1,11 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.planeParser;
 
-import eng.eSystem.Triple;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.utilites.NumberUtils;
-import eng.eSystem.utilites.RegexUtils;
-import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.textProcessing.IWithHelp;
+import eng.jAtcSim.newLib.textProcessing.implemented.ParsingProviderUtils;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParserList;
 import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers.*;
@@ -17,8 +15,6 @@ import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.IWithShortcuts;
 import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.ShortcutList;
 
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PlaneParsingProvider implements IPlaneParsingProvider, IWithShortcuts<String>, IWithHelp {
 
@@ -90,9 +86,9 @@ public class PlaneParsingProvider implements IPlaneParsingProvider, IWithShortcu
 
   @Override
   public final SpeechList<IForPlaneSpeech> parse(Object input) {
-    String line = (String) input.toString().toUpperCase();
-    StringBuilder todo = new StringBuilder(line);
+    StringBuilder todo = new StringBuilder();
     StringBuilder done = new StringBuilder();
+    ParsingProviderUtils.prepareStringBuilders(input, todo, done);
     SpeechList<IForPlaneSpeech> ret = new SpeechList<>();
 
     while (todo.length() > 0) {
@@ -108,46 +104,9 @@ public class PlaneParsingProvider implements IPlaneParsingProvider, IWithShortcu
                 done.toString(), todo.toString());
       }
 
-      IForPlaneSpeech tmp = this.parseWithParser(parsers.getFirst(), todo, done);
+      IForPlaneSpeech tmp = ParsingProviderUtils.parseWithParser(parsers.getFirst(), todo, done);
       ret.add(tmp);
     }
-
-    return ret;
-  }
-
-  private IForPlaneSpeech parseWithParser(TextSpeechParser<? extends IForPlaneSpeech> parser, StringBuilder todo, StringBuilder done) {
-    Triple<Integer, RegexUtils.RegexGroups, Integer> trgs = findFirstMatchingGroupSet(parser, todo.toString());
-
-    todo = todo.delete(0, trgs.getC());
-    trimStringBuilder(todo);
-
-    if (done.length() > 0 && done.charAt(done.length() - 1) != ' ')
-      done.append(" ");
-    done.append(done);
-
-    IForPlaneSpeech ret = parser.parse(trgs.getA(), trgs.getB());
-    return ret;
-  }
-
-  protected void trimStringBuilder(StringBuilder sb) {
-    while (sb.length() > 0 && sb.charAt(0) == ' ')
-      sb.delete(0, 1);
-    while (sb.length() > 0 && sb.charAt(sb.length() - 1) == ' ')
-      sb.delete(sb.length() - 1, sb.length());
-  }
-
-  private Triple<Integer, RegexUtils.RegexGroups, Integer> findFirstMatchingGroupSet(TextSpeechParser<? extends IForPlaneSpeech> parser, String todo) {
-    Triple<Integer, RegexUtils.RegexGroups, Integer> ret = null;
-    for (int i = 0; i < parser.getPatterns().size(); i++) {
-      Pattern p = Pattern.compile(parser.getPatterns().get(i));
-      Matcher m = p.matcher(todo);
-      if (m.find()) {
-        ret = new Triple<>(i, new RegexUtils.RegexGroups(m, true), m.group(0).length());
-        break;
-      }
-    }
-
-    EAssert.isNotNull(ret);
 
     return ret;
   }
