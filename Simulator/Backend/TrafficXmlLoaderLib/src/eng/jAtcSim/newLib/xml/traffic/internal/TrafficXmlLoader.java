@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.xml.traffic.internal;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.traffic.models.DensityBasedTrafficModel;
@@ -25,7 +25,7 @@ public class TrafficXmlLoader {
           ret = new FlightListTraffixModelXmlLoader().load(source);
           break;
         default:
-          throw new EEnumValueUnsupportedException(source.getName());
+          throw new UnexpectedValueException(source.getName());
       }
     } catch (Exception e) {
       throw new EApplicationException("Unable to load traffic model.", e);

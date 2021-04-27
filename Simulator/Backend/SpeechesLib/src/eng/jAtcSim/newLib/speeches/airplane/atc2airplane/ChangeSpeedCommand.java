@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
@@ -61,7 +61,7 @@ public class ChangeSpeedCommand implements ICommand {
         case exactly:
           return "Speed exactly " + this.restriction.value + "kts {command}";
         default:
-          throw new EEnumValueUnsupportedException(this.restriction);
+          throw new UnexpectedValueException(this.restriction);
       }
     }
   }

@@ -6,7 +6,7 @@ import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
 
@@ -64,7 +64,7 @@ public class CallsignFactory implements IXPersistable {
         if (addFourth) ret.append(getNumericalChar());
         break;
       default:
-        throw new EEnumValueUnsupportedException(type);
+        throw new UnexpectedValueException(type);
     }
 
     return ret.toString();

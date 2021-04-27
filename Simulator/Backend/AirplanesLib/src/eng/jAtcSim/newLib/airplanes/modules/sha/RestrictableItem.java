@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.jAtcSim.newLib.shared.Restriction;
 
 import exml.IXPersistable;
@@ -64,7 +64,7 @@ class RestrictableItem implements IXPersistable {
           this.targetValue = this.restrictedValue.value;
           break;
         default:
-          throw new EEnumValueUnsupportedException(restrictedValue.direction);
+          throw new UnexpectedValueException(restrictedValue.direction);
       }
     }
   }

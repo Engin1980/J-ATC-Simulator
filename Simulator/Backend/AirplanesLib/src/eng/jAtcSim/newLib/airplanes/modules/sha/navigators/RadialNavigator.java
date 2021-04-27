@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha.navigators;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -33,7 +33,7 @@ public class RadialNavigator extends Navigator {
         RADIAL_MAX_DIFF = 45;
         break;
       default:
-        throw new EEnumValueUnsupportedException(mode);
+        throw new UnexpectedValueException(mode);
     }
 
     double heading = Coordinates.getBearing(current, target);

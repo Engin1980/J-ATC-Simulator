@@ -3,20 +3,20 @@ package eng.jAtcSim.newLib.gameSim;
 import eng.jAtcSim.newLib.textProcessing.formatting.IAtcFormatter;
 import eng.jAtcSim.newLib.textProcessing.formatting.IPlaneFormatter;
 import eng.jAtcSim.newLib.textProcessing.formatting.ISystemFormatter;
-import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParser;
-import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParser;
-import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParser;
+import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParsingProvider;
+import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParsingProvider;
+import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParsingProvider;
 
 public interface IParseFormat {
   IAtcFormatter<?> getAtcFormatter();
 
-  IAtcParser getAtcParser();
+  IAtcParsingProvider getAtcParser();
 
   IPlaneFormatter<?> getPlaneFormatter();
 
-  IPlaneParser getPlaneParser();
+  IPlaneParsingProvider getPlaneParser();
 
   ISystemFormatter<?> getSystemFormatter();
 
-  ISystemParser getSystemParser();
+  ISystemParsingProvider getSystemParser();
 }

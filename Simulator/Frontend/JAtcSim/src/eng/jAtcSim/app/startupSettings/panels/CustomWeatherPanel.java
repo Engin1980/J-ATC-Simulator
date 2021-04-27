@@ -4,7 +4,7 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.utilites.ExceptionUtils;
@@ -182,7 +182,7 @@ public class CustomWeatherPanel extends JStartupPanel {
         txtHitProbability.setValue(100);
         break;
       default:
-        throw new EEnumValueUnsupportedException(item);
+        throw new UnexpectedValueException(item);
     }
   }
 

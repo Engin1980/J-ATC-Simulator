@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha;
 
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
@@ -317,7 +317,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
         this.heading.add(diff);
         break;
       default:
-        throw new EEnumValueUnsupportedException(turn);
+        throw new UnexpectedValueException(turn);
     }
   }
 

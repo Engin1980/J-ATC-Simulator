@@ -4,7 +4,7 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.functionalInterfaces.Action;
 import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.swing.LayoutManager;
@@ -81,7 +81,7 @@ public class RadarView implements IViewWithCustomData {
             sb.append("TRANS:");
             break;
           default:
-            throw new EEnumValueUnsupportedException(q.getType());
+            throw new UnexpectedValueException(q.getType());
         }
         sb.appendItems(tmp.get(q), r -> r.getName(), ", ");
         sb.append(")");
@@ -277,7 +277,7 @@ public class RadarView implements IViewWithCustomData {
     else if (e.action == ViewGlobalEventContext.RadarPositionStoreRestoreEventArgs.EventAction.restore)
       this.restoreRadarPosition(e.bank);
     else
-      throw new EEnumValueUnsupportedException(e.action);
+      throw new UnexpectedValueException(e.action);
   }
 
   private Tuple<JPanel, JButton[]> buildButtonBlock(

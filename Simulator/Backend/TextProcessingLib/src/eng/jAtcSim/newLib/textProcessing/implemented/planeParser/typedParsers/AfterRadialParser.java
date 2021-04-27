@@ -1,13 +1,22 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.utilites.RegexUtils;
 import eng.jAtcSim.newLib.shared.RegexGrouper;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterRadialCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
 public class AfterRadialParser extends TextSpeechParser<AfterRadialCommand> {
-  private static final String BLOCK_PATTERN = "(\\S+)/(\\d{1,3})";
-  private static final String[][] patterns = {{"AR", BLOCK_PATTERN}};
+
+  private static final IReadOnlyList<String> patterns = EList.of(
+          "AR (\\S+)/(\\d{1,3})");
+
+  @Override
+  public IReadOnlyList<String> getPatterns() {
+    return patterns;
+  }
 
   @Override
   public String getHelp() {
@@ -19,18 +28,10 @@ public class AfterRadialParser extends TextSpeechParser<AfterRadialCommand> {
     return ret;
   }
 
-
   @Override
-  public String [][] getPatterns() {
-    return patterns;
-  }
-
-  @Override
-  public AfterRadialCommand parse(IList<String> blocks) {
-
-    RegexGrouper rg = RegexGrouper.apply(blocks.get(1), BLOCK_PATTERN);
-    String ns = rg.getString(1);
-    int rad = rg.getInt(2);
+  public AfterRadialCommand parse(int patternIndex, RegexUtils.RegexGroups groups) {
+    String ns = groups.getString(1);
+    int rad = groups.getInt(2);
     AfterRadialCommand ret = AfterRadialCommand.create(ns, rad);
     return ret;
   }

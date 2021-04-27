@@ -5,6 +5,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.ISet;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class ShortcutList<T> {
 
@@ -41,9 +42,8 @@ public class ShortcutList<T> {
     if (inner.containsKey(key)) inner.remove(key);
   }
 
-  //TODo convert to optional too
-  public T tryGet(T key) {
-    T ret = inner.tryGet(key).orElse(null);
+  public Optional<T> tryGet(T key) {
+    Optional<T> ret = inner.tryGet(key);
     return ret;
   }
 }

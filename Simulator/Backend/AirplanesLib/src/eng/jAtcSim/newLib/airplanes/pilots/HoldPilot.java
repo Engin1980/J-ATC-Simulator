@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
@@ -159,7 +159,7 @@ public class HoldPilot extends Pilot {
         break;
 
       default:
-        throw new EEnumValueUnsupportedException(this.phase);
+        throw new UnexpectedValueException(this.phase);
     }
 
     //TODEL

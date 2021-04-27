@@ -6,7 +6,6 @@ import exml.annotations.XConstructor;
 public class ProceedDirectCommand extends ToNavaidCommand {
 
   @XConstructor
-
   private ProceedDirectCommand(){
     super("?");
   }

@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.area.approaches.perCategoryValues;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
@@ -46,7 +46,7 @@ public class IntegerPerCategoryValue implements IXPersistable {
       case 'D':
         return this.d;
       default:
-        throw new EEnumValueUnsupportedException(category);
+        throw new UnexpectedValueException(category);
     }
   }
 

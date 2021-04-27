@@ -2,7 +2,7 @@ package eng.jAtcSim.newPacks.views;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IReadOnlyMap;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.app.extenders.CommandInputTextFieldExtender;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
@@ -14,9 +14,9 @@ import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 import eng.jAtcSim.newLib.speeches.system.StringMessage;
-import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.AtcParser;
-import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.PlaneParser;
-import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.SystemParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.AtcParsingProvider;
+import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.PlaneParsingProvider;
+import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.SystemParsingProvider;
 import eng.jAtcSim.newPacks.IView;
 import eng.jAtcSim.newPacks.context.ViewGlobalEventContext;
 import eng.jAtcSim.newPacks.utils.GlobalKeyStrokes;
@@ -210,7 +210,7 @@ public class TextInputView implements IView {
 //        sb.appendFormat("Unable to parse system command from '%s.", arguments.get("command"));
 //        break;
 //      default:
-//        throw new EEnumValueUnsupportedException(errorType);
+//        throw new UnexpectedValueException(errorType);
 //    }
 
     return sb.toString();
@@ -218,9 +218,9 @@ public class TextInputView implements IView {
 
   private ParsersSet buildParsers() {
     return new ParsersSet(
-            new PlaneParser(),
-            new AtcParser(),
-            new SystemParser());
+            new PlaneParsingProvider(),
+            new AtcParsingProvider(),
+            new SystemParsingProvider());
   }
 
   private void sendPlaneCommand(CommandInputTextFieldExtender commandInputTextFieldExtender, CommandInputTextFieldExtender.CommandEventArgs<Callsign, SpeechList<IForPlaneSpeech>> e) {
@@ -243,7 +243,7 @@ public class TextInputView implements IView {
         this.sim.pauseUnpauseSim();
         break;
       default:
-        throw new EEnumValueUnsupportedException(e.specialCommand);
+        throw new UnexpectedValueException(e.specialCommand);
     }
   }
 

@@ -1,19 +1,21 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.utilites.RegexUtils;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
 public class ChangeAltitudeParser extends TextSpeechParser<ChangeAltitudeCommand> {
 
-  private static final String[][] patterns = {
-      {"MA", "\\d{1,3}"},
-      {"CM", "\\d{1,3}"},
-      {"DM", "\\d{1,3}"}
-  };
+  private static final IReadOnlyList<String> patterns = EList.of(
+          "MA (\\d{1,3})",
+          "CM (\\d{1,3})",
+          "DM (\\d{1,3})");
 
   @Override
-  public String[][] getPatterns() {
+  public IReadOnlyList<String> getPatterns() {
     return patterns;
   }
 
@@ -30,26 +32,26 @@ public class ChangeAltitudeParser extends TextSpeechParser<ChangeAltitudeCommand
   }
 
   @Override
-  public ChangeAltitudeCommand parse(IList<String> blocks) {
+  public ChangeAltitudeCommand parse(int patternIndex, RegexUtils.RegexGroups groups) {
     ChangeAltitudeCommand ret;
     ChangeAltitudeCommand.eDirection d;
     int a;
 
-    switch (blocks.get(0)) {
-      case "MA":
+    switch (patternIndex) {
+      case 0:
         d = ChangeAltitudeCommand.eDirection.any;
         break;
-      case "CM":
+      case 1:
         d = ChangeAltitudeCommand.eDirection.climb;
         break;
-      case "DM":
+      case 2:
         d = ChangeAltitudeCommand.eDirection.descend;
         break;
       default:
         throw new UnsupportedOperationException("Invalid prefix for Maintain-altitude command.");
     }
 
-    a = super.getInt(blocks, 1) * 100;
+    a = groups.getInt(1) * 100;
 
     ret = ChangeAltitudeCommand.create(d, a);
     return ret;

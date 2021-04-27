@@ -4,7 +4,7 @@ import eng.eSystem.collections.*;
 import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -865,7 +865,7 @@ public class Radar {
           drawRoute(route.getRouteNavaids(), styleSettings.star);
           break;
         default:
-          throw new EEnumValueUnsupportedException(route.getType());
+          throw new UnexpectedValueException(route.getType());
       }
     }
   }
@@ -928,7 +928,7 @@ public class Radar {
       case danger:
         return styleSettings.borderRestricted;
       default:
-        throw new EEnumValueUnsupportedException(border.getType());
+        throw new UnexpectedValueException(border.getType());
     }
   }
 
@@ -953,7 +953,7 @@ public class Radar {
       case airport:
         return styleSettings.navAirport;
       default:
-        throw new EEnumValueUnsupportedException(navaid.getType());
+        throw new UnexpectedValueException(navaid.getType());
     }
   }
 

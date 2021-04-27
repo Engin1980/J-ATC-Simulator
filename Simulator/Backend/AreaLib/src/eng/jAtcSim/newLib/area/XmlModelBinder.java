@@ -3,7 +3,7 @@
 //import eng.eSystem.Tuple;
 //import eng.eSystem.collections.*;
 //import eng.eSystem.exceptions.EApplicationException;
-//import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+//import eng.eSystem.exceptions.UnexpectedValueException;
 //import eng.eSystem.geo.Coordinate;
 //import eng.eSystem.geo.Coordinates;
 //import eng.eSystem.utilites.RegexUtils;
@@ -676,7 +676,7 @@
 //        ret = null;
 //        break;
 //      default:
-//        throw new EEnumValueUnsupportedException(type);
+//        throw new UnexpectedValueException(type);
 //    }
 //    return ret;
 //  }

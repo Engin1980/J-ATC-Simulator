@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.NumberUtils;
@@ -69,7 +69,7 @@ public abstract class Pilot implements IXPersistable {
           maxOrdered = speedRestriction.value;
           break;
         default:
-          throw new EEnumValueUnsupportedException(speedRestriction.direction);
+          throw new UnexpectedValueException(speedRestriction.direction);
       }
     } else {
       minOrdered = Integer.MIN_VALUE;
@@ -125,7 +125,7 @@ public abstract class Pilot implements IXPersistable {
         ts = NumberUtils.boundBetween(minOrdered, Math.min(holdingOptimalSpeed, rdr.getType().vCruise), maxOrdered);
         break;
       default:
-        throw new EEnumValueUnsupportedException(rdr.getState());
+        throw new UnexpectedValueException(rdr.getState());
     }
 
     if (rdr.getSha().getTargetSpeed() != ts)

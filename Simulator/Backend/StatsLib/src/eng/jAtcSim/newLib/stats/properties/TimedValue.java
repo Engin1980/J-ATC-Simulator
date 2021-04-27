@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.stats.properties;
 
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import exml.IXPersistable;
 import exml.annotations.XConstructor;
@@ -45,7 +45,7 @@ public class TimedValue<T> implements IXPersistable {
         value = Double.parseDouble(elm.getContent());
         break;
       default:
-        throw new EEnumValueUnsupportedException(valueType);
+        throw new UnexpectedValueException(valueType);
     }
 
     String dt = elm.getAttribute("time");

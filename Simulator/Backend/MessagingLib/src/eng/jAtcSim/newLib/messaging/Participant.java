@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.messaging;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -88,7 +88,7 @@ public class Participant implements IXPersistable {
       case user:
         return "✉ USR";
       default:
-        throw new EEnumValueUnsupportedException(type);
+        throw new UnexpectedValueException(type);
     }
   }
 }

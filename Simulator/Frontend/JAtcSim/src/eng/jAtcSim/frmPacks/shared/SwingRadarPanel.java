@@ -4,7 +4,7 @@
 //import eng.eSystem.Tuple;
 //import eng.eSystem.collections.*;
 //import eng.eSystem.exceptions.EApplicationException;
-//import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+//import eng.eSystem.exceptions.UnexpectedValueException;
 //import eng.eSystem.functionalInterfaces.Selector;
 //import eng.eSystem.swing.LayoutManager;
 //import eng.jAtcSim.SwingRadar.SwingCanvas;
@@ -104,7 +104,7 @@
 //            sb.append("TRANS:");
 //            break;
 //          default:
-//            throw new EEnumValueUnsupportedException(q.getType());
+//            throw new UnexpectedValueException(q.getType());
 //        }
 //        sb.appendItems(tmp.get(q), r -> r.getName(), ", ");
 //        sb.append(")");
@@ -324,7 +324,7 @@
 //        sb.appendFormat("Unable to parse system command from '%s.", arguments.get("command"));
 //        break;
 //      default:
-//        throw new EEnumValueUnsupportedException(errorType);
+//        throw new UnexpectedValueException(errorType);
 //    }
 //
 //    return sb.toString();
@@ -346,7 +346,7 @@
 //        this.sim.pauseUnpauseSim();
 //        break;
 //      default:
-//        throw new EEnumValueUnsupportedException(e.specialCommand);
+//        throw new UnexpectedValueException(e.specialCommand);
 //    }
 //  }
 //

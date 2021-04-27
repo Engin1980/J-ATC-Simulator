@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.shared.enums;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 
 public enum ApproachType {
   ils_I,
@@ -28,7 +28,7 @@ public enum ApproachType {
       case "VOR":
         return vor;
       default:
-        throw new EEnumValueUnsupportedException(str);
+        throw new UnexpectedValueException(str);
     }
   }
 
@@ -58,7 +58,7 @@ public enum ApproachType {
       case vor:
         return "VOR";
       default:
-        throw new EEnumValueUnsupportedException(this);
+        throw new UnexpectedValueException(this);
     }
   }
 }

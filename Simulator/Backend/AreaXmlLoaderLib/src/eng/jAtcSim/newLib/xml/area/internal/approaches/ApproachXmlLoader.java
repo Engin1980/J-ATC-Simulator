@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.xml.area.internal.approaches;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
@@ -490,7 +490,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
             type = ApproachType.ils_III;
             break;
           default:
-            throw new EEnumValueUnsupportedException(ilsType);
+            throw new UnexpectedValueException(ilsType);
         }
       }
       int daA = SmartXmlLoaderUtils.loadInteger("daA");

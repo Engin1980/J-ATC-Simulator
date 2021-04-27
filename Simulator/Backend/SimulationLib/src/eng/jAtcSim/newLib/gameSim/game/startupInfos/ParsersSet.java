@@ -1,15 +1,15 @@
 package eng.jAtcSim.newLib.gameSim.game.startupInfos;
 
-import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParser;
-import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParser;
-import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParser;
+import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParsingProvider;
+import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParsingProvider;
+import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParsingProvider;
 
 public class ParsersSet {
-  public final IAtcParser atcParser;
-  public final IPlaneParser planeParser;
-  public final ISystemParser systemParser;
+  public final IAtcParsingProvider atcParser;
+  public final IPlaneParsingProvider planeParser;
+  public final ISystemParsingProvider systemParser;
 
-  public ParsersSet(IPlaneParser planeParser, IAtcParser atcParser, ISystemParser systemParser) {
+  public ParsersSet(IPlaneParsingProvider planeParser, IAtcParsingProvider atcParser, ISystemParsingProvider systemParser) {
     this.planeParser = planeParser;
     this.atcParser = atcParser;
     this.systemParser = systemParser;

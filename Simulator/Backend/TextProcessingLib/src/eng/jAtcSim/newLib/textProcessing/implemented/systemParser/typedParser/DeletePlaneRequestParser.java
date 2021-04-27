@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.systemParser.typedParser;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.utilites.RegexUtils;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.speeches.system.user2system.DeletePlaneRequest;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
@@ -8,11 +9,13 @@ import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechPar
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
 public class DeletePlaneRequestParser extends TextSpeechParser<DeletePlaneRequest> {
+
+  private static final IReadOnlyList<String> patterns = EList.of(
+          "REMOVE (\\D{4})");
+
   @Override
-  public String[][] getPatterns() {
-    return new String[][]{
-      {"remove", "\\d{4}"}
-    };
+  public IReadOnlyList<String> getPatterns() {
+    return patterns;
   }
 
   @Override
@@ -27,8 +30,9 @@ public class DeletePlaneRequestParser extends TextSpeechParser<DeletePlaneReques
   }
 
   @Override
-  public DeletePlaneRequest parse(IList<String> blocks) {
-    Squawk sqwk = Squawk.create(blocks.get(1));
+  public DeletePlaneRequest parse(int patternIndex, RegexUtils.RegexGroups groups) {
+    String tmp = groups.getString(1);
+    Squawk sqwk = Squawk.create(tmp);
     return new DeletePlaneRequest(sqwk);
   }
 }

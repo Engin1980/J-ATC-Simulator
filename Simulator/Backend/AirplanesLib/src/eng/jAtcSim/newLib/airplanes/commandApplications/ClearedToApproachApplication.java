@@ -5,7 +5,7 @@ import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.ISet;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
@@ -97,7 +97,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
                     sf("We are not in the correct position to enter %s approach.", c.getType().toString()));
             break;
           default:
-            throw new EEnumValueUnsupportedException(rai.reason);
+            throw new UnexpectedValueException(rai.reason);
         }
       }
     }

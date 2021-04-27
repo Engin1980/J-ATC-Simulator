@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.atcs;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.utilites.CacheUsingProducer;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
@@ -152,7 +152,7 @@ public class AtcProvider implements IXPersistable {
         ret = new CenterAtc(template);
         break;
       default:
-        throw new EEnumValueUnsupportedException(template.getType());
+        throw new UnexpectedValueException(template.getType());
     }
     return ret;
   }

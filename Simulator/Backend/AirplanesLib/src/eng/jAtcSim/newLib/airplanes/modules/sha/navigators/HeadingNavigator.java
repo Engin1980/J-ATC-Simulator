@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha.navigators;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
@@ -54,7 +54,7 @@ public class HeadingNavigator extends Navigator {
           resultTurn = LeftRight.left;
           break;
         default:
-          throw new EEnumValueUnsupportedException(turn);
+          throw new UnexpectedValueException(turn);
       }
       this.isApplied = true;
       ret = new NavigatorResult(heading, resultTurn);

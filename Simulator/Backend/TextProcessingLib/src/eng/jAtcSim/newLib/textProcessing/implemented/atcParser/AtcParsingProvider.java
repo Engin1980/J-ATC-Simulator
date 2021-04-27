@@ -12,11 +12,11 @@ import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextParsing;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParserList;
 import eng.jAtcSim.newLib.textProcessing.parsing.EInvalidCommandException;
-import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParser;
+import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParsingProvider;
 import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.IWithShortcuts;
 import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.ShortcutList;
 
-public class AtcParser implements IAtcParser, IWithShortcuts<String>, IWithHelp {
+public class AtcParsingProvider implements IAtcParsingProvider, IWithShortcuts<String>, IWithHelp {
 
   private static final TextSpeechParserList<IAtcSpeech> atcParsers;
   private final ShortcutList<String> shortcuts = new ShortcutList<>();

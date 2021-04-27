@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.atcs.internal.tower;
 
 
 import eng.eSystem.collections.*;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -432,7 +432,7 @@ public class TowerAtc extends ComputerAtc {
       case 'D':
         return (double) Context.getArea().getAirport().getAltitude() + Context.getApp().getRnd().nextInt(200, 750);
       default:
-        throw new EEnumValueUnsupportedException(category);
+        throw new UnexpectedValueException(category);
     }
   }
 

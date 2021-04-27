@@ -2,13 +2,13 @@ package eng.jAtcSim.newLib.gameSim.simulation;
 
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.TimerModule;
-import eng.jAtcSim.newLib.textProcessing.parsing.IParser;
+import eng.jAtcSim.newLib.textProcessing.parsing.IParsingProvider;
 
 public class InternalAcc {
   private static Producer<TimerModule> timerProviderProducer;
-  private static Producer<IParser> parserProducer;
+  private static Producer<IParsingProvider> parserProducer;
 
-  public static IParser getParser() {
+  public static IParsingProvider getParser() {
     return parserProducer.invoke();
   }
 
@@ -16,7 +16,7 @@ public class InternalAcc {
     return timerProviderProducer.invoke();
   }
 
-  public static void setParserProducer(Producer<IParser> parserProducer) {
+  public static void setParserProducer(Producer<IParsingProvider> parserProducer) {
     InternalAcc.parserProducer = parserProducer;
   }
 

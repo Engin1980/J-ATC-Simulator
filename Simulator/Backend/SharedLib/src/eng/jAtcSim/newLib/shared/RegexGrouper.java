@@ -8,9 +8,11 @@ package eng.jAtcSim.newLib.shared;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 /**
  *
  * @author Marek
+ * @see eng.eSystem.utilites.RegexUtils.RegexGroups
  */
 public class RegexGrouper {
 

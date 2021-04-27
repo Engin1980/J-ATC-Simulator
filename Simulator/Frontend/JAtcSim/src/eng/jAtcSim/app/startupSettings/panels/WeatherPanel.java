@@ -1,6 +1,6 @@
 package eng.jAtcSim.app.startupSettings.panels;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
@@ -34,7 +34,7 @@ public class WeatherPanel extends JStartupPanel {
         rdbWeatherFromFile.setSelected(true);
         break;
       default:
-        throw new EEnumValueUnsupportedException(settings.weather.type);
+        throw new UnexpectedValueException(settings.weather.type);
     }
     fleWeather.setFileName(settings.files.weatherXmlFile);
   }

@@ -1,15 +1,19 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.systemParser.typedParser;
 
-import eng.eSystem.collections.IList;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.exceptions.UnexpectedValueException;
+import eng.eSystem.utilites.RegexUtils;
 import eng.jAtcSim.newLib.speeches.system.user2system.ShortcutRequest;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
 public class ShortcutRequestParser extends TextSpeechParser<ShortcutRequest> {
-  private static final String[][] patterns = {
-          {"SHORTCUT", "SET", "[A-Z0-9]+", ".+"},
-          {"SHORTCUT", "DEL", "[A-Z0-9]+"},
-          {"SHORTCUT"}
-  };
+
+  private static final IReadOnlyList<String> patterns = EList.of(
+          "SHORTCUT SET ([A-Z0-9]+) (.+)",
+          "SHORTCUT DEL ([A-Z0-9]+)",
+          "SHORTCUT");
+
 
   @Override
   public String getHelp() {
@@ -26,26 +30,28 @@ public class ShortcutRequestParser extends TextSpeechParser<ShortcutRequest> {
   }
 
   @Override
-  public String[][] getPatterns() {
+  public IReadOnlyList<String> getPatterns() {
     return patterns;
   }
 
   @Override
-  public boolean ifMatchCollectAllThatLeft() {
-    return true;
-  }
-
-  @Override
-  public ShortcutRequest parse(IList<String> blocks) {
+  public ShortcutRequest parse(int patternIndex, RegexUtils.RegexGroups groups) {
     ShortcutRequest ret;
-    if (blocks.count() == 1)
-      ret = ShortcutRequest.createGet();
-    else if (blocks.get(1).equals("DEL"))
-      ret = ShortcutRequest.createDelete(blocks.get(2));
-    else if (blocks.get(1).equals("SET"))
-      ret = ShortcutRequest.createSet(blocks.get(2), blocks.get(3));
-    else
-      throw new UnsupportedOperationException();
+
+    switch (patternIndex) {
+      case 2:
+        ret = ShortcutRequest.createGet();
+        break;
+      case 1:
+        ret = ShortcutRequest.createDelete(groups.getString(1));
+        break;
+      case 0:
+        ret = ShortcutRequest.createSet(
+                groups.getString(1), groups.getString(2));
+        break;
+      default:
+        throw new UnexpectedValueException(patternIndex);
+    }
     return ret;
   }
 }

@@ -5,7 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.events.Event;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
@@ -179,7 +179,7 @@ class FlightStripPanel extends JPanel {
             ret = isEven ? stripSettings.ctr.even : stripSettings.ctr.odd;
             break;
           default:
-            throw new EEnumValueUnsupportedException(ai.responsibleAtc().getType());
+            throw new UnexpectedValueException(ai.responsibleAtc().getType());
         }
     }
     return ret;

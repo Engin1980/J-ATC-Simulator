@@ -5,7 +5,7 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.functionalInterfaces.Predicate;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
@@ -81,7 +81,7 @@ public class AfterCommandList implements IXPersistable {
           ret = Math.abs((anc.getDistance() - dist)) < 1.0;
           break;
         default:
-          throw new EEnumValueUnsupportedException(anc.getPosition());
+          throw new UnexpectedValueException(anc.getPosition());
       }
     } else if (item.antecedent instanceof AfterRadialCommand) {
       AfterRadialCommand anc = (AfterRadialCommand) item.antecedent;

@@ -7,7 +7,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.airplane.IPlaneSpeech;
@@ -141,7 +141,7 @@ public class DynamicPlaneFormatter implements IPlaneFormatter<String> {
         ret = _evaluateCommandVariable(speech, pts[1]);
         break;
       default:
-        throw new EEnumValueUnsupportedException(pts[0]);
+        throw new UnexpectedValueException(pts[0]);
     }
     return ret;
   }

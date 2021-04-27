@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
@@ -90,7 +90,7 @@ public class ConditionEvaluator {
       case or:
         return condition.getConditions().isAny(q -> check(q, plane));
       default:
-        throw new EEnumValueUnsupportedException(condition.getAggregator());
+        throw new UnexpectedValueException(condition.getAggregator());
     }
   }
 

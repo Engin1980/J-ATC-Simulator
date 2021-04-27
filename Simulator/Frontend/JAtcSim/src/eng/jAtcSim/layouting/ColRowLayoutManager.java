@@ -2,7 +2,7 @@ package eng.jAtcSim.layouting;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 
 import java.awt.*;
 
@@ -52,7 +52,7 @@ public class ColRowLayoutManager implements LayoutManager {
         width = blockSizesMinimalSum;
         break;
       default:
-        throw new EEnumValueUnsupportedException(orientation);
+        throw new UnexpectedValueException(orientation);
     }
 
     Dimension ret = new Dimension(width, height);

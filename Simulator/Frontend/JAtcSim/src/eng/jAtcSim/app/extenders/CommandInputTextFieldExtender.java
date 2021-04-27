@@ -14,9 +14,9 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
-import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParser;
-import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParser;
-import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParser;
+import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParsingProvider;
+import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParsingProvider;
+import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParsingProvider;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -251,7 +251,7 @@ public class CommandInputTextFieldExtender {
       throw new InputFormatException(e.type, msg, e.getMessage(), e.getCause());
     }
 
-    IPlaneParser parser = parsers.planeParser;
+    IPlaneParsingProvider parser = parsers.planeParser;
     SpeechList<IForPlaneSpeech> cmds;
     try {
       cmds = parser.parse(pts[1]);
@@ -296,7 +296,7 @@ public class CommandInputTextFieldExtender {
 
   private void processSystemMessage(String msg) {
     msg = msg.substring(1);
-    ISystemParser parser = parsers.systemParser;
+    ISystemParsingProvider parser = parsers.systemParser;
     ISystemSpeech speech;
     try {
       speech = parser.parse(msg);
@@ -323,7 +323,7 @@ public class CommandInputTextFieldExtender {
   private void processAtcMessage(String msg) {
     AtcType atcType = msg.startsWith("+") ? AtcType.ctr : AtcType.twr;
     msg = msg.substring(1);
-    IAtcParser parser = this.parsers.atcParser;
+    IAtcParsingProvider parser = this.parsers.atcParser;
     IAtcSpeech speech;
     try {
       speech = parser.parse(msg);

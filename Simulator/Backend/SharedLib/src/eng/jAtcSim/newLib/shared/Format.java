@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.shared;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 
 public class Format {
@@ -109,7 +109,7 @@ public class Format {
           return '▲'; //'↗';
         case arrival:
           return '▼'; //'↘';
-        default:throw new EEnumValueUnsupportedException(dir);
+        default:throw new UnexpectedValueException(dir);
       }
     }
   }

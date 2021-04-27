@@ -1,12 +1,18 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.utilites.RegexUtils;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ShortcutCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
 public class ShortcutParser extends TextSpeechParser<ShortcutCommand> {
 
-  private static final String [][]patterns = {{"SH","\\S+"}};
+  private static final IReadOnlyList<String> patterns = EList.of(
+          "SH (\\S+)");
+
   public String getHelp() {
     String ret = super.buildHelpString(
         "Shortcut command",
@@ -15,15 +21,16 @@ public class ShortcutParser extends TextSpeechParser<ShortcutCommand> {
         "SH KENOK");
     return ret;
   }
+
   @Override
-  public String [][]getPatterns() {
+  public IReadOnlyList<String> getPatterns() {
     return patterns;
   }
 
   @Override
-  public ShortcutCommand parse(IList<String> blocks) {
-    String ns = blocks.get(1);
-    ShortcutCommand ret = new ShortcutCommand(ns);
+  public ShortcutCommand parse(int patternIndex, RegexUtils.RegexGroups groups) {
+    String ns = groups.getString(1);
+    ShortcutCommand ret = ShortcutCommand.create(ns);
     return ret;
   }
 }

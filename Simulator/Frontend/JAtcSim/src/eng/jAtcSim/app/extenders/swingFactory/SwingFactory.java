@@ -1,6 +1,6 @@
 package eng.jAtcSim.app.extenders.swingFactory;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.swing.other.HistoryForJFileChooser;
 import eng.eSystem.swing.other.JFileChooserAsidePanel;
 
@@ -104,7 +104,7 @@ public class SwingFactory {
         bindAsidePanel(ret, historyPanel);
         break;
       default:
-        throw new EEnumValueUnsupportedException(type);
+        throw new UnexpectedValueException(type);
     }
     ret.addChoosableFileFilter(new FileTypeFilter("", "All files"));
 

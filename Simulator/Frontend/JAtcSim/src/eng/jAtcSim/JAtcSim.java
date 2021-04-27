@@ -5,7 +5,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
@@ -188,7 +188,7 @@ public class JAtcSim {
             gsi.weatherSource = SourceFactory.createWeatherXmlSource(startupSettings.files.weatherXmlFile);
             break;
           default:
-            throw new EEnumValueUnsupportedException(startupSettings.weather.type);
+            throw new UnexpectedValueException(startupSettings.weather.type);
         }
 
         //TODO do somehow configurable - nahore se to nahrava. Nevim k cemu se to tady pouziva.
@@ -412,7 +412,7 @@ public class JAtcSim {
         snowState = Weather.eSnowState.intensive;
         break;
       default:
-        throw new EEnumValueUnsupportedException(weather.snowState);
+        throw new UnexpectedValueException(weather.snowState);
     }
     Weather ret =
             new Weather(weather.windDirection,

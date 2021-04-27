@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.xml.area.internal;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.area.RunwayThresholdConfiguration;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
@@ -37,7 +37,7 @@ public class RunwayConfigurationXmlLoader extends XmlLoader<RunwayConfiguration>
           arrivals.add(rtc);
           break;
         default:
-          throw new EEnumValueUnsupportedException(child.getName());
+          throw new UnexpectedValueException(child.getName());
       }
     }
 

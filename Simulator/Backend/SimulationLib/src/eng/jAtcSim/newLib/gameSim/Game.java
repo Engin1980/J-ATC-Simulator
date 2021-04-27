@@ -4,7 +4,7 @@
 //import eng.eSystem.eXml.XDocument;
 //import eng.eSystem.eXml.XElement;
 //import eng.eSystem.exceptions.EApplicationException;
-//import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+//import eng.eSystem.exceptions.UnexpectedValueException;
 //import eng.eSystem.exceptions.ERuntimeException;
 //import eng.eSystem.exceptions.EXmlException;
 //import eng.jAtcSim.newLib.area.serialization.LoadSave;
@@ -93,7 +93,7 @@
 //          g.trafficSource = new XmlTrafficSource(gsi.trafficXmlFile);
 //          break;
 //        default:
-//          throw new EEnumValueUnsupportedException(gsi.specificTraffic);
+//          throw new UnexpectedValueException(gsi.specificTraffic);
 //      }
 //      g.trafficSource.init();
 //    } catch (Exception ex){
@@ -113,7 +113,7 @@
 //          g.weatherSource = new UserWeatherSource(gsi.initialWeather);
 //          break;
 //        default:
-//          throw new EEnumValueUnsupportedException(gsi.weatherProviderType);
+//          throw new UnexpectedValueException(gsi.weatherProviderType);
 //      }
 //      g.weatherSource.init();
 //    } catch ( Exception ex){

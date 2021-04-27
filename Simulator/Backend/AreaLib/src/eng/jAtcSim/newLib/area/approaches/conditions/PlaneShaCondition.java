@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.area.approaches.conditions;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.approaches.perCategoryValues.IntegerPerCategoryValue;
 import eng.jAtcSim.newLib.shared.PostContracts;
@@ -50,7 +50,7 @@ public class PlaneShaCondition implements ICondition {
         EAssert.Argument.isTrue(minimum != null && maximum != null);
         break;
       default:
-        throw new EEnumValueUnsupportedException(type);
+        throw new UnexpectedValueException(type);
     }
 
     this.type = type;
