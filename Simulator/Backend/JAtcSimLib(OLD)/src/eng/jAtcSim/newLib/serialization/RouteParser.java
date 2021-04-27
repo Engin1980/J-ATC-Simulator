@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.area.serialization;
 
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.supports.IElementParser;
 import eng.jAtcSim.newLib.world.Airport;
@@ -29,7 +29,7 @@ DARoute ret = null;
       }
     }
     if (ret == null)
-      throw new EApplicationException("Unable to find route " + c + " for airport " + known.getName());
+      throw new ApplicationException("Unable to find route " + c + " for airport " + known.getName());
 
     return ret;
   }

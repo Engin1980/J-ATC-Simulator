@@ -1,7 +1,7 @@
 package eng.jAtcSim.newPacks.views;
 
 import eng.eSystem.collections.IReadOnlyMap;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.LogItemType;
@@ -83,7 +83,7 @@ public class AppLogView implements IView {
     try {
       doc.insertString(doc.getLength(), s + "\n", set);
     } catch (BadLocationException e) {
-      throw new EApplicationException("Unable to print line to FrmLog.");
+      throw new ApplicationException("Unable to print line to FrmLog.");
     }
 
     JScrollBar bar = scr.getVerticalScrollBar();

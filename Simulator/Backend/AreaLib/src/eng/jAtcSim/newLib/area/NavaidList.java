@@ -3,13 +3,12 @@ package eng.jAtcSim.newLib.area;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
+import eng.eSystem.utilites.RegexUtils;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.RegexGrouper;
 
 public class NavaidList extends EList<Navaid> {
 
@@ -28,7 +27,7 @@ public class NavaidList extends EList<Navaid> {
     try {
       ret = this.getFirst(q -> q.getName().equals(name));
     } catch (Exception ex) {
-      throw new EApplicationException("Unable to find element " + name + ".");
+      throw new ApplicationException("Unable to find element " + name + ".");
     }
     return ret;
   }
@@ -63,7 +62,7 @@ public class NavaidList extends EList<Navaid> {
 //          super.add(n);
 //          ret = n;
 //        } catch (Exception ex) {
-//          throw new EApplicationException("Failed to getContent / decode navaid with name " + name, ex);
+//          throw new ApplicationException("Failed to getContent / decode navaid with name " + name, ex);
 //        }
 //      } else if (name.contains(":")) {
 //        // ICAO:RWY
@@ -71,15 +70,15 @@ public class NavaidList extends EList<Navaid> {
 //          String[] pts = name.split(":");
 //          Airport aip = relativeAirport.getParent().getAirports().tryGetFirst(q -> q.getIcao().equals(pts[0]));
 //          if (aip == null)
-//            throw new EApplicationException("Airport with code " + pts[0] + " not found.");
+//            throw new ApplicationException("Airport with code " + pts[0] + " not found.");
 //          ActiveRunwayThreshold th = aip.tryGetRunwayThreshold(pts[1]);
 //          if (th == null)
-//            throw new EApplicationException("Airport with code " + pts[0] + " has no threshold " + pts[1] + ".");
+//            throw new ApplicationException("Airport with code " + pts[0] + " has no threshold " + pts[1] + ".");
 //          Navaid n = Navaid.create(name, Navaid.eType.auxiliary, th.getCoordinate());
 //          super.add(n);
 //          ret = n;
 //        } catch (Exception ex) {
-//          throw new EApplicationException("Failed to getContent / decode navaid with name " + name, ex);
+//          throw new ApplicationException("Failed to getContent / decode navaid with name " + name, ex);
 //        }
 //      }
     }
@@ -97,9 +96,9 @@ public class NavaidList extends EList<Navaid> {
 
   private double getNearestDeclination(Coordinate coordinate) {
     if (declinations.isEmpty())
-      throw new ERuntimeException("Unable to get nearest declination. Any declination is registered.");
+      throw new ApplicationException("Unable to get nearest declination. Any declination is registered.");
     Coordinate nearestCoordinate = declinations.getKeys().getMinimal(q ->
-        Coordinates.getDistanceInNM(coordinate, q)).orElseThrow();
+            Coordinates.getDistanceInNM(coordinate, q)).orElseThrow();
     double ret = declinations.get(nearestCoordinate);
     return ret;
   }
@@ -109,7 +108,7 @@ class PBD {
   private static String pattern = "([A-Z]+)\\/(\\d{1,3})\\/(\\d+(\\.\\d)?)";
 
   public static PBD decode(String navaidName, NavaidList navaids) {
-    RegexGrouper rg = RegexGrouper.apply(navaidName, pattern);
+    RegexUtils.RegexGroups rg = RegexUtils.extractRegexGroups(navaidName, pattern);
 
     PBD ret = new PBD();
     String baseNavaidName = rg.getString(1);

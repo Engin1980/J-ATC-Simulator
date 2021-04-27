@@ -6,7 +6,7 @@
 
 package eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneRO;
 import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtc2Atc;
@@ -39,9 +39,9 @@ public class PlaneSwitchMessage implements IAtc2Atc {
 
   public String getAsString() {
     if (plane.getRoutingModule().getAssignedRoute() == null)
-      throw new EApplicationException("Plane " + plane.getFlightModule().getCallsign() + " does not have assigned route.");
+      throw new ApplicationException("Plane " + plane.getFlightModule().getCallsign() + " does not have assigned route.");
     if (plane.getRoutingModule().getAssignedRunwayThreshold() == null)
-      throw new EApplicationException("Plane " + plane.getFlightModule().getCallsign() + " does not have assigned threshold.");
+      throw new ApplicationException("Plane " + plane.getFlightModule().getCallsign() + " does not have assigned threshold.");
 
     String ret =
         String.format("%1$s (%2$s) [%3$s] via %4$s/%5$s",

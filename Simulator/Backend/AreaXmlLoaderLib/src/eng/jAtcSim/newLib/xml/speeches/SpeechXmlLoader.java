@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.xml.speeches;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
 import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
@@ -42,13 +42,13 @@ public class SpeechXmlLoader extends XmlLoader<ICommand> {
     ICommand ret;
     Optional<XmlLoader<? extends ICommand>> xmlLoader = this.loaders.tryGet(source.getName());
     if (xmlLoader.isEmpty()) {
-      throw new EApplicationException(
+      throw new ApplicationException(
               sf("Unable to load command from xml-element '%s'. No loader defined for this element.", source.getName()));
     } else {
       try {
         ret = xmlLoader.get().load(source);
       } catch (Exception e) {
-        throw new EApplicationException(
+        throw new ApplicationException(
                 sf("Failed to parse speech from xml. XmlLoader: '%s', element: '%s'.", xmlLoader, source), e);
       }
     }

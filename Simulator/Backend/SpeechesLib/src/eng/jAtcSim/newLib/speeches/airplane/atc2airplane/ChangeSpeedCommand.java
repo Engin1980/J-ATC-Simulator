@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Restriction;
@@ -40,7 +40,7 @@ public class ChangeSpeedCommand implements ICommand {
 
   public Restriction getRestriction() {
     if (isResumeOwnSpeed())
-      throw new EApplicationException("Unable to call this on 'ResumeOwnSpeed' command.");
+      throw new ApplicationException("Unable to call this on 'ResumeOwnSpeed' command.");
     return this.restriction;
   }
 

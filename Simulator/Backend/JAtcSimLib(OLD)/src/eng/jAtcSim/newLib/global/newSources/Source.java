@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.area.global.newSources;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 
 public abstract class Source<T> {
   private boolean initialized = false;
@@ -10,7 +10,7 @@ public abstract class Source<T> {
 
   public final T getContent(){
     if (!initialized)
-      throw new EApplicationException("Source must be initialized before the content is accessed.");
+      throw new ApplicationException("Source must be initialized before the content is accessed.");
     else
       return _getContent();
   }

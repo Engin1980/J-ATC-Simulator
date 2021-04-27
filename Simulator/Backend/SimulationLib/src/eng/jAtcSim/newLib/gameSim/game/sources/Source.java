@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.gameSim.game.sources;
 
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.validation.EAssert;
 import exml.IXPersistable;
 import exml.loading.XLoadContext; import exml.saving.XSaveContext;
@@ -19,7 +19,7 @@ public abstract class Source<T> implements IXPersistable {
 
   public final T getContent() {
     if (!initialized)
-      throw new EApplicationException("Source must be initialized before the content is accessed.");
+      throw new ApplicationException("Source must be initialized before the content is accessed.");
     else
       return content;
   }

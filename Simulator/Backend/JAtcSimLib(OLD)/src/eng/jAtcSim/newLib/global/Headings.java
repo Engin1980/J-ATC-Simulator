@@ -7,7 +7,7 @@
 package eng.jAtcSim.newLib.area.global;
 
 import eng.eSystem.Tuple;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geometry2D.Line;
@@ -227,7 +227,7 @@ class RadialCalculator {
         break;
       default: // including "unset"
 //      case unset:
-        throw new EApplicationException("Unable to evaluate plane location according to the radial data.");
+        throw new ApplicationException("Unable to evaluate plane location according to the radial data.");
     }
 
     return ret;

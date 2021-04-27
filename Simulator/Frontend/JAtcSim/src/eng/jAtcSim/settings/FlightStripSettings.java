@@ -1,7 +1,7 @@
 package eng.jAtcSim.settings;
 
 import eng.eSystem.eXml.XDocument;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import exml.IXPersistable;
 import exml.annotations.XAttribute;
 import exml.implemented.AwtFontDeserializer;
@@ -43,7 +43,7 @@ public class FlightStripSettings implements IXPersistable {
 
       ret = ctx.loadObject(XDocument.load(fileName).getRoot(), FlightStripSettings.class);
     } catch (Exception ex) {
-      throw new EApplicationException("Failed to load flight-strip-settings from " + fileName, ex);
+      throw new ApplicationException("Failed to load flight-strip-settings from " + fileName, ex);
     }
     return ret;
   }

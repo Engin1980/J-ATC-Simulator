@@ -1,20 +1,17 @@
 package eng.jAtcSim.newLib.xml.traffic.internal;
 
-import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
-import eng.jAtcSim.newLib.traffic.TrafficProvider;
-import eng.jAtcSim.newLib.traffic.models.DensityBasedTrafficModel;
 
 public class TrafficXmlLoader {
   public static ITrafficModel load(XElement root) {
     ITrafficModel ret;
     try {
-      XElement source = root.getChildren().getFirst(q->!q.getName().equals("meta"));
+      XElement source = root.getChildren().getFirst(q -> !q.getName().equals("meta"));
 
-      switch (source.getName()){
+      switch (source.getName()) {
         case "genericTraffic":
           ret = new SimpleGenericTrafficModelXmlLoader().load(source);
           break;
@@ -28,7 +25,7 @@ public class TrafficXmlLoader {
           throw new UnexpectedValueException(source.getName());
       }
     } catch (Exception e) {
-      throw new EApplicationException("Unable to load traffic model.", e);
+      throw new ApplicationException("Unable to load traffic model.", e);
     }
 
     return ret;

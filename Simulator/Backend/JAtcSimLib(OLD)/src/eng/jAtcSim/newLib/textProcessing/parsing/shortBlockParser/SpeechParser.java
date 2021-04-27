@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.utilites.ReflectionUtils;
 import eng.jAtcSim.newLib.area.speaking.IFromAtc;
 
@@ -39,7 +39,7 @@ public abstract class SpeechParser<T extends IFromAtc> {
     try {
       ret = Integer.parseInt(s);
     } catch (Exception ex) {
-      throw new EApplicationException("Unable to parseOld " + s + " to integer.");
+      throw new ApplicationException("Unable to parseOld " + s + " to integer.");
     }
     return ret;
   }

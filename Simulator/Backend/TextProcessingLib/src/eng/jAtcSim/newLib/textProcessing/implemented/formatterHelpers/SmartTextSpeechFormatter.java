@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.formatterHelpers;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.utilites.ReflectionUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
@@ -30,7 +30,7 @@ public abstract class SmartTextSpeechFormatter<T extends ISpeech> extends TextSp
     try {
       typedInput = (T) input;
     } catch (Exception ex){
-      throw new EApplicationException(sf(
+      throw new ApplicationException(sf(
           "SmartTextSpeechFormatter tried to cast instance of '%s' into required type '%s', but was not succesfull.",
           input.getClass().getName(),
           type.getName()), ex);

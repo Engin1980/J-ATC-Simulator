@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.eXml.XDocument;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.weather.contextLocal.Context;
 import eng.jAtcSim.newLib.weather.presets.PresetWeatherList;
 
@@ -18,11 +18,11 @@ public class PresetWeatherProvider extends WeatherProvider {
       XDocument doc = XDocument.load(sourceFileName);
       this.presetWeathers = PresetWeatherList.load(doc.getRoot());
     } catch (Exception ex) {
-      throw new EApplicationException("Failed to load preset weather from " + sourceFileName + ".", ex);
+      throw new ApplicationException("Failed to load preset weather from " + sourceFileName + ".", ex);
     }
 
     if (presetWeathers.size() == 0)
-      throw new EApplicationException("There is no weather descriptions specified in the file " + sourceFileName + ".");
+      throw new ApplicationException("There is no weather descriptions specified in the file " + sourceFileName + ".");
   }
 
   @Override

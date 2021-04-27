@@ -1,9 +1,8 @@
 package eng.jAtcSim.newLib.shared.time;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
-
 import exml.annotations.XConstructor;
 
 import java.time.LocalTime;
@@ -19,7 +18,7 @@ public class ETimeStamp implements ITime, ITimeComparable<ETimeStamp> {
     Pattern p = Pattern.compile("(\\d{1,2}):(\\d{2}):(\\d{2})");
     Matcher m = p.matcher(s);
     if (m.find() == false)
-      throw new EApplicationException(sf("Failed to parse ETimeStamp from '%s'.", s));
+      throw new ApplicationException(sf("Failed to parse ETimeStamp from '%s'.", s));
     else {
       String tmp;
       tmp = m.group(1);
@@ -36,10 +35,10 @@ public class ETimeStamp implements ITime, ITimeComparable<ETimeStamp> {
     }
     return ret;
   }
+
   private final int value;
 
   @XConstructor
-
   private ETimeStamp() {
     this.value = 0;
   }

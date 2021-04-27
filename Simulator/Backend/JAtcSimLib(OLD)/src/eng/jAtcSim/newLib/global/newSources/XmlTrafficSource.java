@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.area.global.newSources;
 
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.newLib.traffic.DensityBasedTraffic;
@@ -46,7 +46,7 @@ public class XmlTrafficSource extends TrafficSource {
           throw new EEnumValueUnsupportedException(source.getName());
       }
     } catch (Exception e) {
-      throw new EApplicationException("Unable to load traffic from file '" + this.fileName + "'.", e);
+      throw new ApplicationException("Unable to load traffic from file '" + this.fileName + "'.", e);
     }
 
     super.setInitialized();

@@ -10,7 +10,7 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventSimple;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.newLib.area.airplanes.*;
@@ -364,7 +364,7 @@ public class Simulation {
 
   public void setSimulationSecondInterval(int intervalMs) {
     if (intervalMs < 0)
-      throw new EApplicationException("Interval " + intervalMs + " to be set as second length interval must be greater than 0.");
+      throw new ApplicationException("Interval " + intervalMs + " to be set as second length interval must be greater than 0.");
     this.simulationSecondLengthInMs = intervalMs;
     this.stop();
     this.start();
@@ -739,7 +739,7 @@ public class Simulation {
       try {
         plane.elapseSecond();
       } catch (Exception ex) {
-        throw new EApplicationException("Error processing elapseSecond() on plane " + plane.getFlightModule().getCallsign() + ".", ex);
+        throw new ApplicationException("Error processing elapseSecond() on plane " + plane.getFlightModule().getCallsign() + ".", ex);
       }
     }
   }

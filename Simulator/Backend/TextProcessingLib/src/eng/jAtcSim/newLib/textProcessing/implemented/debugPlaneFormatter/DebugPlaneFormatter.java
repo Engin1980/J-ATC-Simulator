@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.debugPlaneFormatter;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.speeches.airplane.IPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneConfirmation;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
@@ -45,7 +45,7 @@ public class DebugPlaneFormatter implements IPlaneFormatter<String> {
     m = tryGetFormatCommandMethodToInvoke(speech.getClass());
 
     if (m == null) {
-      throw new EApplicationException(sf(
+      throw new ApplicationException(sf(
           "No {format(...)} method found for kind {%s} in the formatter of kind {%s}.",
           speech.getClass().getName(),
           this.getClass().getName()));
@@ -55,7 +55,7 @@ public class DebugPlaneFormatter implements IPlaneFormatter<String> {
     try {
       ret = (String) m.invoke(this.fmt, speech);
     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-      throw new EApplicationException(sf(
+      throw new ApplicationException(sf(
           "Format-command invoke failed for class %s and parameter %s.",
           fmt.getClass().getName(),
           speech.getClass().getName()));

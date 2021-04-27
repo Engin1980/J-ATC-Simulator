@@ -1,6 +1,6 @@
 //package eng.jAtcSim.frmPacks.shared;
 //
-//import eng.eSystem.exceptions.EApplicationException;
+//import eng.eSystem.exceptions.ApplicationException;
 //import eng.jAtcSim.Stylist;
 //import eng.jAtcSim.contextLocal.Context;
 //import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
@@ -63,7 +63,7 @@
 //    try {
 //      doc.insertString(doc.getLength(), s + "\n", set);
 //    } catch (BadLocationException e) {
-//      throw new EApplicationException("Unable to print line to FrmLog.");
+//      throw new ApplicationException("Unable to print line to FrmLog.");
 //    }
 //
 //    JScrollBar bar = scr.getVerticalScrollBar();

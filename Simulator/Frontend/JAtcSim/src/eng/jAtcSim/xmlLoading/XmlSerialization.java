@@ -2,7 +2,7 @@
 //
 //import eng.eSystem.eXml.XDocument;
 //import eng.eSystem.eXml.XElement;
-//import eng.eSystem.exceptions.EApplicationException;
+//import eng.eSystem.exceptions.ApplicationException;
 //import eng.eSystem.exceptions.EXmlException;
 //import eng.eSystem.validation.EAssert;
 //import eng.eXmlSerialization.XmlSerializer;
@@ -23,7 +23,7 @@
 //    try {
 //      ret = serializer.deserialize(source, type);
 //    } catch (Exception e) {
-//      throw new EApplicationException(sf("Failed to deserialize/load '%s' from '%s'.", type, source), e);
+//      throw new ApplicationException(sf("Failed to deserialize/load '%s' from '%s'.", type, source), e);
 //    }
 //
 //    return ret;
@@ -43,7 +43,7 @@
 //    try {
 //      doc = XDocument.load(fileName);
 //    } catch (EXmlException e) {
-//      throw new EApplicationException(sf("Unable to load xml file '%s'.", fileName), e);
+//      throw new ApplicationException(sf("Unable to load xml file '%s'.", fileName), e);
 //    }
 //
 //    T ret = load(serializer, doc.getRoot(), type);
@@ -59,7 +59,7 @@
 //    try {
 //      serializer.serialize(value, target);
 //    } catch (Exception e) {
-//      throw new EApplicationException(sf("Failed to serialize/save '%s' into '%s'.", value, target), e);
+//      throw new ApplicationException(sf("Failed to serialize/save '%s' into '%s'.", value, target), e);
 //    }
 //  }
 //
@@ -83,7 +83,7 @@
 //    try {
 //      doc.save(fileName);
 //    } catch (EXmlException e) {
-//      throw new EApplicationException(sf("Failed to save xml file '%s'.", fileName), e);
+//      throw new ApplicationException(sf("Failed to save xml file '%s'.", fileName), e);
 //    }
 //  }
 //}

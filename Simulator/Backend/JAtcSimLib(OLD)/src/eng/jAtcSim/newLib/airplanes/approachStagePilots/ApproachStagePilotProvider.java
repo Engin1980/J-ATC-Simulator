@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.area.airplanes.approachStagePilots;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.newLib.world.approaches.stages.*;
 
@@ -36,7 +36,7 @@ public class ApproachStagePilotProvider {
       try {
         ret = stageType.newInstance();
       } catch (Exception ex) {
-        throw new EApplicationException("Failed to create a new instance of a pilot-stage '" + stageType.getSimpleName() + "'.", ex);
+        throw new ApplicationException("Failed to create a new instance of a pilot-stage '" + stageType.getSimpleName() + "'.", ex);
       }
       inner.set(stageType, ret);
     }

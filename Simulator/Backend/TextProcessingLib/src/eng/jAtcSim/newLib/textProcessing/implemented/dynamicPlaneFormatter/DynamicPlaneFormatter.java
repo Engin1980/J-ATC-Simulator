@@ -4,11 +4,11 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
+import eng.eSystem.eXml.EXmlException;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.UnexpectedValueException;
-import eng.eSystem.exceptions.EXmlException;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.airplane.IPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
@@ -45,7 +45,7 @@ public class DynamicPlaneFormatter implements IPlaneFormatter<String> {
         }
       }
       if (cls == null) {
-        throw new EApplicationException(sf("Unable to find class '%s' as response application.", className));
+        throw new ApplicationException(sf("Unable to find class '%s' as response application.", className));
       }
       return cls;
     }
@@ -77,7 +77,7 @@ public class DynamicPlaneFormatter implements IPlaneFormatter<String> {
       XElement root = XDocument.load(file).getRoot();
       ret = new DynamicPlaneFormatterLoader().load(root);
     } catch (EXmlException e) {
-      throw new EApplicationException("Unable to load."); //TODO improve
+      throw new ApplicationException("Unable to load."); //TODO improve
     }
 
     return ret;
@@ -98,12 +98,12 @@ public class DynamicPlaneFormatter implements IPlaneFormatter<String> {
     try {
       sentences = this.sentences.get(cls);
     } catch (Exception ex) {
-      throw new EApplicationException("Failed to get sentences for " + cls.getSimpleName(), ex);
+      throw new ApplicationException("Failed to get sentences for " + cls.getSimpleName(), ex);
     }
     try {
       kind = _getKind(speech);
     } catch (Exception ex) {
-      throw new EApplicationException("Failed to get 'kind' for " + cls.getSimpleName(), ex);
+      throw new ApplicationException("Failed to get 'kind' for " + cls.getSimpleName(), ex);
     }
     if (kind == null)
       sentences = sentences.where(q -> q.kind == null);
@@ -168,7 +168,7 @@ public class DynamicPlaneFormatter implements IPlaneFormatter<String> {
     try {
       ret = commandVariableEvaluator.eval(speech, key);
     } catch (Exception ex) {
-      throw new EApplicationException(sf("Variable evaluation error. Unable to find for kind '%s' key '%s'.", speech.getClass().getSimpleName(), key));
+      throw new ApplicationException(sf("Variable evaluation error. Unable to find for kind '%s' key '%s'.", speech.getClass().getSimpleName(), key));
     }
     return ret;
   }

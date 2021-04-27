@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.atcs.internal.center;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
@@ -284,7 +284,7 @@ public class CenterAtc extends ComputerAtc {
         try {
           evaluateMiddleArrivalsForCloseArrivals(tmp, plane);
         } catch (Exception ex) {
-          throw new EApplicationException("Failed to evaluate " + plane.getCallsign() + ".", ex);
+          throw new ApplicationException("Failed to evaluate " + plane.getCallsign() + ".", ex);
         }
       }
       middleArrivals.removeMany(tmp);

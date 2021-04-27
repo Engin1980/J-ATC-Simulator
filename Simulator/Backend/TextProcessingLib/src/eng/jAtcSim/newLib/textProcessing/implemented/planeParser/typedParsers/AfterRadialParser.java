@@ -1,10 +1,8 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 
 import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.RegexUtils;
-import eng.jAtcSim.newLib.shared.RegexGrouper;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterRadialCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
@@ -14,18 +12,18 @@ public class AfterRadialParser extends TextSpeechParser<AfterRadialCommand> {
           "AR (\\S+)/(\\d{1,3})");
 
   @Override
-  public IReadOnlyList<String> getPatterns() {
-    return patterns;
+  public String getHelp() {
+    String ret = super.buildHelpString(
+            "After radial",
+            "AR {fixName}/{radial}",
+            "When passing radial to fix",
+            "AR KENOK/030\nAR KENOK/30");
+    return ret;
   }
 
   @Override
-  public String getHelp() {
-    String ret = super.buildHelpString(
-        "After radial",
-        "AR {fixName}/{radial}",
-        "When passing radial to fix",
-        "AR KENOK/030\nAR KENOK/30");
-    return ret;
+  public IReadOnlyList<String> getPatterns() {
+    return patterns;
   }
 
   @Override

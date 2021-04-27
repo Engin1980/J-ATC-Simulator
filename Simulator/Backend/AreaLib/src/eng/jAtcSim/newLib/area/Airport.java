@@ -4,7 +4,7 @@ import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.area.routes.DARoute;
@@ -26,9 +26,9 @@ public class Airport extends Parentable<Area> {
     for (char i = 'A'; i <= 'D'; i++) {
       char c = i;
       if (!arrivals.isAny(q -> q.isForCategory(c)))
-        throw new EApplicationException("Unable to find arrival threshold for category " + c);
+        throw new ApplicationException("Unable to find arrival threshold for category " + c);
       if (!departures.isAny(q -> q.isForCategory(c)))
-        throw new EApplicationException("Unable to find departure threshold for category " + c);
+        throw new ApplicationException("Unable to find departure threshold for category " + c);
     }
   }
 

@@ -78,7 +78,7 @@ public class Area {
 //      EStringBuilder sb = new EStringBuilder();
 //      sb.append(items.size() + " duplicate record(s) were found in " + type + ". E.g.: ");
 //      sb.appendItems(items, q -> q, "; ");
-//      throw new EApplicationException(sb.toString());
+//      throw new ApplicationException(sb.toString());
 //    }
 //  }
 

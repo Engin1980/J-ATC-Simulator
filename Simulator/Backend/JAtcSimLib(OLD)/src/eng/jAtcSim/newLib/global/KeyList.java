@@ -9,7 +9,7 @@
 //import eng.eSystem.collections.EDistinctList;
 //import eng.eSystem.collections.EList;
 //import eng.eSystem.collections.IList;
-//import eng.eSystem.exceptions.ERuntimeException;
+//import eng.eSystem.exceptions.ApplicationException;
 //
 ///**
 // * @param <TValue> Type of item in Collection.
@@ -47,6 +47,6 @@
 //        return item;
 //      }
 //    }
-//    throw new ERuntimeException("No such element in KeyList - key: " + key.toString());
+//    throw new ApplicationException("No such element in KeyList - key: " + key.toString());
 //  }
 //}

@@ -4,11 +4,10 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
+import eng.eSystem.eXml.EXmlException;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.exceptions.EXmlException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.swing.other.HistoryForJFileChooser;
 import exml.loading.XLoadContext;
 import exml.saving.XSaveContext;
@@ -64,7 +63,7 @@ public class FileHistoryManager {
     try {
       doc = XDocument.load(userHomeHistoryFile.toAbsolutePath().toString());
     } catch (Exception ex) {
-      throw new EApplicationException("Failed to load history of loaded files.", ex);
+      throw new ApplicationException("Failed to load history of loaded files.", ex);
     }
 
 //    XmlContext ctx = new XmlContext();
@@ -126,12 +125,12 @@ public class FileHistoryManager {
       tmpFile = java.nio.file.Files.createTempFile("", "");
       doc.save(tmpFile);
     } catch (IOException | EXmlException e) {
-      throw new ERuntimeException("Failed to create a temp xml file '%s'.", e);
+      throw new ApplicationException("Failed to create a temp xml file '%s'.", e);
     }
     try {
       java.nio.file.Files.copy(tmpFile, userHomeHistoryFile, StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException e) {
-      throw new ERuntimeException("Failed to replace existing history file.", e);
+      throw new ApplicationException("Failed to replace existing history file.", e);
     }
   }
 }

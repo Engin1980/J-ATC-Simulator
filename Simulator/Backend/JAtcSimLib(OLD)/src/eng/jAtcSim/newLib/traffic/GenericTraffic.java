@@ -5,7 +5,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.newLib.Acc;
 import eng.jAtcSim.newLib.airplanes.AirplaneType;
@@ -232,7 +232,7 @@ public class GenericTraffic extends GeneratedTraffic {
         type = companyFleet.getTypes().getRandom().getAirplaneType();
       }
       if (companyFleet == null)
-        throw new EApplicationException("There is no plane kind matching requested category and company.");
+        throw new ApplicationException("There is no plane kind matching requested category and company.");
     } else {
       companyFleet = tmp.getRandom();
       icao = companyFleet.getIcao();

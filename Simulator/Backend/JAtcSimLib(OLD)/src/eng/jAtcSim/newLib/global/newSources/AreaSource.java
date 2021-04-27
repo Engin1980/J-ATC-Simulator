@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.area.global.newSources;
 
 import eng.eSystem.eXml.XDocument;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.newLib.world.Airport;
@@ -32,7 +32,7 @@ public class AreaSource extends Source<Area> {
   public Airport getActiveAirport() {
     Airport ret = area.getAirports().tryGetFirst(q -> q.getIcao().equals(icao));
     if (ret == null)
-      throw new EApplicationException("Unable to load airport {" + icao + "} from selected area file.");
+      throw new ApplicationException("Unable to load airport {" + icao + "} from selected area file.");
     return ret;
   }
 
@@ -55,7 +55,7 @@ public class AreaSource extends Source<Area> {
       XDocument xDocument = XDocument.load(this.fileName);
       this.area = Area.load(xDocument.getRoot());
     } catch (EXmlException e) {
-      throw new EApplicationException(sf("Failed to load xml-area-file from '%s'", this.fileName), e);
+      throw new ApplicationException(sf("Failed to load xml-area-file from '%s'", this.fileName), e);
     }
 
     super.setInitialized();

@@ -5,7 +5,7 @@
 //import eng.eSystem.collections.IList;
 //import eng.eSystem.collections.IMap;
 //import eng.eSystem.eXml.XElement;
-//import eng.eSystem.exceptions.EApplicationException;
+//import eng.eSystem.exceptions.ApplicationException;
 //import eng.eXmlSerialization.meta.GenericParameterXmlRuleList;
 //import eng.eXmlSerialization.serializers.ElementSerializer;
 //import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
@@ -33,7 +33,7 @@
 //      }
 //    }
 //    if (cls == null) {
-//      throw new EApplicationException(sf("Unable to find class '%s' as response application.", className));
+//      throw new ApplicationException(sf("Unable to find class '%s' as response application.", className));
 //    }
 //    return cls;
 //  }

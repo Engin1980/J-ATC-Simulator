@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.gameSim.simulation.modules;
 import eng.eSystem.ERandom;
 import eng.eSystem.TryResult;
 import eng.eSystem.collections.*;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -208,11 +208,11 @@ public class TrafficModule extends SimulationModule {
 
     AirplaneType pt = Context.getAirplaneType().getAirplaneTypes().tryGetByName(m.getAirplaneTypeName());
     if (pt == null)
-      return new TryResult<>(new EApplicationException("Unable to find plane type name " + m.getAirplaneTypeName()));
+      return new TryResult<>(new ApplicationException("Unable to find plane type name " + m.getAirplaneTypeName()));
 
     EntryExitPoint entryPoint = tryGetRandomEntryPoint(m.getEntryExitInfo(), true, pt);
     if (entryPoint == null) {
-      return new TryResult<>(new EApplicationException("Unable to find routing.")); // no route means disallowed IFR
+      return new TryResult<>(new ApplicationException("Unable to find routing.")); // no route means disallowed IFR
     }
 
     Coordinate coord = generateArrivalCoordinate(entryPoint.getNavaid().getCoordinate(), Context.getArea().getAirport().getLocation());
@@ -239,11 +239,11 @@ public class TrafficModule extends SimulationModule {
     Callsign cs = m.getCallsign();
     AirplaneType pt = Context.getAirplaneType().getAirplaneTypes().tryGetByName(m.getAirplaneTypeName());
     if (pt == null)
-      return new TryResult<>(new EApplicationException("Unable to find plane type name " + m.getAirplaneTypeName()));
+      return new TryResult<>(new ApplicationException("Unable to find plane type name " + m.getAirplaneTypeName()));
 
     EntryExitPoint entryPoint = tryGetRandomEntryPoint(m.getEntryExitInfo(), false, pt);
     if (entryPoint == null) {
-      return new TryResult<>(new EApplicationException("Unable to find routing.")); // no route means disallowed IFR
+      return new TryResult<>(new ApplicationException("Unable to find routing.")); // no route means disallowed IFR
     }
 
     EDayTimeStamp entryTime = new EDayTimeStamp(

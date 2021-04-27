@@ -2,7 +2,7 @@ package eng.jAtcSim.app.extenders;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.events.Event;
-import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.functionalInterfaces.Action;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
@@ -181,7 +181,7 @@ public class CommandInputTextFieldExtender {
             sendMessageFromText();
             break;
           default:
-            keyStrokes.getKeys().tryGetFirst(q->
+            keyStrokes.getKeys().tryGetFirst(q ->
                     q.isCtr == isCtr && q.keyCode == e.getKeyCode())
                     .ifPresent(q -> keyStrokes.get(q).invoke());
         }
@@ -232,7 +232,7 @@ public class CommandInputTextFieldExtender {
     } catch (InputFormatException e) {
       raiseError(e);
     } catch (Throwable t) {
-      throw new ERuntimeException(sf("Uncaptured error occured in '%s': %s", this.getClass().getName(), msg), t);
+      throw new ApplicationException(sf("Uncaptured error occured in '%s': %s", this.getClass().getName(), msg), t);
     }
   }
 

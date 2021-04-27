@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.messaging;
 
 import eng.eSystem.collections.*;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.validation.EAssert;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -58,7 +58,7 @@ public class Messenger {
       try {
         lis = listeners.get(listener);
       } catch (Exception ex) {
-        throw new EApplicationException("Listener " + listener.toString() + " has not been registered.");
+        throw new ApplicationException("Listener " + listener.toString() + " has not been registered.");
       }
       ret = EList.of(lis.queue);
       if (deleteRetrieved) {

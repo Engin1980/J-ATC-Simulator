@@ -2,7 +2,7 @@ package eng.jAtcSim.newPacks;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.jAtcSim.newPacks.views.*;
 
@@ -23,12 +23,12 @@ public class ViewFactory {
 
   public static IView getView(String viewName) {
     if (viewMap.containsKey(viewName) == false)
-      throw new EApplicationException("Unknown view name: " + viewName);
+      throw new ApplicationException("Unknown view name: " + viewName);
     IView ret;
     try {
       ret = viewMap.get(viewName).invoke();
     } catch (Exception e) {
-      throw new EApplicationException(sf("Failed to instantiate view '%s' : %s.", viewName, e.getMessage()), e);
+      throw new ApplicationException(sf("Failed to instantiate view '%s' : %s.", viewName, e.getMessage()), e);
     }
 
     return ret;

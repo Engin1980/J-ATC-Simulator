@@ -6,7 +6,7 @@
 package eng.jAtcSim.newLib.area.global.logging;
 
 import eng.eSystem.EStringBuilder;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.IMessageParticipant;
@@ -67,12 +67,12 @@ public abstract class Recorder extends SimulationLog {
     try {
       java.nio.file.Files.createDirectories(parent);
     } catch (IOException ex) {
-      throw new EApplicationException("Failed to create directory for flight recorder. Required directory: " + parent.toString(), ex);
+      throw new ApplicationException("Failed to create directory for flight recorder. Required directory: " + parent.toString(), ex);
     }
     try {
       java.nio.file.Files.deleteIfExists(full);
     } catch (IOException ex) {
-      throw new EApplicationException("Failed to try delete existing flight recorder. File: " + full.toString(), ex);
+      throw new ApplicationException("Failed to try delete existing flight recorder. File: " + full.toString(), ex);
     }
 
     return full.toString();

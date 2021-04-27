@@ -1,7 +1,7 @@
 //package eng.jAtcSim;
 //
 //import eng.eSystem.eXml.XDocument;
-//import eng.eSystem.exceptions.EApplicationException;
+//import eng.eSystem.exceptions.ApplicationException;
 //import eng.eSystem.exceptions.EXmlException;
 //import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 //import eng.jAtcSim.settings.AppSettings;
@@ -27,7 +27,7 @@
 ////    try {
 ////      ret = ser.deserialize(fileName, type);
 ////    } catch (Exception ex) {
-////      throw new ERuntimeException("Failed to deserialize the file '" + fileName + "'.", ex);
+////      throw new ApplicationException("Failed to deserialize the file '" + fileName + "'.", ex);
 ////    }
 ////
 ////    return ret;
@@ -43,7 +43,7 @@
 //      XDocument doc = XDocument.load(fileName);
 //      ret = ser.deserialize(doc.getRoot(), AppSettings.class);
 //    } catch (EXmlException e) {
-//      throw new EApplicationException(sf("Unable to load application-settings from '%s'.", fileName), e);
+//      throw new ApplicationException(sf("Unable to load application-settings from '%s'.", fileName), e);
 //    }
 //    return ret;
 //  }
@@ -54,7 +54,7 @@
 //      XmlSerializer ser = XmlSerializationFactory.createForRadarStyleSettings();
 //      ret = XmlSerialization.loadFromFile(ser, fileName, RadarStyleSettings.class);
 //    } catch (Exception e) {
-//      throw new EApplicationException(sf("Unable to load radar-style-settings from '%s'.", fileName), e);
+//      throw new ApplicationException(sf("Unable to load radar-style-settings from '%s'.", fileName), e);
 //    }
 //    return ret;
 //  }

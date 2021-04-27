@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.shared.logging;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.contextLocal.Context;
 
@@ -57,7 +57,7 @@ public class LogFile implements AutoCloseable {
       bw.write(text);
       if (autoFlush) bw.flush();
     } catch (IOException e) {
-      throw new EApplicationException("Failed to write into log file.", e);
+      throw new ApplicationException("Failed to write into log file.", e);
     }
   }
 

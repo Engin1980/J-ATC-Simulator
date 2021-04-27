@@ -3,9 +3,9 @@
 //import eng.eSystem.collections.IMap;
 //import eng.eSystem.eXml.XDocument;
 //import eng.eSystem.eXml.XElement;
-//import eng.eSystem.exceptions.EApplicationException;
+//import eng.eSystem.exceptions.ApplicationException;
 //import eng.eSystem.exceptions.UnexpectedValueException;
-//import eng.eSystem.exceptions.ERuntimeException;
+//import eng.eSystem.exceptions.ApplicationException;
 //import eng.eSystem.exceptions.EXmlException;
 //import eng.jAtcSim.newLib.area.serialization.LoadSave;
 //import eng.jAtcSim.newLib.global.ETime;
@@ -65,14 +65,14 @@
 //      g.areaSource = new AreaSource(gsi.areaXmlFile, gsi.icao);
 //      g.areaSource.init();
 //    } catch (Exception ex){
-//      throw new EApplicationException("Unable to load or initialize area.", ex);
+//      throw new ApplicationException("Unable to load or initialize area.", ex);
 //    }
 //    try {
 //      Context.getShared().getAppLog().writeLine(LogItemType.info, "Loading plane types");
 //      g.airplaneTypesSource = new AirplaneTypesSource(gsi.planesXmlFile);
 //      g.airplaneTypesSource.init();
 //    } catch (Exception ex){
-//      throw new EApplicationException("Unable to load or initialize plane types.", ex);
+//      throw new ApplicationException("Unable to load or initialize plane types.", ex);
 //    }
 //
 //    try {
@@ -80,7 +80,7 @@
 //      g.fleetsSource = new FleetsSource(gsi.fleetsXmlFile);
 //      g.fleetsSource.init(g.airplaneTypesSource.getContent());
 //    } catch (Exception ex){
-//      throw new EApplicationException("Unable to load or initialize fleets.", ex);
+//      throw new ApplicationException("Unable to load or initialize fleets.", ex);
 //    }
 //
 //    try {
@@ -97,7 +97,7 @@
 //      }
 //      g.trafficSource.init();
 //    } catch (Exception ex){
-//      throw new EApplicationException("Unable to load or initialize traffic.", ex);
+//      throw new ApplicationException("Unable to load or initialize traffic.", ex);
 //    }
 //
 //    try {
@@ -117,7 +117,7 @@
 //      }
 //      g.weatherSource.init();
 //    } catch ( Exception ex){
-//      throw new EApplicationException("Unable to load, download or initialize weather.",ex);
+//      throw new ApplicationException("Unable to load, download or initialize weather.",ex);
 //    }
 //
 //    TrafficManager.TrafficManagerSettings tms;
@@ -125,7 +125,7 @@
 //      tms = new TrafficManager.TrafficManagerSettings(
 //          gsi.allowTrafficDelays, gsi.maxTrafficPlanes, gsi.trafficDensityPercentage);
 //    } catch (Exception ex){
-//      throw new EApplicationException("Unable to initialize the traffic manager.", ex);
+//      throw new ApplicationException("Unable to initialize the traffic manager.", ex);
 //    }
 //
 //    try {
@@ -141,7 +141,7 @@
 //      Context.getShared().getAppLog().writeLine(LogItemType.info, "Initializing the simulation");
 //      g.simulation.init();
 //    } catch (Exception ex){
-//      throw new EApplicationException("Unable to create or initialize the simulation.", ex);
+//      throw new ApplicationException("Unable to create or initialize the simulation.", ex);
 //    }
 //    return g;
 //  }
@@ -154,7 +154,7 @@
 //    try {
 //      doc = XDocument.load(fileName);
 //    } catch (EXmlException e) {
-//      throw new EApplicationException("Unable to load xml document.", e);
+//      throw new ApplicationException("Unable to load xml document.", e);
 //    }
 //
 //    XElement root = doc.getRoot();
@@ -242,7 +242,7 @@
 //        try {
 //          LoadSave.saveAsElement(tmp, entry.getKey(), entry.getValue());
 //        } catch (Exception ex) {
-//          throw new ERuntimeException("Failed to save custom data to game. Data key: " + entry.getKey() + ", data value: " + entry.getValue(), ex);
+//          throw new ApplicationException("Failed to save custom data to game. Data key: " + entry.getKey() + ", data value: " + entry.getValue(), ex);
 //        }
 //      }
 //      root.addElement(tmp);
@@ -254,7 +254,7 @@
 //    try {
 //      doc.save(fileName);
 //    } catch (EXmlException e) {
-//      throw new EApplicationException("Failed to save simulation.", e);
+//      throw new ApplicationException("Failed to save simulation.", e);
 //    }
 //
 //    long saveEnd = System.currentTimeMillis();

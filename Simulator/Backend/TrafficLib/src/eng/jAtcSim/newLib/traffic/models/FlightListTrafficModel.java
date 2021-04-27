@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.traffic.models;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -33,7 +33,7 @@ public class FlightListTrafficModel implements ITrafficModel {
 
       EAssert.Argument.isNotNull(callsign, "callsign");
       EAssert.Argument.isTrue(heading != null || otherAirport != null,
-          sf("Heading or other-airport location must be set for '%s'.", callsign));
+              sf("Heading or other-airport location must be set for '%s'.", callsign));
       EAssert.Argument.isNonemptyString(planeType, "planeType");
       EAssert.Argument.isNotNull(time, "time");
 
@@ -72,20 +72,20 @@ public class FlightListTrafficModel implements ITrafficModel {
         try {
           flight.bindedFollows = flights.getFirst(q -> q.callsign.toString(false).equals(flight.follows));
         } catch (Exception ex) {
-          throw new EApplicationException("Unable to find previous flight with the callsign " + flight.follows + ".", ex);
+          throw new ApplicationException("Unable to find previous flight with the callsign " + flight.follows + ".", ex);
         }
     }
   }
 
   private MovementTemplate convertFlightToMovementTemplate(Flight flight) {
     EntryExitInfo eei = flight.otherAirport != null ?
-        new EntryExitInfo(flight.otherAirport) : new EntryExitInfo(flight.heading);
+            new EntryExitInfo(flight.otherAirport) : new EntryExitInfo(flight.heading);
     FlightMovementTemplate ret = new FlightMovementTemplate(
-        flight.callsign,
-        flight.planeType,
-        flight.kind,
-        new ETimeStamp(flight.time.getHour(), flight.time.getMinute(), flight.time.getSecond()),
-        eei);
+            flight.callsign,
+            flight.planeType,
+            flight.kind,
+            new ETimeStamp(flight.time.getHour(), flight.time.getMinute(), flight.time.getSecond()),
+            eei);
     return ret;
   }
 }

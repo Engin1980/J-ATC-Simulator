@@ -1,7 +1,7 @@
 package eng.jAtcSim.abstractRadar.support;
 
 import eng.eSystem.collections.EList;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.utilites.StringUtils;
 import eng.eSystem.validation.EAssert;
@@ -59,7 +59,7 @@ public class VisualisedMessageManager {
     try {
       ret = tryFormat(message);
     } catch (Exception ex) {
-      throw new EApplicationException(
+      throw new ApplicationException(
           sf("Failed to format message '%s'.", message.getContent()),
           ex);
     }
@@ -76,7 +76,7 @@ public class VisualisedMessageManager {
     else if (content instanceof ISystemNotification)
       ret = this.formatters.systemFormatter.format((ISystemNotification) content);
     else
-      throw new EApplicationException(sf(
+      throw new ApplicationException(sf(
           "Unable to find appropriate formatter for type '%s'.",
           content.getClass().getName()));
     return ret;

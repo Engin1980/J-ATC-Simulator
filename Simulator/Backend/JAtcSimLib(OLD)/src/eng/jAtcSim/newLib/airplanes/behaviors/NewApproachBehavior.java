@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.area.airplanes.behaviors;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.newLib.area.airplanes.approachStagePilots.ApproachStagePilotProvider;
@@ -19,7 +19,7 @@ public class NewApproachBehavior extends Behavior {
   public NewApproachBehavior(NewApproachInfo approachInfo) {
     Validator.isNotNull(approachInfo);
     Validator.check(this.approachInfo.getStages().isEmpty() == false,
-        new EApplicationException("Created approach info has empty stages list."));
+        new ApplicationException("Created approach info has empty stages list."));
     this.approachInfo = approachInfo;
   }
 

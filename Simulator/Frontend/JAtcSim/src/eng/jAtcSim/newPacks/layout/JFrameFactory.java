@@ -4,7 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.layouting.Panel;
 import eng.jAtcSim.layouting.Window;
@@ -22,7 +22,7 @@ public class JFrameFactory {
   public JFrameInfo buildFrame(Layout layout, String frameName) {
     Window window = layout.getWindows()
             .tryGetFirst(q -> q.getTitle().equals(frameName))
-            .orElseThrow(() -> new EApplicationException("Unable to find frame titled " + frameName));
+            .orElseThrow(() -> new ApplicationException("Unable to find frame titled " + frameName));
     JFrameInfo ret = buildFrame(window, new ESet<>());
     return ret;
   }

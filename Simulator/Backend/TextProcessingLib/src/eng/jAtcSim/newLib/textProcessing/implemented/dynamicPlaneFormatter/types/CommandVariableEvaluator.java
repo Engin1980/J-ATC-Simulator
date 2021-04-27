@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.type
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.functionalInterfaces.Selector;
 import eng.jAtcSim.newLib.shared.Format;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
@@ -124,13 +124,13 @@ public class CommandVariableEvaluator {
       IMap<String, Selector<? extends IPlaneSpeech, String>> typeEvals = evals.get(cls);
       fun = (Selector<T, String>) typeEvals.get(key);
     } catch (Exception ex) {
-      throw new EApplicationException(
+      throw new ApplicationException(
           sf("Unable to find lambda function for '%s'.'%s'.", cls.getSimpleName(), key), ex);
     }
     try {
       ret = fun.invoke(value);
     } catch (Exception ex) {
-      throw new EApplicationException(
+      throw new ApplicationException(
           sf("Unable to evaluate '%s'.'%s' via its lambda function.", cls.getSimpleName(), key), ex);
     }
     return ret;

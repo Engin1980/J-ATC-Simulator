@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.IList;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.utilites.NumberUtils;
 
@@ -25,7 +25,7 @@ public class Border {
     public int compare(Border a, Border b) {
       if (a.disjoints.contains(b.getName()))
         if (b.disjoints.contains(a.getName()))
-          throw new EApplicationException("Borders has cyclic dependency in disjoints definition. Borders. " + a.getName() + ", " + b.getName());
+          throw new ApplicationException("Borders has cyclic dependency in disjoints definition. Borders. " + a.getName() + ", " + b.getName());
         else
           return 1;
       else if (b.disjoints.contains(a.getName()))

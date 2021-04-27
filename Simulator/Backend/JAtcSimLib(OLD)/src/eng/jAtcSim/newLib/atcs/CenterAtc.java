@@ -38,7 +38,7 @@ public class CenterAtc extends ComputerAtc {
         try {
           evaluateMiddleArrivalsForCloseArrivals(tmp, plane);
         } catch (Exception ex) {
-          throw new EApplicationException("Failed to evaluate " + plane.getFlightModule().getCallsign() + ".", ex);
+          throw new ApplicationException("Failed to evaluate " + plane.getFlightModule().getCallsign() + ".", ex);
         }
       }
       middleArrivals.remove(tmp);

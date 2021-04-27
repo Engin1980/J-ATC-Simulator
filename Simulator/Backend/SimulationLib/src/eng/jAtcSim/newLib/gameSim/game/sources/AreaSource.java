@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.game.sources;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.context.AreaAcc;
@@ -35,7 +35,7 @@ public class AreaSource extends Source<Area> {
   public Airport getActiveAirport() {
     Optional<Airport> ret = getContent().getAirports().tryGetFirst(q -> q.getIcao().equals(icao));
     if (ret.isEmpty())
-      throw new EApplicationException("Unable to load airport {" + icao + "} from selected area file.");
+      throw new ApplicationException("Unable to load airport {" + icao + "} from selected area file.");
     return ret.get();
   }
 
@@ -60,7 +60,7 @@ public class AreaSource extends Source<Area> {
       Area area = AreaXmlLoader.load(this.fileName);
       super.setContent(area);
     } catch (Exception e) {
-      throw new EApplicationException(sf("Failed to load xml-area-file from '%s'", this.fileName), e);
+      throw new ApplicationException(sf("Failed to load xml-area-file from '%s'", this.fileName), e);
     }
 
     IAreaAcc areaAcc = new AreaAcc(this.getArea(), this.getActiveAirport());

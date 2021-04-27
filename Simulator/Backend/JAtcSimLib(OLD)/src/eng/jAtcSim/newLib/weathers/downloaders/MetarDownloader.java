@@ -5,8 +5,8 @@
  */
 package eng.jAtcSim.newLib.area.weathers.downloaders;
 
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.ApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public abstract class MetarDownloader {
     try {
       ret = downloadMetarString(icao);
     } catch (Exception ex) {
-      throw new ERuntimeException("Failed to download metar.", ex);
+      throw new ApplicationException("Failed to download metar.", ex);
     }
 
     return ret;
@@ -45,12 +45,12 @@ public abstract class MetarDownloader {
     try {
       url = new URL(urlString);
     } catch (MalformedURLException ex) {
-      throw new EApplicationException("Cannot open reader to URL: " + urlString + " cos it is not valid.", ex);
+      throw new ApplicationException("Cannot open reader to URL: " + urlString + " cos it is not valid.", ex);
     }
     try {
       is = url.openStream();
     } catch (IOException ex) {
-      throw new ERuntimeException("Failed to open stream to " + urlString + ".",ex);
+      throw new ApplicationException("Failed to open stream to " + urlString + ".",ex);
     }
 
     ret = new BufferedReader(new InputStreamReader(is));

@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.area.airplanes.modules;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.IList;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
@@ -61,7 +61,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
   @Override
   public Navaid getDepartureLastNavaid() {
     if (this.parent.getFlightModule().isDeparture() == false)
-        throw new EApplicationException(sf(
+        throw new ApplicationException(sf(
             "This method should not be called on departure aircraft %s.",
             this.parent.getFlightModule().getCallsign().toString()));
 

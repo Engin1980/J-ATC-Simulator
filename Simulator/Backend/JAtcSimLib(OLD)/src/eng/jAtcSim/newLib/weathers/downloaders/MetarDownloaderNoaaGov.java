@@ -6,7 +6,7 @@
 
 package eng.jAtcSim.newLib.area.weathers.downloaders;
 
-import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.ApplicationException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class MetarDownloaderNoaaGov extends MetarDownloader {
     line = br.readLine(); // skips the first line, where date is
     line = br.readLine();
     } catch (IOException ex ){
-      throw new ERuntimeException("Failed to read content of url " + url);
+      throw new ApplicationException("Failed to read content of url " + url);
     } finally {
       try {
         br.close();

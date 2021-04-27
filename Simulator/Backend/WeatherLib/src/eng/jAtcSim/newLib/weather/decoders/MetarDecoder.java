@@ -1,11 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eng.jAtcSim.newLib.weather.decoders;
 
-import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.utilites.RegexUtils;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.weather.presets.PresetWeather;
@@ -32,7 +27,7 @@ public class MetarDecoder {
     try {
       ret = decodeWeather(metarLine);
     } catch (Exception ex) {
-      throw new ERuntimeException("Failed to decode metar from string " + metarLine + ".", ex);
+      throw new ApplicationException("Failed to decode metar from string " + metarLine + ".", ex);
     }
 
     return ret;

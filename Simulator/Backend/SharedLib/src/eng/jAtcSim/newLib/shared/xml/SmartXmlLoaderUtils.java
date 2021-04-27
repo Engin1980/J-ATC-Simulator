@@ -4,13 +4,11 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
-
-import java.util.function.Function;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -79,7 +77,7 @@ public abstract class SmartXmlLoaderUtils {
       try {
         ret *= Integer.parseInt(intS);
       } catch (Exception ex) {
-        throw new EApplicationException(sf("Error in loading altitude. Failed to convert value '%s' to altitude.", tmp));
+        throw new ApplicationException(sf("Error in loading altitude. Failed to convert value '%s' to altitude.", tmp));
       }
     }
     return ret;
@@ -175,7 +173,7 @@ public abstract class SmartXmlLoaderUtils {
       try {
         ret = Coordinate.parse(tmp);
       } catch (Exception ex) {
-        throw new EApplicationException(sf("Failed to parse coordinate from '%s'.", tmp), ex);
+        throw new ApplicationException(sf("Failed to parse coordinate from '%s'.", tmp), ex);
       }
     return ret;
   }
@@ -310,8 +308,8 @@ public abstract class SmartXmlLoaderUtils {
   public static PlaneCategoryDefinitions loadPlaneCategory(XElement source, String key, String defaultValue) {
     String tmp = loadString(source, key, null);
     PlaneCategoryDefinitions ret = (tmp == null) ?
-        PlaneCategoryDefinitions.getAll() :
-        new PlaneCategoryDefinitions(tmp);
+            PlaneCategoryDefinitions.getAll() :
+            new PlaneCategoryDefinitions(tmp);
     return ret;
   }
 
@@ -372,9 +370,9 @@ public abstract class SmartXmlLoaderUtils {
   public static AboveBelowExactly loadAboveBelowExactly(XElement source, String key, AboveBelowExactly defaultValue) {
     AboveBelowExactly ret = defaultValue;
 
-    if (source.hasAttribute(key)){
+    if (source.hasAttribute(key)) {
       String val = source.getAttribute(key);
-      switch (val){
+      switch (val) {
         case "orAbove":
           ret = AboveBelowExactly.above;
           break;
@@ -395,7 +393,7 @@ public abstract class SmartXmlLoaderUtils {
   public static AboveBelowExactly loadAboveBelowExactly(XElement source, String key) {
     AboveBelowExactly ret = loadAboveBelowExactly(source, key, null);
     if (ret == null)
-      throw throwNotFound(source, key) ;
+      throw throwNotFound(source, key);
 
     return ret;
   }
@@ -410,7 +408,7 @@ public abstract class SmartXmlLoaderUtils {
     if (content != null && possibleValues != null) {
       IList<String> tmp = EList.of(possibleValues);
       if (tmp.contains(content) == false)
-        throw new EApplicationException("Error in loading - string does not match any of required values.");
+        throw new ApplicationException("Error in loading - string does not match any of required values.");
     }
   }
 
@@ -418,7 +416,7 @@ public abstract class SmartXmlLoaderUtils {
     if (printLogToConsole)
       System.out.println("XmlLoader - loading value  " + context.toXmlPath(true) + " -- looking for " + key);
     String ret = source.tryGetAttribute(key)
-            .or(() -> source.tryGetChild(key).map(q->q.getName()))
+            .or(() -> source.tryGetChild(key).map(q -> q.getName()))
             .orElse(null);
     return ret;
   }
@@ -428,12 +426,12 @@ public abstract class SmartXmlLoaderUtils {
   }
 
   private static RuntimeException throwConvertFail(Object value, Class<?> targetType, Exception innerException) {
-    return new EApplicationException(sf(
-        "The conversion of the value %s to type %s has failed.", value, targetType.getName()
+    return new ApplicationException(sf(
+            "The conversion of the value %s to type %s has failed.", value, targetType.getName()
     ), innerException);
   }
 
   private static RuntimeException throwNotFound(XElement element, String key) {
-    return new EApplicationException(sf("Mandatory value not found for key '%s'", key));
+    return new ApplicationException(sf("Mandatory value not found for key '%s'", key));
   }
 }

@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.airplanes;
 
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
@@ -51,7 +51,7 @@ public class AirplanesController implements IXPersistable {
     } else if (at instanceof ArrivalAirplaneTemplate) {
       airplane = Airplane.createArrival((ArrivalAirplaneTemplate) at, sqwk, arrivalInitialAtId);
     } else
-      throw new EApplicationException("Unknown airplane template type " + at.getClass().getName());
+      throw new ApplicationException("Unknown airplane template type " + at.getClass().getName());
 
     this.planes.add(airplane);
     this.publicPlanes.add(airplane.getReader());
@@ -89,7 +89,7 @@ public class AirplanesController implements IXPersistable {
       try {
         plane.elapseSecond();
       } catch (Exception ex) {
-        throw new EApplicationException("Error processing elapseSecond() on plane " + plane.getReader().getCallsign() + ".", ex);
+        throw new ApplicationException("Error processing elapseSecond() on plane " + plane.getReader().getCallsign() + ".", ex);
       }
     }
   }

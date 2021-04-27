@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.area.serialization;
 
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.supports.IElementParser;
 import eng.jAtcSim.newLib.world.Airport;
@@ -21,7 +21,7 @@ public class RunwayParser implements IElementParser<ActiveRunway> {
       }
     }
     if (ret == null)
-      throw new EApplicationException("Unable to find runway " + c + ".");
+      throw new ApplicationException("Unable to find runway " + c + ".");
     return ret;
   }
 

@@ -8,10 +8,12 @@ package eng.jAtcSim.newLib.area.textProcessing.parsing;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 /**
  *
  * @author Marek
  */
+@Deprecated
 public class RegexGrouper {
 
   private final Matcher m;

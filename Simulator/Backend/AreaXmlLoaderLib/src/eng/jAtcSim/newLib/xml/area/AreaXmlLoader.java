@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.xml.area;
 
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
@@ -14,7 +14,7 @@ public class AreaXmlLoader {
     try {
       doc = XDocument.load(fileName);
     } catch (Exception ex) {
-      throw new EApplicationException(sf("Failed to load area from '{0}'.", fileName));
+      throw new ApplicationException(sf("Failed to load area from '{0}'.", fileName));
     }
 
     LoadingContext context = new LoadingContext();

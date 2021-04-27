@@ -1,7 +1,6 @@
 package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.shared.RegexGrouper;
 
 public class Navaid {
 
@@ -13,6 +12,7 @@ public class Navaid {
     airport,
     auxiliary
   }
+
   public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.007;
 
   public static Navaid create(String name, eType type, Coordinate coordinate) {

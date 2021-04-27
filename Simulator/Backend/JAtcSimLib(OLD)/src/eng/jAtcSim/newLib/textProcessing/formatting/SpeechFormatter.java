@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.area.textProcessing.formatting;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.jAtcSim.newLib.Acc;
@@ -115,7 +115,7 @@ public class SpeechFormatter implements IFormatter {
             return i;
         }
       }
-      throw new EApplicationException("Unable to find closing bracket " + closeChar + "  for sequence " + text.substring(fromIndex));
+      throw new ApplicationException("Unable to find closing bracket " + closeChar + "  for sequence " + text.substring(fromIndex));
     }
   }
 
@@ -124,7 +124,7 @@ public class SpeechFormatter implements IFormatter {
     try {
       doc = XDocument.load(xmlFilePath.toAbsolutePath());
     } catch (EXmlException e) {
-      throw new EApplicationException("Unable to load XmlFormatter from file " + xmlFilePath + ".", e);
+      throw new ApplicationException("Unable to load XmlFormatter from file " + xmlFilePath + ".", e);
     }
 
     SpeechFormatter ret = new XmlFormatterLoader().parse(doc.getRoot());
@@ -146,12 +146,12 @@ public class SpeechFormatter implements IFormatter {
     try {
       sentences = this.sentences.get(cls);
     } catch (Exception ex){
-      throw new EApplicationException("Failed to get sentences for " + cls.getSimpleName(), ex);
+      throw new ApplicationException("Failed to get sentences for " + cls.getSimpleName(), ex);
     }
     try {
       kind = _getKind(speech);
     } catch (Exception ex){
-      throw new EApplicationException("Failed to get 'kind' for " + cls.getSimpleName(),  ex);
+      throw new ApplicationException("Failed to get 'kind' for " + cls.getSimpleName(),  ex);
     }
     if (kind == null)
       sentences = sentences.where(q -> q.kind == null);
@@ -310,7 +310,7 @@ public class SpeechFormatter implements IFormatter {
     try {
       ret = commandVariableEvaluator.eval(speech, key);
     } catch (Exception ex) {
-      throw new EApplicationException(sf("Variable evaluation error. Unable to find for kind '%s' key '%s'.", speech.getClass().getSimpleName(), key));
+      throw new ApplicationException(sf("Variable evaluation error. Unable to find for kind '%s' key '%s'.", speech.getClass().getSimpleName(), key));
     }
     return ret;
   }
@@ -379,7 +379,7 @@ class XmlFormatterLoader {
       }
     }
     if (cls == null) {
-      throw new EApplicationException(sf("Unable to find class '%s' as response application.", className));
+      throw new ApplicationException(sf("Unable to find class '%s' as response application.", className));
     }
     return cls;
   }
@@ -517,13 +517,13 @@ class CommandVariableEvaluator {
       IMap<String, Function<? extends ISpeech, String>> typeEvals = evals.get(cls);
       fun = (Function<T, String>) typeEvals.get(key);
     } catch (Exception ex) {
-      throw new EApplicationException(
+      throw new ApplicationException(
           sf("Unable to find lambda function for '%s'.'%s'.", cls.getSimpleName(), key), ex);
     }
     try {
       ret = fun.apply(value);
     } catch (Exception ex) {
-      throw new EApplicationException(
+      throw new ApplicationException(
           sf("Unable to evaluate '%s'.'%s' via its lambda function.", cls.getSimpleName(), key), ex);
     }
     return ret;

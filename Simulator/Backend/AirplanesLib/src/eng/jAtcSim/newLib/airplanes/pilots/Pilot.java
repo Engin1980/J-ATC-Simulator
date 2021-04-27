@@ -1,8 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.UnexpectedValueException;
-import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
@@ -135,14 +134,14 @@ public abstract class Pilot implements IXPersistable {
   public final void elapseSecond() {
     if (isFirstElapseSecond) {
       if (ArrayUtils.contains(getInitialStates(), rdr.getState()) == false)
-        throw new EApplicationException(sf(
+        throw new ApplicationException(sf(
                 "Airplane %s has illegal initial state %s for pilot %s.",
                 rdr.getCallsign().toString(), rdr.getState().toString(), this.getClass().getName()
         ));
       isFirstElapseSecond = false;
     } else {
       if (ArrayUtils.contains(getValidStates(), rdr.getState()) == false)
-        throw new EApplicationException(sf(
+        throw new ApplicationException(sf(
                 "Airplane %s has illegal state %s for pilot %s.",
                 rdr.getCallsign().toString(), rdr.getState().toString(), this.getClass().getName()
         ));
@@ -152,7 +151,7 @@ public abstract class Pilot implements IXPersistable {
   }
 
   void throwIllegalStateException() {
-    throw new ERuntimeException(
+    throw new ApplicationException(
             "Illegal state " + rdr.getState() + " for behavior " + this.getClass().getSimpleName() + "."
     );
   }

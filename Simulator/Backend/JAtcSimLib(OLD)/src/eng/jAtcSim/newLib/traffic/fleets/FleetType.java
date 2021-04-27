@@ -4,7 +4,7 @@ package eng.jAtcSim.newLib.area.traffic.fleets;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.airplanes.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.AirplaneTypes;
 import eng.jAtcSim.newLib.area.airplanes.AirplaneType;
@@ -25,7 +25,7 @@ public class FleetType {
 
     AirplaneType at = airplaneTypes.tryGetByName(name);
     if (at == null)
-      throw new EApplicationException(sf(
+      throw new ApplicationException(sf(
           "Airplane type defined in company fleets '%s' not found in known airplane types.", name));
 
     FleetType ret = new FleetType(at,weight);

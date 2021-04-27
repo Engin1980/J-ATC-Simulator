@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.toAtcParsers;
 
 import eng.eSystem.collections.IList;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.Acc;
 import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck;
 import eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.SpeechParser;
@@ -50,7 +50,7 @@ public class RunwayCheckParser extends SpeechParser<RunwayCheck> {
     else {
       ActiveRunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(rwyName);
       if (rt == null) {
-        throw new EApplicationException("Unable to find threshold name " + rwyName + ".");
+        throw new ApplicationException("Unable to find threshold name " + rwyName + ".");
       } else {
         rwy = rt.getParent();
       }

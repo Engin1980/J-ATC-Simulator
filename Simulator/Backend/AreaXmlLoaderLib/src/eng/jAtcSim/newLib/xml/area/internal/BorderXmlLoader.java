@@ -5,7 +5,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -136,7 +136,7 @@ public class BorderXmlLoader extends XmlLoader<Border> {
           ret.add(point);
           break;
         default:
-          throw new EApplicationException(sf("Unknown type of point '%s' in border.", node.getName()));
+          throw new ApplicationException(sf("Unknown type of point '%s' in border.", node.getName()));
       }
     }
 

@@ -1,6 +1,6 @@
 //package eng.jAtcSim.newLib.textProcessing.formatting;
 //
-//import eng.eSystem.exceptions.EApplicationException;
+//import eng.eSystem.exceptions.ApplicationException;
 //import eng.jAtcSim.newLib.area.atcs.Atc;
 //import eng.jAtcSim.newLib.area.speaking.ISpeech;
 //import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
@@ -26,7 +26,7 @@
 //    m = tryGetFormatCommandMethodToInvoke(speech.getClass());
 //
 //    if (m == null) {
-//      throw new EApplicationException(sf(
+//      throw new ApplicationException(sf(
 //          "No {format(...)} method found for kind {%s} in the formatter of kind {%s}.",
 //          speech.getClass().getName(),
 //          this.getClass().getName()));
@@ -36,7 +36,7 @@
 //    try {
 //      ret = (String) m.invoke(fmt, speech);
 //    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-//      throw new EApplicationException(sf(
+//      throw new ApplicationException(sf(
 //          "Format-command invoke failed for class %s and parameter %s.",
 //          fmt.getClass().getName(),
 //          speech.getClass().getName()));

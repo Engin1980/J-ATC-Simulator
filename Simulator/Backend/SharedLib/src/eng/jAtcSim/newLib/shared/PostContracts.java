@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.shared;
 
 import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.ISet;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.functionalInterfaces.Producer;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -45,6 +45,6 @@ public class PostContracts {
             postContract.sender.getClass());
     if (postContract.message != null)
       msg += ": " + postContract.message;
-    throw new EApplicationException(msg);
+    throw new ApplicationException(msg);
   }
 }

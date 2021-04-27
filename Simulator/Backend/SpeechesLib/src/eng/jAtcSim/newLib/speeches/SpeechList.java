@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.speeches;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.NullArgumentException;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.speeches.base.ISpeech;
@@ -24,14 +24,14 @@ public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageC
     super();
     super.addMany(speeches);
     if (this.isAny(q -> q == null))
-      throw new EApplicationException("Some speech is null.");
+      throw new ApplicationException("Some speech is null.");
   }
 
   public SpeechList(Iterable<? extends T> lst) {
     super();
     super.addMany(lst);
     if (this.isAny(q -> q == null))
-      throw new EApplicationException("Some speech is null.");
+      throw new ApplicationException("Some speech is null.");
   }
 
   @Override
@@ -88,7 +88,7 @@ public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageC
   public <U extends T> U getAs(int index) {
     U ret = this.tryGetAs(index);
     if (ret == null)
-      throw new EApplicationException("Element at index {" + index + "} cannot be cast to requested kind.");
+      throw new ApplicationException("Element at index {" + index + "} cannot be cast to requested kind.");
     return ret;
   }
 

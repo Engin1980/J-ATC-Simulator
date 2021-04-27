@@ -3,7 +3,7 @@ package eng.jAtcSim.app.startupSettings;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
@@ -80,7 +80,7 @@ public class FrmStartupSettings extends JPanel {
       XLoadContext ctx = new XLoadContext().withDefaultParsers();
       sett = ctx.loadObject(XDocument.load(file).getRoot(), StartupSettings.class);
     } catch (Exception e) {
-      throw new EApplicationException("Unable to load startup settings.", e);
+      throw new ApplicationException("Unable to load startup settings.", e);
     }
 
     this.fillBySettings(sett);
@@ -107,7 +107,7 @@ public class FrmStartupSettings extends JPanel {
       XDocument doc = new XDocument(root);
       doc.save(fileName);
     } catch (Exception e) {
-      throw new EApplicationException("Failed to save startup settings.", e);
+      throw new ApplicationException("Failed to save startup settings.", e);
     }
     FileHistoryManager.updateHistory(SwingFactory.FileDialogType.startupSettings.toString(), fileName);
     this.lastStartupSettingsFileName = fileName;

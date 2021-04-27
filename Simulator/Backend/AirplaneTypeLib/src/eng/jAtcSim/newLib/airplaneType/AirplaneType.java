@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.airplaneType;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import exml.IXPersistable;
 import exml.annotations.XAttribute;
 import exml.annotations.XConstructor;
@@ -214,7 +214,7 @@ public class AirplaneType implements IXPersistable {
       f.set(this,value);
       f.setAccessible(false);
     } catch (IllegalAccessException | NoSuchFieldException e) {
-      throw new EApplicationException(sf("Failed to set field '%s' internally.", name));
+      throw new ApplicationException(sf("Failed to set field '%s' internally.", name));
     }
   }
 }

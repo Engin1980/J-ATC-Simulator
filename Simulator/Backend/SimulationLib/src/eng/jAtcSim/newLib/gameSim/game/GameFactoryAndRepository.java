@@ -2,10 +2,10 @@ package eng.jAtcSim.newLib.gameSim.game;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
+import eng.eSystem.eXml.EXmlException;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EXmlException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.functionalInterfaces.Consumer2;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.functionalInterfaces.Selector;
@@ -403,7 +403,7 @@ public class GameFactoryAndRepository {
         num = nf.parse(pts[1]);
         lng = num instanceof Long ? (double) (long) (num) : (double) num;
       } catch (ParseException e) {
-        throw new EApplicationException(sf("Failed to parse %s to latitude/longitude coordinate.", q));
+        throw new ApplicationException(sf("Failed to parse %s to latitude/longitude coordinate.", q));
       }
       Coordinate ret = new Coordinate(lat, lng);
       return ret;

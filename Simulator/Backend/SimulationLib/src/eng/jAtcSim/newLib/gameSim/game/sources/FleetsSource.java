@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.game.sources;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.fleet.airliners.AirlinesFleets;
 import eng.jAtcSim.newLib.fleet.generalAviation.GeneralAviationFleets;
 import eng.jAtcSim.newLib.xml.fleets.FleetsXmlLoader;
@@ -44,12 +44,12 @@ public class FleetsSource extends Source<FleetsSource.Fleets> {
     try {
       gaFleets = FleetsXmlLoader.loadGeneralAviationFleets(generalAviationFileName);
     } catch (Exception e) {
-      throw new EApplicationException(sf("Failed to load g-a xml-fleets-file from '%s'", this.generalAviationFileName), e);
+      throw new ApplicationException(sf("Failed to load g-a xml-fleets-file from '%s'", this.generalAviationFileName), e);
     }
     try {
       companyFleets = FleetsXmlLoader.loadCompanyFleet(companyFileName);
     } catch (Exception e) {
-      throw new EApplicationException(sf("Failed to load company xml-fleets-file from '%s'", this.companyFileName), e);
+      throw new ApplicationException(sf("Failed to load company xml-fleets-file from '%s'", this.companyFileName), e);
     }
 
     Fleets fleets = new Fleets(gaFleets, companyFleets);

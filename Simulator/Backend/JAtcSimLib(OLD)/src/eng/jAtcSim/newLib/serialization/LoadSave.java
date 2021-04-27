@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.area.serialization;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.CoordinateValue;
 import eng.eSystem.xmlSerialization.Log;
@@ -79,7 +79,7 @@ public class LoadSave {
     try {
       ser.serialize(ret, obj);
     } catch (XmlSerializationException e) {
-      throw new EApplicationException("Failed to save object " + obj + ".", e);
+      throw new ApplicationException("Failed to save object " + obj + ".", e);
     }
     return ret;
   }
@@ -90,7 +90,7 @@ public class LoadSave {
     try {
       ret = ser.deserialize(tmp, type);
     } catch (Exception e) {
-      throw new EApplicationException("Failed to load object " + name + " of kind " + type.getClass().getName() + ".", e);
+      throw new ApplicationException("Failed to load object " + name + " of kind " + type.getClass().getName() + ".", e);
     }
     return ret;
   }
@@ -100,7 +100,7 @@ public class LoadSave {
     try {
       f = getField(src.getClass(), fieldName);
     } catch (NoSuchFieldException e) {
-      throw new EApplicationException("Unable to find field " + fieldName + " in kind " + src.getClass().getName());
+      throw new ApplicationException("Unable to find field " + fieldName + " in kind " + src.getClass().getName());
     }
 
     Object v;
@@ -110,7 +110,7 @@ public class LoadSave {
       f.setAccessible(true);
       f.set(src, v);
     } catch (IllegalAccessException e) {
-      throw new EApplicationException("Unable to set value " + v + " into " + src.getClass().getName() + "." + f.getName());
+      throw new ApplicationException("Unable to set value " + v + " into " + src.getClass().getName() + "." + f.getName());
     }
   }
 
@@ -149,7 +149,7 @@ public class LoadSave {
       f.setAccessible(true);
       v = f.get(src);
     } catch (NoSuchFieldException | IllegalAccessException ex) {
-      throw new EApplicationException("Unreadable field " + fieldName + " on object " + src.getClass(), ex);
+      throw new ApplicationException("Unreadable field " + fieldName + " on object " + src.getClass(), ex);
     }
     return v;
   }

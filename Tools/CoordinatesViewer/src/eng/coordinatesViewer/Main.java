@@ -2,7 +2,7 @@ package eng.coordinatesViewer;
 
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eXmlSerialization.XmlSerializer;
 import javafx.fxml.FXML;
@@ -82,7 +82,7 @@ public class Main {
         XDocument doc = XDocument.load(file.toString());
         this.project = ser.deserialize(doc.getRoot(), Project.class);
       } catch (Exception e) {
-        throw new ERuntimeException("Unable to load " + file.toString());
+        throw new ApplicationException("Unable to load " + file.toString());
       }
       this.project.reinit();
       project.getRedrawRequiredEvent().add(() -> updateView());
@@ -103,7 +103,7 @@ public class Main {
       try {
         doc.save(res.toString());
       } catch (EXmlException e) {
-        throw new ERuntimeException("Unable to save " + res.toString());
+        throw new ApplicationException("Unable to save " + res.toString());
       }
     }
   }

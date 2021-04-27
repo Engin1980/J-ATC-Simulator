@@ -1,10 +1,10 @@
 package eng.jAtcSim.layouting;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.eXml.EXmlException;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EXmlException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.validation.EAssert;
 
 public class LayoutFactory {
@@ -27,7 +27,7 @@ public class LayoutFactory {
       XDocument doc = XDocument.load(fileName);
       root = doc.getRoot();
     } catch (EXmlException e) {
-      throw new EApplicationException("Failed to load layout xml file " + fileName + ".", e);
+      throw new ApplicationException("Failed to load layout xml file " + fileName + ".", e);
     }
 
     Layout ret = loadFromXml(root);
@@ -90,7 +90,7 @@ public class LayoutFactory {
       ret = loadColumns(parentElement);
     else if (parentElement.getChildren("row").count() > 0)
       ret = loadRows(parentElement);
-    else throw new EApplicationException("Block type not recognized!");
+    else throw new ApplicationException("Block type not recognized!");
 
     return ret;
   }
@@ -145,11 +145,11 @@ public class LayoutFactory {
     boolean focus = elm.tryGetAttribute("focus").orElse("false").equals("true");
 
     IMap<String, String> options = new EMap<>();
-    elm.getChildren("option").forEach(q->
+    elm.getChildren("option").forEach(q ->
     {
       String k = q.getAttribute("key");
       String v = q.getAttribute("value");
-      options.set(k,v);
+      options.set(k, v);
     });
 
     Panel panel = new Panel(view, id, focus, options);

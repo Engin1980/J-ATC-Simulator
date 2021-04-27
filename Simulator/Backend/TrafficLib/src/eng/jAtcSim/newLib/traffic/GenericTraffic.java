@@ -208,7 +208,7 @@
 ////        type = companyFleet.getTypes().getRandom().getAirplaneType();
 ////      }
 ////      if (companyFleet == null)
-////        throw new EApplicationException("There is no plane kind matching requested category and company.");
+////        throw new ApplicationException("There is no plane kind matching requested category and company.");
 ////    } else {
 ////      companyFleet = tmp.getRandom();
 ////      icao = companyFleet.getIcao();

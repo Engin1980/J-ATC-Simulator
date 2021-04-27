@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.area.global.newSources;
 
 import eng.eSystem.eXml.XDocument;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.newLib.airplanes.AirplaneTypes;
@@ -30,7 +30,7 @@ public class FleetsSource extends Source<Fleets> {
       XDocument xDocument = XDocument.load(this.fileName);
       this.content = Fleets.load(xDocument.getRoot(), types);
     } catch (EXmlException e) {
-      throw new EApplicationException(sf("Failed to load xml-fleets-file from '%s'", this.fileName), e);
+      throw new ApplicationException(sf("Failed to load xml-fleets-file from '%s'", this.fileName), e);
     }
 
     super.setInitialized();

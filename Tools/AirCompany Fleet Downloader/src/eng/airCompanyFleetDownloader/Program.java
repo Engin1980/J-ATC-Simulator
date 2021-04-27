@@ -2,11 +2,10 @@ package eng.airCompanyFleetDownloader;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
+import eng.eSystem.eXml.EXmlException;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.exceptions.EXmlException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eXmlSerialization.StoreTypeMode;
 import eng.eXmlSerialization.XmlSerializer;
@@ -131,7 +130,7 @@ public class Program {
     try {
       doc = XDocument.load(fileName);
     } catch (EXmlException e) {
-      throw new EApplicationException(sf("Unable to load file '%s'.", fileName), e);
+      throw new ApplicationException(sf("Unable to load file '%s'.", fileName), e);
     }
 
     T ret = ser.deserialize(doc.getRoot(), type);
@@ -158,10 +157,10 @@ public class Program {
         in.close();
 
       } catch (Exception ex) {
-        throw new ERuntimeException(ex);
+        throw new ApplicationException(ex);
       }
     } catch (Exception ex) {
-      throw new ERuntimeException(ex);
+      throw new ApplicationException(ex);
     }
 
     try {
@@ -389,7 +388,7 @@ public class Program {
     try {
       doc.save(fileName);
     } catch (EXmlException e) {
-      throw new EApplicationException(sf("Unable to save file '%s'.", fileName), e);
+      throw new ApplicationException(sf("Unable to save file '%s'.", fileName), e);
     }
   }
 

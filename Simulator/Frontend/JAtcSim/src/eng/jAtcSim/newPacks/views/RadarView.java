@@ -3,7 +3,7 @@ package eng.jAtcSim.newPacks.views;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.functionalInterfaces.Action;
 import eng.eSystem.functionalInterfaces.Selector;
@@ -500,13 +500,13 @@ class ButtonBinding {
     try {
       mi = cls.getMethod("is" + propertyName);
     } catch (NoSuchMethodException e) {
-      throw new EApplicationException("Unable to find property is" + propertyName + " over " + target + ".", e);
+      throw new ApplicationException("Unable to find property is" + propertyName + " over " + target + ".", e);
     }
     boolean val;
     try {
       val = (boolean) mi.invoke(target, (Object[]) null);
     } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new EApplicationException("Unable to read property is" + propertyName + " over " + target + ".", e);
+      throw new ApplicationException("Unable to read property is" + propertyName + " over " + target + ".", e);
     }
     return val;
   }
@@ -517,12 +517,12 @@ class ButtonBinding {
     try {
       mi = cls.getMethod("set" + propertyName, boolean.class);
     } catch (NoSuchMethodException e) {
-      throw new EApplicationException("Unable to find property set" + propertyName + " over " + target + ".", e);
+      throw new ApplicationException("Unable to find property set" + propertyName + " over " + target + ".", e);
     }
     try {
       mi.invoke(target, val);
     } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new EApplicationException("Unable to write property set" + propertyName + " over " + target + ".", e);
+      throw new ApplicationException("Unable to write property set" + propertyName + " over " + target + ".", e);
     }
   }
 }

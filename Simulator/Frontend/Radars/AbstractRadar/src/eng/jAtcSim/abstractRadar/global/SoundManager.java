@@ -1,6 +1,6 @@
 package eng.jAtcSim.abstractRadar.global;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -33,8 +33,8 @@ public class SoundManager {
       systemClip = loadAndOpenClip(systemMessageFile);
       airproxClip = loadAndOpenClip(airproxFile);
 
-    } catch (EApplicationException ex) {
-      throw new EApplicationException("Sound area init fail!", ex);
+    } catch (ApplicationException ex) {
+      throw new ApplicationException("Sound area init fail!", ex);
     }
   }
 
@@ -47,7 +47,7 @@ public class SoundManager {
       ret = (Clip) AudioSystem.getLine(info);
       ret.open(audioStream);
     } catch (Exception ex){
-      throw new EApplicationException("Unable to initialize sound clip from " + file + ".", ex);
+      throw new ApplicationException("Unable to initialize sound clip from " + file + ".", ex);
     }
     return ret;
   }

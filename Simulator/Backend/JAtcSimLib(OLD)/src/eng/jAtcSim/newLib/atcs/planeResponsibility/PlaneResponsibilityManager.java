@@ -7,7 +7,7 @@ package eng.jAtcSim.newLib.area.atcs.planeResponsibility;
 
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.*;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.validation.Validator;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.newLib.Acc;
@@ -68,15 +68,15 @@ public class PlaneResponsibilityManager {
       }
 
       if (ai.getSwitchRequest() != null)
-        throw new EApplicationException("Airplane " + plane.getFlightModule().getCallsign() + " is already under request switch from "
+        throw new ApplicationException("Airplane " + plane.getFlightModule().getCallsign() + " is already under request switch from "
             + ai.getAtc().getType().toString() + " to " + ai.getSwitchRequest().getAtc().getType().toString() + ".");
       if (ai.getAtc() != sender)
-        throw new EApplicationException("Airplane " + plane.getFlightModule().getCallsign()
+        throw new ApplicationException("Airplane " + plane.getFlightModule().getCallsign()
             + " is requested to be switched from incorrect atc. Current is "
             + ai.getAtc().getType().toString() + ", requested from is " + sender.getType().toString() + ".");
 
       if ((sender.getType() == Atc.eType.ctr || sender.getType() == Atc.eType.twr) && targetAtc.getType() != Atc.eType.app)
-        throw new EApplicationException("Invalid request direction.");
+        throw new ApplicationException("Invalid request direction.");
 
       SwitchRequest sr = new SwitchRequest(targetAtc);
       ai.setSwitchRequest(sr);
@@ -181,7 +181,7 @@ public class PlaneResponsibilityManager {
 
   public void registerNewPlane(Atc atc, Airplane plane) {
     if (dao.getAll().isAny(q -> q.getPlane() == plane)) {
-      throw new EApplicationException(sf("Second registration of already registered plane %s!", plane.getFlightModule().getCallsign()));
+      throw new ApplicationException(sf("Second registration of already registered plane %s!", plane.getFlightModule().getCallsign()));
     }
 
     dao.add(new AirplaneResponsibilityInfo(plane, atc));
@@ -191,7 +191,7 @@ public class PlaneResponsibilityManager {
   public void unregisterPlane(Airplane plane) {
     AirplaneResponsibilityInfo ai = dao.getAll().tryGetFirst(q -> q.getPlane() == plane);
     if (ai == null) {
-      throw new EApplicationException(sf("Plane %s is not registered, cannot be unregistered!", plane.getFlightModule().getCallsign()));
+      throw new ApplicationException(sf("Plane %s is not registered, cannot be unregistered!", plane.getFlightModule().getCallsign()));
     }
     dao.remove(ai);
     ai.getAtc().removePlaneDeletedFromGame(plane);

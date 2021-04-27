@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.area.global.newSources;
 
 import eng.eSystem.eXml.XDocument;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.jAtcSim.newLib.airplanes.AirplaneTypes;
 import eng.jAtcSim.newLib.area.airplanes.AirplaneTypes;
@@ -32,7 +32,7 @@ public class AirplaneTypesSource extends Source<AirplaneTypes> {
       XDocument xDocument = XDocument.load(this.fileName);
       this.content = AirplaneTypes.load(xDocument.getRoot());
     } catch (EXmlException e) {
-      throw new EApplicationException(sf("Failed to load xml-airplaneTypes-file from '%s'", this.fileName), e);
+      throw new ApplicationException(sf("Failed to load xml-airplaneTypes-file from '%s'", this.fileName), e);
     }
   }
 }

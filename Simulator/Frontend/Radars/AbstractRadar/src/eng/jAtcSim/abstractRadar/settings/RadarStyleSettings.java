@@ -1,10 +1,9 @@
 package eng.jAtcSim.abstractRadar.settings;
 
+import eng.eSystem.eXml.EXmlException;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EXmlException;
-import eng.eSystem.functionalInterfaces.Selector;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.abstractRadar.global.Color;
 import eng.jAtcSim.abstractRadar.global.Font;
 import exml.IXPersistable;
@@ -136,14 +135,6 @@ public class RadarStyleSettings implements IXPersistable {
       this.firstLineFormat = firstLineFormat;
     }
 
-    public boolean isShowHeadingLine() {
-      return showHeadingLine;
-    }
-
-    public void setShowHeadingLine(boolean showHeadingLine) {
-      this.showHeadingLine = showHeadingLine;
-    }
-
     public int getHistoryDotCount() {
       return historyDotCount;
     }
@@ -192,6 +183,14 @@ public class RadarStyleSettings implements IXPersistable {
       this.thirdLineFormat = thirdLineFormat;
     }
 
+    public boolean isShowHeadingLine() {
+      return showHeadingLine;
+    }
+
+    public void setShowHeadingLine(boolean showHeadingLine) {
+      this.showHeadingLine = showHeadingLine;
+    }
+
     public boolean isVisible() {
       return visible;
     }
@@ -232,7 +231,7 @@ public class RadarStyleSettings implements IXPersistable {
       initContext(ctx);
       ret = ctx.loadObject(root, RadarStyleSettings.class);
     } catch (EXmlException e) {
-      throw new EApplicationException(sf("Unable to load radar style settings from '%s'.", fileName), e);
+      throw new ApplicationException(sf("Unable to load radar style settings from '%s'.", fileName), e);
     }
     return ret;
   }

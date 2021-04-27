@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.messaging;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.validation.Validator;
 
 public class Messenger {
@@ -44,7 +44,7 @@ public class Messenger {
     Validator.isNotNull(listener);
     Validator.isNotNull(messageTarget);
     if (listeners.isAny(q -> q.listener == listener))
-      throw new EApplicationException("Listener " + listener.toString() + " already registered.");
+      throw new ApplicationException("Listener " + listener.toString() + " already registered.");
 
     ListenerInfo li = new ListenerInfo(listener, messageTarget);
     this.listeners.add(li);
@@ -73,7 +73,7 @@ public class Messenger {
       try {
         li = listeners.getFirst(q -> q.listener == listener);
       } catch (Exception ex){
-        throw new EApplicationException("Listener " + listener.toString() + " has not been registered.");
+        throw new ApplicationException("Listener " + listener.toString() + " has not been registered.");
       }
       ret = new EList(li.queue);
       if (deleteRetrieved) {

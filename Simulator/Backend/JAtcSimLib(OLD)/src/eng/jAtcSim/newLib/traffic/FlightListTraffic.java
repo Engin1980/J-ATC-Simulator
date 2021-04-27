@@ -4,7 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.Acc;
@@ -84,7 +84,7 @@ public class FlightListTraffic extends Traffic {
     public Movement toMovement() {
       AirplaneType type = Acc.types().tryGetByName(this.planeType);
       if (type == null)
-        throw new EApplicationException("Unable to create flight. Required airplane kind '" + this.planeType + "' not found.");
+        throw new ApplicationException("Unable to create flight. Required airplane kind '" + this.planeType + "' not found.");
 
       int currentHeading;
       if (this.heading == EMPTY_HEADING) {
@@ -183,13 +183,13 @@ public class FlightListTraffic extends Traffic {
     for (Flight flight : flights) {
 
       if (flight.heading == EMPTY_HEADING && flight.otherAirport == null)
-        throw new EApplicationException("Flight " + flight.callsign + " has neither heading nor other-airport coordinate.");
+        throw new ApplicationException("Flight " + flight.callsign + " has neither heading nor other-airport coordinate.");
 
       if (flight.follows != null)
         try {
           flight.bindedFollows = flights.getFirst(q -> q.callsign.equals(flight.follows));
         } catch (Exception ex) {
-          throw new EApplicationException("Unable to find previous flight with the callsign " + flight.follows + ".", ex);
+          throw new ApplicationException("Unable to find previous flight with the callsign " + flight.follows + ".", ex);
         }
     }
   }

@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.atcs.internal.computer;
 
 import eng.eSystem.collections.IList;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
@@ -104,7 +104,7 @@ public abstract class ComputerAtc extends Atc {
         else if (m.getSource().getType() == Participant.eType.atc)
           elapseSecondProcessMessageFromAtc(m);
       } catch (Exception ex) {
-        throw new EApplicationException(sf(
+        throw new ApplicationException(sf(
                 "Failed to process a message for Atc. Atc: %s. Message from %s. Message itself: %s.",
                 this.getAtcId().getName(),
                 m.getSource().getId(),

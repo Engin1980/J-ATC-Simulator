@@ -4,7 +4,7 @@ import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.Acc;
 import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplane4Atc;
 import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneRO;
@@ -79,7 +79,7 @@ public abstract class ComputerAtc extends Atc {
           elapseSecondProcessMessageFromAtc(m);
         }
       } catch (Exception ex) {
-        throw new EApplicationException(sf(
+        throw new ApplicationException(sf(
             "Failed to process a message for Atc. Atc: %s. Message from %s. Message itself: %s.",
             this.getName(),
             m.getSource().getName(),

@@ -4,7 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import exml.loading.XLoadContext;
@@ -17,7 +17,7 @@ public class AirplaneTypesXmlLoader {
     try {
       doc = XDocument.load(fileName);
     } catch (Exception ex) {
-      throw new EApplicationException(sf("Failed to load airplane types from '{0}'.", fileName));
+      throw new ApplicationException(sf("Failed to load airplane types from '{0}'.", fileName));
     }
 
     AirplaneTypes ret = load(doc.getRoot());

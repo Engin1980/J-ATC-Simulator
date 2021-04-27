@@ -7,7 +7,7 @@ package eng.jAtcSim.newLib.area.atcs;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.utilites.RegexUtils;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.newLib.Acc;
@@ -283,7 +283,7 @@ public class UserAtc extends Atc {
         sendError(text);
         break;
       case throwExceptions:
-        throw new ERuntimeException(text);
+        throw new ApplicationException(text);
       default:
         throw new UnsupportedOperationException();
     }

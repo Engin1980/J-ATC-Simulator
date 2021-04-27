@@ -5,7 +5,7 @@
  */
 package eng.jAtcSim.newLib.area.weathers;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.utilites.Action;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.validation.Validator;
@@ -83,7 +83,7 @@ public class DynamicWeatherProvider extends WeatherProvider {
         ud.join();
         nextUpdate = java.time.LocalDateTime.now().plusMinutes(updateIntervalMinutes);
       } catch (InterruptedException e) {
-        throw new EApplicationException("Failed to wait for weather download.", e);
+        throw new ApplicationException("Failed to wait for weather download.", e);
       }
     }
   }

@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.game.sources;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.airplaneType.context.AirplaneTypeAcc;
 import eng.jAtcSim.newLib.airplaneType.context.IAirplaneTypeAcc;
@@ -32,7 +32,7 @@ public class AirplaneTypesSource extends Source<AirplaneTypes> {
       AirplaneTypes at = AirplaneTypesXmlLoader.load(this.fileName);
       super.setContent(at);
     } catch (Exception e) {
-      throw new EApplicationException(sf("Failed to load xml-airplaneTypes-file from '%s'", this.fileName), e);
+      throw new ApplicationException(sf("Failed to load xml-airplaneTypes-file from '%s'", this.fileName), e);
     }
 
     IAirplaneTypeAcc airplaneTypeAcc = new AirplaneTypeAcc(super.getContent());

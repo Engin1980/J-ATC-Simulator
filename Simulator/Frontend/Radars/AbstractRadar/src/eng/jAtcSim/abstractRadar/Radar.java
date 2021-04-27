@@ -3,7 +3,7 @@ package eng.jAtcSim.abstractRadar;
 import eng.eSystem.collections.*;
 import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
@@ -505,7 +505,7 @@ public class Radar {
     } else if (approach.getType() == ApproachType.ndb) {
       dispSett = styleSettings.ndbApproach;
     } else
-      throw new EApplicationException("Not supported");
+      throw new ApplicationException("Not supported");
     Coordinate start = Coordinates.getCoordinate(
         approach.getParent().getCoordinate(),
         Headings.getOpposite(approach.getGeographicalRadial()),

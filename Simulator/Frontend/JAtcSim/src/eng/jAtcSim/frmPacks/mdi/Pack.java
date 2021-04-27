@@ -10,7 +10,7 @@
 //import eng.eSystem.collections.IList;
 //import eng.eSystem.collections.IMap;
 //import eng.eSystem.events.EventSimple;
-//import eng.eSystem.exceptions.EApplicationException;
+//import eng.eSystem.exceptions.ApplicationException;
 //import eng.eXmlSerialization.XmlSerializer;
 //import eng.jAtcSim.settings.AppSettings;
 //import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
@@ -113,8 +113,8 @@
 //    try {
 //      XmlSerializer ser = XmlSerializationFactory.createForSpeechResponses();
 //      speechResponses = XmlSerialization.loadFromFile(ser, speechFormatterFile.toFile(), IMap.class);
-//    } catch (EApplicationException ex) {
-//      throw new EApplicationException(
+//    } catch (ApplicationException ex) {
+//      throw new ApplicationException(
 //              sf("Unable to load speech responses from xml file '%s'.", speechFormatterFile), ex);
 //    }
 //    DynamicPlaneFormatter ret = new DynamicPlaneFormatter(speechResponses);

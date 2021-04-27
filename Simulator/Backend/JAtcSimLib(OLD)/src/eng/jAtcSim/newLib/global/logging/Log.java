@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.area.global.logging;
 
-import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.utilites.ExceptionUtils;
 
 import java.io.*;
@@ -52,7 +52,7 @@ public abstract class Log {
       if (errorKind)
         System.out.println("Log " + this.name + " write failed: " + ExceptionUtils.toFullString(ex, " ==> "));
       else
-        throw new ERuntimeException("Log " + this.name + " write failed.", ex);
+        throw new ApplicationException("Log " + this.name + " write failed.", ex);
     }
   }
 }

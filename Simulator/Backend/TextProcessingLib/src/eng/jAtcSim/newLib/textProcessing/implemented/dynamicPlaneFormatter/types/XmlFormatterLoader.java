@@ -3,7 +3,7 @@
 //
 //import eng.eSystem.collections.*;
 //import eng.eSystem.eXml.XElement;
-//import eng.eSystem.exceptions.EApplicationException;
+//import eng.eSystem.exceptions.ApplicationException;
 //import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
 //
 //import static eng.eSystem.utilites.FunctionShortcuts.*;
@@ -36,7 +36,7 @@
 //      }
 //    }
 //    if (cls == null) {
-//      throw new EApplicationException(sf("Unable to find class '%s' as response application.", className));
+//      throw new ApplicationException(sf("Unable to find class '%s' as response application.", className));
 //    }
 //    return cls;
 //  }

@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.area.airplanes.approachStagePilots;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -34,7 +34,7 @@ public class CheckStagePilot implements IApproachStagePilot<ICheckStage> {
     else if (stage instanceof CheckPlaneShaStage)
       ret = evaluateCheckPlaneShaStage(plane, (CheckPlaneShaStage) stage);
     else
-      throw new EApplicationException("CheckStagePilot does not support stage of type '" + stage.getClass().getSimpleName() + "'.");
+      throw new ApplicationException("CheckStagePilot does not support stage of type '" + stage.getClass().getSimpleName() + "'.");
 
     return ret;
   }

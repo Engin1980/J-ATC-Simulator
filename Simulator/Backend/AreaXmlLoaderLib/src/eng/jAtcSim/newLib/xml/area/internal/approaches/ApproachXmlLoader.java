@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.xml.area.internal.approaches;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
@@ -76,7 +76,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
         ret = loadCustom(source);
         break;
       default:
-        throw new EApplicationException("Unknown approach type " + source.getName() + ".");
+        throw new ApplicationException("Unknown approach type " + source.getName() + ".");
     }
     return ret;
   }

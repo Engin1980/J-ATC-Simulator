@@ -2,11 +2,11 @@ package eng.jAtcSim;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
+import eng.eSystem.eXml.EXmlException;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.exceptions.UnexpectedValueException;
-import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.app.FrmIntro;
@@ -133,8 +133,8 @@ public class JAtcSim {
         XElement root = ctx.saveObject(startupSettings, "startupSettings");
         XDocument doc = new XDocument(root);
         doc.save(appSettings.startupSettingsFile);
-      } catch (EApplicationException | EXmlException ex) {
-        throw new EApplicationException("Failed to normalize or save default settings.", ex);
+      } catch (ApplicationException | EXmlException ex) {
+        throw new ApplicationException("Failed to normalize or save default settings.", ex);
       }
 
       pi.increase("Loading simulation");
@@ -214,7 +214,7 @@ public class JAtcSim {
 //      try {
 //        g.getSimulation().getArea().checkForDuplicits();
 //      } catch (Exception ex) {
-//        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
+//        throw new ApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
 //      }
 
         pi.increase("Initializing sound");
@@ -268,7 +268,7 @@ public class JAtcSim {
                 xmlFileName, ExceptionUtils.toFullString(ex)));
         MessageBox.show(sf("Loading game from '%s' failed. %s", xmlFileName, ex.getMessage()), "Loading failed.");
         pi.done();
-        throw new EApplicationException("Load error", ex);
+        throw new ApplicationException("Load error", ex);
         //TODO fix this
         //return;
       }
@@ -313,7 +313,7 @@ public class JAtcSim {
         try {
           java.nio.file.Files.createDirectories(appSettings.autosave.path);
         } catch (IOException e) {
-          throw new EApplicationException("Unable to create directory " + appSettings.autosave.path + " specified in appSettings for autosaves.");
+          throw new ApplicationException("Unable to create directory " + appSettings.autosave.path + " specified in appSettings for autosaves.");
         }
       }
       isAutoSaveInitialized = true;
@@ -430,7 +430,7 @@ public class JAtcSim {
       try {
         java.nio.file.Files.createDirectories(path);
       } catch (IOException e) {
-        throw new EApplicationException(sf(
+        throw new ApplicationException(sf(
                 "Failed to create/use log path '%s'", path.toString()), e);
       }
     }

@@ -2,7 +2,7 @@
 //
 //import eng.eSystem.Tuple;
 //import eng.eSystem.collections.*;
-//import eng.eSystem.exceptions.EApplicationException;
+//import eng.eSystem.exceptions.ApplicationException;
 //import eng.eSystem.exceptions.UnexpectedValueException;
 //import eng.eSystem.geo.Coordinate;
 //import eng.eSystem.geo.Coordinates;
@@ -169,9 +169,9 @@
 //    for (char i = 'A'; i <= 'D'; i++) {
 //      char c = i;
 //      if (!arrivals.isAny(q -> q.isForCategory(c)))
-//        throw new EApplicationException("Unable to find arrival threshold for category " + c);
+//        throw new ApplicationException("Unable to find arrival threshold for category " + c);
 //      if (!departures.isAny(q -> q.isForCategory(c)))
-//        throw new EApplicationException("Unable to find departure threshold for category " + c);
+//        throw new ApplicationException("Unable to find departure threshold for category " + c);
 //    }
 //  }
 //
@@ -381,7 +381,7 @@
 ////      for (String groupName : groupNames) {
 ////        Airport.SharedIafRoutesGroup group = this.getParent().getParent().getParent().getSharedIafRoutesGroups().tryGetFirst(q -> q.groupName.equals(groupName));
 ////        if (group == null) {
-////          throw new EApplicationException("Unable to find iaf-route group named " + groupName + " in airport "
+////          throw new ApplicationException("Unable to find iaf-route group named " + groupName + " in airport "
 ////              + this.getParent().getParent().getParent().getIcao() + " required for runway approach " + this.getParent().getName() + " " + this.getTypeString() + ".");
 ////        }
 ////
@@ -483,7 +483,7 @@
 //          IList<IafRoute> routes = sharedIafRoutesGroups.get(groupName);
 //          approachRoutes.add(routes);
 //        } catch (Exception ex) {
-//          throw new EApplicationException("Unable to find route group named " + groupName + ".");
+//          throw new ApplicationException("Unable to find route group named " + groupName + ".");
 //        }
 //      }
 //    }
@@ -501,7 +501,7 @@
 //    try {
 //      ret = decodeRouteFromString(x.gaRoute);
 //    } catch (Exception ex) {
-//      throw new EApplicationException("Unable to decode go-around routing for approach.");
+//      throw new ApplicationException("Unable to decode go-around routing for approach.");
 //    }
 //    return ret;
 //  }
@@ -632,7 +632,7 @@
 //          IList<DARoute> routes = sharedRoutesGroups.get(groupName);
 //          aRoutes.add(routes);
 //        } catch (Exception ex) {
-//          throw new EApplicationException("Unable to find route group named " + groupName + " required for runway threshold " + xa.name);
+//          throw new ApplicationException("Unable to find route group named " + groupName + " required for runway threshold " + xa.name);
 //        }
 //      }
 //    }

@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.airplanes.modules.speeches;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.validation.EAssert;
@@ -282,7 +282,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
       else if (content instanceof IForPlaneSpeech)
         ret.add((IForPlaneSpeech) content);
       else
-        throw new EApplicationException("Unexpected type of cmd: " + content.getClass().getName());
+        throw new ApplicationException("Unexpected type of cmd: " + content.getClass().getName());
     }
 
     return ret;

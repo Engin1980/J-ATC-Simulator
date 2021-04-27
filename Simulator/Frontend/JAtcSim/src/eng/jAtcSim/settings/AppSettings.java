@@ -1,9 +1,8 @@
 package eng.jAtcSim.settings;
 
+import eng.eSystem.eXml.EXmlException;
 import eng.eSystem.eXml.XDocument;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EXmlException;
-import eng.eSystem.exceptions.ToDoException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
 import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
@@ -35,7 +34,7 @@ public class AppSettings implements IXPersistable {
     try {
       ret = ctx.loadObject(XDocument.load(appPath).getRoot(), AppSettings.class);
     } catch (EXmlException e) {
-      throw new EApplicationException("Failed to load app settings"); //TODO write here only info to log and continue with default settings
+      throw new ApplicationException("Failed to load app settings"); //TODO write here only info to log and continue with default settings
     }
 
     ret.startupSettingsFile = decodePath(ret.startupSettingsFile.toString());
@@ -61,7 +60,7 @@ public class AppSettings implements IXPersistable {
 //      try {
 //        doc = XDocument.load(appPath);
 //      } catch (EXmlException ex) {
-//        throw new EApplicationException("App settings file was not loaded.", ex);
+//        throw new ApplicationException("App settings file was not loaded.", ex);
 //      }
 //
 //      String tmp;
@@ -164,13 +163,17 @@ public class AppSettings implements IXPersistable {
   @XConstructor
   private AppSettings() {
     if (!initialized)
-      throw new EApplicationException("Unable to create a new instance of AppSettings. Static method 'AppSettings.init()' must be called first.");
+      throw new ApplicationException("Unable to create a new instance of AppSettings. Static method 'AppSettings.init()' must be called first.");
 
     this.startupSettingsFile = getUnderAppFolder("defaultStartupSettings.ss.xml");
     this.soundFolder = getUnderAppFolder("_Sounds");
     this.logFolder = getUnderAppFolder("_Log");
     this.stripSettingsFile = getUnderAppFolder("stripSettings.at.xml");
     this.radar.styleSettingsFile = getUnderAppFolder("radarStyleSettings.at.xml");
+  }
+
+  public DynamicPlaneFormatter getDynamicPlaneFormatter() {
+    return dynamicPlaneFormatter;
   }
 
   public FlightStripSettings getFlightStripSettings() {
@@ -183,10 +186,6 @@ public class AppSettings implements IXPersistable {
 
   public RadarStyleSettings getRadarStyleSettings() {
     return radarStyleSettings;
-  }
-
-  public DynamicPlaneFormatter getDynamicPlaneFormatter() {
-    return dynamicPlaneFormatter;
   }
 
   private void loadInternalStuff() {

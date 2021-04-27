@@ -5,7 +5,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.utilites.Selector;
 import eng.jAtcSim.newLib.Acc;
 import eng.jAtcSim.newLib.airplanes.AirplaneType;
@@ -228,7 +228,7 @@ public class DensityBasedTraffic extends GeneratedTraffic {
 
     if (!initialized) {
       if (density.size() == 0)
-        throw new EApplicationException("Unable to use generic traffic without density specified.");
+        throw new ApplicationException("Unable to use generic traffic without density specified.");
       // init things
       density.sort(q -> q.hour);
       IReadOnlyList<Movement> tmp = generateTrafficForHour(Acc.now().getHours());

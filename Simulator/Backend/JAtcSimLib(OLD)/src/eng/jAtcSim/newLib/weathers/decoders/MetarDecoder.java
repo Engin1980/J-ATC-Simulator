@@ -6,7 +6,7 @@
 package eng.jAtcSim.newLib.area.weathers.decoders;
 
 import com.sun.javafx.image.BytePixelSetter;
-import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.utilites.RegexUtils;
 import eng.jAtcSim.newLib.weathers.Weather;
 import eng.jAtcSim.newLib.weathers.presets.PresetWeather;
@@ -33,7 +33,7 @@ public class MetarDecoder {
     try {
       ret = decodeWeather(metarLine);
     } catch (Exception ex) {
-      throw new ERuntimeException("Failed to decode metar from string " + metarLine + ".", ex);
+      throw new ApplicationException("Failed to decode metar from string " + metarLine + ".", ex);
     }
 
     return ret;

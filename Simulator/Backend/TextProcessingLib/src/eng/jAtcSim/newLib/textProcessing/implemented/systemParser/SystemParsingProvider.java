@@ -85,7 +85,7 @@ public class SystemParsingProvider implements ISystemParsingProvider, IWithHelp 
     return ret;
   }
 
-  private Triple<Integer, RegexUtils.RegexGroups, Integer> findFirstMatchingGroupSet(TextSpeechParser<? extends IForPlaneSpeech> parser, String todo) {
+  private Triple<Integer, RegexUtils.RegexGroups, Integer> findFirstMatchingGroupSet(TextSpeechParser<? extends ISystemUserRequest> parser, String todo) {
     Triple<Integer, RegexUtils.RegexGroups, Integer> ret = null;
     for (int i = 0; i < parser.getPatterns().size(); i++) {
       Pattern p = Pattern.compile(parser.getPatterns().get(i));

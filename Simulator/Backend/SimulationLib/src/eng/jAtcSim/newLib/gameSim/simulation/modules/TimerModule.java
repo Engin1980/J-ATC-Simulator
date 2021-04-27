@@ -7,7 +7,7 @@ package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.events.IEventListenerSimple;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
@@ -56,7 +56,7 @@ public class TimerModule extends SimulationModule {
 
   public synchronized void start() {
     if (tmr != null) {
-      throw new EApplicationException("Cannot start the timer, its not stopped.");
+      throw new ApplicationException("Cannot start the timer, its not stopped.");
     }
 
     TimerTask tt = new TimerTask() {

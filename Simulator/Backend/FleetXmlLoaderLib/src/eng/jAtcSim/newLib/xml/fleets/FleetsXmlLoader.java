@@ -5,7 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.fleet.TypeAndWeight;
 import eng.jAtcSim.newLib.fleet.airliners.AirlinesFleets;
 import eng.jAtcSim.newLib.fleet.airliners.CompanyFleet;
@@ -22,7 +22,7 @@ public class FleetsXmlLoader {
     try {
       doc = XDocument.load(fileName);
     } catch (Exception ex) {
-      throw new EApplicationException(sf("Failed to load airlines fleets from '{0}'.", fileName));
+      throw new ApplicationException(sf("Failed to load airlines fleets from '{0}'.", fileName));
     }
 
     AirlinesFleets ret = loadAirlines(doc.getRoot());
@@ -34,7 +34,7 @@ public class FleetsXmlLoader {
     try {
       doc = XDocument.load(fileName);
     } catch (Exception ex) {
-      throw new EApplicationException(sf("Failed to load G-A fleets from '{0}'.", fileName));
+      throw new ApplicationException(sf("Failed to load G-A fleets from '{0}'.", fileName));
     }
 
     GeneralAviationFleets ret = loadGAs(doc.getRoot());

@@ -1,6 +1,6 @@
 package eng.jAtcSim.recording;
 
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.BitmapRadar.BitmapCanvas;
 import eng.jAtcSim.abstractRadar.Radar;
@@ -42,7 +42,7 @@ public class Recording {
 
     File f = new File(settings.getPath());
     if (f.exists() == false || f.canWrite() == false) {
-      throw new EApplicationException("Unable to create a new recorder to the folder " + settings.getPath() + ". Folder does not exist or write-access is not granted.");
+      throw new ApplicationException("Unable to create a new recorder to the folder " + settings.getPath() + ". Folder does not exist or write-access is not granted.");
     }
 
     this.simulation = sim;

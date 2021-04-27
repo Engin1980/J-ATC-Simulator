@@ -5,7 +5,7 @@
 // */
 //package eng.jAtcSim.lib.global;
 //
-//import eng.eSystem.exceptions.ERuntimeException;
+//import eng.eSystem.exceptions.ApplicationException;
 //
 ///**
 // *
@@ -28,6 +28,6 @@
 //        return item;
 //      }
 //    }
-//    throw new ERuntimeException("No such element in KeyList - key: " + key.toString());
+//    throw new ApplicationException("No such element in KeyList - key: " + key.toString());
 //  }
 //}

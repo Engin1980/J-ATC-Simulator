@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types;
 
 import eng.eSystem.collections.*;
-import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ApplicationException;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
@@ -94,6 +94,6 @@ public class Sentence {
           return i;
       }
     }
-    throw new EApplicationException("Unable to find closing bracket " + closeChar + "  for sequence " + text.substring(fromIndex));
+    throw new ApplicationException("Unable to find closing bracket " + closeChar + "  for sequence " + text.substring(fromIndex));
   }
 }

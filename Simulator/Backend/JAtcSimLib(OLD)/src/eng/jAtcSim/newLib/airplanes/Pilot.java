@@ -8,7 +8,7 @@
 //import com.sun.istack.internal.Nullable;
 //import eng.eSystem.collections.IList;
 //import eng.eSystem.eXml.XElement;
-//import eng.eSystem.exceptions.EApplicationException;
+//import eng.eSystem.exceptions.ApplicationException;
 //import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 //import eng.eSystem.geo.Coordinate;
 //import eng.eSystem.geo.Coordinates;
@@ -443,18 +443,18 @@
 //    try {
 //      cls = Class.forName(clsName);
 //    } catch (ClassNotFoundException e) {
-//      throw new EApplicationException("Unable to find behavior class " + clsName + ".", e);
+//      throw new ApplicationException("Unable to find behavior class " + clsName + ".", e);
 //    }
 //    try {
 //      ctor = cls.getDeclaredConstructor(Pilot.class);
 //    } catch (NoSuchMethodException e) {
-//      throw new EApplicationException("Unable to find parameter-less constructor for " + cls.getName() + ".", e);
+//      throw new ApplicationException("Unable to find parameter-less constructor for " + cls.getName() + ".", e);
 //    }
 //    try {
 //      ctor.setAccessible(true);
 //      ret = (Behavior) ctor.newInstance(parent);
 //    } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-//      throw new EApplicationException("Unable to create new instance of " + cls.getName() + ".", ex);
+//      throw new ApplicationException("Unable to create new instance of " + cls.getName() + ".", ex);
 //    }
 //    return ret;
 //  }
