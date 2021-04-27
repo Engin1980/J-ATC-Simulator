@@ -1,8 +1,6 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.systemParser;
 
 import eng.eSystem.Triple;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.utilites.RegexUtils;
 import eng.eSystem.validation.EAssert;
@@ -10,7 +8,6 @@ import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemUserRequest;
 import eng.jAtcSim.newLib.textProcessing.IWithHelp;
-import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextParsing;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParserList;
 import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.typedParser.*;

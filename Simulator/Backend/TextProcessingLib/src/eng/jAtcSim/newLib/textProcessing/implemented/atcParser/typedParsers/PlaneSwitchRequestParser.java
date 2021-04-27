@@ -1,6 +1,10 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.exceptions.UnexpectedValueException;
+import eng.eSystem.utilites.RegexUtils;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequest;
 import eng.jAtcSim.newLib.speeches.atc.planeSwitching.PlaneSwitchRequestRouting;
@@ -8,12 +12,11 @@ import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechPar
 
 public class PlaneSwitchRequestParser extends TextSpeechParser<PlaneSwitchRequest> {
 
-  private static final String[][] patterns = {
-      {"\\d{4}", "\\d{2}[LRC]?/[A-Z0-9]+"},
-      {"\\d{4}", "/[A-Z0-9]+"},
-      {"\\d{4}", "\\d{2}[LRC]?"},
-      {"\\d{4}"},
-  };
+  private static final IReadOnlyList<String> patterns = EList.of(
+      "(\\d{4}) (\\d{2}[LRC]?)/([A-Z0-9]+)",
+      "(\\d{4}) (/[A-Z0-9]+)",
+      "(\\d{4}) (\\d{2}[LRC]?)",
+      "(\\d{4})");
 
   @Override
   public String getHelp() {
@@ -31,29 +34,38 @@ public class PlaneSwitchRequestParser extends TextSpeechParser<PlaneSwitchReques
   }
 
   @Override
-  public String[][] getPatterns() {
+  public IReadOnlyList<String> getPatterns() {
     return patterns;
   }
 
   @Override
-  public PlaneSwitchRequest parse(IList<String> blocks) {
+  public PlaneSwitchRequest parse(int patternIndex, RegexUtils.RegexGroups groups) {
     PlaneSwitchRequest ret;
-    String sqwk = blocks.get(0);
-    String runway = null;
-    String route = null;
-    if (blocks.count() == 2) {
-      String[] tmp = blocks.get(1).split("/");
-      if (tmp.length == 1) {
-        runway = tmp[0];
+    String sqwk = groups.getString(1);
+    String rwy;
+    String route;
+    switch (patternIndex){
+      case 0:
+        rwy = groups.getString(2);
+        route = groups.getString(3);
+        break;
+      case 1:
+        rwy = null;
+        route = groups.getString(2);
+        break;
+      case 2:
+        rwy = groups.getString(2);
         route = null;
-      } else {
-        runway = tmp[0].length() > 0 ? tmp[0] : null;
-        route = tmp[1];
-      }
+        break;
+      case 3:
+        rwy = null;
+        route = null;
+        break;
+      default:
+        throw new UnexpectedValueException(patternIndex);
     }
-
-    if (runway != null || route != null){
-      ret = new PlaneSwitchRequest(Squawk.create(sqwk), new PlaneSwitchRequestRouting(runway, route));
+    if (rwy != null || route != null){
+      ret = new PlaneSwitchRequest(Squawk.create(sqwk), new PlaneSwitchRequestRouting(rwy, route));
     }
      else
        ret = new PlaneSwitchRequest(Squawk.create(sqwk), false);

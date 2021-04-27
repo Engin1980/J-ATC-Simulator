@@ -1,14 +1,14 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.atcParser;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
+import eng.eSystem.Triple;
+import eng.eSystem.collections.ISet;
+import eng.eSystem.utilites.RegexUtils;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.textProcessing.IWithHelp;
-//import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers.PlaneSwitchRequestCancelationParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers.PlaneSwitchRequestParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers.RunwayInUseRequestParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers.RunwayMaintenanceRequestParser;
-import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextParsing;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParserList;
 import eng.jAtcSim.newLib.textProcessing.parsing.EInvalidCommandException;
@@ -16,10 +16,12 @@ import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParsingProvider;
 import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.IWithShortcuts;
 import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.ShortcutList;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class AtcParsingProvider implements IAtcParsingProvider, IWithShortcuts<String>, IWithHelp {
 
   private static final TextSpeechParserList<IAtcSpeech> atcParsers;
-  private final ShortcutList<String> shortcuts = new ShortcutList<>();
 
   static {
     atcParsers = new TextSpeechParserList<>();
@@ -28,6 +30,8 @@ public class AtcParsingProvider implements IAtcParsingProvider, IWithShortcuts<S
 //    atcParsers.add(new PlaneSwitchRequestCancelationParser());
     atcParsers.add(new PlaneSwitchRequestParser());
   }
+
+  private final ShortcutList<String> shortcuts = new ShortcutList<>();
 
   @Override
   public boolean acceptsType(Class<?> type) {
@@ -61,28 +65,56 @@ public class AtcParsingProvider implements IAtcParsingProvider, IWithShortcuts<S
   @Override
   public IAtcSpeech parse(Object input) {
     String line = (String) input;
-    line = line.trim();
-    IList<String> toDo = TextParsing.tokenize(line);
-    IList<String> done = new EList<>();
+    StringBuilder todo = new StringBuilder(line);
+    StringBuilder done = new StringBuilder();
 
-    TextSpeechParser<? extends IAtcSpeech> p = atcParsers.get(toDo);
+    ISet<TextSpeechParser<? extends IAtcSpeech>> parsers = atcParsers.get(todo.toString());
+    if (parsers.size() == 0)
+      throw new EInvalidCommandException("Failed to parse command prefix.",
+              done.toString(), todo.toString());
+    else if (parsers.size() > 1)
+      throw new EInvalidCommandException("There are multiple ways to parse command prefix (probably internal error?).",
+              done.toString(), todo.toString());
 
-    if (p == null)
-      throw new EInvalidCommandException("Failed to parseOld atc message prefix.",
-          TextParsing.toLineString(toDo),
-          TextParsing.toLineString(done));
+    IAtcSpeech ret = this.parseWithParser(parsers.getFirst(), todo, done);
+    return ret;
+  }
 
-    IList<String> used;
-    try {
-      used = TextParsing.getInterestingBlocks(toDo, done, p);
-    } catch (Exception ex) {
-      throw new EInvalidCommandException("Failed to parseOld command via parser " + p.getClass().getName() + ". Probably invalid syntax?.",
-          TextParsing.toLineString(toDo),
-          TextParsing.toLineString(done));
+  private IAtcSpeech parseWithParser(TextSpeechParser<? extends IAtcSpeech> parser, StringBuilder todo, StringBuilder done) {
+    Triple<Integer, RegexUtils.RegexGroups, Integer> trgs = findFirstMatchingGroupSet(parser, todo.toString());
+
+    todo = todo.delete(0, trgs.getC());
+    trimStringBuilder(todo);
+
+    if (done.charAt(done.length() - 1) != ' ')
+      done.append(" ");
+    done.append(" ").append(done);
+
+    IAtcSpeech ret = parser.parse(trgs.getA(), trgs.getB());
+    return ret;
+  }
+
+  private Triple<Integer, RegexUtils.RegexGroups, Integer> findFirstMatchingGroupSet(TextSpeechParser<? extends IAtcSpeech> parser, String todo) {
+    Triple<Integer, RegexUtils.RegexGroups, Integer> ret = null;
+    for (int i = 0; i < parser.getPatterns().size(); i++) {
+      Pattern p = Pattern.compile(parser.getPatterns().get(i));
+      Matcher m = p.matcher(todo);
+      if (m.find()) {
+        ret = new Triple<>(i, new RegexUtils.RegexGroups(m), m.group(0).length());
+        break;
+      }
     }
 
-    IAtcSpeech ret = p.parse(used);
+    EAssert.isNotNull(ret);
+
     return ret;
+  }
+
+  protected void trimStringBuilder(StringBuilder sb) {
+    while (sb.charAt(0) == ' ')
+      sb.delete(0, 1);
+    while (sb.charAt(sb.length() - 1) == ' ')
+      sb.delete(sb.length() - 1, sb.length());
   }
 
 }
