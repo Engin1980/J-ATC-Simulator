@@ -1,5 +1,8 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.planeParser;
 
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -11,12 +14,10 @@ import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechPar
 import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers.*;
 import eng.jAtcSim.newLib.textProcessing.parsing.EInvalidCommandException;
 import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParsingProvider;
-import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.IWithShortcuts;
-import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.ShortcutList;
 
 import java.util.Optional;
 
-public class PlaneParsingProvider implements IPlaneParsingProvider, IWithShortcuts<String>, IWithHelp {
+public class PlaneParsingProvider implements IPlaneParsingProvider, IWithHelp {
 
   private static final TextSpeechParserList<IForPlaneSpeech> planeParsers;
 
@@ -52,7 +53,10 @@ public class PlaneParsingProvider implements IPlaneParsingProvider, IWithShortcu
     planeParsers.add(new AltitudeRestrictionCommandParser());
   }
 
-  private final ShortcutList<String> shortcuts = new ShortcutList<>();
+  private final IMap<String, String> shortcuts = new EMap<>();
+
+  public PlaneParsingProvider() {
+  }
 
   @Override
   public boolean acceptsType(Class<?> type) {
@@ -69,6 +73,10 @@ public class PlaneParsingProvider implements IPlaneParsingProvider, IWithShortcu
     return NumberUtils.isBetweenOrEqual('A', c, 'Z') || NumberUtils.isBetweenOrEqual('0', c, '9');
   }
 
+  public void deleteShortcut(String key) {
+    this.shortcuts.tryRemove(key);
+  }
+
   @Override
   public String getHelp() {
     return planeParsers.getHelp();
@@ -79,9 +87,8 @@ public class PlaneParsingProvider implements IPlaneParsingProvider, IWithShortcu
     return planeParsers.getHelp((String) cmd);
   }
 
-  @Override
-  public ShortcutList<String> getShortcuts() {
-    return shortcuts;
+  public IReadOnlyMap<String, String> getShortcutsMap() {
+    return this.shortcuts;
   }
 
   @Override
@@ -111,13 +118,17 @@ public class PlaneParsingProvider implements IPlaneParsingProvider, IWithShortcu
     return ret;
   }
 
+  public void setShortcut(String key, String value) {
+    this.shortcuts.set(key, value);
+  }
+
   private boolean tryExpandByShortcut(StringBuilder todo) {
     boolean hasSpace = todo.toString().contains(" ");
     String firstWord;
     if (hasSpace)
       firstWord = todo.substring(0, todo.toString().indexOf(" "));
     else firstWord = todo.toString();
-    Optional<String> exp = this.getShortcuts().tryGet(firstWord);
+    Optional<String> exp = this.shortcuts.tryGet(firstWord);
     if (exp.isPresent())
       if (hasSpace)
         todo.replace(0, firstWord.length(), exp.get() + " ");

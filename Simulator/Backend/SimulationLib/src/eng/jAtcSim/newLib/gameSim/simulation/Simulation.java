@@ -21,7 +21,6 @@ import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.SimulationStartupContext;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.AirproxController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceController;
-import eng.jAtcSim.newLib.gameSim.simulation.controllers.KeyShortcutManager;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.MrvaController;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.*;
 import eng.jAtcSim.newLib.messaging.Message;
@@ -221,7 +220,6 @@ public class Simulation implements IXPersistable {
     this.atcModule = null;
     this.ioModule = new IOModule(
             this,
-            new KeyShortcutManager(),
             new SystemMessagesModule(this)
     );
 
@@ -253,7 +251,6 @@ public class Simulation implements IXPersistable {
 
     this.ioModule = new IOModule(
             this,
-            new KeyShortcutManager(),
             new SystemMessagesModule(this)
     );
 

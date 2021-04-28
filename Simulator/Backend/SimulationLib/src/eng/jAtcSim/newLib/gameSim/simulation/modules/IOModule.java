@@ -6,7 +6,6 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.atcs.IUserAtcInterface;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
-import eng.jAtcSim.newLib.gameSim.simulation.controllers.KeyShortcutManager;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
@@ -54,30 +53,22 @@ public class IOModule extends SimulationModule {
     }
   }
 
-  private final KeyShortcutManager keyShortcutManager;
   private final Messenger messenger;
   private final SystemMessagesModule systemMessagesModule;
   private final OnlyOnePlaneMessageAtOnceProxy onlyOnePlaneMessageAtOnceProxy = new OnlyOnePlaneMessageAtOnceProxy();
 
   public IOModule(
           Simulation parent,
-          KeyShortcutManager keyShortcutManager,
           SystemMessagesModule systemMessagesModule) {
     super(parent);
-    EAssert.Argument.isNotNull(keyShortcutManager, "keyShortcutManager");
     EAssert.Argument.isNotNull(systemMessagesModule, "systemMessagesModule");
 
-    this.keyShortcutManager = keyShortcutManager;
     this.systemMessagesModule = systemMessagesModule;
     this.messenger = new Messenger();
   }
 
   public void elapseSecond() {
     systemMessagesModule.elapseSecond();
-  }
-
-  public KeyShortcutManager getKeyShortcutManager() {
-    return keyShortcutManager;
   }
 
   public IList<Message> getMessagesByKey(Object listener) {

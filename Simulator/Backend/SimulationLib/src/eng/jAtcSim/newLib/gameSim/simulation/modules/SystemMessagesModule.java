@@ -60,23 +60,29 @@ public class SystemMessagesModule extends SimulationModule {
   }
 
   private void processShortcutRequest(ShortcutRequest content, Participant source) {
-    if (parent.getIoModule().getKeyShortcutManager() == null) {
-      sendMessage(source, new SystemRejection(content, "Shortcuts are not available in the current mode."));
-      return;
-    }
+    throw new UnsupportedOperationException("ShortcutRequests on sim-level are not supported.");
 
-    if (content.getType() == ShortcutRequest.eType.delete
-            || (content.getType() == ShortcutRequest.eType.set && StringUtils.isNullOrWhitespace(content.getValue()))) {
-      parent.getIoModule().getKeyShortcutManager().shortcutDeletion(content.getKey());
-      sendMessage(source, new SystemConfirmation(content));
-    } else if (content.getType() == ShortcutRequest.eType.set) {
-      parent.getIoModule().getKeyShortcutManager().shortcutSet(content.getKey(), content.getValue());
-      sendMessage(source, new SystemConfirmation(content));
-    } else if (content.getType() == ShortcutRequest.eType.get) {
-      sendMessage(source, new ShorcutsOverviewNotification(parent.getIoModule().getKeyShortcutManager().shortcutList()));
-    } else {
-      throw new UnsupportedOperationException();
-    }
+    /* this is old code representing how was this implemented on sim-level
+       now, the shorctus are handled by View covering input
+       This block is not used anymore.
+     */
+//    if (parent.getIoModule().getKeyShortcutManager() == null) {
+//      sendMessage(source, new SystemRejection(content, "Shortcuts are not available in the current mode."));
+//      return;
+//    }
+//
+//    if (content.getType() == ShortcutRequest.eType.delete
+//            || (content.getType() == ShortcutRequest.eType.set && StringUtils.isNullOrWhitespace(content.getValue()))) {
+//      parent.getIoModule().getKeyShortcutManager().shortcutDeletion(content.getKey());
+//      sendMessage(source, new SystemConfirmation(content));
+//    } else if (content.getType() == ShortcutRequest.eType.set) {
+//      parent.getIoModule().getKeyShortcutManager().shortcutSet(content.getKey(), content.getValue());
+//      sendMessage(source, new SystemConfirmation(content));
+//    } else if (content.getType() == ShortcutRequest.eType.get) {
+//      sendMessage(source, new ShorcutsOverviewNotification(parent.getIoModule().getKeyShortcutManager().shortcutList()));
+//    } else {
+//      throw new UnsupportedOperationException();
+//    }
   }
 
   private void processSystemMessage(Message m) {

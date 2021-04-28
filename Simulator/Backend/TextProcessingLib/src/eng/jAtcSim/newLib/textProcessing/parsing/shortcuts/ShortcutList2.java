@@ -7,7 +7,7 @@ import eng.eSystem.collections.ISet;
 import java.util.Map;
 import java.util.Optional;
 
-public class ShortcutList<T> {
+public class ShortcutList2<T> {
 
   private final IMap<T, T> inner = new EMap<>();
 

@@ -53,7 +53,33 @@ public class ViewGlobalEventContext {
     }
   }
 
+  //TODEL if not used
+//  public static class ShortcutSetEventArgs extends EventsEventArgs{
+//    public final Object key;
+//    public final Object value;
+//
+//    public ShortcutSetEventArgs(IView sender, Object key, Object value) {
+//      super(sender);
+//      this.key = key;
+//      this.value = value;
+//    }
+//  }
+//
+//  public static class ShortcutDeleteEventArgs extends EventsEventArgs{
+//    public final Object key;
+//
+//    public ShortcutDeleteEventArgs(IView sender, Object key) {
+//      super(sender);
+//      this.key = key;
+//    }
+//  }
+
   public EventAnonymous<SelectedCallsignChangedEventArgs> onSelectedCallsignChanged = new EventAnonymous<SelectedCallsignChangedEventArgs>();
   public EventAnonymous<RadarPositionStoreRestoreEventArgs> onRadarPositionStoreRestore = new EventAnonymous<RadarPositionStoreRestoreEventArgs>();
   public EventAnonymous<UnhandledKeyPressEventArgs> onUnhandledKeyPress = new EventAnonymous<>();
+  //TODEL use or delete
+//  public EventAnonymous<ShortcutSetEventArgs> onShortcutSet = new EventAnonymous<>();
+//  public EventAnonymous<ShortcutDeleteEventArgs> onShortcutDelete = new EventAnonymous<>();
+
+
 }

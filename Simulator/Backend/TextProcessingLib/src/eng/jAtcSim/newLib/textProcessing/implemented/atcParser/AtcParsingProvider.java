@@ -11,10 +11,8 @@ import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechPar
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParserList;
 import eng.jAtcSim.newLib.textProcessing.parsing.EInvalidCommandException;
 import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParsingProvider;
-import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.IWithShortcuts;
-import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.ShortcutList;
 
-public class AtcParsingProvider implements IAtcParsingProvider, IWithShortcuts<String>, IWithHelp {
+public class AtcParsingProvider implements IAtcParsingProvider, IWithHelp {
 
   private static final TextSpeechParserList<IAtcSpeech> atcParsers;
 
@@ -25,8 +23,6 @@ public class AtcParsingProvider implements IAtcParsingProvider, IWithShortcuts<S
 //    atcParsers.add(new PlaneSwitchRequestCancelationParser());
     atcParsers.add(new PlaneSwitchRequestParser());
   }
-
-  private final ShortcutList<String> shortcuts = new ShortcutList<>();
 
   @Override
   public boolean acceptsType(Class<?> type) {
@@ -50,11 +46,6 @@ public class AtcParsingProvider implements IAtcParsingProvider, IWithShortcuts<S
   public String getHelp(Object cmd) {
     String tag = (String) cmd;
     return atcParsers.getHelp(tag);
-  }
-
-  @Override
-  public ShortcutList<String> getShortcuts() {
-    return shortcuts;
   }
 
   @Override

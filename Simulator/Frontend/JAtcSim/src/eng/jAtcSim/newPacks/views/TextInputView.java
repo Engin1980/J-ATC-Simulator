@@ -1,9 +1,11 @@
 package eng.jAtcSim.newPacks.views;
 
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyMap;
-import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.exceptions.ToDoException;
+import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.jAtcSim.app.extenders.CommandInputTextFieldExtender;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParsersSet;
@@ -14,10 +16,11 @@ import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 import eng.jAtcSim.newLib.speeches.system.StringMessage;
+import eng.jAtcSim.newLib.speeches.system.user2system.ShortcutRequest;
 import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.AtcParsingProvider;
 import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.PlaneParsingProvider;
 import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.SystemParsingProvider;
-import eng.jAtcSim.newPacks.IView;
+import eng.jAtcSim.newPacks.IViewWithCustomData;
 import eng.jAtcSim.newPacks.context.ViewGlobalEventContext;
 import eng.jAtcSim.newPacks.utils.GlobalKeyStrokes;
 import eng.jAtcSim.newPacks.utils.ViewGameInfo;
@@ -26,8 +29,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Map;
 
-public class TextInputView implements IView {
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
+public class TextInputView implements IViewWithCustomData {
 
   public class CommandInputWrapper {
     public void addCommandTextToLine(char keyChar) {
@@ -57,6 +63,13 @@ public class TextInputView implements IView {
   private ISimulation sim;
   private AtcId userAtcId;
   private ViewGlobalEventContext viewGlobalEventContext;
+  private PlaneParsingProvider planeParsingProvider;
+
+  @Override
+  public Object getCustomDataToSave() {
+    IMap<String, String> ret = new EMap<String, String>().with(this.planeParsingProvider.getShortcutsMap());
+    return ret;
+  }
 
   @Override
   public void init(JPanel panel, ViewGameInfo initInfo, IReadOnlyMap<String, String> options,
@@ -78,6 +91,14 @@ public class TextInputView implements IView {
 
     if (options.tryGet("requestFocus").orElse("false").equals("true"))
       addFocusRequestOnFrameOpen();
+  }
+
+  @Override
+  public void setCustomDataOnLoad(Object data) {
+    IMap<String, String> map = (IMap<String, String>) data;
+    for (Map.Entry<String, String> entry : map) {
+      this.planeParsingProvider.setShortcut(entry.getKey(), entry.getValue());
+    }
   }
 
   private void addFocusRequestOnFrameOpen() {
@@ -217,8 +238,9 @@ public class TextInputView implements IView {
   }
 
   private ParsersSet buildParsers() {
+    this.planeParsingProvider = new PlaneParsingProvider();
     return new ParsersSet(
-            new PlaneParsingProvider(),
+            planeParsingProvider,
             new AtcParsingProvider(),
             new SystemParsingProvider());
   }
@@ -248,7 +270,28 @@ public class TextInputView implements IView {
   }
 
   private void sendSystemCommand(CommandInputTextFieldExtender commandInputTextFieldExtender, CommandInputTextFieldExtender.CommandEventArgs<Object, ISystemSpeech> e) {
-    this.sim.sendSystemCommand(this.userAtcId, e.command);
+    if (e.command instanceof ShortcutRequest) {
+      ShortcutRequest shortcutRequest = (ShortcutRequest) e.command;
+      switch (shortcutRequest.getType()) {
+        case delete:
+          this.planeParsingProvider.deleteShortcut(shortcutRequest.getKey());
+          this.sim.sendSystemCommandAnonymous(
+                  this.userAtcId, new StringMessage(sf("Shortcut '%s' deleted.", shortcutRequest.getKey())));
+          break;
+        case set:
+          this.planeParsingProvider.setShortcut(shortcutRequest.getKey(), shortcutRequest.getValue());
+          this.sim.sendSystemCommandAnonymous(
+                  this.userAtcId, new StringMessage(sf("Shortcut '%s' set.", shortcutRequest.getKey())));
+          break;
+        case get:
+          this.sim.sendSystemCommandAnonymous(
+                  this.userAtcId, new StringMessage(sf("Shortcut get not supported yet.")));
+          break;
+        default:
+          throw new UnexpectedValueException(shortcutRequest.getType());
+      }
+    } else
+      this.sim.sendSystemCommand(this.userAtcId, e.command);
   }
 
   private void sendAtcCommand(
