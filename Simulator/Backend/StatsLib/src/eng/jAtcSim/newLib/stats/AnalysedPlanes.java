@@ -1,14 +1,15 @@
 package eng.jAtcSim.newLib.stats;
 
 import eng.eSystem.collections.*;
+import eng.jAtcSim.newLib.shared.AtcId;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
 public class AnalysedPlanes {
   public final int arrivals;
   public final int departures;
-  public final int appArrivals;
-  public final int appDepartures;
+  public final IMap<AtcId, Integer> appArrivals;
+  public final IMap<AtcId, Integer> appDepartures;
   public final int mrvaErrors;
   public final int airproxErrors;
   public final int planesAtHoldingPoint;

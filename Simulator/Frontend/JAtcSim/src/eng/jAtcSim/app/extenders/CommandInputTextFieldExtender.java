@@ -304,7 +304,7 @@ public class CommandInputTextFieldExtender {
       throw new InputFormatException(ErrorType.systemUnableParse, msg, "Unable to understand system message.", e);
     }
     raiseSystemCommand(speech);
-    this.clear();348134
+    this.clear();
     this.focus();
   }
 
