@@ -1,7 +1,8 @@
-package eng.jAtcSim.newLib.newStats;
+package eng.jAtcSim.newLib.newStats.blocks;
 
 
 import eng.eSystem.collections.IReadOnlyMap;
+import eng.jAtcSim.newLib.newStats.values.IMMM;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
@@ -33,7 +34,7 @@ public interface IStatsBlock {
 
   IMMM getFinishedArrivalsMoodValues();
 
-  IMMM getFinishedDeparturesMoodValue();
+  IMMM getFinishedDeparturesMoodValues();
 
   IReadOnlyMap<AtcId, ? extends IMMM> getAppDeparturesCount();
 

@@ -1,8 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
@@ -31,13 +29,13 @@ import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.mood.MoodManager;
 import eng.jAtcSim.newLib.mood.context.IMoodAcc;
 import eng.jAtcSim.newLib.mood.context.MoodAcc;
+import eng.jAtcSim.newLib.newStats.AnalysedPlanes;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
-import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
 import exml.annotations.XConstructor;
 import exml.loading.XLoadContext;
@@ -116,8 +114,8 @@ public class AirplanesModule extends SimulationModule {
     IReadOnlyList<IAirplane> planes = airplanesController.getPlanes();
     int arrivals = 0;
     int departures = 0;
-    int appArrivals = 0;
-    int appDepartures = 0;
+    IMap<AtcId, Integer> appArrivals = new EMap<>();
+    IMap<AtcId, Integer> appDepartures = new EMap<>();
     int mrvaErrors;
     int airproxErrors;
     int planesAtHoldingPoint;
@@ -128,10 +126,12 @@ public class AirplanesModule extends SimulationModule {
       else
         departures++;
       if (plane.getAtc().getTunedAtc().getType() == AtcType.app) {
-        if (plane.isArrival())
-          appArrivals++;
+        AtcId atcId = plane.getAtc().getTunedAtc();
+        IMap<AtcId, Integer> tmp = plane.isArrival() ? appArrivals : appDepartures;
+        if (tmp.containsKey(atcId))
+          tmp.set(atcId, tmp.get(atcId) + 1);
         else
-          appDepartures++;
+          tmp.set(atcId, 1);
       }
     }
     mrvaErrors = this.mrvaController.getMrvaViolatingPlanes().count();
@@ -171,6 +171,14 @@ public class AirplanesModule extends SimulationModule {
     return this.mrvaController.isMrvaErrorForPlane(airplane);
   }
 
+  public void removePlane(Callsign callsign, boolean isForced) {
+    super.parent.getAtcModule().unregisterPlane(callsign, isForced);
+    this.planes4public.remove(q -> q.callsign().equals(callsign));
+    this.moodManager.unregisterCallsign(callsign);
+    this.airplanesController.unregisterPlane(callsign);
+    Context.getMessaging().getMessenger().unregisterListener(Participant.createAirplane(callsign));
+  }
+
   @Override
   public void xLoad(XElement elm, XLoadContext ctx) {
     super.xLoad(elm, ctx);
@@ -178,14 +186,6 @@ public class AirplanesModule extends SimulationModule {
     ctx.fields.ignoreFields(this,
             "planes4public",
             "planesPrepared");
-  }
-
-  public void removePlane(Callsign callsign, boolean isForced) {
-    super.parent.getAtcModule().unregisterPlane(callsign, isForced);
-    this.planes4public.remove(q -> q.callsign().equals(callsign));
-    this.moodManager.unregisterCallsign(callsign);
-    this.airplanesController.unregisterPlane(callsign);
-    Context.getMessaging().getMessenger().unregisterListener(Participant.createAirplane(callsign));
   }
 
   @Override
@@ -243,7 +243,8 @@ public class AirplanesModule extends SimulationModule {
     int index = 0;
     while (index < planesPrepared.count()) {
       AirplaneTemplate at = planesPrepared.get(index);
-      if (at.getEntryTimeWithEntryDelay().isAfter(Context.getShared().getNow())) break; // the first incoming plane is after now
+      if (at.getEntryTimeWithEntryDelay().isAfter(Context.getShared().getNow()))
+        break; // the first incoming plane is after now
       if (at instanceof ArrivalAirplaneTemplate && isInSeparationConflictWithTraffic((ArrivalAirplaneTemplate) at))
         index++;
       else {

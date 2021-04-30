@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.newStats;
+package eng.jAtcSim.newLib.newStats.values;
 
 public class ElapsedSecondCounter {
   private int value = 0;

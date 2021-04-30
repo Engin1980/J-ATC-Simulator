@@ -7,4 +7,5 @@ module JAtcSim.Modules.Backend.StatsLib {
   exports eng.jAtcSim.newLib.stats.context to
       JAtcSim.Modules.Backend.AtcLib,
       JAtcSim.Modules.Backend.SimulationLib;
+  exports eng.jAtcSim.newLib.newStats;
 }

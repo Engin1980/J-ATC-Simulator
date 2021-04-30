@@ -4,12 +4,12 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 import eng.jAtcSim.newLib.shared.ContextManager;
-import eng.jAtcSim.newLib.stats.AnalysedPlanes;
+import eng.jAtcSim.newLib.newStats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.stats.context.IStatsAcc;
 import eng.jAtcSim.newLib.stats.context.StatsAcc;
-import exml.loading.XLoadContext; import exml.saving.XSaveContext;
+import exml.loading.XLoadContext;
 import exml.annotations.XConstructor;
 
 public class StatsModule extends SimulationModule {

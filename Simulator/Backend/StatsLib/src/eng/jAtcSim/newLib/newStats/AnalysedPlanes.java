@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.stats;
+package eng.jAtcSim.newLib.newStats;
 
 import eng.eSystem.collections.*;
 import eng.jAtcSim.newLib.shared.AtcId;
@@ -14,7 +14,7 @@ public class AnalysedPlanes {
   public final int airproxErrors;
   public final int planesAtHoldingPoint;
 
-  public AnalysedPlanes(int arrivals, int departures, int appArrivals, int appDepartures, int mrvaErrors, int airproxErrors, int planesAtHoldingPoint) {
+  public AnalysedPlanes(int arrivals, int departures, IMap<AtcId, Integer> appArrivals, IMap<AtcId, Integer> appDepartures, int mrvaErrors, int airproxErrors, int planesAtHoldingPoint) {
     this.arrivals = arrivals;
     this.departures = departures;
     this.appArrivals = appArrivals;

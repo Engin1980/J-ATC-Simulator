@@ -2,11 +2,11 @@ package eng.jAtcSim.newLib.newStats;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.exceptions.UnexpectedValueException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.mood.MoodResult;
-import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
-import eng.jAtcSim.newLib.stats.AnalysedPlanes;
+import eng.jAtcSim.newLib.newStats.blocks.IStatsBlock;
+import eng.jAtcSim.newLib.newStats.blocks.LiveStatsBlock;
+import eng.jAtcSim.newLib.newStats.blocks.SnapshotStatsBlock;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
 import eng.jAtcSim.newLib.stats.contextLocal.Context;
 
@@ -30,6 +30,31 @@ public class StatsProvider {
     blocks.add(new LiveStatsBlock(Context.getShared().getNow().toStamp()));
   }
 
+  public void registerFinishedPlane(FinishedPlaneStats finishedPlaneStats) {
+    MoodResult mr = finishedPlaneStats.getMoodResult();
+    this.moodResults.add(mr);
+
+    LiveStatsBlock b = getLiveStatsBlock();
+    if (finishedPlaneStats.isArrival()) {
+      b.getFinishedArrivalsMoodValues().addValue(mr.getPoints());
+      if (!finishedPlaneStats.isEmergency())
+        b.getFinishedArrivalDelays().addValue(finishedPlaneStats.getDelayDifference());
+    } else {
+      b.getFinishedDeparturesMoodValues().addValue(mr.getPoints());
+      if (!finishedPlaneStats.isEmergency())
+        b.getHoldingPointDelays().addValue(finishedPlaneStats.getDelayDifference());
+    }
+  }
+
+  public void registerLandedPlane() {
+    getLiveStatsBlock().getArrivalsCount().addValue(1);
+  }
+
+  public void registerTakenOffPlane(int holdingPointSeconds) {
+    getLiveStatsBlock().getHoldingPointDelays().addValue(holdingPointSeconds);
+    getLiveStatsBlock().getDeparturesCount().addValue(1);
+  }
+
   private void migrateLiveBlockToSnapshotIfRequired() {
     EAssert.isTrue(blocks.getLast() instanceof LiveStatsBlock);
     if (blocks.getLast().getCoveredSecondsCount() == blockLength) {
@@ -42,40 +67,5 @@ public class StatsProvider {
 
   private LiveStatsBlock getLiveStatsBlock() {
     return (LiveStatsBlock) blocks.getLast();
-  }
-
-  public void registerFinishedPlane(FinishedPlaneStats finishedPlaneStats) {
-    getLiveStatsBlock().getFinishedArrivalDelays().addValue(finishedPlaneStats.getDelayDifference());
-  }
-
-  public void registerFinishedPlane(FinishedPlaneStats finishedPlaneStats) {
-    MoodResult mr = finishedPlaneStats.getMoodResult();
-    this.moodResults.add(mr);
-
-    LiveStatsBlock b = getLiveStatsBlock();
-    if (finishedPlaneStats.isArrival()){
-      b.getFinishedArrivalsMoodValues().addValue(mr);
-      if (!finishedPlaneStats.isEmergency())
-        b.getFinishedArrivalDelays().addValue(finishedPlaneStats.getDelayDifference());
-    } else {
-      b.getFinishedDeparturesMoodValues().addValue(mr);
-      if (!finishedPlaneStats.isEmergency())
-        b.getFinishedDepartureDelays().addValue(finishedPlaneStats.getDelayDifference());
-    }
-  }
-
-  public void registerHoldingPointDelay(int delay) {
-    getLiveStatsBlock().getHoldingPointDelays().addValue(delay);
-  }
-
-  public void registerNewArrivalOrDeparture(DepartureArrival departureArrival) {
-    switch (departureArrival){
-      case departure:
-        getLiveStatsBlock().getDeparturesCount().addValue(1);
-      case arrival:
-        getLiveStatsBlock().getArrivalsCount().addValue(1);
-      default:
-        throw new UnexpectedValueException(departureArrival);
-    }
   }
 }

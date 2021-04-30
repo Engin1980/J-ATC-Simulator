@@ -1,13 +1,13 @@
-package eng.jAtcSim.newLib.newStats;
+package eng.jAtcSim.newLib.newStats.blocks;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyMap;
+import eng.jAtcSim.newLib.newStats.values.ElapsedSecondCounter;
+import eng.jAtcSim.newLib.newStats.values.LiveMMM;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.stats.AnalysedPlanes;
-import eng.jAtcSim.newLib.stats.contextLocal.Context;
-import eng.jAtcSim.newLib.stats.properties.TimedValue;
+import eng.jAtcSim.newLib.newStats.AnalysedPlanes;
 
 public class LiveStatsBlock implements IStatsBlock {
   private final ElapsedSecondCounter elapsedSecondCounter = new ElapsedSecondCounter();
@@ -25,6 +25,8 @@ public class LiveStatsBlock implements IStatsBlock {
   private final IMap<AtcId, LiveMMM> appDeparturesCount = new EMap<>();
   private final IMap<AtcId, LiveMMM> appArrivalsCount = new EMap<>();
   private final IMap<AtcId, LiveMMM> appPlanesCount = new EMap<>();
+  private final LiveMMM finishedDeparturesMoodValues = new LiveMMM();
+  private final LiveMMM finishedArrivalsMoodValues = new LiveMMM();
 
   public LiveStatsBlock(EDayTimeStamp startTime) {
     this.startTime = startTime;
@@ -117,6 +119,16 @@ public class LiveStatsBlock implements IStatsBlock {
   @Override
   public LiveMMM getPlanesCount() {
     return planesCount;
+  }
+
+  @Override
+  public LiveMMM getFinishedArrivalsMoodValues() {
+    return finishedArrivalsMoodValues;
+  }
+
+  @Override
+  public LiveMMM getFinishedDeparturesMoodValues() {
+    return finishedDeparturesMoodValues;
   }
 
   @Override

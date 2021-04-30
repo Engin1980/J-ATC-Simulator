@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.stats.context;
 
-import eng.jAtcSim.newLib.stats.StatsProvider;
+import eng.jAtcSim.newLib.newStats.StatsProvider;
 
 public class StatsAcc implements IStatsAcc {
   private final StatsProvider statsProvider;
